@@ -7,14 +7,6 @@ export default function Root(){
 
   return (
     <Fragment>
-      <header>
-        <nav>
-          Indexed
-        </nav>
-      </header>
-      <div>
-        Welcome!
-      </div>
     </Fragment>
   )
 }
