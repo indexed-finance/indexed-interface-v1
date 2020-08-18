@@ -12,14 +12,17 @@ import Root from './routes/root'
 import './assets/css/root.css'
 
 const theme = createMuiTheme({
-    palette: {
-     primary: {
-       main: '#666666',
-     },
-     secondary: {
-       main: '#999999',
-     },
-   },
+  typography: {
+    fontFamily: "San Francisco"
+  },
+  palette: {
+    primary: {
+      main: '#666666',
+    },
+    secondary: {
+      main: '#999999',
+    },
+  }
 });
 
 ReactDOM.render(

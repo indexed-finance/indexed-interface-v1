@@ -7,12 +7,29 @@ import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
-import TextField from '@material-ui/core/TextField'
-import Grid from '@material-ui/core/Grid';
+import SearchIcon from '@material-ui/icons/Search'
+import TextField from '@material-ui/core/TextField';
+import Grid from '@material-ui/core/Grid'
+import { styled } from '@material-ui/core/styles'
+import InputAdornment from '@material-ui/core/InputAdornment'
+
+import indexed from '../assets/images/indexed.png'
+
+const Field = styled(TextField)({
+  '& fieldset': {
+   background: 'rgba(0, 0, 0, 0.075)',
+   borderWidth: 2,
+   borderRadius: 10,
+  },
+  '& input': {
+    paddingLeft: '5px',
+  }
+})
 
 const useStyles = makeStyles(({ spacing }) => ({
   root: {
     flexGrow: 1,
+    fontFamily: 'San Fransico',
   },
   appBar: {
     background: 'white',
@@ -25,12 +42,37 @@ const useStyles = makeStyles(({ spacing }) => ({
     marginRight: spacing(1),
   },
   title: {
-    marginLeft: spacing(1),
+    marginLeft: spacing(2),
     fontWeight: 350,
     flexGrow: 1,
+    float: 'right'
+  },
+  logo: {
+    width: 35,
+    marginLeft: spacing(1),
   },
   search: {
-    background: 'rgba(0, 0, 0, 0.075)',
+    '&:hover fieldset': {
+      borderColor: '#999999 !important',
+    },
+    '& label': {
+      color: 'white',
+    },
+    '& label.Mui-focused': {
+      color: 'white',
+    },
+    '& input:valid + fieldset': {
+      borderWidth: 2,
+    },
+    '& input:invalid + fieldset': {
+      borderColor: 'red',
+      borderWidth: 2,
+    },
+    '& input:valid:focus + fieldset': {
+      borderWidth: 2,
+      paddingRight: '5px !important',
+      paddingLeft: '8px !important',
+    }
   }
 }))
 
@@ -43,14 +85,22 @@ export default function ButtonAppBar() {
         <Toolbar>
           <Grid container direction='row' alignItems='center' justify='space-between'>
             <Grid item>
-              <Typography variant='h6' className={classes.title}> INDEXED </Typography>
+              <img className={classes.logo} src={indexed} />
+              <Typography variant='h5' className={classes.title}> INDEXED </Typography>
             </Grid>
             <Grid item>
-              <TextField size='small' className={classes.search} placeholder='Search...' variant='outlined' />
+              <Field size='small' className={classes.search} placeholder='Search...' variant='outlined'
+                InputProps={{
+                  startAdornment:
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                }}
+              />
             </Grid>
             <Grid item>
               <IconButton className={classes.menuButton}>
-                <MenuIcon />
+                <MenuIcon size='large' color='secondary'/>
               </IconButton>
             </Grid>
           </Grid>
