@@ -33,19 +33,20 @@ const useStyles = makeStyles(({ spacing }) => ({
   },
   appBar: {
     background: 'white',
-    color: '#999999',
-    borderBottom: 'solid 3px #999999',
+    color: '#666666',
+    borderBottom: 'solid 3px #666666',
     boxShadow: 'none',
-    padding: spacing(1, 0),
+    padding: spacing(1.25,0),
   },
   menuButton: {
     marginRight: spacing(1),
   },
   title: {
+    fontFamily: 'San Francisco Bold',
     marginLeft: spacing(2),
-    fontWeight: 350,
+    letterSpacing: 5,
     flexGrow: 1,
-    float: 'right'
+    float: 'right',
   },
   logo: {
     width: 35,
@@ -53,7 +54,7 @@ const useStyles = makeStyles(({ spacing }) => ({
   },
   search: {
     '&:hover fieldset': {
-      borderColor: '#999999 !important',
+      borderColor: '#666666 !important',
     },
     '& label': {
       color: 'white',
@@ -93,7 +94,7 @@ export default function ButtonAppBar() {
                 InputProps={{
                   startAdornment:
                   <InputAdornment position="start">
-                    <SearchIcon />
+                    <SearchIcon color='secondary' />
                   </InputAdornment>
                 }}
               />

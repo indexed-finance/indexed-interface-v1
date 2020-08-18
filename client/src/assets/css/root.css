@@ -1,18 +1,16 @@
 @font-face {
   font-family: 'San Francisco';
-  font-weight: 'normal';
   src: url("../fonts/apple-sf/sf.otf");
 }
 
+@font-face {
+  font-family: 'San Francisco Bold';
+  src: url("../fonts/apple-sf/sf-bold.otf");
+}
 
 body {
   margin: 0;
   font-family: 'San Francisco';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
 }

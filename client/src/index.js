@@ -13,11 +13,11 @@ import './assets/css/root.css'
 
 const theme = createMuiTheme({
   typography: {
-    fontFamily: "San Francisco"
+    fontFamily: "San Francisco Bold"
   },
   palette: {
     primary: {
-      main: '#666666',
+      main: '#333333',
     },
     secondary: {
       main: '#999999',
