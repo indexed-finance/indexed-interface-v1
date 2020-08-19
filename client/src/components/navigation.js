@@ -44,6 +44,7 @@ const useStyles = makeStyles(({ spacing }) => ({
   title: {
     fontFamily: 'San Francisco Bold',
     marginLeft: spacing(2),
+    marginTop: spacing(.375),
     letterSpacing: 5,
     flexGrow: 1,
     float: 'right',
@@ -101,7 +102,7 @@ export default function ButtonAppBar() {
             </Grid>
             <Grid item>
               <IconButton className={classes.menuButton}>
-                <MenuIcon size='large' color='secondary'/>
+                <MenuIcon iconStyle={{ width: 50 }} color='secondary'/>
               </IconButton>
             </Grid>
           </Grid>

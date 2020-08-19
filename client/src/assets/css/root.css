@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'San Francisco';
-  src: url("../fonts/apple-sf/sf.otf");
+  src: url("../fonts/sf-mono/SFMonoLight.otf");
 }
 
 @font-face {
   font-family: 'San Francisco Bold';
-  src: url("../fonts/apple-sf/sf-bold.otf");
+  src: url("../fonts/sf-mono/SFMonoRegular.otf");
 }
 
 body {
@@ -13,4 +13,10 @@ body {
   font-family: 'San Francisco';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+table {
+  border-collapse: collapse;
+  border-radius: 1em;
+  overflow: hidden;
 }
