@@ -21,9 +21,30 @@ const Container = styled(Paper)({
     marginTop: '-2em',
     background: 'white',
     padding: '0em 1em 0em 1em',
-    width: '7.5%',
+    width: '8.75%',
   }
 })
+
+const Canvas = styled(Paper)({
+  border: '3px solid #666666',
+  borderRadius: 10,
+  margin: '1.5em 3em',
+  overflow: 'auto'
+})
+
+const Wrapper = styled(Paper)({
+  borderLeft: '5px solid #666666',
+  borderTop: '5px solid #666666',
+  borderBottom: '5px solid #666666',
+  borderTopLeftRadius: 100,
+  borderBottomLeftRadius: 100,
+  width: '30%',
+  marginLeft: 'auto',
+  height: '9.375em',
+  boxShadow: 'none',
+  background: 'white'
+})
+
 
 export default function Root(){
   let { state, dispatch } = useContext(store)
@@ -32,9 +53,12 @@ export default function Root(){
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item>
-          <Container>
+          <Canvas>
             <Spline/>
-          </Container>
+            <Wrapper>
+
+            </Wrapper>
+          </Canvas>
         </Grid>
         <Grid item>
           <Container>

@@ -15,8 +15,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-table {
-  border-collapse: collapse;
-  border-radius: 1em;
-  overflow: hidden;
+html, body {
+  overflow-x: hidden;
+  margin: 0;
+}
+
+canvas {
+  z-index: 1;
 }
