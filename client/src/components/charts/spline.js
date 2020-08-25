@@ -1,5 +1,5 @@
 import React from 'react';
-import {Line} from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 
 const data = (canvas) => {
   const ctx = canvas.getContext("2d")

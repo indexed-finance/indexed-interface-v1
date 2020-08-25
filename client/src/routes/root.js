@@ -9,8 +9,8 @@ import Button from '@material-ui/core/Button'
 
 import Table from '../components/table'
 import Container from '../components/container'
-import Spline from '../components/spline'
-import Pie from '../components/pie'
+import Spline from '../components/charts/spline'
+import Pie from '../components/charts/pie'
 import indexed from '../assets/images/indexed.png'
 
 import { store } from '../state'
