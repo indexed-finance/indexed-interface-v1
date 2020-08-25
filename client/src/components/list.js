@@ -25,43 +25,41 @@ const columns = [
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
-    id: 'delta',
-    label: '\u0394',
+    id: 'eoy',
+    label: 'EOY',
     minWidth: 170,
     align: 'center',
-    format: (value) => `$${value.toLocaleString('en-US')}`,
-  },
-  {
-    id: 'marketcap',
-    label: 'Marketcap',
-    minWidth: 170,
-    align: 'center',
-    format: (value) => `$${value.toLocaleString('en-US')}`,
+    format: (value) => `${value.toLocaleString('en-US')}%`,
   },
   {
     id: 'liquidity',
     label: 'Liquidity',
-    minWidth: 150,
+    minWidth: 170,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
-    id: 'volume',
-    label: 'Volume',
-    minWidth: 150,
+    id: 'supply',
+    minWidth: 100,
     align: 'center',
-    format: (value) => `$${value.toLocaleString('en-US')}`,
+    format: () => <span> test </span>,
+  },
+  {
+    id: 'retract',
+    minWidth: 100,
+    align: 'center',
+    format: () => <span> test </span>,
   },
 ];
 
-function createData(name, price, delta, marketcap, liquidity, volume ) {
-  return { name, price, delta, marketcap, liquidity, volume };
+function createData(name, price, eoy, liquidity ) {
+  return { name, price, eoy, liquidity };
 }
 
 const rows = [
-  createData('Cryptocurrency Index [CCII]', 7232.23, 4.34, 125000.18, 304321.22, 1232232.34),
-  createData('DeFi Index [DEFII]', 10553.11, 2.11, 100232.18, 1250023.11, 1204232.23),
-  createData('Governance Index [GOVII]', 25731.23, 1.12, 75000.11, 100000.11, 500000.12)
+  createData('Cryptocurrency Index [CCII]', 7232.23, 4.34, 125000.18),
+  createData('DeFi Index [DEFII]', 10553.11, 2.11, 100232.18),
+  createData('Governance Index [GOVII]', 25731.23, 1.12, 75000.11)
 ];
 
 const useStyles = makeStyles({

@@ -1,5 +1,7 @@
 import React from 'react'
 
+
+import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -39,7 +41,7 @@ const useStyles = makeStyles(({ spacing }) => ({
     padding: spacing(1.25,0),
   },
   menuButton: {
-    marginRight: spacing(1),
+    marginRight: spacing(1)
   },
   title: {
     fontFamily: 'San Francisco Bold',
@@ -48,6 +50,7 @@ const useStyles = makeStyles(({ spacing }) => ({
     letterSpacing: 5,
     flexGrow: 1,
     float: 'right',
+    color: '#666666'
   },
   logo: {
     width: 35,
@@ -87,8 +90,10 @@ export default function ButtonAppBar() {
         <Toolbar>
           <Grid container direction='row' alignItems='center' justify='space-between'>
             <Grid item>
-              <img className={classes.logo} src={indexed} />
-              <Typography variant='h5' className={classes.title}> INDEXED </Typography>
+              <Link to='/'>
+                <img className={classes.logo} src={indexed} />
+                <Typography variant='h5' className={classes.title}> INDEXED </Typography>
+              </Link>
             </Grid>
             <Grid item>
               <Field size='small' className={classes.search} placeholder='Search...' variant='outlined'
@@ -102,7 +107,7 @@ export default function ButtonAppBar() {
             </Grid>
             <Grid item>
               <IconButton className={classes.menuButton}>
-                <MenuIcon iconStyle={{ width: 50 }} color='secondary'/>
+                <MenuIcon color='secondary'/>
               </IconButton>
             </Grid>
           </Grid>

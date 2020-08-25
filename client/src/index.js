@@ -8,6 +8,7 @@ import { StateProvider } from './state'
 
 import Navigation from './components/navigation'
 import Root from './routes/root'
+import Demo from './routes/demo'
 
 import './assets/css/root.css'
 
@@ -28,15 +29,17 @@ const theme = createMuiTheme({
 ReactDOM.render(
   <StateProvider>
     <ThemeProvider theme={theme}>
-      <Navigation />
-        <Router>
-          <Switch>
-            <Route path='/'>
-              <Root />
-            </Route>
-          </Switch>
-        </Router>
-      </ThemeProvider>
-    </StateProvider>,
-  document.getElementById('root')
-);
+      <Router>
+        <Navigation />
+        <Switch>
+          <Route exact path='/'>
+            <Root />
+          </Route>
+          <Route path='/demo'>
+            <Demo />
+          </Route>
+        </Switch>
+      </Router>
+    </ThemeProvider>
+  </StateProvider>,
+document.getElementById('root'))
