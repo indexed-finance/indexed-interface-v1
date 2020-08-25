@@ -19,3 +19,36 @@ html, body {
   overflow-x: hidden;
   margin: 0;
 }
+
+.market-options {
+  font-size: 14px;
+  list-style: none;
+  width: 50%;
+  float: right;
+  padding-right: 25px;
+  color: #999999;
+}
+
+.market-select {
+  position: absolute;
+  padding-left: 1.75em;
+}
+
+
+.market-select h2 {
+  margin-bottom: 0px;
+}
+
+.market-select h3 {
+  margin-top: 10px;
+  color: #999999;
+}
+
+.market-options li {
+  margin-bottom: 5px;
+}
+
+.market-options li span {
+  float: right;
+  color: #666666;
+}

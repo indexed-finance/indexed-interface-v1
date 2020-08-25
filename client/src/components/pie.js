@@ -12,7 +12,13 @@ const data = {
   ],
 	datasets: [{
     datalabels: {
-      color: '#FFFFFF',
+      color: function(ctx) {
+        var index = ctx.dataIndex
+        var label = ctx.chart.data.labels[index]
+
+        if(label == 'COMP') return 'black'
+        else return 'white'
+      },
       labels: {
            title: {
                font: {
@@ -45,13 +51,23 @@ const options = {
   legend: {
     display: false
   },
+  plugins: {
+  datalabels: {
+    textAlign: 'center',
+    formatter: function(value, ctx) {
+      var index = ctx.dataIndex
+      var label = ctx.chart.data.labels[index]
+      return label
+      }
+    }
+  }
 }
 
 export default function PieChart(){
 
   return (
     <div style={{ position: 'absolute', right: '42.5%', top: '8.75%' }}>
-      <Pie height={125} options={options} data={data} />
+      <Pie height={145} options={options} data={data} />
     </div>
   )
 }

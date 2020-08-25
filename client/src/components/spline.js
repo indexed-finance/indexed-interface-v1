@@ -5,11 +5,10 @@ const data = (canvas) => {
   const ctx = canvas.getContext("2d")
   var gradient = ctx.createLinearGradient(0,337.5,0, 25)
 
-  gradient.addColorStop(1, 'rgba(	138, 239, 255, 0.5)')
+  gradient.addColorStop(1, 'rgba(	138, 239, 255, .5)')
   gradient.addColorStop(0.7, 'rgba(	138, 239, 255, 0.25)')
   gradient.addColorStop(0.6, 'rgba(	138, 239, 255, 0.125)')
-  gradient.addColorStop(0.5, 'rgba(	255, 255, 255 ,0.05)')
-  gradient.addColorStop(0.375, 'rgba(	255, 255, 255, 0)')
+  gradient.addColorStop(0.5, 'rgba(	138, 239, 255, 0.075)')
   gradient.addColorStop(0.25, 'rgba(	255, 255, 255, 0)')
 
   return {
@@ -22,8 +21,23 @@ const data = (canvas) => {
       pointHoverBorderWidth: 15,
       pointRadius: 4,
       data: [{
+          x: 1597865990111 * .55,
+          y: 1675
+        },{
+          x: 1597865990111 * .60,
+          y: 1775
+        },{
+          x: 1597865990111 * .65,
+          y: 2200
+        },{
+          x: 1597865990111  * .70,
+          y: 1750
+        },{
+          x: 1597865990111  * .725,
+          y: 2750
+        },{
         x: 1597865990111 * .75,
-        y: 1020
+        y: 2000
       },{
         x: 1597865990111 * .8,
         y: 2443
@@ -32,16 +46,16 @@ const data = (canvas) => {
         y: 4503
       },{
         x: 1597865990111  * .90,
-        y: 5783
+        y: 3000
       },{
         x: 1597865990111  * .95,
-        y: 3532
+        y: 3750
       },{
         x: 1597865990111  * 1,
-        y: 4000
+        y: 2750
       },{
         x: 1597865990111  * 1.05,
-        y: 4250
+        y: 3750
       }]
      }
     ]
@@ -52,7 +66,7 @@ const options = {
   bezierCurve: true,
   responsive: true,
   plugins: {
-     datalabels: false   
+     datalabels: false
  },
   elements: {
       point:{
@@ -61,10 +75,10 @@ const options = {
   },
   layout: {
     padding: {
-      left: 0,
+      left: -12.5,
       right: 0,
       top: 75,
-      bottom: -25
+      bottom: 0
     }
   },
   type: 'line',
@@ -77,10 +91,14 @@ const options = {
   scales: {
       yAxes: [{
         gridLines: {
+          tickMarkLength: 0,
           drawBorder: false,
           display: false
         },
         ticks: {
+          ticks: {
+            beginAtZero: true
+          },
           display: false,
           padding: 0
         }
@@ -93,6 +111,7 @@ const options = {
           unit: 'day'
         },
         gridLines: {
+          tickMarkLength: 0,
           drawBorder: false,
           display: false
         },
@@ -107,6 +126,6 @@ const options = {
 
 export default function Spline(){
     return <div style={{ 'z-index': 1, float: 'left', width: '75%'}}>
-      <Line options={options} height={50} data={data} redraw />
+      <Line options={options} height={55} data={data} redraw />
     </div>
 }
