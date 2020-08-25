@@ -5,11 +5,12 @@ const data = (canvas) => {
   const ctx = canvas.getContext("2d")
   var gradient = ctx.createLinearGradient(0,337.5,0, 25)
 
-  gradient.addColorStop(1, 'rgba(255,51,138,0.225)')
-  gradient.addColorStop(0.7, 'rgba(255,51,138,0.2)')
-  gradient.addColorStop(0.5, 'rgba(255,51,138,0.125)')
-  gradient.addColorStop(0.2, 'rgba(255,51,138,0.075)')
-  gradient.addColorStop(0, 'rgba(119,52,169,0)')
+  gradient.addColorStop(1, 'rgba(	138, 239, 255, 0.5)')
+  gradient.addColorStop(0.7, 'rgba(	138, 239, 255, 0.25)')
+  gradient.addColorStop(0.6, 'rgba(	138, 239, 255, 0.125)')
+  gradient.addColorStop(0.5, 'rgba(	255, 255, 255 ,0.05)')
+  gradient.addColorStop(0.375, 'rgba(	255, 255, 255, 0)')
+  gradient.addColorStop(0.25, 'rgba(	255, 255, 255, 0)')
 
   return {
     datasets: [
@@ -17,12 +18,7 @@ const data = (canvas) => {
       backgroundColor: gradient,
       fill: true,
       borderWidth: 3,
-      borderColor: "#bae755",
-      pointBackgroundColor: '#d048b6',
-      pointBorderColor:'rgba(255,255,255,0)',
-      pointHoverBackgroundColor: '#d048b6',
-      pointBorderWidth: 20,
-      pointHoverRadius: 4,
+      borderColor: "#66FFFF",
       pointHoverBorderWidth: 15,
       pointRadius: 4,
       data: [{
@@ -55,6 +51,14 @@ const data = (canvas) => {
 const options = {
   bezierCurve: true,
   responsive: true,
+  plugins: {
+     datalabels: false   
+ },
+  elements: {
+      point:{
+          radius: 0
+      }
+  },
   layout: {
     padding: {
       left: 0,

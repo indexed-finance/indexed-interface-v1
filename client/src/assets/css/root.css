@@ -19,7 +19,3 @@ html, body {
   overflow-x: hidden;
   margin: 0;
 }
-
-canvas {
-  z-index: 1;
-}

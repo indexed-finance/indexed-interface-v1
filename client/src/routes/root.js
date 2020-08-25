@@ -8,6 +8,7 @@ import Grid from '@material-ui/core/Grid'
 
 import Table from '../components/table'
 import Spline from '../components/spline'
+import Pie from '../components/pie'
 import indexed from '../assets/images/indexed.png'
 
 import { store } from '../state'
@@ -34,17 +35,18 @@ const Canvas = styled(Paper)({
 
 const Wrapper = styled(Paper)({
   borderLeft: '5px solid #666666',
-  borderTop: '5px solid #666666',
-  borderBottom: '5px solid #666666',
+  borderRight: '3px solid #666666',
+  borderTop: '3px solid #666666',
+  borderBottom: '3px solid #666666',
   borderTopLeftRadius: 100,
   borderBottomLeftRadius: 100,
   width: '30%',
-  marginLeft: 'auto',
-  height: '9.375em',
+  height: '9.75em',
   boxShadow: 'none',
-  background: 'white'
+  background: 'white',
+  position: 'absolute',
+  right: '2%'
 })
-
 
 export default function Root(){
   let { state, dispatch } = useContext(store)
@@ -54,9 +56,9 @@ export default function Root(){
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item>
           <Canvas>
-            <Spline/>
+            <Spline />
             <Wrapper>
-
+              <Pie/>
             </Wrapper>
           </Canvas>
         </Grid>
