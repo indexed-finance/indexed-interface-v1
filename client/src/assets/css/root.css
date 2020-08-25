@@ -61,3 +61,11 @@ h4 {
   float: right;
   color: #666666;
 }
+
+.MuiInputLabel-shrink {
+  top: 2px !important;
+}
+
+.MuiOutlinedInput-input {
+  padding: .75em 1em !important;
+}

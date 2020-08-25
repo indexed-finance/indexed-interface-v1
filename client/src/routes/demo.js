@@ -7,9 +7,12 @@ import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
 
 import Container from '../components/container'
+import Select from '../components/select'
 import List from '../components/list'
 
 import { store } from '../state'
+
+const selections = [[{ value: 0, label: null }]];
 
 const Canvas = styled(Paper)({
   border: '3px solid #666666',
@@ -18,7 +21,6 @@ const Canvas = styled(Paper)({
   padding: '1.5em',
 })
 
-
 const Trigger = styled(Button)({
   border: '2px solid #999999',
   color: '#999999',
@@ -26,6 +28,10 @@ const Trigger = styled(Button)({
   padding: '.2em 2em',
   marginTop: '7.5px',
   marginLeft: 'auto',
+  '&:hover': {
+    fontWeight: 'bold',
+    color: '#333333'
+  }
 })
 
 const Input = styled(TextField)({
@@ -34,12 +40,23 @@ const Input = styled(TextField)({
   '& input': {
     padding: '.75em 1em',
   },
+  '& label': {
+    top: -5,
+  },
+  '& label:placeholder-shown': {
+    color: '#666666',
+    top: -5,
+  },
+  '& input:placeholder-shown + label': {
+    color: '#666666',
+    top: -5,
+  },
+  '& label + fieldset': {
+    color: '#666666',
+    top: -5,
+  },
   '&:hover fieldset': {
    borderColor: '#8da1ff !important',
- },
- '& label': {
-   color: '#666666',
-   top: -5,
  },
  '& label.Mui-focused': {
    color: '#666666',
@@ -72,7 +89,7 @@ export default function Demo(){
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item>
           <Canvas>
-            <Grid container direction='row' alignItems='center' justify='space-between'>
+            <Grid container direction='row' alignItems='flex-start' justify='space-between'>
               <Grid item>
                 <div className="demo-option">
                   <h4> CREATE CATEGORY </h4>
@@ -85,7 +102,7 @@ export default function Demo(){
               <Grid item>
                 <div className="demo-option">
                   <h4> ADD ASSET </h4>
-                  <Input label="CATEGORY" variant="outlined" />
+                  <Select label="CATEGORY" selections={selections} />
                   <Input label="NAME" variant="outlined" />
                   <Input label="SYMBOL" variant="outlined" />
                   <Trigger> ADD </Trigger>
@@ -94,8 +111,8 @@ export default function Demo(){
               <Grid item>
                 <div className="demo-option">
                   <h4> ADD LIQUIDITY </h4>
-                  <Input label="CATEGORY" variant="outlined" />
-                  <Input label="ASSET" variant="outlined" />
+                  <Select label="CATEGORY" selections={selections} />
+                  <Select label="ASSET" selections={selections} />
                   <Input label="AMOUNT" variant="outlined" />
                   <Trigger> ADD </Trigger>
                 </div>
@@ -103,7 +120,7 @@ export default function Demo(){
               <Grid item>
                 <div className="demo-option">
                   <h4> DEPLOY INDEX </h4>
-                  <Input label="CATEGORY" variant="outlined" />
+                  <Select label="CATEGORY" selections={selections} />
                   <Input label="SIZE" variant="outlined" />
                   <Trigger> DEPLOY </Trigger>
                 </div>

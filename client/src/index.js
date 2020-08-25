@@ -7,6 +7,7 @@ import * as serviceWorker from './utils/serviceWorker'
 import { StateProvider } from './state'
 
 import Navigation from './components/navigation'
+import Index from './routes/index'
 import Root from './routes/root'
 import Demo from './routes/demo'
 
@@ -34,6 +35,9 @@ ReactDOM.render(
         <Switch>
           <Route exact path='/'>
             <Root />
+          </Route>
+          <Route path='/index/:name'>
+            <Index />
           </Route>
           <Route path='/demo'>
             <Demo />

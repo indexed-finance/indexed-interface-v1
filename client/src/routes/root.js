@@ -30,6 +30,10 @@ const Trigger = styled(Button)({
   marginTop: '7.5px',
   marginLeft: 'auto',
   float: 'right',
+  '&:hover': {
+    fontWeight: 'bold',
+    color: '#333333'
+  }
 })
 
 

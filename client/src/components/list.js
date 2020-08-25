@@ -22,17 +22,6 @@ const Liquidity = styled(Button)({
   }
 })
 
-const Supply = styled(Button)({
-  border: '2px solid #FF9900',
-  color: '#999999',
-  borderRadius: 5,
-  padding: '.5em 2.5em',
-  '&:hover': {
-    color: '#FF9900',
-    fontWeight: 'bold'
-  }
-})
-
 const Row = styled(TableRow)({
   border: '3px solid #666666',
   borderRadius: 10
@@ -62,13 +51,8 @@ const columns = [
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
-    id: 'supply',
-    minWidth: 100,
-    align: 'center',
-  },
-  {
-    id: 'retract',
-    minWidth: 100,
+    id: 'explore',
+    minWidth: 150,
     align: 'center',
   },
 ];
@@ -130,17 +114,12 @@ export default function StickyHeadTable() {
                   {columns.map((column) => {
                     const value = row[column.id];
 
-                    if(column.id === 'supply') {
+                    if(column.id === 'explore') {
                       return (
                         <TableCell key={column.id} align={column.align}>
-                          <Liquidity> ADD LIQUIDITY </Liquidity>
+                          <Liquidity> EXPLORE </Liquidity>
                         </TableCell>
                       )
-                    } else if(column.id == 'retract') {
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          <Supply> ADD SUPPLY </Supply>
-                        </TableCell>                      )
                     } else {
                       return (
                         <TableCell key={column.id} align={column.align}>
