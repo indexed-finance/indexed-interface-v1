@@ -13,7 +13,9 @@ const Wrapper = styled(Paper)({
     marginTop: '-2em',
     background: 'white',
     padding: '0em 1em 0em 1em',
-    width: '8.75%',
+    width: '11.5%',
+    fontFamily: 'San Francisco Bold',
+    letterSpacing: 3,
   }
 })
 

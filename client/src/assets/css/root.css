@@ -20,6 +20,16 @@ html, body {
   margin: 0;
 }
 
+h4 {
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+.demo-option {
+  width: 20vw;
+  clear: both;
+}
+
 .market-options {
   font-size: 14px;
   list-style: none;

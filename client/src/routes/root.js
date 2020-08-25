@@ -19,18 +19,17 @@ const Canvas = styled(Paper)({
   border: '3px solid #666666',
   borderRadius: 10,
   margin: '1.5em 3em',
-  overflow: 'auto'
+  overflow: 'auto',
 })
 
 const Trigger = styled(Button)({
-  border: '3px solid #999999',
+  border: '2px solid #999999',
   color: '#999999',
-  borderRadius: 10,
+  borderRadius: 5,
   padding: '.2em 2em',
   marginTop: '7.5px',
   marginLeft: 'auto',
   float: 'right',
-  overflow: 'auto'
 })
 
 
@@ -73,13 +72,13 @@ export default function Root(){
                 <li>Outflow: <span>$5,232,100 </span> </li>
                 <li>Inflow: <span>$3,102,531</span></li>
                 <li>TVL: <span>$10,023,021</span></li>
-                <Trigger> Explore </Trigger>
+                <Trigger> EXPLORE </Trigger>
               </ul>
             </Wrapper>
           </Canvas>
         </Grid>
         <Grid item>
-          <Container title='Markets' components={<Table />}/>
+          <Container title='MARKETS' components={<Table />}/>
         </Grid>
       </Grid>
     </Fragment>

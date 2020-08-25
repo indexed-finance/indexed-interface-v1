@@ -5,10 +5,33 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
+import Button from '@material-ui/core/Button';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import { styled } from '@material-ui/core/styles'
+
+const Liquidity = styled(Button)({
+  border: '2px solid #009966',
+  color: '#999999',
+  borderRadius: 5,
+  padding: '.5em 2.5em',
+  '&:hover': {
+    color: '#009966',
+    fontWeight: 'bold'
+  }
+})
+
+const Supply = styled(Button)({
+  border: '2px solid #FF9900',
+  color: '#999999',
+  borderRadius: 5,
+  padding: '.5em 2.5em',
+  '&:hover': {
+    color: '#FF9900',
+    fontWeight: 'bold'
+  }
+})
 
 const Row = styled(TableRow)({
   border: '3px solid #666666',
@@ -16,7 +39,7 @@ const Row = styled(TableRow)({
 })
 
 const columns = [
-  { id: 'name', label: 'Name', minWidth: 250 },
+  { id: 'name', label: 'Name', minWidth: 200 },
   {
     id: 'price',
     label: 'Price',
@@ -27,14 +50,14 @@ const columns = [
   {
     id: 'eoy',
     label: 'EOY',
-    minWidth: 170,
+    minWidth: 50,
     align: 'center',
     format: (value) => `${value.toLocaleString('en-US')}%`,
   },
   {
     id: 'liquidity',
     label: 'Liquidity',
-    minWidth: 170,
+    minWidth: 125,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
@@ -42,13 +65,11 @@ const columns = [
     id: 'supply',
     minWidth: 100,
     align: 'center',
-    format: () => <span> test </span>,
   },
   {
     id: 'retract',
     minWidth: 100,
     align: 'center',
-    format: () => <span> test </span>,
   },
 ];
 
@@ -108,11 +129,25 @@ export default function StickyHeadTable() {
                 <Row hover tabIndex={-1} key={row.code}>
                   {columns.map((column) => {
                     const value = row[column.id];
-                    return (
-                      <TableCell key={column.id} align={column.align}>
-                        {column.format && typeof value === 'number' ? column.format(value) : value}
-                      </TableCell>
-                    );
+
+                    if(column.id === 'supply') {
+                      return (
+                        <TableCell key={column.id} align={column.align}>
+                          <Liquidity> ADD LIQUIDITY </Liquidity>
+                        </TableCell>
+                      )
+                    } else if(column.id == 'retract') {
+                      return (
+                        <TableCell key={column.id} align={column.align}>
+                          <Supply> ADD SUPPLY </Supply>
+                        </TableCell>                      )
+                    } else {
+                      return (
+                        <TableCell key={column.id} align={column.align}>
+                          {column.format && typeof value === 'number' ? column.format(value) : value}
+                        </TableCell>
+                      )
+                    }
                   })}
                 </Row>
               );
