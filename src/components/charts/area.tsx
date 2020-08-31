@@ -1,4 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
+
+// @ts-ignore
+
 import { AreaClosed, Line, Bar } from '@vx/shape';
 import appleStock, { AppleStock } from '@vx/mock-data/lib/mocks/appleStock';
 import { curveMonotoneX } from '@vx/curve';
@@ -15,7 +18,7 @@ type TooltipData = AppleStock;
 
 const stock = appleStock.slice(800);
 export const background = '#999999';
-export const background2 = '#204051';
+export const background2 = '#FFFFFF';
 export const accentColor = '#333333';
 export const accentColorDark = '#999999';
 const tooltipStyles = {
@@ -79,7 +82,7 @@ export default withTooltip<AreaProps, TooltipData>(
       (event: React.TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => {
         const { x } = localPoint(event) || { x: 0 };
         const x0 = dateScale.invert(x);
-        const index = 0;
+        const index = 1;
         const d0 = stock[index - 1];
         const d1 = stock[index];
         let d = d0;
@@ -96,7 +99,7 @@ export default withTooltip<AreaProps, TooltipData>(
     );
 
     return (
-      <div className="chart-ohlc">
+      <div className="market-area">
         <svg width={width} height={height}>
           <rect
             x={0}
