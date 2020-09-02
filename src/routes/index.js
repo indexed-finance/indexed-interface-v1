@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
   sidebar: {
     float: 'right',
-    height: '100vh',
+    height: '87.5vh',
     width: '30vw',
     borderLeft: 'solid 3px #666666',
     top: 0,
