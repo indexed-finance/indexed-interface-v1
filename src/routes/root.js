@@ -26,7 +26,7 @@ const Trigger = styled(Button)({
   border: '2px solid #999999',
   color: '#999999',
   borderRadius: 5,
-  padding: '.2em 2em',
+  padding: '.3em 2.125em',
   marginTop: '7.5px',
   marginLeft: 'auto',
   float: 'right',

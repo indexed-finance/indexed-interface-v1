@@ -7,12 +7,14 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Swap from '@material-ui/icons/SwapCalls'
+import Divider from '@material-ui/core/Divider';
 
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
 import Area from '../components/charts/area'
 import Tabs from '../components/tabs'
 import Input from '../components/input'
-
+import Adornment from '../components/adornment'
+import NumberFormat from '../utils/format'
 
 const MarketButton = styled(Button)({
   root: {
@@ -36,6 +38,7 @@ const Trigger = styled(Button)({
   borderRadius: 5,
   padding: '.5em 2.25em',
   marginTop: '7.5px',
+  marginLeft: 100,
   float: 'right',
   '&:hover': {
     fontWeight: 'bold',
@@ -84,15 +87,32 @@ const useStyles = makeStyles((theme) => ({
     padding: '1em 6.25em'
   },
   market: {
-    padding: '.5em 1.75em',
-  }
+    padding: '.5em 0em',
+  },
+  inputs: {
+    width: 250,
+    '& .MuiOutlinedInput-adornedEnd': {
+      paddingRight: 0
+    }
+  },
+  altInputs: {
+    width: 250,
+    '& .MuiOutlinedInput-adornedEnd': {
+      paddingRight: 32.5
+    }
+  },
+  divider: {
+    borderTop: '#666666 solid 2px',
+    borderBottom: '#666666 solid 1px',
+    margin: '1em 0em 1.5em 0em',
+    width: '27.5em',
+  },
 }));
 
 export default function Index(){
-  let { name } = useParams()
+  const [ component, setComponent ] = useState(<Trade />)
   const classes = useStyles()
-
-  const [ component, setComponent ] = useState(<span />)
+  let { name } = useParams()
 
   const changeExecution = (option) => {
     var target = document.getElementsByClassName(option)[0]
@@ -103,7 +123,7 @@ export default function Index(){
     } else if(option == 'mint') {
       setComponent(<p> Mint </p>)
     } else {
-      setComponent(<p> Trade </p>)
+      setComponent(<Trade />)
     }
 
     target.style.background = '#666666'
@@ -121,6 +141,41 @@ export default function Index(){
     borrow.firstChild.style.color = 'black'
     swap.style.background = 'white'
     swap.firstChild.style.color = 'black'
+  }
+
+  function Trade() {
+    return(
+      <Grid container direction='column' alignItems='center' justify='space-around'>
+        <Grid item>
+          <Input className={classes.inputs} label="AMOUNT" variant='outlined'
+            InputProps={{
+              endAdornment: <Adornment market='ETH'/>,
+              inputComponent: NumberFormat
+            }}
+          />
+        </Grid >
+        <Grid item>
+          <IconButton> <Swap/> </IconButton>
+        </Grid>
+        <Grid item>
+          <Input className={classes.altInputs} label="RECIEVE" variant='outlined'
+            InputProps={{
+              endAdornment: 'CCI',
+              inputComponent: NumberFormat
+            }}
+          />
+        </Grid>
+        <Grid item>
+          <div className={classes.divider} />
+          <p> Price: <span> $5,060 </span> </p>
+          <p> Source: <span> Uniswap </span> </p>
+          <div className={classes.divider} />
+        </Grid>
+        <Grid item>
+          <Trigger> EXECUTE </Trigger>
+        </Grid>
+      </Grid>
+    )
   }
 
   return (
@@ -150,27 +205,12 @@ export default function Index(){
           </ButtonGroup>
         </header>
         <div className={classes.market}>
-          <Grid container direction='column' alignItems='center' justify='space-around'>
-            <Grid item>
-              <Input label="AMOUNT" variant='outlined' />
-            </Grid >
-            <Grid item>
-              <IconButton> <Swap/> </IconButton>
-            </Grid>
-            <Grid item>
-              <Input label="RECIEVE" variant='outlined' />
-            </Grid>
-            <Grid item>
-              <Trigger> EXECUTE </Trigger>
-            </Grid>
-          </Grid>
+          {component}
         </div>
       </div>
       <div className={classes.chart}>
         <ParentSize>
-          {({ width, height }) =>
-          <Area width={width} height={height} />
-          }
+          {({ width, height }) => <Area width={width} height={height} /> }
         </ParentSize>
       </div>
       <div className={classes.metrics}>

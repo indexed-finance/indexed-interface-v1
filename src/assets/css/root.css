@@ -83,6 +83,14 @@ h4 {
   border-collapse: collapse !important;
 }
 
-.MuiButton-outlined {
+.MuiButton-outlined, .MuiOutlinedInput-notchedOutline {
   border: 2px solid #666666 !important;
+}
+
+.MuiInput-underline:before, .MuiInput-underline:active:before {
+  border: none !important;
+}
+
+.MuiInputAdornment-positionEnd {
+    margin-left: 2px !important;
 }
