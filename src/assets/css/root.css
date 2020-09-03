@@ -83,6 +83,6 @@ h4 {
   border-collapse: collapse !important;
 }
 
-.tcell {
-  margin-bottom: 50px !important;
+.MuiButton-outlined {
+  border: 2px solid #666666 !important;
 }
