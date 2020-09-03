@@ -11,72 +11,37 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import { styled } from '@material-ui/core/styles'
 
-const Liquidity = styled(Button)({
-  border: '2px solid #009966',
-  color: '#999999',
-  borderRadius: 5,
-  padding: '.5em 2.5em',
-  '&:hover': {
-    color: '#009966',
-    fontWeight: 'bold'
-  }
-})
-
 const Row = styled(TableRow)({
-  border: '3px solid #666666',
-  borderRadius: 10
+  borderBottom: '2px solid #666666 !important',
+  borderTop: '2px solid #666666 !important',
+  borderRadius: 2.5
 })
 
-const columns = [
-  { id: 'name', label: 'Name', minWidth: 200 },
-  {
-    id: 'price',
-    label: 'Price',
-    minWidth: 100,
-    align: 'center',
-    format: (value) => `$${value.toLocaleString('en-US')}`,
-  },
-  {
-    id: 'eoy',
-    label: 'EOY',
-    minWidth: 50,
-    align: 'center',
-    format: (value) => `${value.toLocaleString('en-US')}%`,
-  },
-  {
-    id: 'liquidity',
-    label: 'Liquidity',
-    minWidth: 125,
-    align: 'center',
-    format: (value) => `$${value.toLocaleString('en-US')}`,
-  },
-  {
-    id: 'explore',
-    minWidth: 150,
-    align: 'center',
-  },
-];
+const Head = styled(TableHead)({
+  background: 'white !important',
+  borderBottom: 'solid 2px #666666',
+  margin: 0,
+  zIndex: 1
+})
 
-function createData(name, price, eoy, liquidity ) {
-  return { name, price, eoy, liquidity };
-}
 
-const rows = [
-  createData('Cryptocurrency Index [CCII]', 7232.23, 4.34, 125000.18),
-  createData('DeFi Index [DEFII]', 10553.11, 2.11, 100232.18),
-  createData('Governance Index [GOVII]', 25731.23, 1.12, 75000.11)
-];
-
-const useStyles = makeStyles({
+const useStyles = (height) => makeStyles({
   root: {
     width: '100%',
+    padding: 0
   },
   container: {
-    maxHeight: 440,
+    maxHeight: 150,
+    padding: 0
   },
+  table: {
+    margin: 0,
+    padding: 0,
+    margin: 0
+  }
 });
 
-export default function StickyHeadTable() {
+export default function StickyHeadTable({ height, action, data, columns }) {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -91,13 +56,14 @@ export default function StickyHeadTable() {
   };
 
   return (
-    <Fragment className={classes.root}>
-      <TableContainer className={classes.container}>
-        <Table className={classes.table}>
-          <TableHead>
+    <Fragment>
+      <TableContainer className={classes.container} style={{ maxHeight: height }}>
+        <Table stickyHeader className={classes.table}>
+          <Head className={classes.head}>
             <TableRow>
               {columns.map((column) => (
                 <TableCell
+                  className={classes.head}
                   key={column.id}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
@@ -106,18 +72,18 @@ export default function StickyHeadTable() {
                 </TableCell>
               ))}
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+          </Head>
+          <TableBody className={classes.body}>
+            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
               return (
                 <Row hover tabIndex={-1} key={row.code}>
                   {columns.map((column) => {
                     const value = row[column.id];
 
-                    if(column.id === 'explore') {
+                    if(column.id === 'action') {
                       return (
                         <TableCell key={column.id} align={column.align}>
-                          <Liquidity> EXPLORE </Liquidity>
+                          {action}
                         </TableCell>
                       )
                     } else {
@@ -134,15 +100,6 @@ export default function StickyHeadTable() {
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
-      />
     </Fragment>
   );
 }

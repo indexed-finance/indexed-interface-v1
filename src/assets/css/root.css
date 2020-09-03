@@ -74,3 +74,15 @@ h4 {
   position: absolute;
   clear:both;
 }
+
+.MuiTableCell-stickyHeader {
+  background: white !important;
+}
+
+.MuiTable-stickyHeader {
+  border-collapse: collapse !important;
+}
+
+.tcell {
+  margin-bottom: 50px !important;
+}

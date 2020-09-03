@@ -14,6 +14,57 @@ import { store } from '../state'
 
 const selections = [[{ value: 0, label: null }]];
 
+const columns = [
+  { id: 'name', label: 'Name', minWidth: 200 },
+  {
+    id: 'price',
+    label: 'Price',
+    minWidth: 100,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'eoy',
+    label: 'EOY',
+    minWidth: 50,
+    align: 'center',
+    format: (value) => `${value.toLocaleString('en-US')}%`,
+  },
+  {
+    id: 'liquidity',
+    label: 'Liquidity',
+    minWidth: 125,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'action',
+    minWidth: 150,
+    align: 'center',
+  },
+];
+
+function createData(name, price, eoy, liquidity ) {
+  return { name, price, eoy, liquidity };
+}
+
+const rows = [
+  createData('Cryptocurrency Index [CCII]', 7232.23, 4.34, 125000.18),
+  createData('DeFi Index [DEFII]', 10553.11, 2.11, 100232.18),
+  createData('Governance Index [GOVII]', 25731.23, 1.12, 75000.11),
+];
+
+const Liquidity = styled(Button)({
+  border: '2px solid #009966',
+  color: '#999999',
+  borderRadius: 5,
+  padding: '.5em 2.5em',
+  '&:hover': {
+    color: '#009966',
+    fontWeight: 'bold'
+  }
+})
+
 const Canvas = styled(Paper)({
   border: '3px solid #666666',
   borderRadius: 10,
@@ -129,7 +180,14 @@ export default function Demo(){
           </Canvas>
         </Grid>
         <Grid item>
-          <Container title='INDEXES' components={<List/>} />
+          <Container title='INDEXES'
+            components={
+              <List data={rows} columns={columns} height={250}
+              action={
+                <Liquidity> EXPLORE </Liquidity>
+              } />
+            }
+          />
         </Grid>
       </Grid>
     </Fragment>
