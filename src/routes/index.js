@@ -15,6 +15,8 @@ import Tabs from '../components/tabs'
 import Input from '../components/input'
 import Adornment from '../components/adornment'
 import NumberFormat from '../utils/format'
+import Mint from '../components/mint'
+import Burn from '../components/burn'
 
 const MarketButton = styled(Button)({
   root: {
@@ -37,8 +39,8 @@ const Trigger = styled(Button)({
   color: '#999999',
   borderRadius: 5,
   padding: '.5em 2.25em',
-  marginTop: '7.5px',
-  marginLeft: 100,
+  marginTop: 10,
+  marginLeft: 125,
   float: 'right',
   '&:hover': {
     fontWeight: 'bold',
@@ -84,10 +86,10 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center'
   },
   selections: {
-    padding: '1em 6.25em'
+    padding: '1em 6.5em'
   },
   market: {
-    padding: '.5em 0em',
+    padding: '.125em 0em',
   },
   inputs: {
     width: 250,
@@ -102,11 +104,26 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   divider: {
-    borderTop: '#666666 solid 2px',
+    borderTop: '#666666 solid 1px',
     borderBottom: '#666666 solid 1px',
-    margin: '1em 0em 1.5em 0em',
+    margin: '1.5em 0em 1.5em 0em',
     width: '27.5em',
   },
+  market: {
+    width: '100%',
+    color: '#666666',
+    '& p': {
+      fontSize: 14,
+      marginLeft: 12.5
+    },
+    '& p span': {
+      float: 'right',
+      fontFamily: "San Francisco Bold",
+      fontWeight: 500,
+      marginRight: 50,
+      color: '#333333'
+    }
+  }
 }));
 
 export default function Index(){
@@ -119,9 +136,9 @@ export default function Index(){
     clearSelections()
 
     if(option == 'burn') {
-      setComponent(<p> Burn </p>)
+      setComponent(<Burn/ >)
     } else if(option == 'mint') {
-      setComponent(<p> Mint </p>)
+      setComponent(<Mint />)
     } else {
       setComponent(<Trade />)
     }
@@ -166,10 +183,15 @@ export default function Index(){
           />
         </Grid>
         <Grid item>
-          <div className={classes.divider} />
-          <p> Price: <span> $5,060 </span> </p>
-          <p> Source: <span> Uniswap </span> </p>
-          <div className={classes.divider} />
+            <div className={classes.divider} />
+            <div className={classes.market}>
+              <p> ROUTE: <span> DAI {'->'} CCI </span> </p>
+              <p> PRICE: <span> $5,060.45 </span> </p>
+              <p> PRICE EFFECT: <span> %.23 </span> </p>
+              <p> SOURCE: <span> UNISWAP </span> </p>
+              <p> GAS: <span> $0.21 </span> </p>
+            </div>
+            <div className={classes.divider} />
         </Grid>
         <Grid item>
           <Trigger> EXECUTE </Trigger>
@@ -189,10 +211,10 @@ export default function Index(){
             <h4 className={classes.price}> $5,410.23 <span className={classes.delta}>(%0.42)</span></h4>
           </Grid>
           <Grid item>
-            <span className={classes.alternative}>Marketcap: $50,313,217.33</span>
+            <span className={classes.alternative}>MARKETCAP: $50,313,217.33</span>
           </Grid>
           <Grid item>
-            <span className={classes.alternative}>Volume: $100,101,333.51</span>
+            <span className={classes.alternative}>VOLUME: $100,101,333.51</span>
           </Grid>
         </Grid>
       </div>

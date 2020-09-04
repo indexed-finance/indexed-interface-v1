@@ -28,25 +28,59 @@ const Exit = styled(ExitIcon)({
   fontSize: '1rem'
 })
 
-const columns = [
-  { id: 'time', label: 'Time', minWidth: 100 },
+const marketColumns = [
+  { id: 'time', label: 'TIME', minWidth: 100 },
+  {
+    id: 'price',
+    label: 'PRICE',
+    minWidth: 125,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'type',
+    label: 'TYPE',
+    minWidth: 100,
+    align: 'center',
+    format: (value) => `${value.toLocaleString('en-US')}%`,
+  },
+  {
+    id: 'amount',
+    label: 'AMOUNT',
+    minWidth: 100,
+    align: 'center',
+    format: (value) => `${value.toLocaleString('en-US')}%`,
+  },
+  {
+    id: 'transaction',
+    label: 'TRANSACTION',
+    minWidth: 100,
+    align: 'center',
+    bodyRender: (value) => {
+      return <label> {value}<Exit/> </label>
+    }
+  }
+];
+
+const rebalanceColumns = [
+  { id: 'time', label: 'TIME', minWidth: 100 },
   {
     id: 'input',
-    label: 'Trade in',
+    label: 'TRADE IN',
     minWidth: 125,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
     id: 'output',
-    label: 'Trade out',
+    label: 'TRADE OUT',
     minWidth: 125,
     align: 'center',
     format: (value) => `${value.toLocaleString('en-US')}%`,
   },
   {
     id: 'transaction',
-    label: 'Transaction',
+    label: 'TRANSACTION',
     minWidth: 100,
     align: 'center',
     bodyRender: (value) => {
@@ -66,11 +100,23 @@ function createData(time, input, output, transaction, fee) {
   return { time, input, output, transaction, fee };
 }
 
+function createAlt(time, type, price, amount, transaction) {
+  return { time, type, price, amount, transaction };
+}
+
 function hash(value) {
   return <label> {value}&nbsp;<Exit/> </label>
 }
 
-const rows = [
+const marketRows = [
+  createAlt(parseInt(Date.now() * 1), 'SELL', '$5,403.22', '100,001.03 CCI', hash('0x411...641')),
+  createAlt(parseInt(Date.now() * 1.0025), 'SELL', '$5,404.00', '50,023.12 CCI', hash('0x543...431')),
+  createAlt(parseInt(Date.now()* 1.0030), 'BUY', '$5,404.00', '100,420.21', hash('0x861...310')),
+  createAlt(parseInt(Date.now()* 1.0035), 'BUY',  '$5,403.52', '100.21 CCI', hash('0x912...006')),
+  createAlt(parseInt(Date.now()* 1.0040), 'SELL', '$5,403.49', '0.53 CCI', hash('0x444...215')),
+];
+
+const rebalanceRows = [
   createData(parseInt(Date.now() * 1), '20.31 WBTC', '176.42 COMP', hash('0x411...641'), '$605.64'),
   createData(parseInt(Date.now() * 1.0025), '2500.34 MKR', '100,341.23 ETH', hash('0x543...431'),  '$5031.02'),
   createData(parseInt(Date.now()* 1.0030), '7,250,301 DAI', '8,002,319 USDC', hash('0x861...310'), '$800.23'),
@@ -163,8 +209,9 @@ export default function VerticalTabs() {
           onChange={handleChange}
           aria-label="Vertical tabs example"
         >
-          <Tab label="Assets" {...a11yProps(0)} />
-          <Tab label="Rebalances" {...a11yProps(1)} />
+          <Tab label="ASSETS" {...a11yProps(0)} />
+          <Tab label="TRADES" {...a11yProps(0)} />
+          <Tab label="REBALANCES" {...a11yProps(1)} />
         </Tabs>
       </div>
       <TabPanel className={classes.assets} value={value} index={0}>
@@ -202,7 +249,10 @@ export default function VerticalTabs() {
         </Grid>
       </TabPanel>
       <TabPanel className={classes.panels} value={value} index={1}>
-        <List height={150} columns={columns} data={rows} />
+        <List height={150} columns={marketColumns} data={marketRows} />
+      </TabPanel>
+      <TabPanel className={classes.panels} value={value} index={2}>
+        <List height={150} columns={rebalanceColumns} data={rebalanceRows} />
       </TabPanel>
     </div>
   );
