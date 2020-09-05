@@ -7,6 +7,7 @@ import * as serviceWorker from './utils/serviceWorker'
 import { StateProvider } from './state'
 
 import Navigation from './components/navigation'
+import Categories from './routes/categories'
 import Index from './routes/index'
 import Root from './routes/root'
 import Demo from './routes/demo'
@@ -33,11 +34,14 @@ ReactDOM.render(
       <Router>
         <Navigation />
         <Switch>
-          <Route exact path='/'>
-            <Root />
-          </Route>
           <Route path='/index/:name'>
             <Index />
+          </Route>
+          <Route path='/categories'>
+            <Categories />
+          </Route>
+          <Route exact path='/'>
+            <Root />
           </Route>
           <Route path='/demo'>
             <Demo />

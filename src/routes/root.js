@@ -82,7 +82,7 @@ export default function Root(){
           </Canvas>
         </Grid>
         <Grid item>
-          <Container title='MARKETS' components={<Table />}/>
+          <Container percentage='11%' title='MARKETS' components={<Table />}/>
         </Grid>
       </Grid>
     </Fragment>

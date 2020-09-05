@@ -134,7 +134,7 @@ export default function Demo(){
           </Canvas>
         </Grid>
         <Grid item>
-          <Container title='INDEXES'
+          <Container title='INDEXES' percentage='11%'
             components={
               <List data={rows} columns={columns} height={250}
               action={
