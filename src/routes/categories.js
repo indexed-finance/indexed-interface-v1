@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect, useContext } from "react"
 
-import { styled } from '@material-ui/core/styles'
+import { styled, makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
@@ -15,32 +15,45 @@ import { tokenMapping } from '../assets/constants/parameters'
 import { getTokenCategories } from '../api/gql'
 import { store } from '../state'
 
-const selections = [[{ value: 0, label: null }]];
+import usdt from '../assets/images/tether.png'
+import usdc from '../assets/images/usdc.png'
+import busd from '../assets/images/busd.png'
 
-const formatArray = (array) => {
-  let string = ''
-  array.map((cell, index) => {
-    console.log(cell)
-    if(index == 0) string = cell
-    else string = string + ', ' + cell
-  })
-  console.log(string)
-  return string
+const tokenImage = {
+  'USDC': usdc,
+  'USDT': usdt,
+  'BUSD': busd
 }
 
+const selections = [[{ value: 0, label: null }]];
+
+const useStyles = makeStyles((theme) => ({
+    category: {
+      width: '100%',
+      marginBottom: '2.5em'
+    },
+    divider: {
+      borderBottom: '#666666 solid 3px',
+    },
+    asset: {
+      width: 25,
+      marginRight: 10
+    }
+  })
+)
+
 const columns = [
-  { id: 'name', label: 'NAME', minWidth: 200 },
   {
-    id: 'symbol',
-    label: 'SYMBOL',
-    minWidth: 100,
+    id: 'index',
+    label: 'INDEX',
+    minWidth: 50,
     align: 'center',
     format: (value) => `${value.toLocaleString('en-US')}`,
   },
   {
-    id: 'size',
-    label: 'TOKENS',
-    minWidth: 50,
+    id: 'price',
+    label: 'PRICE',
+    minWidth: 150,
     align: 'center',
     format: (value) => `${value.toLocaleString('en-US')}`,
   },
@@ -52,16 +65,15 @@ const columns = [
     format: (value) => `${value.toLocaleString('en-US')}`,
   },
   {
-    id: 'pools',
-    label: 'POOLS',
+    id: 'tokens',
+    label: 'TOKENS',
     minWidth: 100,
     align: 'center',
-    format: (value) => `${value.toLocaleString('en-US')}`,
   },
   {
     id: 'action',
     minWidth: 150,
-    align: 'center',
+    align: 'right',
   },
 ];
 
@@ -99,6 +111,7 @@ const Trigger = styled(Button)({
 export default function Categories(){
   const [ rows, setRows ] = useState([])
   let { dispatch, state } = useContext(store)
+  const classes = useStyles()
 
   useEffect(() => {
     const retrieveCategories = async() => {
@@ -107,19 +120,19 @@ export default function Categories(){
       setRows(
         metadata.map((value) => {
           return {
-            tokens:
-              value.tokens.map((address, index) => {
-                return { ...tokenMapping[address] }
-              }),
-            supply:
-              value.indexPools.reduce((a,b) => {
-                return a + parseInt(b.totalSupply/Math.pow(10,18))
-              }, 0),
-            size:
-              value.indexPools.reduce((a,b) => {
-                return a + b.size
-             }, 0),
-            pools: value.indexPools.length,
+            tokens: value.tokens.map(address => { return tokenMapping[address].symbol }),
+            funds: value.indexPools.map((item, index) => {
+              return {
+                tokens:
+                  value.tokens.map((address, index) => {
+                    if(index <= item.size) return tokenMapping[address].symbol
+                }).join(', '),
+                supply: parseInt(item.totalSupply)/Math.pow(10, 18),
+                price: '$5,410.34',
+                size: item.size,
+                index: index + 1
+              }
+            }),
             symbol: value.symbol,
             name: value.name,
           }
@@ -136,10 +149,20 @@ export default function Categories(){
         <Grid item>
           <Container percentage='15%' title='CATEGORIES'
             components={
-              <List data={rows} columns={columns} height={250}
-              action={
-                <Liquidity> EXPLORE </Liquidity>
-              } />
+              <Fragment>
+              {rows.map((value) => (
+                <div className={classes.category}>
+                  <h3> {value.name} [{value.symbol}]</h3>
+                  <p> {value.tokens.map((token) => ( <img src={tokenImage[token]} className={classes.asset}/> ))} </p>
+                  <div className={classes.divider} />
+                  <List data={value.funds} columns={columns} height={250}
+                    action={
+                      <Liquidity> EXPAND </Liquidity>
+                    } />
+                </div>
+                )
+              )}
+              </Fragment>
             }
           />
         </Grid>
