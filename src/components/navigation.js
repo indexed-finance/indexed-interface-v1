@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { Fragment, useContext, useState } from 'react'
 
 import { Link } from 'react-router-dom'
-import { makeStyles } from '@material-ui/core/styles'
+import makeBlockie from 'ethereum-blockies-base64'
+import { makeStyles, styled } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
@@ -9,14 +10,17 @@ import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
 import SearchIcon from '@material-ui/icons/Search'
-import TextField from '@material-ui/core/TextField';
+import TextField from '@material-ui/core/TextField'
 import Grid from '@material-ui/core/Grid'
-import { styled } from '@material-ui/core/styles'
 import InputAdornment from '@material-ui/core/InputAdornment'
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu'
+import MenuItem from '@material-ui/core/MenuItem'
 
+import { toChecksumAddress } from '../assets/constants/functions'
 import indexed from '../assets/images/indexed.png'
+import getWeb3 from '../utils/getWeb3'
+
+import { store } from '../state'
 
 const Field = styled(TextField)({
   '& fieldset': {
@@ -41,6 +45,9 @@ const useStyles = makeStyles(({ spacing }) => ({
   item: {
     borderBottom: 'solid 1px #666666',
     borderTop: 'solid 1px #666666'
+  },
+  middle: {
+    borderBottom: 'solid 1px #666666',
   },
   appBar: {
     background: 'white',
@@ -87,12 +94,33 @@ const useStyles = makeStyles(({ spacing }) => ({
       paddingRight: '5px !important',
       paddingLeft: '8px !important',
     }
+  },
+  blockie: {
+    border: 'solid 2px #999999',
+    borderRadius: 25,
+    width: 35
+  },
+  profile: {
+    paddingTop: 5,
+    float: 'left',
+    paddingRight: 10,
+    '& span': {
+      fontFamily: 'San Francisco',
+      float: 'left',
+      textAlign: 'left',
+      paddingRight: 25,
+      paddingTop: 10
+    }
   }
 }))
 
 export default function ButtonAppBar() {
-  const [anchorEl, setAnchorEl] = React.useState(null)
+  const [ component, setComponent ] = useState(<Fragment/>)
+  const [ menuItems, setItems ] = useState(<LoggedOut />)
+  const [ anchorEl, setAnchorEl ] = useState(null)
   const classes = useStyles()
+
+  let { state, dispatch } = useContext(store)
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
@@ -100,6 +128,70 @@ export default function ButtonAppBar() {
 
   const handleClose = () => {
     setAnchorEl(null)
+  }
+
+  const connectWeb3 = async() => {
+    const web3 = await getWeb3()
+
+    let accounts = await web3.eth.getAccounts()
+    let network = await web3.eth.net.getId()
+    let account = toChecksumAddress(accounts[0])
+
+    setComponent(<Blockie address={account} />)
+    setItems(<LoggedIn />)
+
+    dispatch({
+      type: 'WEB3',
+      payload: {
+        account, network
+      }
+    })
+  }
+
+  function Blockie({ address }) {
+    return(
+      <div className={classes.profile}>
+        <span>{address.substring(0, 6)}...{address.substring(38, 64)}</span>
+        <a target='_blank' href={`https://etherscan.io/address/${address}`}>
+          <img src={makeBlockie(address)} className={classes.blockie} />
+        </a>
+      </div>
+    )
+  }
+
+  function LoggedOut() {
+    return(
+      <Fragment>
+        <Link className={classes.href} onClick={connectWeb3}>
+          <MenuItem>CONNECT WALLET</MenuItem>
+        </Link>
+        <Link className={classes.href} to='/categories' onClick={handleClose}>
+          <MenuItem className={classes.item}>CATEGORIES</MenuItem>
+        </Link>
+        <Link className={classes.href} to='/' onClick={handleClose}>
+          <MenuItem className={classes.middle}>MARKETS</MenuItem>
+        </Link>
+        <Link className={classes.href} to='/demo' onClick={handleClose}>
+          <MenuItem>DEMO</MenuItem>
+        </Link>
+      </Fragment>
+    )
+  }
+
+  function LoggedIn() {
+    return(
+      <Fragment>
+        <Link className={classes.href} to='/categories' onClick={handleClose}>
+          <MenuItem className={classes}>CATEGORIES</MenuItem>
+        </Link>
+        <Link className={classes.href} to='/' onClick={handleClose}>
+          <MenuItem className={classes.item}>MARKETS</MenuItem>
+        </Link>
+        <Link className={classes.href} to='/demo' onClick={handleClose}>
+          <MenuItem>DEMO</MenuItem>
+        </Link>
+      </Fragment>
+    )
   }
 
   return (
@@ -124,6 +216,7 @@ export default function ButtonAppBar() {
               />
             </Grid>
             <Grid item>
+              {component}
               <IconButton onClick={handleClick} className={classes.menuButton}>
                 <MenuIcon color='secondary'/>
               </IconButton>
@@ -133,15 +226,7 @@ export default function ButtonAppBar() {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <Link className={classes.href} to='/categories' onClick={handleClose}>
-                  <MenuItem>CATEGORIES</MenuItem>
-                </Link>
-                <Link className={classes.href} to='/' onClick={handleClose}>
-                  <MenuItem className={classes.item}>MARKETS</MenuItem>
-                </Link>
-                <Link className={classes.href} to='/demo' onClick={handleClose}>
-                  <MenuItem>DEMO</MenuItem>
-                </Link>
+              {menuItems}
              </Menu>
             </Grid>
           </Grid>
