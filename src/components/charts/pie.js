@@ -1,22 +1,17 @@
-import React from 'react';
-import { Pie } from 'react-chartjs-2';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import React, { Fragment, useState, useEffect } from 'react'
 
-const data = {
-  labels: [
-    'SNX',
-    'DAI',
-    'ETH',
-    'LINK',
-    'COMP'
-  ],
+import ChartDataLabels from 'chartjs-plugin-datalabels'
+import { Pie } from 'react-chartjs-2'
+
+const chartConfig = metadata => ({
+  labels: metadata.assets,
 	datasets: [{
     datalabels: {
       color: function(ctx) {
         var index = ctx.dataIndex
         var label = ctx.chart.data.labels[index]
 
-        if(label == 'COMP') return 'black'
+        if(index == 4) return 'black'
         else return 'white'
       },
       labels: {
@@ -29,7 +24,7 @@ const data = {
     },
     borderColor: '#666666',
     borderWidth: 3,
-		data: [50, 10, 25, 30, 37.5],
+		data: metadata.weights,
 		backgroundColor: [
 		'#009999',
 		'#00CCCC',
@@ -45,7 +40,7 @@ const data = {
     '#FFFFFF'
 		]
 	}]
-}
+})
 
 const options = {
   legend: {
@@ -63,11 +58,18 @@ const options = {
   }
 }
 
-export default function PieChart(){
+export default function PieChart({ metadata }){
+  const [ component, setComponent ] = useState(<Fragment />)
+
+  useEffect(() => {
+    setComponent(
+      <Pie height={175} options={options} data={chartConfig(metadata)} />
+    )
+  }, [ metadata ])
 
   return (
     <div style={{ position: 'absolute', right: '42.5%', top: '8.75%' }}>
-      <Pie height={145} options={options} data={data} />
+      {component}
     </div>
   )
 }

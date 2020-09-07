@@ -15,18 +15,25 @@ const Row = styled(TableRow)({
 })
 
 const columns = [
-  { id: 'name', label: 'Name', minWidth: 250 },
+  { id: 'name', label: 'Category', minWidth: 200 },
+  {
+    id: 'symbol',
+    label: 'Symbol',
+    minWidth: 25 ,
+    align: 'center',
+    format: (value) => `[${value.toLocaleString('en-US')}]`,
+  },
   {
     id: 'price',
     label: 'Price',
-    minWidth: 100,
+    minWidth: 200,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
     id: 'delta',
     label: '\u0394',
-    minWidth: 170,
+    minWidth: 50,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
@@ -53,15 +60,14 @@ const columns = [
   },
 ];
 
-function createData(name, price, delta, marketcap, liquidity, volume ) {
-  return { name, price, delta, marketcap, liquidity, volume }
+function createData(name, symbol, price, delta, marketcap, liquidity, volume ) {
+  return { name, symbol, price, delta, marketcap, liquidity, volume }
 }
 
 const rows = [
-  createData('Cryptocurrency Index [CCII]', 7232.23, 4.34, 125000.18, 304321.22, 1232232.34),
-  createData('DeFi Index [DEFII]', 10553.11, 2.11, 100232.18, 1250023.11, 1204232.23),
-  createData('DeFi Index [DEFII]', 10553.11, 2.11, 100232.18, 1250023.11, 1204232.23),
-  createData('Governance Index [GOVII]', 25731.23, 1.12, 75000.11, 100000.11, 500000.12)
+  createData('Cryptocurrency', 'CCI', 7232.23, 4.34, 125000.18, 304321.22, 1232232.34),
+  createData('Decentralized Finance', 'DEFII', 10553.11, 2.11, 100232.18, 1250023.11, 1204232.23),
+  createData('Governance', 'GOVI', 25731.23, 1.12, 75000.11, 100000.11, 500000.12)
 ];
 
 const useStyles = makeStyles({
@@ -73,7 +79,7 @@ const useStyles = makeStyles({
   },
 })
 
-export default function StickyHeadTable() {
+export default function StickyHeadTable({ triggerMarket }) {
   const classes = useStyles()
 
   return (
@@ -95,8 +101,9 @@ export default function StickyHeadTable() {
           </TableHead>
           <TableBody>
             {rows.map((row) => {
+              console.log(row)
               return (
-                <Row hover tabIndex={-1} key={row.code}>
+                <Row onClick={() => triggerMarket(row.symbol)} hover tabIndex={-1} key={row.code}>
                   {columns.map((column) => {
                     const value = row[column.id];
                     return (
