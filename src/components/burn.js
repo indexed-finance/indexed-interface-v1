@@ -1,41 +1,18 @@
-import React from 'react';
-import { makeStyles, styled } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import FolderIcon from '@material-ui/icons/Folder';
-import DeleteIcon from '@material-ui/icons/Delete';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
+import React from 'react'
+
+import { makeStyles, styled } from '@material-ui/core/styles'
+import TableContainer from '@material-ui/core/TableContainer'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
+import Table from '@material-ui/core/Table'
+import Grid from '@material-ui/core/Grid'
 
-import eth from '../assets/images/ethereum.png';
-import mkr from '../assets/images/maker.png'
-import dai from '../assets/images/dai.png'
-import wbtc from '../assets/images/wrappedbitcoin.png'
-import comp from '../assets/images/compound.png'
-import link from '../assets/images/chainlink.png'
-import ampl from '../assets/images/ampleforth.png'
-import snx from '../assets/images/synthetix.png'
-import usdt from '../assets/images/tether.png'
-import usdc from '../assets/images/usdc.png'
-
+import { tokenImages } from '../assets/constants/parameters'
+import ButtonPrimary from './buttons/primary'
 import NumberFormat from '../utils/format'
-import Input from './input'
+import Input from './inputs/input'
 
 const AmountInput = styled(Input)({
   width: 75,
@@ -61,38 +38,6 @@ const AmountInput = styled(Input)({
 const RecieveInput = styled(Input)({
   width: 200,
   marginBottom: 37.5
-})
-
-const SecondaryActionAlt = styled(ListItemSecondaryAction)({
-  top: '70%'
-})
-
-const SecondaryItemText =  styled(ListItemText)({
-  margin: 0,
-  marginRight: 50,
-  paddingLeft: 0,
-  '& span': {
-    fontSize: 12
-  },
-  '& .MuiListItemText-secondary': {
-    fontSize: 12
-  },
-  '& .MuiListItemText-primary': {
-    fontSize: 10
-  }
-})
-
-const Trigger = styled(Button)({
-  border: '2px solid #999999',
-  color: '#999999',
-  borderRadius: 5,
-  padding: '.5em 2.25em',
-  marginLeft: 125,
-  float: 'right',
-  '&:hover': {
-    fontWeight: 'bold',
-    color: '#333333'
-  }
 })
 
 const useStyles = makeStyles((theme) => ({
@@ -200,7 +145,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function createData(asset, recieve) {
-  return { asset, recieve };
+  return { asset, recieve }
 }
 
 const rows = [
@@ -217,8 +162,8 @@ const rows = [
 
 export default function InteractiveList() {
   const classes = useStyles();
-  const [dense, setDense] = React.useState(false);
-  const [secondary, setSecondary] = React.useState(false);
+  const [dense, setDense] = React.useState(false)
+  const [secondary, setSecondary] = React.useState(false)
 
   return (
     <Grid container direction='column' alignItems='center' justify='space-around'>
@@ -260,8 +205,8 @@ export default function InteractiveList() {
         <div className={classes.divider}/>
       </Grid>
       <Grid item>
-        <Trigger> EXECUTE </Trigger>
+        <ButtonPrimary> EXECUTE </ButtonPrimary>
       </Grid>
     </Grid>
-  );
+  )
 }

@@ -7,25 +7,15 @@ import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
 
 import Container from '../components/container'
-import Select from '../components/select'
+import Select from '../components/inputs/select'
+import Input from '../components/inputs/input'
 import List from '../components/list'
-import Input from '../components/input'
 
-import { tokenMapping } from '../assets/constants/parameters'
+import { tokenMapping, tokenImages } from '../assets/constants/parameters'
 import { getTokenCategories } from '../api/gql'
 import { store } from '../state'
 
-import usdt from '../assets/images/tether.png'
-import usdc from '../assets/images/usdc.png'
-import busd from '../assets/images/busd.png'
-
-const tokenImage = {
-  'USDC': usdc,
-  'USDT': usdt,
-  'BUSD': busd
-}
-
-const selections = [[{ value: 0, label: null }]];
+const selections = [[{ value: 0, label: null }]]
 
 const useStyles = makeStyles((theme) => ({
     category: {
@@ -153,7 +143,7 @@ export default function Categories(){
               {rows.map((value) => (
                 <div className={classes.category}>
                   <h3> {value.name} [{value.symbol}]</h3>
-                  <p> {value.tokens.map((token) => ( <img src={tokenImage[token]} className={classes.asset}/> ))} </p>
+                  <p> {value.tokens.map((token) => ( <img src={tokenImages[token]} className={classes.asset}/> ))} </p>
                   <div className={classes.divider} />
                   <List data={value.funds} columns={columns} height={250}
                     action={

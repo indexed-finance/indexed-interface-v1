@@ -1,3 +1,17 @@
+import React from 'react'
+
+import eth from '../images/ethereum.png'
+import mkr from '../images/maker.png'
+import dai from '../images/dai.png'
+import wbtc from '../images/wrappedbitcoin.png'
+import comp from '../images/compound.png'
+import busd from '../images/busd.png'
+import link from '../images/chainlink.png'
+import ampl from '../images/ampleforth.png'
+import snx from '../images/synthetix.png'
+import usdt from '../images/tether.png'
+import usdc from '../images/usdc.png'
+
 export const initialState = {
   account: null,
   network: null,
@@ -21,3 +35,79 @@ export const tokenMapping = {
     decimals: 18
   }
 }
+
+export const tokenImages = {
+  'USDC': usdc,
+  'USDT': usdt,
+  'BUSD': busd,
+  'AMPL': ampl,
+  'ETH': eth,
+  'COMP': comp,
+  'SNX': snx,
+  'WBTC': wbtc,
+  'LINK': link,
+  'DAI': dai,
+  'MKR': mkr
+}
+
+export const marketColumns = [
+  { id: 'time', label: 'TIME', minWidth: 100 },
+  {
+    id: 'price',
+    label: 'PRICE',
+    minWidth: 125,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'type',
+    label: 'TYPE',
+    minWidth: 100,
+    align: 'center',
+    format: (value) => `${value.toLocaleString('en-US')}%`,
+  },
+  {
+    id: 'amount',
+    label: 'AMOUNT',
+    minWidth: 100,
+    align: 'center',
+    format: (value) => `${value.toLocaleString('en-US')}%`,
+  },
+  {
+    id: 'transaction',
+    label: 'TRANSACTION',
+    minWidth: 100,
+    align: 'center'
+  }
+]
+
+export const rebalanceColumns = [
+  { id: 'time', label: 'TIME', minWidth: 100 },
+  {
+    id: 'input',
+    label: 'TRADE IN',
+    minWidth: 125,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'output',
+    label: 'TRADE OUT',
+    minWidth: 125,
+    align: 'center',
+    format: (value) => `${value.toLocaleString('en-US')}%`,
+  },
+  {
+    id: 'transaction',
+    label: 'TRANSACTION',
+    minWidth: 100,
+    align: 'center'
+  },
+  {
+    id: 'fee',
+    label: 'Fee',
+    minWidth: 75,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+]

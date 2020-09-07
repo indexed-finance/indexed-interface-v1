@@ -2,21 +2,16 @@ import React, { Fragment, useState } from 'react'
 
 import { useParams } from 'react-router-dom'
 import { makeStyles, styled } from '@material-ui/core/styles'
-import Grid from '@material-ui/core/Grid'
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import Swap from '@material-ui/icons/SwapCalls'
-import Divider from '@material-ui/core/Divider';
-
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
+import ButtonGroup from '@material-ui/core/ButtonGroup'
+import Button from '@material-ui/core/Button'
+import Grid from '@material-ui/core/Grid'
+
 import Area from '../components/charts/area'
-import Tabs from '../components/tabs'
-import Input from '../components/input'
-import Adornment from '../components/adornment'
-import NumberFormat from '../utils/format'
+import Trade from '../components/trade'
 import Mint from '../components/mint'
 import Burn from '../components/burn'
+import Tabs from '../components/tabs'
 
 const MarketButton = styled(Button)({
   root: {
@@ -33,20 +28,6 @@ const MarketButton = styled(Button)({
     }
   },
 });
-
-const Trigger = styled(Button)({
-  border: '2px solid #999999',
-  color: '#999999',
-  borderRadius: 5,
-  padding: '.5em 2.25em',
-  marginTop: 10,
-  marginLeft: 125,
-  float: 'right',
-  '&:hover': {
-    fontWeight: 'bold',
-    color: '#333333'
-  }
-})
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -90,26 +71,6 @@ const useStyles = makeStyles((theme) => ({
   },
   market: {
     padding: '.125em 0em',
-  },
-  inputs: {
-    width: 250,
-    '& .MuiOutlinedInput-adornedEnd': {
-      paddingRight: 0
-    }
-  },
-  altInputs: {
-    width: 250,
-    '& .MuiOutlinedInput-adornedEnd': {
-      paddingRight: 32.5
-    }
-  },
-  divider: {
-    borderTop: '#666666 solid 1px',
-    borderBottom: '#666666 solid 1px',
-    margin: '1.5em 0em 1.5em 0em',
-    width: '27.5em',
-  },
-  market: {
     width: '100%',
     color: '#666666',
     '& p': {
@@ -124,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
       color: '#333333'
     }
   }
-}));
+}))
 
 export default function Index(){
   const [ component, setComponent ] = useState(<Trade />)
@@ -158,46 +119,6 @@ export default function Index(){
     borrow.firstChild.style.color = 'black'
     swap.style.background = 'white'
     swap.firstChild.style.color = 'black'
-  }
-
-  function Trade() {
-    return(
-      <Grid container direction='column' alignItems='center' justify='space-around'>
-        <Grid item>
-          <Input className={classes.inputs} label="AMOUNT" variant='outlined'
-            InputProps={{
-              endAdornment: <Adornment market='ETH'/>,
-              inputComponent: NumberFormat
-            }}
-          />
-        </Grid >
-        <Grid item>
-          <IconButton> <Swap/> </IconButton>
-        </Grid>
-        <Grid item>
-          <Input className={classes.altInputs} label="RECIEVE" variant='outlined'
-            InputProps={{
-              endAdornment: 'CCI',
-              inputComponent: NumberFormat
-            }}
-          />
-        </Grid>
-        <Grid item>
-            <div className={classes.divider} />
-            <div className={classes.market}>
-              <p> ROUTE: <span> DAI {'->'} CCI </span> </p>
-              <p> PRICE: <span> $5,060.45 </span> </p>
-              <p> PRICE EFFECT: <span> %.23 </span> </p>
-              <p> SOURCE: <span> UNISWAP </span> </p>
-              <p> GAS: <span> $0.21 </span> </p>
-            </div>
-            <div className={classes.divider} />
-        </Grid>
-        <Grid item>
-          <Trigger> EXECUTE </Trigger>
-        </Grid>
-      </Grid>
-    )
   }
 
   return (

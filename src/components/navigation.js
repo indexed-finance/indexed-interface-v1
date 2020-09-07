@@ -1,6 +1,5 @@
 import React from 'react'
 
-
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
@@ -14,6 +13,8 @@ import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid'
 import { styled } from '@material-ui/core/styles'
 import InputAdornment from '@material-ui/core/InputAdornment'
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 import indexed from '../assets/images/indexed.png'
 
@@ -32,6 +33,14 @@ const useStyles = makeStyles(({ spacing }) => ({
   root: {
     flexGrow: 1,
     fontFamily: 'San Fransico',
+  },
+  href: {
+    color: '#333333 !important',
+    textDecoration: 'none !important',
+  },
+  item: {
+    borderBottom: 'solid 1px #666666',
+    borderTop: 'solid 1px #666666'
   },
   appBar: {
     background: 'white',
@@ -82,7 +91,16 @@ const useStyles = makeStyles(({ spacing }) => ({
 }))
 
 export default function ButtonAppBar() {
+  const [anchorEl, setAnchorEl] = React.useState(null)
   const classes = useStyles()
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
 
   return (
     <div className={classes.root}>
@@ -106,9 +124,25 @@ export default function ButtonAppBar() {
               />
             </Grid>
             <Grid item>
-              <IconButton className={classes.menuButton}>
+              <IconButton onClick={handleClick} className={classes.menuButton}>
                 <MenuIcon color='secondary'/>
               </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <Link className={classes.href} to='/categories' onClick={handleClose}>
+                  <MenuItem>CATEGORIES</MenuItem>
+                </Link>
+                <Link className={classes.href} to='/' onClick={handleClose}>
+                  <MenuItem className={classes.item}>MARKETS</MenuItem>
+                </Link>
+                <Link className={classes.href} to='/demo' onClick={handleClose}>
+                  <MenuItem>DEMO</MenuItem>
+                </Link>
+             </Menu>
             </Grid>
           </Grid>
         </Toolbar>

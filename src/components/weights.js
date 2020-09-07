@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import React, { useEffect } from 'react'
+
+import { makeStyles, withStyles } from '@material-ui/core/styles'
+import LinearProgress from '@material-ui/core/LinearProgress'
 
 const useStyles = makeStyles({
   root: {
@@ -44,7 +45,7 @@ export default function Weight({ image, name, holdings, value, color }) {
       borderRadius: 5,
       backgroundColor: color,
     },
-  }))(LinearProgress);
+  }))(LinearProgress)
 
   return (
     <div className={classes.root}>

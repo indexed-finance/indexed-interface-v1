@@ -24,7 +24,6 @@ const Head = styled(TableHead)({
   zIndex: 1
 })
 
-
 const useStyles = (height) => makeStyles({
   root: {
     width: '100%',
@@ -43,17 +42,6 @@ const useStyles = (height) => makeStyles({
 
 export default function StickyHeadTable({ height, action, data, columns }) {
   const classes = useStyles();
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
 
   return (
     <Fragment>
@@ -74,7 +62,7 @@ export default function StickyHeadTable({ height, action, data, columns }) {
             </TableRow>
           </Head>
           <TableBody className={classes.body}>
-            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+            {data.map((row) => {
               return (
                 <Row hover tabIndex={-1} key={row.code}>
                   {columns.map((column) => {

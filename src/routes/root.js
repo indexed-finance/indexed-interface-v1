@@ -1,41 +1,26 @@
 import React, { Fragment, useState, useEffect, useContext } from "react";
 
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography'
+import { Link } from 'react-router-dom'
 import { styled } from '@material-ui/core/styles'
-import InputAdornment from '@material-ui/core/InputAdornment'
+import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
-import Button from '@material-ui/core/Button'
 
-import Table from '../components/table'
+import ButtonPrimary from '../components/buttons/primary'
 import Container from '../components/container'
 import Spline from '../components/charts/spline'
 import Pie from '../components/charts/pie'
-import indexed from '../assets/images/indexed.png'
+import Canvas from '../components/canvas'
+import Table from '../components/table'
 
+import indexed from '../assets/images/indexed.png'
 import { store } from '../state'
 
-const Canvas = styled(Paper)({
-  border: '3px solid #666666',
-  borderRadius: 10,
-  margin: '1.5em 3em',
-  overflow: 'auto',
-})
-
-const Trigger = styled(Button)({
-  border: '2px solid #999999',
-  color: '#999999',
-  borderRadius: 5,
+const Trigger = styled(ButtonPrimary)({
   padding: '.3em 2.125em',
   marginTop: '7.5px',
   marginLeft: 'auto',
   float: 'right',
-  '&:hover': {
-    fontWeight: 'bold',
-    color: '#333333'
-  }
 })
-
 
 const Wrapper = styled(Paper)({
   borderLeft: '5px solid #666666',
@@ -76,7 +61,9 @@ export default function Root(){
                 <li>Outflow: <span>$5,232,100 </span> </li>
                 <li>Inflow: <span>$3,102,531</span></li>
                 <li>TVL: <span>$10,023,021</span></li>
-                <Trigger> EXPLORE </Trigger>
+                <Link to='/index/crypto'>
+                  <Trigger> EXPLORE </Trigger>
+                </Link>
               </ul>
             </Wrapper>
           </Canvas>

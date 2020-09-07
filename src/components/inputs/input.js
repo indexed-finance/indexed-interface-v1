@@ -1,7 +1,7 @@
 import React from "react"
 
+import TextField from '@material-ui/core/TextField'
 import { styled } from '@material-ui/core/styles'
-import TextField from '@material-ui/core/TextField';
 
 const Input = styled(TextField)({
   borderRadius: 10,
@@ -50,4 +50,4 @@ const Input = styled(TextField)({
   }
 })
 
-export default Input;
+export default Input

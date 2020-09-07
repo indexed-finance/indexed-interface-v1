@@ -6,10 +6,12 @@ import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
 
+import ButtonPrimary from '../components/buttons/primary'
 import Container from '../components/container'
-import Select from '../components/select'
+import Input from '../components/inputs/input'
+import Select from '../components/inputs/select'
+import Canvas from '../components/canvas'
 import List from '../components/list'
-import Input from '../components/input'
 
 import { store } from '../state'
 
@@ -66,24 +68,8 @@ const Liquidity = styled(Button)({
   }
 })
 
-const Canvas = styled(Paper)({
-  border: '3px solid #666666',
-  borderRadius: 10,
-  margin: '1.5em 3em',
-  padding: '1.5em',
-})
-
-const Trigger = styled(Button)({
-  border: '2px solid #999999',
-  color: '#999999',
-  borderRadius: 5,
-  padding: '.2em 2em',
-  marginTop: '7.5px',
+const Trigger = styled(ButtonPrimary)({
   marginLeft: 'auto',
-  '&:hover': {
-    fontWeight: 'bold',
-    color: '#333333'
-  }
 })
 
 export default function Demo(){

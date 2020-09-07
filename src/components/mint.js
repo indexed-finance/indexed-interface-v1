@@ -1,35 +1,19 @@
-import React from 'react';
-import { makeStyles, styled } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import FolderIcon from '@material-ui/icons/Folder';
-import DeleteIcon from '@material-ui/icons/Delete';
+import React from 'react'
 
-import eth from '../assets/images/ethereum.png'
-import mkr from '../assets/images/maker.png'
-import dai from '../assets/images/dai.png'
-import wbtc from '../assets/images/wrappedbitcoin.png'
-import comp from '../assets/images/compound.png'
-import link from '../assets/images/chainlink.png'
-import ampl from '../assets/images/ampleforth.png'
-import snx from '../assets/images/synthetix.png'
-import usdt from '../assets/images/tether.png'
-import usdc from '../assets/images/usdc.png'
+import { makeStyles, styled } from '@material-ui/core/styles'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+import ListItemAvatar from '@material-ui/core/ListItemAvatar'
+import ListItemText from '@material-ui/core/ListItemText'
+import ListItem from '@material-ui/core/ListItem'
+import Avatar from '@material-ui/core/Avatar'
+import List from '@material-ui/core/List'
+import Grid from '@material-ui/core/Grid'
+
+import { tokenImages } from '../assets/constants/parameters'
 
 import NumberFormat from '../utils/format'
-import Input from './input'
+import ButtonPrimary from './buttons/primary'
+import Input from './inputs/input'
 
 const AmountInput = styled(Input)({
   width: 75,
@@ -72,20 +56,6 @@ const SecondaryItemText =  styled(ListItemText)({
   },
   '& .MuiListItemText-primary': {
     fontSize: 10
-  }
-})
-
-const Trigger = styled(Button)({
-  border: '2px solid #999999',
-  color: '#999999',
-  borderRadius: 5,
-  padding: '.5em 2.25em',
-  marginTop: 10,
-  marginLeft: 125,
-  float: 'right',
-  '&:hover': {
-    fontWeight: 'bold',
-    color: '#333333'
   }
 })
 
@@ -182,7 +152,7 @@ function generate(element) {
     React.cloneElement(element, {
       key: value,
     }),
-  );
+  )
 }
 
 export default function InteractiveList() {
@@ -205,7 +175,7 @@ export default function InteractiveList() {
             <List className={classes.list} dense={dense}>
                 <ListItem className={classes.first}>
                   <ListItemAvatar className={classes.altWrapper}>
-                    <Avatar className={classes.avatar} src={eth} />
+                    <Avatar className={classes.avatar} src={tokenImages['ETH']} />
                   </ListItemAvatar>
                   <ListItemText primary="ETH" />
                   <SecondaryItemText primary="BALANCE" secondary='100,23.12' />
@@ -215,7 +185,7 @@ export default function InteractiveList() {
                 </ListItem>
                 <ListItem className={classes.item}>
                   <ListItemAvatar className={classes.wrapper}>
-                    <Avatar className={classes.avatar} src={mkr} />
+                    <Avatar className={classes.avatar} src={tokenImages['MKR']} />
                   </ListItemAvatar>
                   <ListItemText primary="MKR" />
                   <SecondaryItemText primary="BALANCE" secondary='10.343' />
@@ -225,7 +195,7 @@ export default function InteractiveList() {
                 </ListItem>
                 <ListItem className={classes.item}>
                     <ListItemAvatar className={classes.wrapper}>
-                    <Avatar className={classes.avatar} src={comp} />
+                    <Avatar className={classes.avatar} src={tokenImages['COMP']} />
                   </ListItemAvatar>
                   <ListItemText primary="COMP" />
                   <SecondaryItemText primary="BALANCE" secondary='0.53' />
@@ -235,7 +205,7 @@ export default function InteractiveList() {
                 </ListItem>
                 <ListItem className={classes.item}>
                     <ListItemAvatar className={classes.wrapper}>
-                      <Avatar className={classes.avatar} src={wbtc} />
+                      <Avatar className={classes.avatar} src={tokenImages['WBTC']} />
                     </ListItemAvatar>
                     <ListItemText primary="WBTC" />
                     <SecondaryItemText primary="BALANCE" secondary='1.32' />
@@ -245,7 +215,7 @@ export default function InteractiveList() {
                 </ListItem>
                 <ListItem className={classes.item}>
                     <ListItemAvatar className={classes.wrapper}>
-                      <Avatar className={classes.avatar} src={dai} />
+                      <Avatar className={classes.avatar} src={tokenImages['DAI']} />
                     </ListItemAvatar>
                     <ListItemText primary="DAI" />
                     <SecondaryItemText primary="BALANCE" secondary='100,321.40' />
@@ -255,7 +225,7 @@ export default function InteractiveList() {
                 </ListItem>
                 <ListItem className={classes.item}>
                     <ListItemAvatar className={classes.wrapper}>
-                      <Avatar className={classes.avatar} src={ampl} />
+                      <Avatar className={classes.avatar} src={tokenImages['AMPL']} />
                     </ListItemAvatar>
                     <ListItemText primary="AMPL" />
                     <SecondaryItemText primary="BALANCE" secondary='5,333' />
@@ -265,7 +235,7 @@ export default function InteractiveList() {
                 </ListItem>
                 <ListItem className={classes.item}>
                     <ListItemAvatar className={classes.wrapper}>
-                      <Avatar className={classes.avatar} src={snx} />
+                      <Avatar className={classes.avatar} src={tokenImages['SNX']} />
                     </ListItemAvatar>
                     <ListItemText primary="SNX" />
                     <SecondaryItemText primary="BALANCE" secondary='44,123.44' />
@@ -275,7 +245,7 @@ export default function InteractiveList() {
                 </ListItem>
                 <ListItem className={classes.alt}>
                   <ListItemAvatar className={classes.wrapper}>
-                    <Avatar className={classes.avatar} src={link} />
+                    <Avatar className={classes.avatar} src={tokenImages['LINK']} />
                   </ListItemAvatar>
                   <ListItemText primary="LINK" />
                   <SecondaryItemText primary="BALANCE" secondary='10,232,123' />
@@ -287,7 +257,7 @@ export default function InteractiveList() {
           </div>
       </Grid>
       <Grid item>
-        <Trigger> APPROVE </Trigger>
+        <ButtonPrimary> APPROVE </ButtonPrimary>
       </Grid>
     </Grid>
   );
