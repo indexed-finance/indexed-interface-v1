@@ -34,6 +34,7 @@ const formatDate = timeFormat("%b %d, '%y");
 // accessors
 const getDate = (d: AppleStock) => new Date(d.date);
 const getStockValue = (d: AppleStock) => d.close;
+const bisectDate = bisector(d => new Date(d.date)).left;
 
 export type AreaProps = {
   width: number;
@@ -82,7 +83,8 @@ export default withTooltip<AreaProps, TooltipData>(
       (event: React.TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => {
         const { x } = localPoint(event) || { x: 0 };
         const x0 = dateScale.invert(x);
-        const index = 1;
+        const index = bisectDate(stock, x0, 1);
+
         const d0 = stock[index - 1];
         const d1 = stock[index];
         let d = d0;

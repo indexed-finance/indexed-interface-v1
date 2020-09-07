@@ -30,7 +30,7 @@ const useStyles = (height) => makeStyles({
     padding: 0
   },
   container: {
-    maxHeight: 150,
+    maxHeight: 'calc(100v - 150px)',
     padding: 0
   },
   table: {
@@ -41,7 +41,7 @@ const useStyles = (height) => makeStyles({
 });
 
 export default function StickyHeadTable({ height, action, data, columns }) {
-  const classes = useStyles();
+  const classes = useStyles()
 
   return (
     <Fragment>

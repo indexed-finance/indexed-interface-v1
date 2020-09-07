@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from  'react'
 
-import { styled } from '@material-ui/core/styles';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
+import { styled } from '@material-ui/core/styles'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import MenuItem from '@material-ui/core/MenuItem'
+import Select from '@material-ui/core/Select'
 
 const Selection = styled(Select)({
   padding: 5,

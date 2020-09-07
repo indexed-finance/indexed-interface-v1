@@ -161,9 +161,7 @@ const rows = [
 
 
 export default function InteractiveList() {
-  const classes = useStyles();
-  const [dense, setDense] = React.useState(false)
-  const [secondary, setSecondary] = React.useState(false)
+  const classes = useStyles()
 
   return (
     <Grid container direction='column' alignItems='center' justify='space-around'>
@@ -177,7 +175,7 @@ export default function InteractiveList() {
       </Grid>
       <Grid item>
         <TableContainer className={classes.container}>
-        <Table stickyHeader className={classes.table} size="small" aria-label="a dense table">
+        <Table stickyHeader className={classes.table} size="small">
           <TableHead className={classes.header}>
             <TableRow>
               <TableCell>ASSET</TableCell>
