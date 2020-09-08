@@ -17,10 +17,10 @@ import { timeFormat } from 'd3-time-format';
 type TooltipData = AppleStock;
 
 const stock = appleStock.slice(800);
-export const background = '#999999';
+export const background = '#666666';
 export const background2 = '#FFFFFF';
-export const accentColor = '#333333';
-export const accentColorDark = '#999999';
+export const accentColor = '#999999';
+export const accentColorDark = '#666666';
 const tooltipStyles = {
   ...defaultStyles,
   background,

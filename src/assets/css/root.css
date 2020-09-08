@@ -67,10 +67,6 @@ h4 {
   top: 2px !important;
 }
 
-.MuiOutlinedInput-input {
-  padding: .75em 1em !important;
-}
-
 .market-area {
   position: absolute;
   clear:both;
@@ -94,4 +90,8 @@ h4 {
 
 .MuiInputAdornment-positionEnd {
     margin-left: 2px !important;
+}
+
+.MuiTableRow-root.Mui-selected {
+  background-color: rgba(102, 255, 255, 0.1) !important;
 }

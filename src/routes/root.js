@@ -78,19 +78,19 @@ const dummy = {
     tvl: '$5,102,377',
     history: [{
         x: 1597865990111 * .55,
-        y: 500
+        y: 6000
       },{
         x: 1597865990111 * .60,
-        y: 1000
+        y: 4215
       },{
         x: 1597865990111 * .65,
-        y: 2500
+        y: 7250
       },{
         x: 1597865990111  * .70,
-        y: 750
+        y: 6500
       },{
         x: 1597865990111  * .725,
-        y: 3243
+        y: 3575
       },{
         x: 1597865990111 * .75,
         y: 7500
@@ -221,7 +221,7 @@ export default function Root(){
                 <li>OUTFLOW: <span>{market.outflow} </span> </li>
                 <li>INFLOW: <span>{market.inflow}</span></li>
                 <li>TVL: <span>{market.tvl}</span></li>
-                <Link to={`index/${market.symbol}`}>
+                <Link to={`index/${market.symbol.toLowerCase()}`}>
                   <Trigger> EXPLORE </Trigger>
                 </Link>
               </ul>
@@ -230,7 +230,7 @@ export default function Root(){
         </Grid>
         <Grid item>
           <Container percentage='11%' title='MARKETS' components={
-            <Table triggerMarket={changeMarket} />
+            <Table market={market.symbol} triggerMarket={changeMarket} />
           }/>
         </Grid>
       </Grid>

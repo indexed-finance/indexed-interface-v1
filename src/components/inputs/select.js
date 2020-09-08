@@ -13,6 +13,9 @@ const InputSelect = styled(Select)({
   '& fieldset': {
     border: 'solid 2px #999999',
   },
+  '& .MuiOutlinedInput-input': {
+    padding: '.75em 1em !important',
+  },
   '&input:hover': {
     backgroundColor: 'white'
   },

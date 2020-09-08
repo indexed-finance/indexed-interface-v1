@@ -2,36 +2,24 @@ import React, { Fragment, useContext, useState } from 'react'
 
 import { Link } from 'react-router-dom'
 import makeBlockie from 'ethereum-blockies-base64'
-import { makeStyles, styled } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
-import SearchIcon from '@material-ui/icons/Search'
 import TextField from '@material-ui/core/TextField'
 import Grid from '@material-ui/core/Grid'
-import InputAdornment from '@material-ui/core/InputAdornment'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 
 import { toChecksumAddress } from '../assets/constants/functions'
 import indexed from '../assets/images/indexed.png'
 import getWeb3 from '../utils/getWeb3'
+import Search from './inputs/search'
 
 import { store } from '../state'
-
-const Field = styled(TextField)({
-  '& fieldset': {
-   background: 'rgba(0, 0, 0, 0.075)',
-   borderWidth: 2,
-   borderRadius: 10,
-  },
-  '& input': {
-    paddingLeft: '5px',
-  }
-})
 
 const useStyles = makeStyles(({ spacing }) => ({
   root: {
@@ -41,13 +29,6 @@ const useStyles = makeStyles(({ spacing }) => ({
   href: {
     color: '#333333 !important',
     textDecoration: 'none !important',
-  },
-  item: {
-    borderBottom: 'solid 1px #666666',
-    borderTop: 'solid 1px #666666'
-  },
-  middle: {
-    borderBottom: 'solid 1px #666666',
   },
   appBar: {
     background: 'white',
@@ -166,10 +147,10 @@ export default function ButtonAppBar() {
           <MenuItem>CONNECT WALLET</MenuItem>
         </Link>
         <Link className={classes.href} to='/categories' onClick={handleClose}>
-          <MenuItem className={classes.item}>CATEGORIES</MenuItem>
+          <MenuItem>CATEGORIES</MenuItem>
         </Link>
         <Link className={classes.href} to='/' onClick={handleClose}>
-          <MenuItem className={classes.middle}>MARKETS</MenuItem>
+          <MenuItem>MARKETS</MenuItem>
         </Link>
         <Link className={classes.href} to='/demo' onClick={handleClose}>
           <MenuItem>DEMO</MenuItem>
@@ -182,10 +163,10 @@ export default function ButtonAppBar() {
     return(
       <Fragment>
         <Link className={classes.href} to='/categories' onClick={handleClose}>
-          <MenuItem className={classes}>CATEGORIES</MenuItem>
+          <MenuItem>CATEGORIES</MenuItem>
         </Link>
         <Link className={classes.href} to='/' onClick={handleClose}>
-          <MenuItem className={classes.item}>MARKETS</MenuItem>
+          <MenuItem>MARKETS</MenuItem>
         </Link>
         <Link className={classes.href} to='/demo' onClick={handleClose}>
           <MenuItem>DEMO</MenuItem>
@@ -206,14 +187,7 @@ export default function ButtonAppBar() {
               </Link>
             </Grid>
             <Grid item>
-              <Field size='small' className={classes.search} placeholder='Search...' variant='outlined'
-                InputProps={{
-                  startAdornment:
-                  <InputAdornment position="start">
-                    <SearchIcon color='secondary' />
-                  </InputAdornment>
-                }}
-              />
+              <Search />
             </Grid>
             <Grid item>
               {component}

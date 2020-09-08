@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState} from 'react'
 
 import { makeStyles, styled } from '@material-ui/core/styles'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
@@ -13,10 +13,18 @@ import { tokenImages } from '../assets/constants/parameters'
 
 import NumberFormat from '../utils/format'
 import ButtonPrimary from './buttons/primary'
+import Adornment from './inputs/adornment'
 import Input from './inputs/input'
+import Radio from './inputs/radio'
+
+const OutputInput = styled(Input)({
+  width: 250,
+  marginLeft: 85,
+  marginTop: 75
+})
 
 const AmountInput = styled(Input)({
-  width: 75,
+  width: 100,
   '& label': {
     fontSize: 12
   },
@@ -37,7 +45,12 @@ const AmountInput = styled(Input)({
 })
 
 const RecieveInput = styled(Input)({
-  width: 200,
+  width: 250,
+  marginLeft: -22.5
+})
+
+const Trigger = styled(ButtonPrimary)({
+  marginTop: -7.5
 })
 
 const SecondaryActionAlt = styled(ListItemSecondaryAction)({
@@ -66,20 +79,21 @@ const useStyles = makeStyles((theme) => ({
   },
   demo: {
     backgroundColor: theme.palette.background.paper,
-    width: 350,
+    paddingBottom: 0,
+    marginBottom: 0
   },
   title: {
     margin: theme.spacing(4, 0, 2),
   },
   list: {
-    marginTop: 20,
-    marginBottom: 20,
-    border: 'solid 2px #666666',
-    borderRadius: 10,
+    marginBottom: 0,
     paddingTop: 0,
     paddingBottom: 0,
+    marginLeft: 0,
+    padding: 0,
     overflowY: 'scroll',
-    height: 325
+    height: 205,
+    width: 410
   },
   item: {
     borderBottom: 'solid 2px #666666',
@@ -91,6 +105,18 @@ const useStyles = makeStyles((theme) => ({
     borderTop: '#666666 solid 1px',
     borderBottom: '#666666 solid 1px',
     margin: '1.5em 0em 1.5em 0em',
+    width: '27.5em',
+  },
+  altDivider1: {
+    borderTop: '#666666 solid 1px',
+    borderBottom: '#666666 solid 1px',
+    margin: '1.5em 0em 0em 0em',
+    width: '27.5em',
+  },
+  altDivider2: {
+    borderTop: '#666666 solid 1px',
+    borderBottom: '#666666 solid 1px',
+    margin: '0em 0em 1.5em 0em',
     width: '27.5em',
   },
   first: {
@@ -144,6 +170,9 @@ const useStyles = makeStyles((theme) => ({
       marginRight: 50,
       color: '#333333'
     }
+  },
+  single: {
+    height: 205
   }
 }));
 
@@ -156,108 +185,146 @@ function generate(element) {
 }
 
 export default function InteractiveList() {
-  const classes = useStyles();
-  const [dense, setDense] = React.useState(false);
-  const [secondary, setSecondary] = React.useState(false);
+  const [ component, setComponent ] = useState(<Multi />)
+  const [ isSelected, setSelection ] = useState(true)
+  const [ dense, setDense ] = useState(false)
+  const classes = useStyles()
+
+  const handleChange = (event) => {
+    if(event.target.checked) setComponent(<Multi />)
+    else setComponent(<Single />)
+    setSelection(event.target.checked)
+  }
+
+  function Multi() {
+    return(
+      <List className={classes.list} dense={dense}>
+        <ListItem className={classes.first}>
+          <ListItemAvatar className={classes.altWrapper}>
+            <Avatar className={classes.avatar} src={tokenImages['ETH']} />
+          </ListItemAvatar>
+          <ListItemText primary="ETH" />
+          <SecondaryItemText primary="BALANCE" secondary='100,23.12' />
+          <ListItemSecondaryAction classes={classes.input}>
+            <AmountInput variant='outlined' label='AMOUNT'/>
+          </ListItemSecondaryAction>
+        </ListItem>
+        <ListItem className={classes.item}>
+          <ListItemAvatar className={classes.wrapper}>
+            <Avatar className={classes.avatar} src={tokenImages['MKR']} />
+          </ListItemAvatar>
+          <ListItemText primary="MKR" />
+          <SecondaryItemText primary="BALANCE" secondary='10.343' />
+          <ListItemSecondaryAction classes={classes.input}>
+            <AmountInput variant='outlined' label='AMOUNT'/>
+          </ListItemSecondaryAction>
+        </ListItem>
+        <ListItem className={classes.item}>
+          <ListItemAvatar className={classes.wrapper}>
+            <Avatar className={classes.avatar} src={tokenImages['COMP']} />
+          </ListItemAvatar>
+          <ListItemText primary="COMP" />
+          <SecondaryItemText primary="BALANCE" secondary='0.53' />
+          <ListItemSecondaryAction classes={classes.input}>
+            <AmountInput variant='outlined' label='AMOUNT'/>
+          </ListItemSecondaryAction>
+        </ListItem>
+        <ListItem className={classes.item}>
+          <ListItemAvatar className={classes.wrapper}>
+            <Avatar className={classes.avatar} src={tokenImages['WBTC']} />
+          </ListItemAvatar>
+          <ListItemText primary="WBTC" />
+          <SecondaryItemText primary="BALANCE" secondary='1.32' />
+          <ListItemSecondaryAction classes={classes.input}>
+            <AmountInput variant='outlined' label='AMOUNT'/>
+          </ListItemSecondaryAction>
+          </ListItem>
+          <ListItem className={classes.item}>
+            <ListItemAvatar className={classes.wrapper}>
+              <Avatar className={classes.avatar} src={tokenImages['DAI']} />
+            </ListItemAvatar>
+            <ListItemText primary="DAI" />
+            <SecondaryItemText primary="BALANCE" secondary='100,321.40' />
+            <ListItemSecondaryAction classes={classes.input}>
+              <AmountInput variant='outlined' label='AMOUNT'/>
+            </ListItemSecondaryAction>
+        </ListItem>
+        <ListItem className={classes.item}>
+          <ListItemAvatar className={classes.wrapper}>
+            <Avatar className={classes.avatar} src={tokenImages['AMPL']} />
+          </ListItemAvatar>
+          <ListItemText primary="AMPL" />
+          <SecondaryItemText primary="BALANCE" secondary='5,333' />
+          <ListItemSecondaryAction classes={classes.input}>
+            <AmountInput variant='outlined' label='AMOUNT'/>
+          </ListItemSecondaryAction>
+        </ListItem>
+        <ListItem className={classes.item}>
+          <ListItemAvatar className={classes.wrapper}>
+            <Avatar className={classes.avatar} src={tokenImages['SNX']} />
+          </ListItemAvatar>
+          <ListItemText primary="SNX" />
+          <SecondaryItemText primary="BALANCE" secondary='44,123.44' />
+          <ListItemSecondaryAction classes={classes.input}>
+            <AmountInput variant='outlined' label='AMOUNT'/>
+          </ListItemSecondaryAction>
+          </ListItem>
+          <ListItem className={classes.alt}>
+            <ListItemAvatar className={classes.wrapper}>
+              <Avatar className={classes.avatar} src={tokenImages['LINK']} />
+            </ListItemAvatar>
+            <ListItemText primary="LINK" />
+            <SecondaryItemText primary="BALANCE" secondary='10,232,123' />
+            <SecondaryActionAlt>
+              <AmountInput variant='outlined' label='AMOUNT'/>
+            </SecondaryActionAlt>
+          </ListItem>
+      </List>
+    )
+  }
+
+  function Single() {
+    return(
+      <div className={classes.single}>
+        <OutputInput label="INPUT" variant='outlined'
+          InputProps={{
+            endAdornment: <Adornment market='ETH'/>,
+            inputComponent: NumberFormat
+          }}
+        />
+      </div>
+    )
+  }
 
   return (
     <Grid container direction='column' alignItems='center' justify='space-around'>
       <Grid item>
-      <RecieveInput label="RECIEVE" variant='outlined'
-        InputProps={{
-          endAdornment: 'CCI',
-          inputComponent: NumberFormat
-        }}
-      />
+        <RecieveInput label="RECIEVE" variant='outlined'
+          InputProps={{
+            endAdornment: 'CCI',
+            inputComponent: NumberFormat
+          }}
+        />
       </Grid>
       <Grid item>
+        <Radio selected={isSelected} triggerChange={handleChange} />
+      </Grid>
+      <Grid item>
+        <div className={classes.altDivider1} />
         <div className={classes.demo}>
-            <List className={classes.list} dense={dense}>
-                <ListItem className={classes.first}>
-                  <ListItemAvatar className={classes.altWrapper}>
-                    <Avatar className={classes.avatar} src={tokenImages['ETH']} />
-                  </ListItemAvatar>
-                  <ListItemText primary="ETH" />
-                  <SecondaryItemText primary="BALANCE" secondary='100,23.12' />
-                  <ListItemSecondaryAction classes={classes.input}>
-                    <AmountInput variant='outlined' label='AMOUNT'/>
-                  </ListItemSecondaryAction>
-                </ListItem>
-                <ListItem className={classes.item}>
-                  <ListItemAvatar className={classes.wrapper}>
-                    <Avatar className={classes.avatar} src={tokenImages['MKR']} />
-                  </ListItemAvatar>
-                  <ListItemText primary="MKR" />
-                  <SecondaryItemText primary="BALANCE" secondary='10.343' />
-                  <ListItemSecondaryAction classes={classes.input}>
-                    <AmountInput variant='outlined' label='AMOUNT'/>
-                  </ListItemSecondaryAction>
-                </ListItem>
-                <ListItem className={classes.item}>
-                    <ListItemAvatar className={classes.wrapper}>
-                    <Avatar className={classes.avatar} src={tokenImages['COMP']} />
-                  </ListItemAvatar>
-                  <ListItemText primary="COMP" />
-                  <SecondaryItemText primary="BALANCE" secondary='0.53' />
-                  <ListItemSecondaryAction classes={classes.input}>
-                    <AmountInput variant='outlined' label='AMOUNT'/>
-                  </ListItemSecondaryAction>
-                </ListItem>
-                <ListItem className={classes.item}>
-                    <ListItemAvatar className={classes.wrapper}>
-                      <Avatar className={classes.avatar} src={tokenImages['WBTC']} />
-                    </ListItemAvatar>
-                    <ListItemText primary="WBTC" />
-                    <SecondaryItemText primary="BALANCE" secondary='1.32' />
-                    <ListItemSecondaryAction classes={classes.input}>
-                      <AmountInput variant='outlined' label='AMOUNT'/>
-                    </ListItemSecondaryAction>
-                </ListItem>
-                <ListItem className={classes.item}>
-                    <ListItemAvatar className={classes.wrapper}>
-                      <Avatar className={classes.avatar} src={tokenImages['DAI']} />
-                    </ListItemAvatar>
-                    <ListItemText primary="DAI" />
-                    <SecondaryItemText primary="BALANCE" secondary='100,321.40' />
-                    <ListItemSecondaryAction classes={classes.input}>
-                      <AmountInput variant='outlined' label='AMOUNT'/>
-                    </ListItemSecondaryAction>
-                </ListItem>
-                <ListItem className={classes.item}>
-                    <ListItemAvatar className={classes.wrapper}>
-                      <Avatar className={classes.avatar} src={tokenImages['AMPL']} />
-                    </ListItemAvatar>
-                    <ListItemText primary="AMPL" />
-                    <SecondaryItemText primary="BALANCE" secondary='5,333' />
-                    <ListItemSecondaryAction classes={classes.input}>
-                      <AmountInput variant='outlined' label='AMOUNT'/>
-                    </ListItemSecondaryAction>
-                </ListItem>
-                <ListItem className={classes.item}>
-                    <ListItemAvatar className={classes.wrapper}>
-                      <Avatar className={classes.avatar} src={tokenImages['SNX']} />
-                    </ListItemAvatar>
-                    <ListItemText primary="SNX" />
-                    <SecondaryItemText primary="BALANCE" secondary='44,123.44' />
-                    <ListItemSecondaryAction classes={classes.input}>
-                      <AmountInput variant='outlined' label='AMOUNT'/>
-                    </ListItemSecondaryAction>
-                </ListItem>
-                <ListItem className={classes.alt}>
-                  <ListItemAvatar className={classes.wrapper}>
-                    <Avatar className={classes.avatar} src={tokenImages['LINK']} />
-                  </ListItemAvatar>
-                  <ListItemText primary="LINK" />
-                  <SecondaryItemText primary="BALANCE" secondary='10,232,123' />
-                  <SecondaryActionAlt>
-                    <AmountInput variant='outlined' label='AMOUNT'/>
-                  </SecondaryActionAlt>
-                </ListItem>
-            </List>
-          </div>
+          {component}
+        </div>
       </Grid>
       <Grid item>
-        <ButtonPrimary> APPROVE </ButtonPrimary>
+        <div className={classes.altDivider2} />
+        <div className={classes.market}>
+          <p> PRICE: <span> $5.31 </span> </p>
+          <p> GAS: <span> $0.21 </span> </p>
+        </div>
+        <div className={classes.divider} />
+      </Grid>
+      <Grid item>
+        <Trigger> APPROVE </Trigger>
       </Grid>
     </Grid>
   );

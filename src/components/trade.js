@@ -12,16 +12,21 @@ import Input from './inputs/input'
 
 const useStyles = makeStyles((theme) => ({
   inputs: {
+    marginLeft: -22.5,
     width: 250,
     '& .MuiOutlinedInput-adornedEnd': {
       paddingRight: 0
-    }
+    },
   },
   altInputs: {
+    marginLeft: -22.5,
     width: 250,
     '& .MuiOutlinedInput-adornedEnd': {
       paddingRight: 32.5
     }
+  },
+  swap: {
+    marginLeft: -22.5
   },
   divider: {
     borderTop: '#666666 solid 1px',
@@ -60,7 +65,9 @@ export default function Trade() {
         />
       </Grid >
       <Grid item>
-        <IconButton> <Swap/> </IconButton>
+        <div className={classes.swap}>
+          <IconButton> <Swap/> </IconButton>
+        </div>
       </Grid>
       <Grid item>
         <Input className={classes.altInputs} label="RECIEVE" variant='outlined'

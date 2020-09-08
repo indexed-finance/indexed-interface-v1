@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { makeStyles, styled } from '@material-ui/core/styles'
 import TableContainer from '@material-ui/core/TableContainer'
@@ -11,8 +11,14 @@ import Grid from '@material-ui/core/Grid'
 
 import { tokenImages } from '../assets/constants/parameters'
 import ButtonPrimary from './buttons/primary'
+import Adornment from './inputs/adornment'
 import NumberFormat from '../utils/format'
+import Radio from './inputs/radio'
 import Input from './inputs/input'
+
+const Trigger = styled(ButtonPrimary)({
+  marginTop: 0
+})
 
 const AmountInput = styled(Input)({
   width: 75,
@@ -36,8 +42,15 @@ const AmountInput = styled(Input)({
 })
 
 const RecieveInput = styled(Input)({
-  width: 200,
-  marginBottom: 37.5
+  width: 250,
+  marginBottom: 20,
+  marginLeft: -27.5
+})
+
+const OutputInput = styled(Input)({
+  width: 250,
+  marginLeft: 82.5,
+  marginTop: 75
 })
 
 const useStyles = makeStyles((theme) => ({
@@ -86,7 +99,7 @@ const useStyles = makeStyles((theme) => ({
     flex: '1 1 auto',
     width: '25.5em',
     marginLeft: -32.5,
-    maxHeight: 250,
+    height: 200,
     margin: 0,
     padding: 0
   },
@@ -94,6 +107,10 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: 17.5,
     paddingBottom: 0,
     fontSize: 12
+  },
+  radio: {
+    marginLeft: -32.5,
+    marginBottom: 20
   },
   secondary: {
     root: {
@@ -161,7 +178,49 @@ const rows = [
 
 
 export default function InteractiveList() {
+  const [ component, setComponent ] = useState(<Multi />)
+  const [ isSelected, setSelection ] = useState(true)
   const classes = useStyles()
+
+  const handleChange = (event) => {
+    if(event.target.checked) setComponent(<Multi />)
+    else setComponent(<Single />)
+    setSelection(event.target.checked)
+  }
+
+  function Multi() {
+    return(
+      <Table stickyHeader className={classes.table} size="small">
+        <TableHead className={classes.header}>
+          <TableRow>
+            <TableCell>ASSET</TableCell>
+            <TableCell align="right">RECIEVE</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+        {rows.map((row) => (
+          <TableRow key={row.name}>
+            <TableCell component="th" scope="row">
+              {row.asset}
+            </TableCell>
+            <TableCell align="right">{row.recieve}</TableCell>
+          </TableRow>
+        ))}
+        </TableBody>
+      </Table>
+    )
+  }
+
+  function Single() {
+    return(
+      <OutputInput label="RECIEVE" variant='outlined'
+        InputProps={{
+          endAdornment: <Adornment market='ETH'/>,
+          inputComponent: NumberFormat
+        }}
+      />
+    )
+  }
 
   return (
     <Grid container direction='column' alignItems='center' justify='space-around'>
@@ -174,25 +233,13 @@ export default function InteractiveList() {
         />
       </Grid>
       <Grid item>
+        <div className={classes.radio}>
+          <Radio selected={isSelected} triggerChange={handleChange} />
+        </div>
+      </Grid>
+      <Grid item>
         <TableContainer className={classes.container}>
-        <Table stickyHeader className={classes.table} size="small">
-          <TableHead className={classes.header}>
-            <TableRow>
-              <TableCell>ASSET</TableCell>
-              <TableCell align="right">RECIEVE</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
-                {row.asset}
-              </TableCell>
-              <TableCell align="right">{row.recieve}</TableCell>
-            </TableRow>
-          ))}
-          </TableBody>
-        </Table>
+          {component}
         </TableContainer>
       </Grid>
       <Grid item>
@@ -203,7 +250,7 @@ export default function InteractiveList() {
         <div className={classes.divider}/>
       </Grid>
       <Grid item>
-        <ButtonPrimary> EXECUTE </ButtonPrimary>
+        <Trigger> EXECUTE </Trigger>
       </Grid>
     </Grid>
   )

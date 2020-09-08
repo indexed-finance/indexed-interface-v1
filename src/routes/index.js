@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center'
   },
   selections: {
-    padding: '1em 6.5em'
+    padding: '1em 6.4em'
   },
   market: {
     padding: '.125em 0em',

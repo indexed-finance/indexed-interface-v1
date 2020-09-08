@@ -11,7 +11,10 @@ import { styled } from '@material-ui/core/styles'
 
 const Row = styled(TableRow)({
   border: '3px solid #666666',
-  borderRadius: 10
+  cursor: 'pointer',
+  '& .Mui-selected': {
+    backgroundColor: '#66FFFF !important'
+  }
 })
 
 const columns = [
@@ -79,7 +82,7 @@ const useStyles = makeStyles({
   },
 })
 
-export default function StickyHeadTable({ triggerMarket }) {
+export default function StickyHeadTable({ market, triggerMarket }) {
   const classes = useStyles()
 
   return (
@@ -101,9 +104,8 @@ export default function StickyHeadTable({ triggerMarket }) {
           </TableHead>
           <TableBody>
             {rows.map((row) => {
-              console.log(row)
               return (
-                <Row onClick={() => triggerMarket(row.symbol)} hover tabIndex={-1} key={row.code}>
+                <Row selected={market == row.symbol} onClick={() => triggerMarket(row.symbol)} hover tabIndex={-1} key={row.code}>
                   {columns.map((column) => {
                     const value = row[column.id];
                     return (

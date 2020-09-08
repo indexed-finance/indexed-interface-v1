@@ -25,7 +25,7 @@ const Input = styled(TextField)({
     top: -5,
   },
   '&:hover fieldset': {
-   borderColor: '#8da1ff !important',
+   borderColor: '#999999 !important',
  },
  '& label.Mui-focused': {
    color: '#666666',
