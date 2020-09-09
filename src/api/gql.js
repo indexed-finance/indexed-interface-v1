@@ -15,8 +15,6 @@ const execRequest = (query, url = subgraph_url) => fetch(
   }
 ).then(r => r.json());
 
-
-
 const categoriesQuery = () => `
 {
   categories {

@@ -77,8 +77,9 @@ const useStyles = makeStyles(({ spacing }) => ({
     }
   },
   blockie: {
-    border: 'solid 2px #999999',
+    border: 'solid 3px #666666',
     borderRadius: 25,
+    backgroundClip: 'content-box',
     width: 35
   },
   profile: {
@@ -124,7 +125,7 @@ export default function ButtonAppBar() {
     dispatch({
       type: 'WEB3',
       payload: {
-        account, network
+        web3, account, network
       }
     })
   }
@@ -200,7 +201,7 @@ export default function ButtonAppBar() {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-              {menuItems}
+               {menuItems}
              </Menu>
             </Grid>
           </Grid>

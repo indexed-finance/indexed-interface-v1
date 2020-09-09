@@ -55,7 +55,7 @@ export default function Weight({ image, name, holdings, value, color }) {
       <div className={classes.percentage}>
         <span className={classes.title}> {name} </span>
         <BorderLinearProgress variant="determinate" value={value} />
-        <span className={classes.alternative}> {holdings}</span>
+        <span className={classes.alternative}> {holdings} </span>
       </div>
     </div>
   );
