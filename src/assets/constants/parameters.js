@@ -1,4 +1,5 @@
 import React from 'react'
+import Web3 from 'web3'
 
 import eth from '../images/ethereum.png'
 import mkr from '../images/maker.png'
@@ -13,23 +14,28 @@ import usdt from '../images/tether.png'
 import usdc from '../images/usdc.png'
 
 export const initialState = {
+  web3: new Web3('https://mainnet.infura.io/v3/1c6549e97ff24d9a99ba4e007b538de6'),
   account: null,
   network: null,
-  web3: null,
+  request: false,
+  indexes: {}
 }
 
 export const tokenMapping = {
   "0x1d670711eb571f1607e289e6466639c149a0d020": {
+    address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
     name: "USD Coin",
     symbol: "USDC",
     decimals: 6
   },
   "0x04844e88c17917dabbe6ca8972cf73455bd26962": {
+    address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
     name: "Tether",
     symbol: "USDT",
     decimals: 6
   },
   "0xa7cde04e62874ce7b7700de537386fcf145ca728": {
+    address: "0x4fabb145d64652a948d72533023f6e7a623c7c53",
     name: "Binance USD",
     symbol: "BUSD",
     decimals: 18

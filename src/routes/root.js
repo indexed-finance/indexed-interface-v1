@@ -16,7 +16,7 @@ import indexed from '../assets/images/indexed.png'
 import { store } from '../state'
 
 const dummy = {
-  'CCI': {
+  'NA': {
     assets: [ 'WBTC', 'USDC', 'ETH', 'COMP', 'USDT', 'LINK', 'LEO' ],
     address: '0x208d174775dc39fe18b1b374972f77ddec6c0f73',
     weights: [ 50, 10, 25, 30, 37.5, 30, 10 ],
@@ -191,13 +191,20 @@ const Wrapper = styled(Paper)({
 })
 
 export default function Root(){
-  const [ market, setMarket ] = useState(dummy['CCI'])
+  const [ market, setMarket ] = useState(dummy['NA'])
   const [ pie, setPie ] = useState(<Fragment />)
   let { state, dispatch } = useContext(store)
 
   const changeMarket = (market) => {
     setMarket(dummy[market])
   }
+
+  useEffect(() => {
+    if(Object.keys(state.indexes).length > 0){
+      console.log(state.indexes)
+      setMarket(state.indexes['USDI3'])
+    }
+  }, [ state.indexes ])
 
   return (
     <Fragment>
@@ -218,9 +225,9 @@ export default function Root(){
                   </span>
                 </li>
                 <li>SUPPLY: <span>{market.supply}</span> </li>
-                <li>OUTFLOW: <span>{market.outflow} </span> </li>
-                <li>INFLOW: <span>{market.inflow}</span></li>
-                <li>TVL: <span>{market.tvl}</span></li>
+                <li>OUTFLOW: <span></span> </li>
+                <li>INFLOW: <span></span></li>
+                <li>TVL: <span>{market.marketcap}</span></li>
                 <Link to={`index/${market.symbol.toLowerCase()}`}>
                   <Trigger> EXPLORE </Trigger>
                 </Link>
@@ -229,8 +236,8 @@ export default function Root(){
           </Canvas>
         </Grid>
         <Grid item>
-          <Container percentage='11%' title='MARKETS' components={
-            <Table market={market.symbol} triggerMarket={changeMarket} />
+          <Container percentage='11%' title='INDEXES' components={
+            <Table indexes={state.indexes} market={market.symbol} triggerMarket={changeMarket} />
           }/>
         </Grid>
       </Grid>

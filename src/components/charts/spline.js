@@ -36,7 +36,7 @@ const options = {
           display: false
         },
         ticks: {
-          beginAtZero: true,
+          beginAtZero: false,
           display: false,
           padding: 0
         }

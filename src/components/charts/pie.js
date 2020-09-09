@@ -4,7 +4,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { Pie } from 'react-chartjs-2'
 
 const chartConfig = metadata => ({
-  labels: metadata.assets,
+  labels: metadata.assets.map(value => value.symbol),
 	datasets: [{
     datalabels: {
       color: function(ctx) {
@@ -24,7 +24,7 @@ const chartConfig = metadata => ({
     },
     borderColor: '#666666',
     borderWidth: 3,
-		data: metadata.weights,
+		data: metadata.assets.map(value => value.weight),
 		backgroundColor: [
 		'#009999',
 		'#00CCCC',

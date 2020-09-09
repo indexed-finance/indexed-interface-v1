@@ -18,17 +18,17 @@ const Row = styled(TableRow)({
 })
 
 const columns = [
-  { id: 'name', label: 'Category', minWidth: 200 },
+  { id: 'name', label: 'CATEGORY', minWidth: 200 },
   {
     id: 'symbol',
-    label: 'Symbol',
+    label: 'SYMBOL',
     minWidth: 25 ,
     align: 'center',
     format: (value) => `[${value.toLocaleString('en-US')}]`,
   },
   {
     id: 'price',
-    label: 'Price',
+    label: 'PRICE',
     minWidth: 200,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
@@ -36,27 +36,27 @@ const columns = [
   {
     id: 'delta',
     label: '\u0394',
-    minWidth: 50,
+    minWidth: 25,
     align: 'center',
-    format: (value) => `$${value.toLocaleString('en-US')}`,
+    format: (value) => `%${value.toLocaleString('en-US')}`,
   },
   {
     id: 'marketcap',
-    label: 'Marketcap',
+    label: 'MARKETCAP',
     minWidth: 170,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
-    id: 'liquidity',
-    label: 'Liquidity',
+    id: 'tvl',
+    label: 'LIQUIDITY',
     minWidth: 150,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
     id: 'volume',
-    label: 'Volume',
+    label: 'VOLU',
     minWidth: 150,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
@@ -82,7 +82,7 @@ const useStyles = makeStyles({
   },
 })
 
-export default function StickyHeadTable({ market, triggerMarket }) {
+export default function StickyHeadTable({ indexes, market, triggerMarket }) {
   const classes = useStyles()
 
   return (
@@ -103,9 +103,9 @@ export default function StickyHeadTable({ market, triggerMarket }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => {
+            {Object.values(indexes).map((row) => {
               return (
-                <Row selected={market == row.symbol} onClick={() => triggerMarket(row.symbol)} hover tabIndex={-1} key={row.code}>
+                <Row selected={market.symbol == row.symbol} onClick={() => triggerMarket(row.symbol)} hover tabIndex={-1} key={row.code}>
                   {columns.map((column) => {
                     const value = row[column.id];
                     return (
