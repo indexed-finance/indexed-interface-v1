@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 
 import { makeStyles, styled } from '@material-ui/core/styles'
@@ -8,7 +8,6 @@ import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
-
 
 import TransactionButton from './buttons/transaction'
 import Weights from './weights'
@@ -106,13 +105,20 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-export default function VerticalTabs() {
-  const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+export default function VerticalTabs({ data }) {
+  const [ value, setValue ] = useState(0)
+  const [ meta, setMeta ] = useState([])
+  const classes = useStyles()
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   }
+
+  useEffect(() => {
+    if(data != undefined){
+      setMeta(data)
+    }
+  }, [ data ])
 
   return (
     <div className={classes.root}>
@@ -131,36 +137,10 @@ export default function VerticalTabs() {
       </div>
       <TabPanel className={classes.assets} value={value} index={0}>
         <Grid item container direction='row' alignItems='flex-start' justify='space-around' spacing={4}>
-          <Grid item>
-            <Weights color='#00D395' image={tokenImages['COMP']} name='Compound (COMP)' value={27.5} holdings='1,673 COMP' />
+          {meta.map(asset => (<Grid item>
+            <Weights image={tokenImages[asset.symbol]} name={`${asset.name} [${asset.symbol}]`} value={asset.weight*100} holdings={`${asset.balance.toLocaleString()} ${asset.symbol} ≈ $${(asset.balance*asset.price).toLocaleString()}`} />
           </Grid>
-          <Grid item>
-            <Weights color='#999999' image={tokenImages['ETH']} name='Ethereum (ETH)' value={50} holdings='767,310.43 ETH' />
-          </Grid>
-          <Grid item>
-            <Weights color='orange' image={tokenImages['WBTC']} name='Wrapped Bitcoin (WBTC)' value={25} holdings='10,100 WBTC' />
-          </Grid>
-          <Grid item>
-            <Weights color='rgb(26, 171, 155)' image={tokenImages['MKR']} name='MakerDAO (MKR)' value={25} holdings='5,100 MKR' />
-          </Grid>
-          <Grid item>
-            <Weights color='#22a079' image={tokenImages['USDT']} name='Tether (USDT)' value={70} holdings='150,412,555 USDT' />
-          </Grid>
-          <Grid item>
-            <Weights color='#0a258a' image={tokenImages['LINK']} name='Chainlink (LINK)' value={50} holdings='5,000,323 LINK' />
-          </Grid>
-          <Grid item>
-            <Weights color='#007aff' image={tokenImages['USDC']} name='USD Coin (USDC)' value={20} holdings='1,750,321 USDC' />
-          </Grid>
-          <Grid item>
-            <Weights color='rgb(249, 166, 6)' image={tokenImages['DAI']} name='Dai (DAI)' value={15} holdings='240,023,100 DAI' />
-          </Grid>
-          <Grid item>
-            <Weights color='rgb(18, 4, 70)' image={tokenImages['SNX']} name='Synthetix (SNX)' value={30} holdings='50,441,123 SNX' />
-          </Grid>
-          <Grid item>
-            <Weights color='#333333' image={tokenImages['AMPL']} name='Ampleforth (AMPL)' value={5} holdings='150,312.44 AMPL' />
-          </Grid>
+          ))}
         </Grid>
       </TabPanel>
       <TabPanel className={classes.panels} value={value} index={1}>

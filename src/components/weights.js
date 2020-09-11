@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 
 import { makeStyles, withStyles } from '@material-ui/core/styles'
 import LinearProgress from '@material-ui/core/LinearProgress'
+import { usePalette } from 'react-palette'
 
 const useStyles = makeStyles({
   root: {
@@ -27,8 +28,9 @@ const useStyles = makeStyles({
   }
 });
 
-export default function Weight({ image, name, holdings, value, color }) {
-  const classes = useStyles();
+export default function Weight({ image, name, holdings, value }) {
+  let { data } = usePalette(image)
+  const classes = useStyles()
 
   const BorderLinearProgress = withStyles((theme) => ({
     root: {
@@ -43,7 +45,7 @@ export default function Weight({ image, name, holdings, value, color }) {
     },
     bar: {
       borderRadius: 5,
-      backgroundColor: color,
+      backgroundColor: data.vibrant,
     },
   }))(LinearProgress)
 

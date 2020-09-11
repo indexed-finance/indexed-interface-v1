@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { Link } from 'react-router-dom'
 import TextField from '@material-ui/core/TextField'
@@ -62,9 +62,19 @@ const useStyles = makeStyles(({ spacing }) => ({
   },
 }))
 
-export default function FreeSoloCreateOption() {
-  const [value, setValue] = useState(null)
+export default function FreeSoloCreateOption({ selections }) {
+  const [ data, setData ] = useState(subsitute)
+  const [ value, setValue ] = useState(null)
   const classes = useStyles()
+
+  useEffect(() => {
+    if(Object.keys(selections).length > 0){
+      let options = Object.values(selections)
+      .map(obj => { return { ...obj } })
+      console.log(options, subsitute)
+      setData(options)
+    }
+  }, [ selections ])
 
   return (
     <AutoFill
@@ -72,12 +82,12 @@ export default function FreeSoloCreateOption() {
       onChange={(event, newValue) => {
         if (typeof newValue === 'string') {
           setValue({
-            title: newValue,
+            name: newValue,
           });
         } else if (newValue && newValue.inputValue) {
           // Create a new value from the user input
           setValue({
-            title: newValue.inputValue,
+            name: newValue.inputValue,
           });
         } else {
           setValue(newValue);
@@ -91,7 +101,7 @@ export default function FreeSoloCreateOption() {
       selectOnFocus
       clearOnBlur
       handleHomeEndKeys
-      options={indexes}
+      options={data}
       getOptionLabel={(option) => {
         // Value selected with enter, right from the input
         if (typeof option === 'string') {
@@ -102,11 +112,11 @@ export default function FreeSoloCreateOption() {
           return option.inputValue;
         }
         // Regular option
-        return option.title
+        return option.name
       }}
       renderOption={(option) =>
         <Link className={classes.href} to={`/index/${option.symbol.toLowerCase()}`}>
-          {`${option.title} [${option.symbol}]`}
+          {`${option.name} [${option.symbol}]`}
         </Link>
       }
       style={{
@@ -128,11 +138,9 @@ export default function FreeSoloCreateOption() {
         />
       )}
     />
-  );
+  )
 }
 
-const indexes = [
-  { title: 'Cryptocurrency', symbol: 'CCI' },
-  { title: 'Governance', symbol: 'GOVII' },
-  { title: 'DeFi', symbol: 'DEFII' },
+const subsitute = [
+  { name: 'NA', symbol: 'NA' },
 ];

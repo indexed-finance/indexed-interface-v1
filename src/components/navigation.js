@@ -150,7 +150,7 @@ export default function ButtonAppBar() {
         <Link className={classes.href} to='/categories' onClick={handleClose}>
           <MenuItem>CATEGORIES</MenuItem>
         </Link>
-        <Link className={classes.href} to='/' onClick={handleClose}>
+        <Link className={classes.href} to='/markets' onClick={handleClose}>
           <MenuItem>MARKETS</MenuItem>
         </Link>
         <Link className={classes.href} to='/demo' onClick={handleClose}>
@@ -166,7 +166,7 @@ export default function ButtonAppBar() {
         <Link className={classes.href} to='/categories' onClick={handleClose}>
           <MenuItem>CATEGORIES</MenuItem>
         </Link>
-        <Link className={classes.href} to='/' onClick={handleClose}>
+        <Link className={classes.href} to='/markets' onClick={handleClose}>
           <MenuItem>MARKETS</MenuItem>
         </Link>
         <Link className={classes.href} to='/demo' onClick={handleClose}>
@@ -188,7 +188,7 @@ export default function ButtonAppBar() {
               </Link>
             </Grid>
             <Grid item>
-              <Search />
+              <Search selections={state.indexes} />
             </Grid>
             <Grid item>
               {component}

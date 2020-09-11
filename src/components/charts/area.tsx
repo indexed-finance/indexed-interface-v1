@@ -16,7 +16,8 @@ import { timeFormat } from 'd3-time-format';
 
 type TooltipData = AppleStock;
 
-const stock = appleStock.slice(800);
+let stock = appleStock.slice(800);
+
 export const background = '#666666';
 export const background2 = '#FFFFFF';
 export const accentColor = '#999999';
@@ -39,11 +40,13 @@ const bisectDate = bisector(d => new Date(d.date)).left;
 export type AreaProps = {
   width: number;
   height: number;
-  margin?: { top: number; right: number; bottom: number; left: number };
+  margin?: { top: number; right: number; bottom: number; left: number },
+  data: AppleStock[];
 };
 
 export default withTooltip<AreaProps, TooltipData>(
   ({
+    data,
     width,
     height,
     margin = { top: 0, right: 0, bottom: 0, left: 0 },
@@ -54,6 +57,8 @@ export default withTooltip<AreaProps, TooltipData>(
     tooltipLeft = 0,
   }: AreaProps & WithTooltipProvidedProps<TooltipData>) => {
     if (width < 10) return null;
+
+    stock = data;
 
     // bounds
     const xMax = width - margin.left - margin.right;
@@ -72,7 +77,7 @@ export default withTooltip<AreaProps, TooltipData>(
       () =>
         scaleLinear({
           range: [yMax, 0],
-          domain: [0, (max(stock, getStockValue) || 0) + yMax / 3],
+          domain: [(max(stock, getStockValue))*.6, (max(stock, getStockValue) || 0) +  yMax/ 250],
           nice: true,
         }),
       [yMax],

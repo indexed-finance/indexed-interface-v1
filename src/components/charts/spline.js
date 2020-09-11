@@ -2,6 +2,17 @@ import React, { Fragment, useState, useEffect } from 'react'
 
 import { Line } from 'react-chartjs-2'
 
+const renameKeys = (keysMap, obj) =>
+  obj.map(value =>
+    Object.keys(value).reduce(
+      (acc, key) => ({
+        ...acc,
+        ...{ [keysMap[key] || key]: value[key] }
+      }),
+    {}
+   )
+ )
+
 const options = {
   bezierCurve: true,
   responsive: true,
@@ -17,7 +28,7 @@ const options = {
     padding: {
       left: -12.5,
       right: 0,
-      top: 75,
+      top: 100,
       bottom: 0
     }
   },
@@ -68,12 +79,18 @@ export default function Spline({ metadata }){
   const getConfig = (canvas) => {
     const ctx = canvas.getContext("2d")
     var gradient = ctx.createLinearGradient(0,337.5,0, 25)
+    let length = metadata.history.length
+    let array = metadata.history
 
     gradient.addColorStop(1, 'rgba(	138, 239, 255, .5)')
     gradient.addColorStop(0.7, 'rgba(	138, 239, 255, 0.25)')
     gradient.addColorStop(0.6, 'rgba(	138, 239, 255, 0.125)')
     gradient.addColorStop(0.5, 'rgba(	138, 239, 255, 0.075)')
     gradient.addColorStop(0.25, 'rgba(	255, 255, 255, 0)')
+
+    let data = renameKeys(
+      { close: 'y', date: 'x' }, array.slice(length-8, length)
+    )
 
     return {
       datasets: [
@@ -84,7 +101,7 @@ export default function Spline({ metadata }){
         borderColor: "#66FFFF",
         pointHoverBorderWidth: 15,
         pointRadius: 4,
-        data: metadata.history
+        data: data
         }
       ]
     }

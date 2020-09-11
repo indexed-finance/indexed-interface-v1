@@ -10,6 +10,7 @@ import BN from 'bn.js'
 
 import Navigation from './components/navigation'
 import Categories from './routes/categories'
+import Markets from './routes/markets'
 import Index from './routes/index'
 import Root from './routes/root'
 import Demo from './routes/demo'
@@ -20,20 +21,6 @@ import { tokenMapping } from './assets/constants/parameters'
 import { store } from './state'
 
 import './assets/css/root.css'
-
-const indexMapping = {
-  category: null,
-  address: null,
-  outflow: null,
-  inflow: null,
-  symbol: null,
-  price: null,
-  assets: [],
-  name: null,
-  supply: 0,
-  size: 0,
-  tvl: null
-}
 
 const renameKeys = (keysMap, obj) =>
   obj.map(value =>
@@ -80,12 +67,13 @@ function Application(){
     for(let token in pool[0].tokens) {
      let asset = pool[0].tokens[token]
      let { name, symbol, decimals, address } = tokenMapping[asset.token.id]
-     let replace = { priceUSD: 'y', date: 'x' }
+     let replace = { priceUSD: 'close', date: 'date' }
 
      const contract = new state.web3.eth.Contract(IERC20, address)
      let supply = await contract.methods.totalSupply().call()
         .then((supply) => supply/Math.pow(10, 18))
-     let history = await getTokenPriceHistory(address, 7)
+
+     let history = await getTokenPriceHistory(address, 28)
      let [{ priceUSD }] = history
 
      array.push({
@@ -119,12 +107,14 @@ function Application(){
 
           tokens[0].history.map((meta, index) =>
             history.push({
-              y: ((meta.y * tokens[0].balance) +
-                tokens.slice(1).reduce((a, b) => a + b.balance * b.history[index].y , 0)
+              close: ((meta.close * tokens[0].balance) +
+                tokens.slice(1).reduce((a, b) => a + b.balance * b.history[index].close , 0)
               )/supply,
-              x: meta.x * 1000
+              date: meta.date * 1000
             })
           )
+
+          var change = price/history[history.length-2].close
 
           indexes[`${symbol}I${size}`] = {
             symbol: `${symbol}I${size}`,
@@ -132,11 +122,11 @@ function Application(){
             category: tokenCategories[category].id,
             marketcap: `$${value.toLocaleString()}`,
             price: `$${price.toLocaleString()}`,
+            delta: `${(change - 1).toFixed(4)}%`,
             supply: supply.toLocaleString(),
             history: history,
             assets: tokens,
-            address: id,
-            size: size,
+            address: id
           }
         }
       }
@@ -147,18 +137,24 @@ function Application(){
 
   return(
     <Router>
-      <Navigation />
       <Switch>
         <Route path='/index/:name'>
+          <Navigation />
           <Index />
         </Route>
         <Route path='/categories'>
+          <Navigation />
           <Categories />
+        </Route>
+        <Route path='/markets'>
+          <Navigation />
+          <Markets />
         </Route>
         <Route exact path='/'>
           <Root />
         </Route>
         <Route path='/demo'>
+          <Navigation />
           <Demo />
         </Route>
       </Switch>

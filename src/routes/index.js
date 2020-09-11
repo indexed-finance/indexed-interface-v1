@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, useContext, useEffect } from 'react'
 
 import { useParams } from 'react-router-dom'
 import { makeStyles, styled } from '@material-ui/core/styles'
@@ -12,6 +12,8 @@ import Trade from '../components/trade'
 import Mint from '../components/mint'
 import Burn from '../components/burn'
 import Tabs from '../components/tabs'
+
+import { store } from '../state'
 
 const MarketButton = styled(Button)({
   root: {
@@ -89,20 +91,21 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Index(){
   const [ component, setComponent ] = useState(<Trade />)
+  const [ chart, setChart ] = useState(<Fragment />)
+  const [ metadata, setMetadata ] = useState({})
   const classes = useStyles()
+
+  let { state, dispatch } = useContext(store)
   let { name } = useParams()
+  name = name.toUpperCase()
 
   const changeExecution = (option) => {
     var target = document.getElementsByClassName(option)[0]
     clearSelections()
 
-    if(option == 'burn') {
-      setComponent(<Burn/ >)
-    } else if(option == 'mint') {
-      setComponent(<Mint />)
-    } else {
-      setComponent(<Trade />)
-    }
+    if(option == 'burn') setComponent(<Burn/ >)
+    else if(option == 'mint') setComponent(<Mint />)
+    else setComponent(<Trade />)
 
     target.style.background = '#666666'
     target.firstChild.style.color = 'white'
@@ -121,21 +124,36 @@ export default function Index(){
     swap.firstChild.style.color = 'black'
   }
 
+  useEffect(() => {
+    if(Object.keys(state.indexes).length > 0){
+      setChart(renderChart(state.indexes[name].history))
+      setMetadata(state.indexes[name])
+    }
+  }, [ state.indexes ])
+
+  const renderChart = (data) => {
+    return(
+      <ParentSize>
+        {({ width, height }) => <Area data={data} width={width} height={height} /> }
+      </ParentSize>
+    )
+  }
+
   return (
     <Fragment>
       <div className={classes.header}>
         <Grid container direction='row' alignItems='center' justify='space-between'>
           <Grid item>
-            <h3 className={classes.title}> {name} [CCI]</h3>
+            <h3 className={classes.title}> {metadata.name} [{metadata.symbol}]</h3>
           </Grid>
           <Grid item>
-            <h4 className={classes.price}> $5,410.23 <span className={classes.delta}>(%0.42)</span></h4>
+            <h4 className={classes.price}> {metadata.price} <span className={classes.delta}>({metadata.delta})</span></h4>
           </Grid>
           <Grid item>
-            <span className={classes.alternative}>MARKETCAP: $50,313,217.33</span>
+            <span className={classes.alternative}>MARKETCAP: {metadata.marketcap}</span>
           </Grid>
           <Grid item>
-            <span className={classes.alternative}>VOLUME: $100,101,333.51</span>
+            <span className={classes.alternative}>VOLUME:</span>
           </Grid>
         </Grid>
       </div>
@@ -152,12 +170,10 @@ export default function Index(){
         </div>
       </div>
       <div className={classes.chart}>
-        <ParentSize>
-          {({ width, height }) => <Area width={width} height={height} /> }
-        </ParentSize>
+        {chart}
       </div>
       <div className={classes.metrics}>
-        <Tabs />
+        <Tabs data={metadata.assets}/>
       </div>
     </Fragment>
   )

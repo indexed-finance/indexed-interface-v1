@@ -56,7 +56,7 @@ const columns = [
   },
   {
     id: 'volume',
-    label: 'VOLU',
+    label: 'VOLUME',
     minWidth: 150,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
