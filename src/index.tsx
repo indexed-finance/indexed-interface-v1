@@ -46,7 +46,7 @@ const oneToken = new BN('de0b6b3a7640000', 'hex')
 
 const theme = createMuiTheme({
   typography: {
-    fontFamily: "San Francisco Bold"
+    fontFamily: "San Francisco Bold",
   },
   palette: {
     primary: {
@@ -66,8 +66,12 @@ function Application(){
 
     for(let token in pool[0].tokens) {
      let asset = pool[0].tokens[token]
+     console.log(asset.token.id)
+
      let { name, symbol, decimals, address } = tokenMapping[asset.token.id]
      let replace = { priceUSD: 'close', date: 'date' }
+
+     console.log(symbol)
 
      const contract = new state.web3.eth.Contract(IERC20, address)
      let supply = await contract.methods.totalSupply().call()
@@ -84,7 +88,7 @@ function Application(){
        address: address,
        price: priceUSD,
        symbol: symbol,
-       name: name
+       name: name.toUpperCase()
      })
     }
     return array
@@ -118,7 +122,7 @@ function Application(){
 
           indexes[`${symbol}I${size}`] = {
             symbol: `${symbol}I${size}`,
-            name: tokenCategories[category].name,
+            name: tokenCategories[category].name.toUpperCase(),
             category: tokenCategories[category].id,
             marketcap: `$${value.toLocaleString()}`,
             price: `$${price.toLocaleString()}`,

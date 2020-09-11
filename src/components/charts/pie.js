@@ -1,7 +1,9 @@
 import React, { Fragment, useState, useEffect } from 'react'
 
 import ChartDataLabels from 'chartjs-plugin-datalabels'
-import { Pie } from 'react-chartjs-2'
+import { Pie, defaults } from 'react-chartjs-2'
+
+defaults.global.defaultFontFamily = 'San Francisco';
 
 const chartConfig = metadata => ({
   labels: metadata.assets.map(value => value.symbol),

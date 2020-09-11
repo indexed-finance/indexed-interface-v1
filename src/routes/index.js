@@ -150,10 +150,7 @@ export default function Index(){
             <h4 className={classes.price}> {metadata.price} <span className={classes.delta}>({metadata.delta})</span></h4>
           </Grid>
           <Grid item>
-            <span className={classes.alternative}>MARKETCAP: {metadata.marketcap}</span>
-          </Grid>
-          <Grid item>
-            <span className={classes.alternative}>VOLUME:</span>
+            <span className={classes.alternative}>VOLUME: {metadata.marketcap}</span>
           </Grid>
         </Grid>
       </div>

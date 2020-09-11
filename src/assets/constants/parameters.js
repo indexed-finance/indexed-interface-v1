@@ -23,42 +23,42 @@ export const initialState = {
 }
 
 export const tokenMapping = {
-  "0x1d670711eb571f1607e289e6466639c149a0d020": {
+  "0xeabcaa888fcdd99871dd26823f8df7b0be304e09": {
     address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
     name: "USD Coin",
     symbol: "USDC"
   },
-  "0x04844e88c17917dabbe6ca8972cf73455bd26962": {
+  "0x50b2e1a8d4b92509b1c98d0125d5638ea7509541": {
     address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
     name: "Tether",
     symbol: "USDT"
   },
-  "0xa7cde04e62874ce7b7700de537386fcf145ca728": {
+  "0x7fc814f19a8b6416c666a67d8b0bfc9998ea352c": {
     address: "0x4fabb145d64652a948d72533023f6e7a623c7c53",
     name: "Binance USD",
     symbol: "BUSD"
   },
-  "0x40d093520a9834c3aafe2f2a66ad173c3ae419f1": {
+  "0xd5ae7bee0a3505ff10ce26952770ee44872f9335": {
     address: "0xc00e94cb662c3520282e6f5717214004a7f26888",
     name: "Compound",
     symbol: "COMP"
   },
-  "0x4b4b697711c730185c13c54b6c3b3d299eb50dbb": {
+  "0x76cd51ab56b0980c03a2d833253b6e1cefc12e50": {
     address: "0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e",
     name: "Yearn",
     symbol: "YFI"
   },
-  "0x7fae6fcff920a89e4d0b15a8a50c531d47b05b2b": {
+  "0x865a907b41809ee66aa6b09dce99b4257c986e75": {
     address: "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
     name: "Maker",
     symbol: "MKR"
   },
-  "0x887bc7fa84bd6e491756945fc89370c9f2ebf155": {
+  "0xd1175b329af2a9471006bf7bbb8710b0a04a90a8": {
     address: "0x6b175474e89094c44da98b954eedeac495271d0f",
     name: "Dai Stablecoin",
     symbol: "DAI",
   },
-  "0x8a7a34f2859fe781819830eaef6258b6c6a147ae": {
+  "0x0b401f3b84a84ef29b75a540cbf7443597558c21": {
     address: "0x514910771af9ca656af840dff83e8264ecf986ca",
     name: "Chainlink",
     symbol: "LINK"

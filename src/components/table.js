@@ -18,7 +18,7 @@ const Row = styled(TableRow)({
 })
 
 const columns = [
-  { id: 'name', label: 'CATEGORY', minWidth: 200 },
+  { id: 'name', label: 'CATEGORY', minWidth: 225 },
   {
     id: 'symbol',
     label: 'SYMBOL',
@@ -43,21 +43,14 @@ const columns = [
   {
     id: 'marketcap',
     label: 'MARKETCAP',
-    minWidth: 170,
-    align: 'center',
-    format: (value) => `$${value.toLocaleString('en-US')}`,
-  },
-  {
-    id: 'tvl',
-    label: 'LIQUIDITY',
-    minWidth: 150,
+    minWidth: 200,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
     id: 'volume',
     label: 'VOLUME',
-    minWidth: 150,
+    minWidth: 200,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },

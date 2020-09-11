@@ -35,7 +35,7 @@ const useStyles = makeStyles(({ spacing }) => ({
     color: '#666666',
     borderBottom: 'solid 3px #666666',
     boxShadow: 'none',
-    padding: spacing(1.25,0),
+    padding: spacing(1.5,0)
   },
   menuButton: {
     marginRight: spacing(1)
@@ -43,14 +43,14 @@ const useStyles = makeStyles(({ spacing }) => ({
   title: {
     fontFamily: 'San Francisco Bold',
     marginLeft: spacing(2),
-    marginTop: spacing(.375),
+    marginTop: spacing(1),
     letterSpacing: 5,
     flexGrow: 1,
     float: 'right',
-    color: '#666666'
+    color: '#333333'
   },
   logo: {
-    width: 35,
+    width: 50,
     marginLeft: spacing(1),
   },
   search: {
@@ -184,7 +184,7 @@ export default function ButtonAppBar() {
             <Grid item>
               <Link to='/'>
                 <img className={classes.logo} src={indexed} />
-                <Typography variant='h5' className={classes.title}> INDEXED </Typography>
+                <Typography variant='h4' className={classes.title}> INDEXED </Typography>
               </Link>
             </Grid>
             <Grid item>

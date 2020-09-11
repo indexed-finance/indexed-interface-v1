@@ -43,12 +43,12 @@ const Wrapper = styled(Paper)({
   borderTopRightRadius: 10,
   borderBottomRightRadius: 10,
   width: '32.5%',
-  height: '13.575em',
+  height: '13.5em',
   boxShadow: 'none',
   background: 'white',
   position: 'absolute',
   marginTop: '-.2em',
-  right: '2.375%'
+  right: '3.5%'
 })
 
 export default function Markets(){
@@ -57,7 +57,7 @@ export default function Markets(){
   let { state, dispatch } = useContext(store)
 
   const changeMarket = (market) => {
-    setMarket(dummy[market])
+    setMarket(state.indexes[market])
   }
 
   useEffect(() => {

@@ -1,11 +1,12 @@
 @font-face {
   font-family: 'San Francisco';
-  src: url("../fonts/sf-mono/SFMonoLight.otf");
+  src: url("../fonts/aux-mono/aux-mono.otf");
+  font-weight: 200;
 }
 
 @font-face {
   font-family: 'San Francisco Bold';
-  src: url("../fonts/sf-mono/SFMonoRegular.otf");
+  src: url("../fonts/aux-mono/aux-mono.otf");
 }
 
 body {
