@@ -65,7 +65,23 @@ export const tokenMetadata = {
     address: "0x514910771af9ca656af840dff83e8264ecf986ca",
     name: "Chainlink",
     image: link
-  }
+  },
+  "ETH": {
+    name: "Ethereum",
+    image: eth
+  },
+  "SNX": {
+    name: "Synthetix",
+    image: snx
+  },
+  "WBTC": {
+    name: "Wrapped Bitcoin",
+    image: wbtc
+  },
+  "AMPL": {
+    name: "Ampleforth",
+    image: ampl
+  },
 }
 
 export const marketColumns = [

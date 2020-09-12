@@ -15,6 +15,10 @@ import Tabs from '../components/tabs'
 
 import { store } from '../state'
 
+const dummy = {
+  symbol: ''
+}
+
 const MarketButton = styled(Button)({
   root: {
     background: 'white',
@@ -90,22 +94,22 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function Index(){
-  const [ component, setComponent ] = useState(<Trade />)
-  const [ chart, setChart ] = useState(<Fragment />)
-  const [ metadata, setMetadata ] = useState({})
-  const classes = useStyles()
-
   let { state, dispatch } = useContext(store)
   let { name } = useParams()
   name = name.toUpperCase()
+
+  const [ component, setComponent ] = useState(<Trade market={name}/>)
+  const [ chart, setChart ] = useState(<Fragment />)
+  const [ metadata, setMetadata ] = useState({})
+  const classes = useStyles()
 
   const changeExecution = (option) => {
     var target = document.getElementsByClassName(option)[0]
     clearSelections()
 
-    if(option == 'burn') setComponent(<Burn/ >)
-    else if(option == 'mint') setComponent(<Mint />)
-    else setComponent(<Trade />)
+    if(option == 'burn') setComponent(<Burn market={name}/ >)
+    else if(option == 'mint') setComponent(<Mint market={name}/>)
+    else setComponent(<Trade market={name} />)
 
     target.style.background = '#666666'
     target.firstChild.style.color = 'white'

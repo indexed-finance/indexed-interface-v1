@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import { makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
@@ -9,6 +9,9 @@ import ButtonPrimary from './buttons/primary'
 import NumberFormat from '../utils/format'
 import Adornment from './inputs/adornment'
 import Input from './inputs/input'
+
+import { getPair } from '../lib/markets'
+import { store } from '../state'
 
 const useStyles = makeStyles((theme) => ({
   inputs: {
@@ -51,13 +54,42 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function Trade() {
+export default function Trade({ market }) {
+  const [ contract, setContract ] = useState({})
+  const [ output, setOutput ] = useState(null)
+  const [ input, setInput ] = useState(null)
   const classes = useStyles()
+
+  let { dispatch, state } = useContext(store)
+
+  const handleChange = (event) => {
+    setInput(event.target.value)
+  }
+
+  useEffect(() => {
+    const getPairMetadata = async() => {
+      if(state.indexes[market]) {
+        let { web3, indexes } = state
+
+        let contract = await getPair(web3.rinkeby, indexes[market].address)
+         let price = await contract.methods.price0CumulativeLast().call()
+         let reserves = await contract.methods.getReserves().call()
+
+         console.log(price, reserves)
+         
+        setContract(contract)
+      }
+    }
+    getPairMetadata()
+  }, [ state.indexes ])
 
   return(
     <Grid container direction='column' alignItems='center' justify='space-around'>
       <Grid item>
         <Input className={classes.inputs} label="AMOUNT" variant='outlined'
+          helperText="BALANCE: 0"
+          onChange={handleChange}
+          value={input}
           InputProps={{
             endAdornment: <Adornment market='ETH'/>,
             inputComponent: NumberFormat
@@ -71,20 +103,20 @@ export default function Trade() {
       </Grid>
       <Grid item>
         <Input className={classes.altInputs} label="RECIEVE" variant='outlined'
+          helperText={`1 ${market} = 0.0005 ETH`}
           InputProps={{
-            endAdornment: 'CCI',
-            inputComponent: NumberFormat
+            inputComponent: NumberFormat,
+            endAdornment: market
           }}
         />
       </Grid>
       <Grid item>
           <div className={classes.divider} />
           <div className={classes.market}>
-            <p> ROUTE: <span> DAI {'->'} CCI </span> </p>
-            <p> PRICE: <span> $5,060.45 </span> </p>
-            <p> PRICE EFFECT: <span> %.23 </span> </p>
-            <p> SOURCE: <span> UNISWAP </span> </p>
-            <p> GAS: <span> $0.21 </span> </p>
+            <p> ROUTE: <span> </span> </p>
+            <p> PRICE: <span> </span> </p>
+            <p> PRICE EFFECT: <span>  </span> </p>
+            <p> GAS: <span> </span> </p>
           </div>
           <div className={classes.divider} />
       </Grid>
