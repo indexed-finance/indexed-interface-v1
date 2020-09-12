@@ -11,8 +11,7 @@ import Select from '../components/inputs/select'
 import Input from '../components/inputs/input'
 import List from '../components/list'
 
-import { tokenMapping, tokenImages } from '../assets/constants/parameters'
-import { getTokenCategories } from '../api/gql'
+import { tokenMetadata } from '../assets/constants/parameters'
 import { store } from '../state'
 
 const selections = [[{ value: 0, label: null }]]
@@ -34,8 +33,8 @@ const useStyles = makeStyles((theme) => ({
 
 const columns = [
   {
-    id: 'index',
-    label: 'INDEX',
+    id: 'symbol',
+    label: 'SYMBOL',
     minWidth: 50,
     align: 'center',
     format: (value) => `${value.toLocaleString('en-US')}`,
@@ -56,7 +55,7 @@ const columns = [
   },
   {
     id: 'tokens',
-    label: 'TOKENS',
+    label: 'ASSETS',
     minWidth: 100,
     align: 'center',
   },
@@ -66,6 +65,14 @@ const columns = [
     align: 'right',
   },
 ];
+
+const filtered = (raw, targets) =>
+  Object.keys(raw, targets)
+  .filter(key => targets.includes(key))
+  .reduce((obj, key) => {
+    obj[key] = raw[key];
+    return obj;
+  }, {})
 
 const Liquidity = styled(Button)({
   border: '2px solid #009966',
@@ -99,60 +106,43 @@ const Trigger = styled(Button)({
 })
 
 export default function Categories(){
-  const [ rows, setRows ] = useState([])
   let { dispatch, state } = useContext(store)
+
+  const [ rows, setRows ] = useState({})
   const classes = useStyles()
 
   useEffect(() => {
-    const retrieveCategories = async() => {
-      let metadata = await getTokenCategories()
-
-      setRows(
-        metadata.map((value) => {
-          return {
-            tokens: value.tokens.map(address => { return tokenMapping[address].symbol }),
-            funds: value.indexPools.map((item, index) => {
-              return {
-                tokens:
-                  value.tokens.map((address, index) => {
-                    if(index <= item.size) return tokenMapping[address].symbol
-                }).join(', '),
-                supply: parseInt(item.totalSupply)/Math.pow(10, 18),
-                price: '$5,410.34',
-                size: item.size,
-                index: index + 1
-              }
-            }),
-            symbol: value.symbol,
-            name: value.name,
-          }
-        })
-      )
+    if(Object.keys(state.categories).length > 0){
+      setRows(state.categories)
     }
-
-    retrieveCategories()
-  }, [])
+  }, [ state.indexes ])
 
   return (
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item>
-          <Container percentage='15%' title='CATEGORIES'
-            components={
+          <Container margin="3em" percentage='16%' title='CATEGORIES'
+             components={
               <Fragment>
-              {rows.map((value) => (
-                <div className={classes.category}>
-                  <h3> {value.name} [{value.symbol}]</h3>
-                  <p> {value.tokens.map((token) => ( <img src={tokenImages[token]} className={classes.asset}/> ))} </p>
-                  <div className={classes.divider} />
-                  <List data={value.funds} columns={columns} height={250}
-                    action={
-                      <Liquidity> EXPAND </Liquidity>
-                    } />
-                </div>
-                )
-              )}
-              </Fragment>
+                {Object.values(rows).map((value) => (
+                  <div className={classes.category}>
+                    <h3> {value.name} [{value.symbol}]</h3>
+                    <p>
+                      {value.indexes.map((index) =>
+                        state.indexes[index].assets.map((token) => (
+                          <img src={tokenMetadata[token.symbol].image} className={classes.asset} />
+                      )))}
+                    </p>
+                    <div className={classes.divider} />
+                    <List data={Object.values(filtered(state.indexes, value.indexes))}
+                      action={ <Liquidity> EXPAND </Liquidity>}
+                      columns={columns}
+                      height={250}
+                    />
+                  </div>
+                 )
+               )}
+             </Fragment>
             }
           />
         </Grid>

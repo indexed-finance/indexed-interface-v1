@@ -9,7 +9,7 @@ import Avatar from '@material-ui/core/Avatar'
 import List from '@material-ui/core/List'
 import Grid from '@material-ui/core/Grid'
 
-import { tokenImages } from '../assets/constants/parameters'
+import { tokenMetadata } from '../assets/constants/parameters'
 
 import NumberFormat from '../utils/format'
 import ButtonPrimary from './buttons/primary'
@@ -201,7 +201,7 @@ export default function InteractiveList() {
       <List className={classes.list} dense={dense}>
         <ListItem className={classes.first}>
           <ListItemAvatar className={classes.altWrapper}>
-            <Avatar className={classes.avatar} src={tokenImages['ETH']} />
+            <Avatar className={classes.avatar} src={tokenMetadata['ETH'].image} />
           </ListItemAvatar>
           <ListItemText primary="ETH" />
           <SecondaryItemText primary="BALANCE" secondary='100,23.12' />
@@ -211,7 +211,7 @@ export default function InteractiveList() {
         </ListItem>
         <ListItem className={classes.item}>
           <ListItemAvatar className={classes.wrapper}>
-            <Avatar className={classes.avatar} src={tokenImages['MKR']} />
+            <Avatar className={classes.avatar} src={tokenMetadata['MKR'].image} />
           </ListItemAvatar>
           <ListItemText primary="MKR" />
           <SecondaryItemText primary="BALANCE" secondary='10.343' />
@@ -221,7 +221,7 @@ export default function InteractiveList() {
         </ListItem>
         <ListItem className={classes.item}>
           <ListItemAvatar className={classes.wrapper}>
-            <Avatar className={classes.avatar} src={tokenImages['COMP']} />
+            <Avatar className={classes.avatar} src={tokenMetadata['COMP'].image} />
           </ListItemAvatar>
           <ListItemText primary="COMP" />
           <SecondaryItemText primary="BALANCE" secondary='0.53' />
@@ -231,7 +231,7 @@ export default function InteractiveList() {
         </ListItem>
         <ListItem className={classes.item}>
           <ListItemAvatar className={classes.wrapper}>
-            <Avatar className={classes.avatar} src={tokenImages['WBTC']} />
+            <Avatar className={classes.avatar} src={tokenMetadata['WBTC'].image} />
           </ListItemAvatar>
           <ListItemText primary="WBTC" />
           <SecondaryItemText primary="BALANCE" secondary='1.32' />
@@ -241,7 +241,7 @@ export default function InteractiveList() {
           </ListItem>
           <ListItem className={classes.item}>
             <ListItemAvatar className={classes.wrapper}>
-              <Avatar className={classes.avatar} src={tokenImages['DAI']} />
+              <Avatar className={classes.avatar} src={tokenMetadata['DAI'].image} />
             </ListItemAvatar>
             <ListItemText primary="DAI" />
             <SecondaryItemText primary="BALANCE" secondary='100,321.40' />
@@ -251,7 +251,7 @@ export default function InteractiveList() {
         </ListItem>
         <ListItem className={classes.item}>
           <ListItemAvatar className={classes.wrapper}>
-            <Avatar className={classes.avatar} src={tokenImages['AMPL']} />
+            <Avatar className={classes.avatar} src={tokenMetadata['AMPL'].image} />
           </ListItemAvatar>
           <ListItemText primary="AMPL" />
           <SecondaryItemText primary="BALANCE" secondary='5,333' />
@@ -261,7 +261,7 @@ export default function InteractiveList() {
         </ListItem>
         <ListItem className={classes.item}>
           <ListItemAvatar className={classes.wrapper}>
-            <Avatar className={classes.avatar} src={tokenImages['SNX']} />
+            <Avatar className={classes.avatar} src={tokenMetadata['SNX'].image} />
           </ListItemAvatar>
           <ListItemText primary="SNX" />
           <SecondaryItemText primary="BALANCE" secondary='44,123.44' />
@@ -271,7 +271,7 @@ export default function InteractiveList() {
           </ListItem>
           <ListItem className={classes.alt}>
             <ListItemAvatar className={classes.wrapper}>
-              <Avatar className={classes.avatar} src={tokenImages['LINK']} />
+              <Avatar className={classes.avatar} src={tokenMetadata['LINK'].image} />
             </ListItemAvatar>
             <ListItemText primary="LINK" />
             <SecondaryItemText primary="BALANCE" secondary='10,232,123' />

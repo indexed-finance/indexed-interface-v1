@@ -17,7 +17,7 @@ import Demo from './routes/demo'
 
 import { getTokenCategories, getTokenPriceHistory, getIndexPool } from './api/gql'
 import IERC20 from './assets/constants/abi/IERC20.json'
-import { tokenMapping } from './assets/constants/parameters'
+import { tokenMetadata } from './assets/constants/parameters'
 import { store } from './state'
 
 import './assets/css/root.css'
@@ -32,6 +32,8 @@ const renameKeys = (keysMap, obj) =>
     {}
    )
  )
+
+ const replace = { priceUSD: 'close', date: 'date' }
 
  const toBN = (bn) => {
   if (BN.isBN(bn)) return bn;
@@ -66,46 +68,55 @@ function Application(){
 
     for(let token in pool[0].tokens) {
      let asset = pool[0].tokens[token]
-     console.log(asset.token.id)
+     let contract = new state.web3.rinkeby.eth.Contract(IERC20, asset.token.id)
+     let symbol = await contract.methods.symbol().call()
 
-     let { name, symbol, decimals, address } = tokenMapping[asset.token.id]
-     let replace = { priceUSD: 'close', date: 'date' }
+     if(!tokenMetadata[symbol]) {
+       console.log(`UNKNOWN ASSET: ${symbol}, ADDRESS: ${asset.token.id}`)
+     } else {
+       let { name, address } = tokenMetadata[symbol]
 
-     console.log(symbol)
+       contract = new state.web3.mainnet.eth.Contract(IERC20, address)
+       let supply = await contract.methods.totalSupply().call()
+          .then((supply) => supply/Math.pow(10, 18))
+       let history = await getTokenPriceHistory(address, 28)
+       let [{ priceUSD }] = history
 
-     const contract = new state.web3.eth.Contract(IERC20, address)
-     let supply = await contract.methods.totalSupply().call()
-        .then((supply) => supply/Math.pow(10, 18))
-
-     let history = await getTokenPriceHistory(address, 28)
-     let [{ priceUSD }] = history
-
-     array.push({
-       weight: parseInt(asset.denorm)/parseInt(pool[0].totalWeight),
-       balance: parseInt(asset.balance)/Math.pow(10, 18),
-       history: renameKeys(replace, history).reverse(),
-       marketcap: supply * priceUSD,
-       address: address,
-       price: priceUSD,
-       symbol: symbol,
-       name: name.toUpperCase()
-     })
+       array.push({
+         weight: parseInt(asset.denorm)/parseInt(pool[0].totalWeight),
+         balance: parseInt(asset.balance)/Math.pow(10, 18),
+         history: renameKeys(replace, history).reverse(),
+         marketcap: supply * priceUSD,
+         name: name.toUpperCase(),
+         address: address,
+         price: priceUSD,
+         symbol: symbol,
+       })
+      }
     }
     return array
   }
 
   useEffect(() => {
-    const retrieveCategories = async(indexes) => {
+    const retrieveCategories = async(indexes, categories) => {
       let tokenCategories = await getTokenCategories()
 
       for(let category in tokenCategories) {
         let { id, name, symbol, indexPools } = tokenCategories[category]
+        let tokenCategoryId = id
+
+        name = name.toUpperCase()
+
+        if(!categories[symbol]){
+          categories[tokenCategoryId] = { indexes: [], symbol, name }
+        }
 
         for(let index in indexPools) {
           let { id, totalSupply, size } = indexPools[index]
           let tokens = await getTokenMetadata(id, [])
           var value = tokens.reduce((a, b) => a + b.balance * b.price, 0)
           var supply = totalSupply/Math.pow(10, 18)
+          let ticker = `${symbol}I${size}`
           var price = (value/supply)
           let history = []
 
@@ -120,23 +131,27 @@ function Application(){
 
           var change = price/history[history.length-2].close
 
-          indexes[`${symbol}I${size}`] = {
-            symbol: `${symbol}I${size}`,
-            name: tokenCategories[category].name.toUpperCase(),
-            category: tokenCategories[category].id,
+          categories[tokenCategoryId].indexes.push(ticker)
+          indexes[ticker] = {
+            tokens: tokens.map(token => token.symbol).join(', '),
             marketcap: `$${value.toLocaleString()}`,
             price: `$${price.toLocaleString()}`,
             delta: `${(change - 1).toFixed(4)}%`,
             supply: supply.toLocaleString(),
+            category: tokenCategoryId,
+            name: name.toUpperCase(),
             history: history,
             assets: tokens,
+            symbol: ticker,
             address: id
           }
         }
       }
-      await dispatch({ type: 'INIT', payload: { indexes } })
+      await dispatch({ type: 'INIT',
+        payload: { categories, indexes }
+      })
     }
-    retrieveCategories({})
+    retrieveCategories({}, {})
   }, [ ])
 
   return(

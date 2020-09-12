@@ -4,6 +4,8 @@ import { makeStyles, withStyles } from '@material-ui/core/styles'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import { usePalette } from 'react-palette'
 
+import { tokenMetadata } from '../assets/constants/parameters'
+
 const useStyles = makeStyles({
   root: {
     flexGrow: 1,
@@ -28,7 +30,8 @@ const useStyles = makeStyles({
   }
 });
 
-export default function Weight({ image, name, holdings, value }) {
+export default function Weight({ asset }) {
+  let { image } = tokenMetadata[asset.symbol]
   let { data } = usePalette(image)
   const classes = useStyles()
 
@@ -55,9 +58,11 @@ export default function Weight({ image, name, holdings, value }) {
         <img src={image} className={classes.asset} />
       </div>
       <div className={classes.percentage}>
-        <span className={classes.title}> {name} </span>
-        <BorderLinearProgress variant="determinate" value={value} />
-        <span className={classes.alternative}> {holdings} </span>
+        <span className={classes.title}> {asset.name} [{asset.symbol}] </span>
+        <BorderLinearProgress variant="determinate" value={asset.weight * 100} />
+        <span className={classes.alternative}>
+          {asset.balance.toLocaleString()} {asset.symbol} ≈ ${(asset.balance * asset.price).toLocaleString()}
+        </span>
       </div>
     </div>
   );

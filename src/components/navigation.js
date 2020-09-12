@@ -35,7 +35,7 @@ const useStyles = makeStyles(({ spacing }) => ({
     color: '#666666',
     borderBottom: 'solid 3px #666666',
     boxShadow: 'none',
-    padding: spacing(1.5,0)
+    padding: spacing(2,0)
   },
   menuButton: {
     marginRight: spacing(1)

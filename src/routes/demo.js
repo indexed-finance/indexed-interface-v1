@@ -77,7 +77,7 @@ export default function Demo(){
 
   return (
     <Fragment>
-      <Grid container direction='column' alignItems='space-between' justify='center'>
+      <Grid container margin="3em" direction='column' alignItems='space-between' justify='center'>
         <Grid item>
           <Canvas>
             <Grid container direction='row' alignItems='flex-start' justify='space-between'>

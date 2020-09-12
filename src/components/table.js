@@ -96,9 +96,10 @@ export default function StickyHeadTable({ indexes, market, triggerMarket }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {Object.values(indexes).map((row) => {
+            {Object.values(indexes).map((row, index) => {
+
               return (
-                <Row selected={market.symbol == row.symbol} onClick={() => triggerMarket(row.symbol)} hover tabIndex={-1} key={row.code}>
+                <Row selected={market == row.symbol} onClick={() => triggerMarket(row.symbol)} hover tabIndex={-1} key={row.code}>
                   {columns.map((column) => {
                     const value = row[column.id];
                     return (

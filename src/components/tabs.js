@@ -13,9 +13,7 @@ import TransactionButton from './buttons/transaction'
 import Weights from './weights'
 import List from './list'
 
-import {
-  tokenImages, marketColumns, rebalanceColumns
-} from '../assets/constants/parameters'
+import { marketColumns, rebalanceColumns } from '../assets/constants/parameters'
 
 const Exit = styled(ExitIcon)({
   fontSize: '1rem'
@@ -137,10 +135,7 @@ export default function VerticalTabs({ data }) {
       </div>
       <TabPanel className={classes.assets} value={value} index={0}>
         <Grid item container direction='row' alignItems='flex-start' justify='space-around' spacing={4}>
-          {meta.map(asset => (<Grid item>
-            <Weights image={tokenImages[asset.symbol]} name={`${asset.name} [${asset.symbol}]`} value={asset.weight*100} holdings={`${asset.balance.toLocaleString()} ${asset.symbol} ≈ $${(asset.balance*asset.price).toLocaleString()}`} />
-          </Grid>
-          ))}
+          {meta.map(asset => (<Grid item> <Weights asset={asset} /> </Grid> ))}
         </Grid>
       </TabPanel>
       <TabPanel className={classes.panels} value={value} index={1}>
