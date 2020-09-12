@@ -10,6 +10,16 @@ const StateProvider = ( { children } ) => {
     switch(action.type) {
       case 'INIT':
         return { ...state, ...action.payload }
+      case 'BAL':
+        return { ...state, ...action.payload }
+      case 'WEB3':
+        return {
+          ...state, web3: {
+            ...state.web3, injected: action.payload.web3
+          },
+          account: action.payload.account,
+          network: action.payload.network
+        }
       default:
         return state
     };

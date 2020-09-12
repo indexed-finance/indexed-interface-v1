@@ -18,6 +18,7 @@ export const initialState = {
   web3: {
     mainnet: new Web3('https://mainnet.infura.io/v3/1c6549e97ff24d9a99ba4e007b538de6'),
     rinkeby: new Web3('https://rinkeby.infura.io/v3/1c6549e97ff24d9a99ba4e007b538de6'),
+    injected: false
   },
   categories: {},
   account: null,

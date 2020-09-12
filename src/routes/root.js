@@ -10,8 +10,9 @@ export default function Root(){
 
   return (
     <div id="canvas">
-      <div style={{ position: 'absolute', top: '50%', left: '50%'}}>
+      <div id='landing-main' style={{ position: 'absolute', top: '35%', left: '50%'}}>
         <span style={{ 'font-size': '7.5em'}}> INDEXED </span>
+        <p> A FINANCIAL INDEX PROTOCOL. </p>
       </div>
     </div>
   )

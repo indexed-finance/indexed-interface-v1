@@ -36,7 +36,7 @@ const GRID_FRAGMENT = `	#define TWO_PI 6.28318530718
     float res = resolution.x / resolution.y;
 
     //define colsrows
-    float crCount = 12.0;
+    float crCount = 12.5;
     vec2 colrow = vec2(crCount, crCount/ res);
 
     //get new grid
@@ -79,7 +79,7 @@ function init() {
 
 	//create uniform table which provide all our GLSL binding
 	uniforms = {
-		time: { type: "f", value: 1.0 },
+		time: { type: "f", value: 1 },
 		count: { type: "f", value: 1.0 },
 		resolution: { type: "v2", value: new THREE.Vector2() }
 	};
@@ -130,13 +130,13 @@ function animate() {
 
 function render() {
 	var currentTime = Date.now();
-	var elaspedSeconds =  (currentTime - startTime) / 1000.0;
-	var maxTime = 4.0;
-	var count = parseInt(elaspedSeconds % maxTime);
+	var elaspedSeconds = (currentTime - startTime) / 1000.0;
+	var maxTime = 7.5;
+	var count = parseInt(elaspedSeconds % maxTime ^ Math.random());
 	if(count == 0){
 		if(bool == false){
 			boucle ++;
-			//boucle = Math.random();
+			// boucle = Math.random();
 			bool = true;
 		}
 	}else{
@@ -145,6 +145,11 @@ function render() {
 
 
 	var normTime = (elaspedSeconds % maxTime) / maxTime;
+  var targetElement = document.getElementById('landing-main')
+
+  if(normTime > .225) targetElement.style.color = 'black'
+  if(normTime > .6) targetElement.style.color = 'white'
+
 	uniforms.time.value = normTime;
 	uniforms.count.value = boucle;
 

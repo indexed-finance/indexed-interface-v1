@@ -63,7 +63,15 @@ export default function Trade({ market }) {
   let { dispatch, state } = useContext(store)
 
   const handleChange = (event) => {
-    setInput(event.target.value)
+    let { name, value } = event.target
+
+    if(name == 'input'){
+      setInput(event.target.value)
+      setOutput(event.target.value/2)
+    } else {
+      setOutput(event.target.value)
+      setInput(event.target.value * 2)
+    }
   }
 
   useEffect(() => {
@@ -72,16 +80,17 @@ export default function Trade({ market }) {
         let { web3, indexes } = state
 
         let contract = await getPair(web3.rinkeby, indexes[market].address)
-         let price = await contract.methods.price0CumulativeLast().call()
-         let reserves = await contract.methods.getReserves().call()
-
-         console.log(price, reserves)
-         
+        // let price = await contract.methods.price0CumulativeLast().call()
+         // let reserves = await contract.methods.getReserves().call()
         setContract(contract)
       }
     }
     getPairMetadata()
   }, [ state.indexes ])
+
+  useEffect(() => {
+
+  }, [output, input])
 
   return(
     <Grid container direction='column' alignItems='center' justify='space-around'>
@@ -89,6 +98,7 @@ export default function Trade({ market }) {
         <Input className={classes.inputs} label="AMOUNT" variant='outlined'
           helperText="BALANCE: 0"
           onChange={handleChange}
+          name="input"
           value={input}
           InputProps={{
             endAdornment: <Adornment market='ETH'/>,
@@ -104,6 +114,9 @@ export default function Trade({ market }) {
       <Grid item>
         <Input className={classes.altInputs} label="RECIEVE" variant='outlined'
           helperText={`1 ${market} = 0.0005 ETH`}
+          onChange={handleChange}
+          value={output}
+          name="output"
           InputProps={{
             inputComponent: NumberFormat,
             endAdornment: market

@@ -71,7 +71,6 @@ export default function FreeSoloCreateOption({ selections }) {
     if(Object.keys(selections).length > 0){
       let options = Object.values(selections)
       .map(obj => { return { ...obj } })
-      console.log(options, subsitute)
       setData(options)
     }
   }, [ selections ])

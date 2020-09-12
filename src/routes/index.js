@@ -13,6 +13,8 @@ import Mint from '../components/mint'
 import Burn from '../components/burn'
 import Tabs from '../components/tabs'
 
+
+import { getBalances } from '../lib/markets'
 import { store } from '../state'
 
 const dummy = {
@@ -129,11 +131,22 @@ export default function Index(){
   }
 
   useEffect(() => {
-    if(Object.keys(state.indexes).length > 0){
-      setChart(renderChart(state.indexes[name].history))
-      setMetadata(state.indexes[name])
+    const getMetadata = async() => {
+      let { indexes, web3, account } = state
+
+      if(Object.keys(indexes).length > 0){
+        setChart(renderChart(indexes[name].history))
+        setMetadata(indexes[name])
+
+        if(web3.injected){
+          let tokens = indexes[name].assets.map(data => data.address)
+          let balances = await getBalances(web3.mainnet, account, tokens, {})
+          await dispatch({ type: 'BAL', payload: { balances } })
+        }
+      }
     }
-  }, [ state.indexes ])
+    getMetadata()
+  }, [ state.indexes, state.web3.injected ])
 
   const renderChart = (data) => {
     return(

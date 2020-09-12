@@ -15,7 +15,7 @@ import Index from './routes/index'
 import Root from './routes/root'
 import Demo from './routes/demo'
 
-import { getTokenCategories, getTokenPriceHistory, getIndexPool } from './api/gql'
+import { getTokenCategories, getIndexToken, getTokenPriceHistory, getIndexPool } from './api/gql'
 import IERC20 from './assets/constants/abi/IERC20.json'
 import { tokenMetadata } from './assets/constants/parameters'
 import { store } from './state'
@@ -68,7 +68,7 @@ function Application(){
 
     for(let token in pool[0].tokens) {
      let asset = pool[0].tokens[token]
-     let contract = new state.web3.rinkeby.eth.Contract(IERC20, asset.token.id)
+     let contract = new state.web3.rinkeby.eth.Contract(IERC20.abi, asset.token.id)
      let symbol = await contract.methods.symbol().call()
 
      if(!tokenMetadata[symbol]) {
@@ -76,7 +76,7 @@ function Application(){
      } else {
        let { name, address } = tokenMetadata[symbol]
 
-       contract = new state.web3.mainnet.eth.Contract(IERC20, address)
+       contract = new state.web3.mainnet.eth.Contract(IERC20.abi, address)
        let supply = await contract.methods.totalSupply().call()
           .then((supply) => supply/Math.pow(10, 18))
        let history = await getTokenPriceHistory(address, 28)
@@ -113,6 +113,9 @@ function Application(){
 
         for(let index in indexPools) {
           let { id, totalSupply, size } = indexPools[index]
+          let indexAddress = id
+          console.log(id)
+
           let tokens = await getTokenMetadata(id, [])
           var value = tokens.reduce((a, b) => a + b.balance * b.price, 0)
           var supply = totalSupply/Math.pow(10, 18)
@@ -140,10 +143,10 @@ function Application(){
             supply: supply.toLocaleString(),
             category: tokenCategoryId,
             name: name.toUpperCase(),
+            address: indexAddress,
             history: history,
             assets: tokens,
             symbol: ticker,
-            address: id
           }
         }
       }

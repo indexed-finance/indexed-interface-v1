@@ -30,6 +30,14 @@ const categoriesQuery = () => `
 }
 `;
 
+const tokenQuery = (category) => `
+{
+  Tokens(where: { id: "${category}"}) {
+  id
+  }
+}
+`;
+
 const poolQuery = (address) => `
 {
   indexPools(where: { id: "${address}" }) {

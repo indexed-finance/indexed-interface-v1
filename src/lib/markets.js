@@ -1,5 +1,6 @@
 import UniV2PairABI from '../assets/constants/abi/IUniswapV2Pair.json'
 import UniV2FactoryABI from '../assets/constants/abi/IUniswapV2Factory.json'
+import IERC20 from '../assets/constants/abi/IERC20.json'
 
 import Uniswap from './uniswap'
 import MarketOracle from './market-oracle'
@@ -23,11 +24,23 @@ export async function getHelpers(web3, from) {
 export async function getPair(web3, tokenAddress){
   const factory = toContract(web3, UniV2FactoryABI.abi, FACTORY)
   const pairAddress = await factory.methods.getPair(
-    tokenAddress,
-    WETH
+    WETH,
+    tokenAddress
   ).call()
 
-  console.log(pairAddress)
+  console.log(`PAIR: ${pairAddress}`)
 
   return toContract(web3, UniV2PairABI.abi, pairAddress)
+}
+
+export async function getBalances(web3, address, array, map){
+  console.log(array)
+  
+  for(let token in array){
+    let contract = toContract(web3, IERC20.abi, array[token])
+    let balance = await contract.methods.balanceOf(address).call()
+
+    map[array[token]] = balance
+  }
+  return map
 }
