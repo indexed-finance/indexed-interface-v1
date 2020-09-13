@@ -6,6 +6,7 @@ var container;
 var camera, scene, renderer;
 var uniforms;
 var startTime;
+let shouldRender = true;
 
 const GRID_VERTEX =  `    	void main() {
         gl_Position = vec4(position, 1.0);
@@ -124,7 +125,7 @@ function onWindowResize(event) {
 }
 
 function animate() {
-	render();
+  if(shouldRender) render();
 	requestAnimationFrame(animate);
 }
 
@@ -158,5 +159,9 @@ function render() {
 
 export function renderCanvas(){
 	init();
-	animate();
+  animate();
+}
+
+export function stopRender() {
+  shouldRender = false
 }

@@ -9,12 +9,6 @@
   src: url("../fonts/aux-mono/aux-mono.otf");
 }
 
-@keyframes color-change {
-  0% { color: black; }
-  50% { color: white; }
-  100% { color: black; }
-}
-
 body {
   margin: 0;
   font-family: 'San Francisco';
@@ -81,10 +75,6 @@ h4 {
 .market-area {
   position: absolute;
   clear:both;
-}
-
-.MuiTableCell-stickyHeader {
-  background: white !important;
 }
 
 .MuiTable-stickyHeader {

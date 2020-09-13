@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect, useContext } from "react";
 
 import { Link } from 'react-router-dom'
-import { styled } from '@material-ui/core/styles'
+import { styled, useTheme } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 
@@ -33,28 +33,30 @@ const Trigger = styled(ButtonPrimary)({
   float: 'right',
 })
 
-const Wrapper = styled(Paper)({
-  borderLeft: '5px solid #666666',
-  borderRight: '3px solid #666666',
-  borderTop: '3px solid #666666',
-  borderBottom: '3px solid #666666',
-  borderTopLeftRadius: 200,
-  borderBottomLeftRadius: 200,
-  borderTopRightRadius: 10,
-  borderBottomRightRadius: 10,
-  width: '32.5%',
-  height: '13.5em',
-  boxShadow: 'none',
-  background: 'white',
-  position: 'absolute',
-  marginTop: '-.2em',
-  right: '3.5%'
-})
-
 export default function Markets(){
   const [ market, setMarket ] = useState(dummy)
   const [ pie, setPie ] = useState(<Fragment />)
+  const theme = useTheme()
+
   let { state, dispatch } = useContext(store)
+
+  const Wrapper = styled(Paper)({
+    background: theme.palette.primary.main,
+    borderLeft: '5px solid #666666',
+    borderRight: '3px solid #666666',
+    borderTop: '3px solid #666666',
+    borderBottom: '3px solid #666666',
+    borderTopLeftRadius: 200,
+    borderBottomLeftRadius: 200,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    width: '32.5%',
+    height: '13.5em',
+    boxShadow: 'none',
+    position: 'absolute',
+    marginTop: '-.2em',
+    right: '3.5%'
+  })
 
   const changeMarket = (market) => {
     setMarket(state.indexes[market])

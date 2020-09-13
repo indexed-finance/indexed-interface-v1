@@ -1,8 +1,8 @@
-import React, { Fragment, useContext, useState } from 'react'
+import React, { Fragment, useContext, useState, useEffect} from 'react'
 
 import { Link } from 'react-router-dom'
 import makeBlockie from 'ethereum-blockies-base64'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, useTheme } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
@@ -13,6 +13,8 @@ import TextField from '@material-ui/core/TextField'
 import Grid from '@material-ui/core/Grid'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
+import NightsStayIcon from '@material-ui/icons/NightsStay';
+import Brightness4Icon from '@material-ui/icons/Brightness4';
 
 import { toChecksumAddress } from '../assets/constants/functions'
 import indexed from '../assets/images/indexed.png'
@@ -21,21 +23,21 @@ import Search from './inputs/search'
 
 import { store } from '../state'
 
-const useStyles = makeStyles(({ spacing }) => ({
+const useStyles = makeStyles(({ spacing, palette }) => ({
   root: {
     flexGrow: 1,
     fontFamily: 'San Fransico',
   },
   href: {
-    color: '#333333 !important',
+    color: `${palette.primary} !important`,
     textDecoration: 'none !important',
   },
   appBar: {
-    background: 'white',
-    color: '#666666',
     borderBottom: 'solid 3px #666666',
     boxShadow: 'none',
-    padding: spacing(2,0)
+    padding: spacing(2,0),
+    background: palette.primary,
+    color: palette.secondary
   },
   menuButton: {
     marginRight: spacing(1)
@@ -47,7 +49,7 @@ const useStyles = makeStyles(({ spacing }) => ({
     letterSpacing: 5,
     flexGrow: 1,
     float: 'right',
-    color: '#333333'
+    color: palette.secondary.main
   },
   logo: {
     width: 50,
@@ -58,10 +60,10 @@ const useStyles = makeStyles(({ spacing }) => ({
       borderColor: '#666666 !important',
     },
     '& label': {
-      color: 'white',
+      color: palette.secondary.main
     },
     '& label.Mui-focused': {
-      color: 'white',
+      color: palette.secondary.main
     },
     '& input:valid + fieldset': {
       borderWidth: 2,
@@ -96,7 +98,8 @@ const useStyles = makeStyles(({ spacing }) => ({
   }
 }))
 
-export default function ButtonAppBar() {
+
+export default function ButtonAppBar({ mode }) {
   const [ component, setComponent ] = useState(<Fragment/>)
   const [ menuItems, setItems ] = useState(<LoggedOut />)
   const [ anchorEl, setAnchorEl ] = useState(null)
@@ -176,6 +179,10 @@ export default function ButtonAppBar() {
     )
   }
 
+  useEffect(() => {
+    let { color, background } = state
+  }, [ state.dark ])
+
   return (
     <div className={classes.root}>
       <AppBar className={classes.appBar} position="static">
@@ -191,6 +198,9 @@ export default function ButtonAppBar() {
               <Search selections={state.indexes} />
             </Grid>
             <Grid item>
+              <IconButton onClick={() => state.changeTheme(mode)}>
+                {mode && (<Brightness4Icon />)}{!mode && (<NightsStayIcon />)}
+              </IconButton>
               {component}
               <IconButton onClick={handleClick} className={classes.menuButton}>
                 <MenuIcon color='secondary'/>

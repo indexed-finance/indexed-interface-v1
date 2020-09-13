@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import Web3 from 'web3'
 
@@ -15,7 +15,7 @@ import Index from './routes/index'
 import Root from './routes/root'
 import Demo from './routes/demo'
 
-import { getTokenCategories, getIndexToken, getTokenPriceHistory, getIndexPool } from './api/gql'
+import { getTokenCategories, getTokenPriceHistory, getIndexPool } from './api/gql'
 import IERC20 from './assets/constants/abi/IERC20.json'
 import { tokenMetadata } from './assets/constants/parameters'
 import { store } from './state'
@@ -46,22 +46,39 @@ const renameKeys = (keysMap, obj) =>
 
 const oneToken = new BN('de0b6b3a7640000', 'hex')
 
-const theme = createMuiTheme({
+const isNight = () => {
+  let currentTime = (new Date()).getHours()
+  return (currentTime > 20 || currentTime < 6)
+}
+
+const getTheme = condition => createMuiTheme({
   typography: {
     fontFamily: "San Francisco Bold",
   },
   palette: {
+    text: {
+      primary: !condition ? '#333333' : '#ffffff',
+    },
+    type: !condition ? 'light' : 'dark',
     primary: {
-      main: '#333333',
+      main: !condition ? '#ffffff' : '#111111',
     },
     secondary: {
-      main: '#999999',
+      main: !condition ? '#333333' : '#ffffff',
     },
+    background: {
+      default: !condition ? '#ffffff' : '#111111',
+      paper: !condition ? '#ffffff' : '#111111',
+    }
   }
 });
 
 function Application(){
   let { state, dispatch } = useContext(store)
+  let { dark } = state
+
+  const [ theme, setTheme ] = useState(getTheme(dark))
+  const [ mode, setMode ] = useState(dark)
 
   const getTokenMetadata = async (id, array) => {
     let pool = await getIndexPool(id)
@@ -97,6 +114,21 @@ function Application(){
     return array
   }
 
+  const changeTheme = (isDark) => {
+    let modeChange = isDark ? false : true
+    let background = modeChange ? '#111111' : '#ffffff'
+    let color = modeChange ? '#ffffff' : '#333333'
+
+    setBackground(background, color)
+    setTheme(getTheme(modeChange))
+    setMode(modeChange)
+  }
+
+  const setBackground = (background, color) => {
+    document.body.style.background = background
+    document.body.style.color = color
+  }
+
   useEffect(() => {
     const retrieveCategories = async(indexes, categories) => {
       let tokenCategories = await getTokenCategories()
@@ -114,7 +146,6 @@ function Application(){
         for(let index in indexPools) {
           let { id, totalSupply, size } = indexPools[index]
           let indexAddress = id
-          console.log(id)
 
           let tokens = await getTokenMetadata(id, [])
           var value = tokens.reduce((a, b) => a + b.balance * b.price, 0)
@@ -151,43 +182,44 @@ function Application(){
         }
       }
       await dispatch({ type: 'INIT',
-        payload: { categories, indexes }
+        payload: { categories, indexes, changeTheme  }
       })
     }
+    setBackground(state.background, state.color)
     retrieveCategories({}, {})
   }, [ ])
 
+
   return(
-    <Router>
-      <Switch>
-        <Route path='/index/:name'>
-          <Navigation />
-          <Index />
-        </Route>
-        <Route path='/categories'>
-          <Navigation />
-          <Categories />
-        </Route>
-        <Route path='/markets'>
-          <Navigation />
-          <Markets />
-        </Route>
-        <Route exact path='/'>
-          <Root />
-        </Route>
-        <Route path='/demo'>
-          <Navigation />
-          <Demo />
-        </Route>
-      </Switch>
-    </Router>
+    <ThemeProvider theme={theme}>
+      <Router>
+        <Switch>
+          <Route path='/index/:name'>
+            <Navigation mode={mode}/>
+            <Index />
+          </Route>
+          <Route path='/categories'>
+            <Navigation mode={mode}/>
+            <Categories />
+          </Route>
+          <Route path='/markets'>
+            <Navigation mode={mode}/>
+            <Markets />
+          </Route>
+          <Route exact path='/'>
+            <Root />
+          </Route>
+          <Route path='/demo'>
+            <Navigation mode={mode}/>
+            <Demo />
+          </Route>
+        </Switch>
+      </Router>
+    </ThemeProvider>
   )
 }
 
 ReactDOM.render(
-  <StateProvider>
-    <ThemeProvider theme={theme}>
-      <Application />
-    </ThemeProvider>
-  </StateProvider>,
-document.getElementById('root'))
+  <StateProvider> <Application /> </StateProvider>,
+  document.getElementById('root')
+)
