@@ -96,16 +96,17 @@ function Application(){
        contract = new state.web3.mainnet.eth.Contract(IERC20.abi, address)
        let supply = await contract.methods.totalSupply().call()
           .then((supply) => supply/Math.pow(10, 18))
-       let history = await getTokenPriceHistory(address, 28)
+       let history = await getTokenPriceHistory(address, 30)
        let [{ priceUSD }] = history
 
        array.push({
          weight: parseInt(asset.denorm)/parseInt(pool[0].totalWeight),
+         desired: parseInt(asset.desiredDenorm)/Math.pow(10, 18),
          balance: parseInt(asset.balance)/Math.pow(10, 18),
          history: renameKeys(replace, history).reverse(),
          marketcap: supply * priceUSD,
          name: name.toUpperCase(),
-         address: address,
+         address: asset.token.id,
          price: priceUSD,
          symbol: symbol,
        })

@@ -101,13 +101,13 @@ export default function Index(){
     let newStyle = clearSelections()
 
     if(option == 'burn') {
-      setComponent(<Burn market={name}/ >)
+      setComponent(<Burn metadata={metadata} market={name} / >)
       newStyle.burn = selected
     } else if(option == 'mint'){
-      setComponent(<Mint market={name}/>)
+      setComponent(<Mint metadata={metadata} market={name}/>)
       newStyle.mint = selected
     } else {
-      setComponent(<Trade market={name} />)
+      setComponent(<Trade metadata={metadata} market={name} />)
       newStyle.trade = selected
     }
 
@@ -116,13 +116,8 @@ export default function Index(){
    }
 
   const clearSelections = () => {
-    const noStyle = {
-      color: theme.palette.secondary.main,
-      background: theme.palette.primary.main
-    }
-
     return {
-      trade: noStyle, mint: noStyle, burn: noStyle
+      trade: {}, mint: {}, burn: {}
     }
   }
 

@@ -22,7 +22,7 @@ export default function Root(){
         <span style={{ 'font-size': '7.5em'}}> INDEXED </span>
         <p> A FINANCIAL MANAGEMENT PROTOCOL. </p>
         <Link to='/markets' onClick={stopRender}>
-          <ButtonPrimary> ENTER </ButtonPrimary>
+          <ButtonPrimary id='landing-button'> ENTER </ButtonPrimary>
         </Link>
       </div>
     </div>

@@ -177,7 +177,7 @@ const rows = [
 ];
 
 
-export default function InteractiveList() {
+export default function InteractiveList({ market, metadata }) {
   const [ component, setComponent ] = useState(<Multi />)
   const [ isSelected, setSelection ] = useState(true)
   const classes = useStyles()
@@ -198,12 +198,12 @@ export default function InteractiveList() {
           </TableRow>
         </TableHead>
         <TableBody>
-        {rows.map((row) => (
-          <TableRow key={row.name}>
+        {metadata.assets.map((row) => (
+          <TableRow key={row.symbol}>
             <TableCell component="th" scope="row">
-              {row.asset}
+              {row.symbol}
             </TableCell>
-            <TableCell align="right">{row.recieve}</TableCell>
+            <TableCell align="right">0</TableCell>
           </TableRow>
         ))}
         </TableBody>
@@ -227,7 +227,7 @@ export default function InteractiveList() {
       <Grid item>
         <RecieveInput label="DESTROY" variant='outlined'
           InputProps={{
-            endAdornment: 'CCI',
+            endAdornment: market,
             inputComponent: NumberFormat
           }}
         />
@@ -244,8 +244,8 @@ export default function InteractiveList() {
       </Grid>
       <Grid item>
         <div className={classes.market}>
-          <p> TOTAL VALUE: <span> $45,300.32 </span> </p>
-          <p> GAS: <span> $32.01 </span> </p>
+          <p> TOTAL VALUE: <span> </span> </p>
+          <p> GAS: <span> </span> </p>
         </div>
         <div className={classes.divider}/>
       </Grid>

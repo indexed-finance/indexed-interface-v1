@@ -147,9 +147,15 @@ function render() {
 
 	var normTime = (elaspedSeconds % maxTime) / maxTime;
   var targetElement = document.getElementById('landing-main')
+  var targetButton = document.getElementById('landing-button')
 
-  if(normTime > .225) targetElement.style.color = 'black'
-  if(normTime > .6) targetElement.style.color = 'white'
+  if(normTime > .225) {
+    targetElement.style.color = 'black'
+    targetButton.style.color = 'black'
+  } if(normTime > .6) {
+    targetElement.style.color = 'white'
+    targetButton.style.color = 'white'
+  }
 
 	uniforms.time.value = normTime;
 	uniforms.count.value = boucle;

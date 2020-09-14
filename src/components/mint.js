@@ -1,4 +1,4 @@
-import React, { useState} from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 
 import { makeStyles, styled } from '@material-ui/core/styles'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
@@ -10,12 +10,15 @@ import List from '@material-ui/core/List'
 import Grid from '@material-ui/core/Grid'
 
 import { tokenMetadata } from '../assets/constants/parameters'
+import { getTokenWeights } from '../lib/markets'
 
 import NumberFormat from '../utils/format'
 import ButtonPrimary from './buttons/primary'
 import Adornment from './inputs/adornment'
 import Input from './inputs/input'
 import Radio from './inputs/radio'
+
+import { store } from '../state'
 
 const OutputInput = styled(Input)({
   width: 250,
@@ -184,11 +187,13 @@ function generate(element) {
   )
 }
 
-export default function InteractiveList() {
+export default function InteractiveList({ market, metadata }) {
   const [ component, setComponent ] = useState(<Multi />)
   const [ isSelected, setSelection ] = useState(true)
   const [ dense, setDense ] = useState(false)
   const classes = useStyles()
+
+  let { state, dispatch } = useContext(store)
 
   const handleChange = (event) => {
     if(event.target.checked) setComponent(<Multi />)
@@ -198,100 +203,33 @@ export default function InteractiveList() {
 
   function Multi() {
     const classes = useStyles()
+
     return(
       <List className={classes.list} dense={dense}>
-        <ListItem className={classes.first}>
-          <ListItemAvatar className={classes.altWrapper}>
-            <Avatar className={classes.avatar} src={tokenMetadata['ETH'].image} />
-          </ListItemAvatar>
-          <ListItemText primary="ETH" />
-          <SecondaryItemText primary="BALANCE" secondary='100,23.12' />
-          <ListItemSecondaryAction classes={classes.input}>
-            <AmountInput variant='outlined' label='AMOUNT'/>
-          </ListItemSecondaryAction>
-        </ListItem>
-        <ListItem className={classes.item}>
-          <ListItemAvatar className={classes.wrapper}>
-            <Avatar className={classes.avatar} src={tokenMetadata['MKR'].image} />
-          </ListItemAvatar>
-          <ListItemText primary="MKR" />
-          <SecondaryItemText primary="BALANCE" secondary='10.343' />
-          <ListItemSecondaryAction classes={classes.input}>
-            <AmountInput variant='outlined' label='AMOUNT'/>
-          </ListItemSecondaryAction>
-        </ListItem>
-        <ListItem className={classes.item}>
-          <ListItemAvatar className={classes.wrapper}>
-            <Avatar className={classes.avatar} src={tokenMetadata['COMP'].image} />
-          </ListItemAvatar>
-          <ListItemText primary="COMP" />
-          <SecondaryItemText primary="BALANCE" secondary='0.53' />
-          <ListItemSecondaryAction classes={classes.input}>
-            <AmountInput variant='outlined' label='AMOUNT'/>
-          </ListItemSecondaryAction>
-        </ListItem>
-        <ListItem className={classes.item}>
-          <ListItemAvatar className={classes.wrapper}>
-            <Avatar className={classes.avatar} src={tokenMetadata['WBTC'].image} />
-          </ListItemAvatar>
-          <ListItemText primary="WBTC" />
-          <SecondaryItemText primary="BALANCE" secondary='1.32' />
-          <ListItemSecondaryAction classes={classes.input}>
-            <AmountInput variant='outlined' label='AMOUNT'/>
-          </ListItemSecondaryAction>
-          </ListItem>
+        {metadata.assets.map(token => (
           <ListItem className={classes.item}>
             <ListItemAvatar className={classes.wrapper}>
-              <Avatar className={classes.avatar} src={tokenMetadata['DAI'].image} />
+              <Avatar className={classes.avatar} src={tokenMetadata[token.symbol].image} />
             </ListItemAvatar>
-            <ListItemText primary="DAI" />
-            <SecondaryItemText primary="BALANCE" secondary='100,321.40' />
-            <ListItemSecondaryAction classes={classes.input}>
-              <AmountInput variant='outlined' label='AMOUNT'/>
-            </ListItemSecondaryAction>
-        </ListItem>
-        <ListItem className={classes.item}>
-          <ListItemAvatar className={classes.wrapper}>
-            <Avatar className={classes.avatar} src={tokenMetadata['AMPL'].image} />
-          </ListItemAvatar>
-          <ListItemText primary="AMPL" />
-          <SecondaryItemText primary="BALANCE" secondary='5,333' />
-          <ListItemSecondaryAction classes={classes.input}>
-            <AmountInput variant='outlined' label='AMOUNT'/>
-          </ListItemSecondaryAction>
-        </ListItem>
-        <ListItem className={classes.item}>
-          <ListItemAvatar className={classes.wrapper}>
-            <Avatar className={classes.avatar} src={tokenMetadata['SNX'].image} />
-          </ListItemAvatar>
-          <ListItemText primary="SNX" />
-          <SecondaryItemText primary="BALANCE" secondary='44,123.44' />
-          <ListItemSecondaryAction classes={classes.input}>
-            <AmountInput variant='outlined' label='AMOUNT'/>
-          </ListItemSecondaryAction>
-          </ListItem>
-          <ListItem className={classes.alt}>
-            <ListItemAvatar className={classes.wrapper}>
-              <Avatar className={classes.avatar} src={tokenMetadata['LINK'].image} />
-            </ListItemAvatar>
-            <ListItemText primary="LINK" />
-            <SecondaryItemText primary="BALANCE" secondary='10,232,123' />
+            <ListItemText primary={token.symbol} />
+            <SecondaryItemText primary="BALANCE" secondary='' />
             <SecondaryActionAlt>
               <AmountInput variant='outlined' label='AMOUNT'/>
             </SecondaryActionAlt>
           </ListItem>
+        ))}
       </List>
     )
   }
 
   function Single() {
     const classes = useStyles()
-    
+
     return(
       <div className={classes.single}>
         <OutputInput label="INPUT" variant='outlined'
           InputProps={{
-            endAdornment: <Adornment market='ETH'/>,
+            endAdornment: <Adornment market={market}/>,
             inputComponent: NumberFormat
           }}
         />
@@ -299,12 +237,16 @@ export default function InteractiveList() {
     )
   }
 
+  useEffect(() => {
+    console.log(metadata)
+  }, [ metadata ])
+
   return (
     <Grid container direction='column' alignItems='center' justify='space-around'>
       <Grid item>
         <RecieveInput label="RECIEVE" variant='outlined'
           InputProps={{
-            endAdornment: 'CCI',
+            endAdornment: market,
             inputComponent: NumberFormat
           }}
         />

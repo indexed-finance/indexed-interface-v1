@@ -2,6 +2,7 @@ import { getIPFSFile } from './ipfs';
 
 const subgraph_url = 'https://api.thegraph.com/subgraphs/name/d1ll0n/indexed-rinkeby';
 const uniswap_url = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2';
+const market_url = 'https://api.thegraph.com/subgraphs/name/blockrockettech/uniswap-v2-subgraph-rinkeby'
 
 const execRequest = (query, url = subgraph_url) => fetch(
   url,
@@ -79,6 +80,18 @@ const tokenDayDataQuery = (tokenAddress, days) => `
 }
 `
 
+const marketMetadataQuery = (pairAddress) => `
+{
+	pairs(where:{ id: "${pairAddress}" })
+  {
+    reserveETH
+    token0Price
+    token1Price
+    volumeUSD
+  }
+}
+`
+
 export async function getTokenCategories() {
   const { data: { categories } } = await execRequest(categoriesQuery());
   for (let category of categories) {
@@ -106,4 +119,12 @@ export async function getTokenPriceHistory(tokenAddress, days) {
     uniswap_url
   );
   return tokenDayDatas;
+}
+
+export async function getMarketMetadata(pairAddress) {
+  const { data: { pairs } } = await execRequest(
+    marketMetadataQuery(pairAddress.toLowerCase()),
+    market_url
+  );
+  return pairs[0];
 }
