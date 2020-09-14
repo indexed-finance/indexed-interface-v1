@@ -1,18 +1,18 @@
 import React, { Fragment, useState, useContext, useEffect } from 'react'
 
-import { useParams } from 'react-router-dom'
-import { makeStyles, styled } from '@material-ui/core/styles'
+import { makeStyles, useTheme, styled } from '@material-ui/core/styles'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
+import { useParams } from 'react-router-dom'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 
+import ButtonMarket from '../components/buttons/market'
 import Area from '../components/charts/area'
 import Trade from '../components/trade'
 import Mint from '../components/mint'
 import Burn from '../components/burn'
 import Tabs from '../components/tabs'
-
 
 import { getBalances } from '../lib/markets'
 import { store } from '../state'
@@ -21,23 +21,12 @@ const dummy = {
   symbol: ''
 }
 
-const MarketButton = styled(Button)({
-  root: {
-    background: 'white',
-    color: 'white',
-    border: 'solid 3px #999999 !important',
-    borderWidth: 3,
-    '&:hover, &:active': {
-      backgroundColor: 'rgba(112, 245, 112, 0.575) !important',
-      color: 'white !important',
-    },
-    '&:first-of-type, &:nth-of-type(2)': {
-      borderRight: 'none !important',
-    }
-  },
-});
+const selected = {
+  color: 'white',
+  background: '#666666'
+}
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(({ palette }) => ({
   header: {
     width: '65vw',
     minHeight: '10vh',
@@ -80,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
   market: {
     padding: '.125em 0em',
     width: '100%',
-    color: '#666666',
+    color: palette.secondary.main,
     '& p': {
       fontSize: 14,
       marginLeft: 12.5
@@ -100,34 +89,49 @@ export default function Index(){
   let { name } = useParams()
   name = name.toUpperCase()
 
+  const [ styles, setStyles ] = useState({ trade: selected, mint: {}, burn: {}})
   const [ component, setComponent ] = useState(<Trade market={name}/>)
   const [ chart, setChart ] = useState(<Fragment />)
   const [ metadata, setMetadata ] = useState({})
+  const [ execution, setExecution ] = useState('trade')
   const classes = useStyles()
+  const theme = useTheme()
 
   const changeExecution = (option) => {
-    var target = document.getElementsByClassName(option)[0]
-    clearSelections()
+    let newStyle = clearSelections()
 
-    if(option == 'burn') setComponent(<Burn market={name}/ >)
-    else if(option == 'mint') setComponent(<Mint market={name}/>)
-    else setComponent(<Trade market={name} />)
+    if(option == 'burn') {
+      setComponent(<Burn market={name}/ >)
+      newStyle.burn = selected
+    } else if(option == 'mint'){
+      setComponent(<Mint market={name}/>)
+      newStyle.mint = selected
+    } else {
+      setComponent(<Trade market={name} />)
+      newStyle.trade = selected
+    }
 
-    target.style.background = '#666666'
-    target.firstChild.style.color = 'white'
+    setStyles(newStyle)
+    setExecution(option)
    }
 
   const clearSelections = () => {
-    var supply = document.getElementsByClassName('trade')[0]
-    var borrow = document.getElementsByClassName('mint')[0]
-    var swap = document.getElementsByClassName('burn')[0]
+    const noStyle = {
+      color: theme.palette.secondary.main,
+      background: theme.palette.primary.main
+    }
 
-    supply.style.background = 'white'
-    supply.firstChild.style.color = 'black'
-    borrow.style.background = 'white'
-    borrow.firstChild.style.color = 'black'
-    swap.style.background = 'white'
-    swap.firstChild.style.color = 'black'
+    return {
+      trade: noStyle, mint: noStyle, burn: noStyle
+    }
+  }
+
+  const renderChart = (data) => {
+    return(
+      <ParentSize>
+        {({ width, height }) => <Area data={data} width={width} height={height} /> }
+      </ParentSize>
+    )
   }
 
   useEffect(() => {
@@ -148,13 +152,12 @@ export default function Index(){
     getMetadata()
   }, [ state.indexes, state.web3.injected ])
 
-  const renderChart = (data) => {
-    return(
-      <ParentSize>
-        {({ width, height }) => <Area data={data} width={width} height={height} /> }
-      </ParentSize>
-    )
-  }
+
+  useEffect(() => {
+    setStyles({
+      ...clearSelections(), [execution]: selected
+    })
+  }, [ theme ])
 
   return (
     <Fragment>
@@ -174,9 +177,9 @@ export default function Index(){
       <div className={classes.sidebar}>
         <header className={classes.selections}>
           <ButtonGroup disableElevation variant='outlined'>
-            <MarketButton style={{ color: 'white', background: '#666666' }} className='trade' onClick={() => changeExecution('trade')}> Trade </MarketButton>
-            <MarketButton className='mint' onClick={() => changeExecution('mint')}> Mint </MarketButton>
-            <MarketButton className='burn' onClick={() => changeExecution('burn')}> Burn </MarketButton>
+            <ButtonMarket style={styles.trade} className='trade' onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
+            <ButtonMarket style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
+            <ButtonMarket style={styles.burn} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
           </ButtonGroup>
         </header>
         <div className={classes.market}>

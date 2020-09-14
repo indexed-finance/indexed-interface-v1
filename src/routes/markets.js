@@ -1,9 +1,9 @@
 import React, { Fragment, useState, useEffect, useContext } from "react";
 
-import { Link } from 'react-router-dom'
-import { styled, useTheme } from '@material-ui/core/styles'
+import { styled, useTheme, makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
+import { Link } from 'react-router-dom'
 
 import ButtonPrimary from '../components/buttons/primary'
 import Container from '../components/container'
@@ -33,9 +33,41 @@ const Trigger = styled(ButtonPrimary)({
   float: 'right',
 })
 
+const useStyles = makeStyles(({ spacing, palette }) => ({
+  market: {
+    position: 'absolute',
+    paddingLeft: '1.75em',
+    '& h2': {
+      marginBottom: 0
+    },
+    '& h3': {
+      marginTop: 10,
+      color: '#999999',
+    }
+  },
+  options: {
+    listStyle: 'none',
+    color: '#999999',
+    paddingRight: 15,
+    width: '50%',
+    paddingTop: 5,
+    fontSize: 14,
+    float: 'right',
+    '& li': {
+      marginBottom: 7.5,
+      '& span': {
+        color: palette.secondary.main,
+        float: 'right'
+      }
+    }
+  }
+
+}))
+
 export default function Markets(){
   const [ market, setMarket ] = useState(dummy)
   const [ pie, setPie ] = useState(<Fragment />)
+  const classes = useStyles()
   const theme = useTheme()
 
   let { state, dispatch } = useContext(store)
@@ -73,14 +105,14 @@ export default function Markets(){
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item>
           <Canvas>
-            <div className='market-select'>
+            <div className={classes.market}>
               <h2> {market.name} [{market.symbol}] </h2>
               <h3> {market.price} </h3>
             </div>
             <Spline metadata={market} />
             <Wrapper>
               <Pie metadata={market} />
-              <ul className='market-options'>
+              <ul className={classes.options}>
                 <li>ADDRESS:
                   <span>
                     {market.address.substring(0, 6)}...{market.address.substring(38, 64)}

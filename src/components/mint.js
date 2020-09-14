@@ -197,6 +197,7 @@ export default function InteractiveList() {
   }
 
   function Multi() {
+    const classes = useStyles()
     return(
       <List className={classes.list} dense={dense}>
         <ListItem className={classes.first}>
@@ -284,6 +285,8 @@ export default function InteractiveList() {
   }
 
   function Single() {
+    const classes = useStyles()
+    
     return(
       <div className={classes.single}>
         <OutputInput label="INPUT" variant='outlined'

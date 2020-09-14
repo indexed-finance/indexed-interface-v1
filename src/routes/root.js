@@ -20,7 +20,7 @@ export default function Root(){
     <div id="canvas">
       <div id='landing-main' style={{ position: 'absolute', top: '35%', left: '40%'}}>
         <span style={{ 'font-size': '7.5em'}}> INDEXED </span>
-        <p> A FINANCIAL INDEX PROTOCOL. </p>
+        <p> A FINANCIAL MANAGEMENT PROTOCOL. </p>
         <Link to='/markets' onClick={stopRender}>
           <ButtonPrimary> ENTER </ButtonPrimary>
         </Link>

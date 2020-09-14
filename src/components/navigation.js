@@ -1,7 +1,6 @@
-import React, { Fragment, useContext, useState, useEffect} from 'react'
+import React, { Fragment, useContext, useState, useEffect, useRef } from 'react'
 
 import { Link } from 'react-router-dom'
-import makeBlockie from 'ethereum-blockies-base64'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -15,6 +14,7 @@ import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import NightsStayIcon from '@material-ui/icons/NightsStay';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
+import jazzicon from '@metamask/jazzicon'
 
 import { toChecksumAddress } from '../assets/constants/functions'
 import indexed from '../assets/images/indexed.png'
@@ -29,15 +29,15 @@ const useStyles = makeStyles(({ spacing, palette }) => ({
     fontFamily: 'San Fransico',
   },
   href: {
-    color: `${palette.primary} !important`,
+    color: `${palette.secondary.main} !important`,
     textDecoration: 'none !important',
   },
   appBar: {
     borderBottom: 'solid 3px #666666',
     boxShadow: 'none',
     padding: spacing(2,0),
-    background: palette.primary,
-    color: palette.secondary
+    background: palette.primary.main,
+    color: palette.secondary.main
   },
   menuButton: {
     marginRight: spacing(1)
@@ -78,28 +78,15 @@ const useStyles = makeStyles(({ spacing, palette }) => ({
       paddingLeft: '8px !important',
     }
   },
-  blockie: {
-    border: 'solid 3px #666666',
-    borderRadius: 25,
-    backgroundClip: 'content-box',
-    width: 35
-  },
   profile: {
-    paddingTop: 5,
-    float: 'left',
-    paddingRight: 10,
-    '& span': {
-      fontFamily: 'San Francisco',
-      float: 'left',
-      textAlign: 'left',
-      paddingRight: 25,
-      paddingTop: 10
-    }
+    float: 'right',
+    paddingTop: 2.5,
+    marginLeft: 15
   }
 }))
 
 
-export default function ButtonAppBar({ mode }) {
+export default function Navigation({ mode }) {
   const [ component, setComponent ] = useState(<Fragment/>)
   const [ menuItems, setItems ] = useState(<LoggedOut />)
   const [ anchorEl, setAnchorEl ] = useState(null)
@@ -134,17 +121,32 @@ export default function ButtonAppBar({ mode }) {
   }
 
   function Blockie({ address }) {
+    let classes = useStyles()
+
+    useEffect(() => {
+      let element = document.getElementById('blockie')
+      let parsed =  parseInt(address.slice(2, 10), 16)
+      let blockie = jazzicon(35, parsed)
+
+      blockie.style.float = 'right'
+      blockie.style.borderRadius = '25px'
+      blockie.style.border = '3px solid #666666'
+
+      element.appendChild(blockie)
+    }, [])
+
     return(
       <div className={classes.profile}>
-        <span>{address.substring(0, 6)}...{address.substring(38, 64)}</span>
         <a target='_blank' href={`https://etherscan.io/address/${address}`}>
-          <img src={makeBlockie(address)} className={classes.blockie} />
+          <div id="blockie" />
         </a>
       </div>
     )
   }
 
   function LoggedOut() {
+    const classes = useStyles()
+
     return(
       <Fragment>
         <Link className={classes.href} onClick={connectWeb3}>
@@ -156,14 +158,13 @@ export default function ButtonAppBar({ mode }) {
         <Link className={classes.href} to='/markets' onClick={handleClose}>
           <MenuItem>MARKETS</MenuItem>
         </Link>
-        <Link className={classes.href} to='/demo' onClick={handleClose}>
-          <MenuItem>DEMO</MenuItem>
-        </Link>
       </Fragment>
     )
   }
 
   function LoggedIn() {
+    const classes = useStyles()
+
     return(
       <Fragment>
         <Link className={classes.href} to='/categories' onClick={handleClose}>
@@ -172,16 +173,9 @@ export default function ButtonAppBar({ mode }) {
         <Link className={classes.href} to='/markets' onClick={handleClose}>
           <MenuItem>MARKETS</MenuItem>
         </Link>
-        <Link className={classes.href} to='/demo' onClick={handleClose}>
-          <MenuItem>DEMO</MenuItem>
-        </Link>
       </Fragment>
     )
   }
-
-  useEffect(() => {
-    let { color, background } = state
-  }, [ state.dark ])
 
   return (
     <div className={classes.root}>
@@ -198,21 +192,22 @@ export default function ButtonAppBar({ mode }) {
               <Search selections={state.indexes} />
             </Grid>
             <Grid item>
-              <IconButton onClick={() => state.changeTheme(mode)}>
-                {mode && (<Brightness4Icon />)}{!mode && (<NightsStayIcon />)}
-              </IconButton>
-              {component}
-              <IconButton onClick={handleClick} className={classes.menuButton}>
-                <MenuIcon color='secondary'/>
-              </IconButton>
               <Menu
                 anchorEl={anchorEl}
                 keepMounted
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-               {menuItems}
-             </Menu>
+                {menuItems}
+              </Menu>
+              <IconButton onClick={handleClick} className={classes.menuButton}>
+                <MenuIcon color='secondary'/>
+              </IconButton>
+              <IconButton onClick={() => state.changeTheme(mode)}>
+                {mode && (<Brightness4Icon color='secondary' />)}
+                {!mode && (<NightsStayIcon color='secondary' />)}
+              </IconButton>
+             {component}
             </Grid>
           </Grid>
         </Toolbar>

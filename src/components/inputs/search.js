@@ -14,10 +14,10 @@ const Adornment = styled(InputAdornment)({
 })
 
 const AutoFill = styled(Autocomplete)({
-  marginLeft: 0,
   marginRight: 100,
   paddingLeft: 0,
-  paddingRight: 0
+  paddingRight: 0,
+  marginLeft: 0
 })
 
 const Field = styled(TextField)({
@@ -32,7 +32,11 @@ const Field = styled(TextField)({
   },
 })
 
-const useStyles = makeStyles(({ spacing }) => ({
+const useStyles = makeStyles(({ spacing, palette }) => ({
+  href: {
+    color: `${palette.secondary.main} !important`,
+    textDecoration: 'none !important',
+  },
   search: {
     '&:hover fieldset': {
       borderColor: '#666666 !important',
@@ -41,7 +45,7 @@ const useStyles = makeStyles(({ spacing }) => ({
       color: 'white',
     },
     '& label.Mui-focused': {
-      color: 'white',
+      color: palette.secondary.main,
     },
     '& input:valid + fieldset': {
       borderWidth: 2,
@@ -55,15 +59,11 @@ const useStyles = makeStyles(({ spacing }) => ({
       paddingRight: '5px !important',
       paddingLeft: '8px !important',
     }
-  },
-  href: {
-    color: '#333333 !important',
-    textDecoration: 'none !important',
-  },
+  }
 }))
 
-export default function FreeSoloCreateOption({ selections }) {
-  const [ data, setData ] = useState(subsitute)
+export default function Search({ selections }) {
+  const [ data, setData ] = useState([{ name: 'NA', symbol: 'NA' }])
   const [ value, setValue ] = useState(null)
   const classes = useStyles()
 
@@ -130,7 +130,7 @@ export default function FreeSoloCreateOption({ selections }) {
         InputProps={{
           ...params.InputProps,
           startAdornment:
-          <Adornment position="start">
+            <Adornment position="start">
               <SearchIcon color='secondary' />
             </Adornment>,
           }}
@@ -139,7 +139,3 @@ export default function FreeSoloCreateOption({ selections }) {
     />
   )
 }
-
-const subsitute = [
-  { name: 'NA', symbol: 'NA' },
-];
