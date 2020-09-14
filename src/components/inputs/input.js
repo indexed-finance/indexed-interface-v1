@@ -25,7 +25,7 @@ const Input = styled(TextField)({
     top: -5,
   },
   '&:hover fieldset': {
-   borderColor: '#999999 !important',
+   borderColor: '#999999',
  },
  '& label.Mui-focused': {
    color: '#666666',
@@ -47,7 +47,10 @@ const Input = styled(TextField)({
  },
  '& input:active + fieldset': {
    color: '#999999'
-  }
+ },
+ '& .MuiOutlinedInput-notchedOutline': {
+   border: '2px solid #666666'
+ }
 })
 
 export default Input

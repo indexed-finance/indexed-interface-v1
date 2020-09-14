@@ -10,8 +10,11 @@ import List from '@material-ui/core/List'
 import Grid from '@material-ui/core/Grid'
 
 import { tokenMetadata } from '../assets/constants/parameters'
+import { toContract } from '../lib/util/contracts'
 import { getTokenWeights } from '../lib/markets'
 
+import BPool from '../assets/constants/abi/BPool.json'
+import IERC20 from '../assets/constants/abi/IERC20.json'
 import NumberFormat from '../utils/format'
 import ButtonPrimary from './buttons/primary'
 import ButtonTransaction from './buttons/transaction'
@@ -63,7 +66,8 @@ const Trigger = styled(ButtonPrimary)({
 
 const SecondaryActionAlt = styled(ListItemSecondaryAction)({
   top: '50%',
-  maringLeft: 25
+  maringLeft: 25,
+  cursor: 'pointer'
 })
 
 const SecondaryItemText =  styled(ListItemText)({
@@ -196,10 +200,35 @@ function generate(element) {
 export default function InteractiveList({ market, metadata }) {
   const [ component, setComponent ] = useState(<span />)
   const [ isSelected, setSelection ] = useState(true)
+  const [ focus, setFocus ] = useState(null)
   const [ dense, setDense ] = useState(false)
+  const [ inputs, setInputs ] = useState({})
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
+
+  const approveTokens = async() => {
+    let { address } = state.balances[focus]
+
+    let contract = toContract(state.web3.injected, IERC20.abi, address)
+    let amount = convertNumber(parseFloat(inputs[focus]))
+
+    await contract.methods
+    .approve(metadata.address, amount).send({
+      from: state.account
+    }).on('confirmation', (conf, receipt) => {
+      setInputState(focus, true)
+    })
+  }
+
+  const getAllowance = async(address) => {
+    let contract = toContract(state.web3.injected, IERC20.abi, address)
+
+    let allowance = await contract.methods
+    .allowance(state.account, metadata.address).call()
+
+    return allowance/Math.pow(10,18)
+  }
 
   const handleChange = (event) => {
     if(event.target.checked) setComponent(<Multi />)
@@ -207,22 +236,62 @@ export default function InteractiveList({ market, metadata }) {
     setSelection(event.target.checked)
   }
 
+  const handleInput = (event) => {
+    let { value, name } = event.target
+
+    setInputs({ ...inputs, [name]: value })
+    setFocus(name)
+  }
+
+  const handleBalance  = (symbol) => {
+    let { amount } = state.balances[symbol]
+    let element = document.getElementsByName(symbol)[0]
+
+    element.value = amount
+
+    setInputs({ ...inputs, [symbol]: amount })
+    setFocus(symbol)
+  }
+
+  const convertNumber = (amount) => {
+    let { toHex, toBN } = state.web3.rinkeby.utils
+
+    if(parseInt(amount) == amount) {
+      return toHex(toBN(amount).mul(toBN(1e18)))
+    } else {
+      return toHex(toBN(amount * Math.pow(10, 18)))
+    }
+  }
+
   function Multi() {
     const classes = useStyles()
+    let { balances } = state
 
     return(
       <List className={classes.list} dense={dense}>
         {metadata.assets.map(token => (
           <ListItem className={classes.item}>
             <ListItemAvatar className={classes.wrapper}>
-              <Avatar className={classes.avatar} src={tokenMetadata[token.symbol].image} />
+              <Avatar className={classes.avatar}
+                src={tokenMetadata[token.symbol].image}
+               />
             </ListItemAvatar>
             <ListItemText primary={token.symbol} />
-            <SecondaryItemText primary="BALANCE" secondary={state.balances[token.symbol].amount} />
+            <SecondaryItemText primary="BALANCE"
+              secondary={balances[token.symbol].amount}
+              onClick={() => handleBalance(token.symbol)}
+            />
             <SecondaryActionAlt>
               <AmountInput variant='outlined' label='AMOUNT'
+                InputLabelProps={{ shrink: true }}
+                value={inputs[token.symbol]}
+                onChange={handleInput}
+                name={token.symbol}
                 InputProps={{
-                  endAdornment: <ApproveButton> APPROVE </ApproveButton>
+                  endAdornment:
+                   <ApproveButton onClick={approveTokens}>
+                      APPROVE
+                   </ApproveButton>
                 }}
                />
             </SecondaryActionAlt>
@@ -246,6 +315,33 @@ export default function InteractiveList({ market, metadata }) {
       </div>
     )
   }
+
+  const setInputState = (name, bool) => {
+    let element = document.getElementsByName(name)[0]
+    let { nextSibling } = element.nextSibling
+
+    if(bool) nextSibling.style.borderColor = '#009966'
+    else nextSibling.style.borderColor = 'red'
+  }
+
+  useEffect(() => {
+    const verifyAllowance = async() => {
+      if(state.web3.injected){
+        let { address } = state.balances[focus]
+        let allowance = await getAllowance(address)
+        let amount = inputs[focus]
+
+        console.log(inputs)
+
+        if(allowance < parseInt(amount)){
+          setInputState(focus, false)
+        } else {
+          setInputState(focus, true)
+        }
+      }
+    }
+    verifyAllowance()
+  }, [ inputs ])
 
   useEffect(() => {
     setComponent(<Multi />)

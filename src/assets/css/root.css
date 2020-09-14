@@ -53,7 +53,7 @@ h4 {
 }
 
 .MuiButton-outlined, .MuiOutlinedInput-notchedOutline {
-  border: 2px solid #666666 !important;
+  border: 2px solid #666666;
 }
 
 .MuiInput-underline:before, .MuiInput-underline:active:before {
