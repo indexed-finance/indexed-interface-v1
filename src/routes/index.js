@@ -17,6 +17,8 @@ import Tabs from '../components/tabs'
 import { getBalances } from '../lib/markets'
 import { store } from '../state'
 
+const WETH = '0x554dfe146305944e3d83ef802270b640a43eed44'
+
 const dummy = {
   symbol: ''
 }
@@ -138,8 +140,9 @@ export default function Index(){
         setMetadata(indexes[name])
 
         if(web3.injected){
-          let tokens = indexes[name].assets.map(data => data.address)
-          let balances = await getBalances(web3.mainnet, account, tokens, {})
+          let balances = await getBalances(
+            web3.injected, account, indexes[name].assets, {}
+          )
           await dispatch({ type: 'BAL', payload: { balances } })
         }
       }

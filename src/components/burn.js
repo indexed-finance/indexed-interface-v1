@@ -99,7 +99,7 @@ const useStyles = makeStyles((theme) => ({
     flex: '1 1 auto',
     width: '25.5em',
     marginLeft: -32.5,
-    height: 200,
+    height: 175,
     margin: 0,
     padding: 0
   },

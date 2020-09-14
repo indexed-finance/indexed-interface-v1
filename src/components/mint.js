@@ -14,6 +14,7 @@ import { getTokenWeights } from '../lib/markets'
 
 import NumberFormat from '../utils/format'
 import ButtonPrimary from './buttons/primary'
+import ButtonTransaction from './buttons/transaction'
 import Adornment from './inputs/adornment'
 import Input from './inputs/input'
 import Radio from './inputs/radio'
@@ -26,8 +27,12 @@ const OutputInput = styled(Input)({
   marginTop: 75
 })
 
+const ApproveButton = styled(ButtonTransaction)({
+  fontSize: 10
+})
+
 const AmountInput = styled(Input)({
-  width: 100,
+  width: 150,
   '& label': {
     fontSize: 12
   },
@@ -57,12 +62,13 @@ const Trigger = styled(ButtonPrimary)({
 })
 
 const SecondaryActionAlt = styled(ListItemSecondaryAction)({
-  top: '70%'
+  top: '50%',
+  maringLeft: 25
 })
 
 const SecondaryItemText =  styled(ListItemText)({
   margin: 0,
-  marginRight: 50,
+  marginRight: '35%',
   paddingLeft: 0,
   '& span': {
     fontSize: 12
@@ -188,7 +194,7 @@ function generate(element) {
 }
 
 export default function InteractiveList({ market, metadata }) {
-  const [ component, setComponent ] = useState(<Multi />)
+  const [ component, setComponent ] = useState(<span />)
   const [ isSelected, setSelection ] = useState(true)
   const [ dense, setDense ] = useState(false)
   const classes = useStyles()
@@ -212,9 +218,13 @@ export default function InteractiveList({ market, metadata }) {
               <Avatar className={classes.avatar} src={tokenMetadata[token.symbol].image} />
             </ListItemAvatar>
             <ListItemText primary={token.symbol} />
-            <SecondaryItemText primary="BALANCE" secondary='' />
+            <SecondaryItemText primary="BALANCE" secondary={state.balances[token.symbol].amount} />
             <SecondaryActionAlt>
-              <AmountInput variant='outlined' label='AMOUNT'/>
+              <AmountInput variant='outlined' label='AMOUNT'
+                InputProps={{
+                  endAdornment: <ApproveButton> APPROVE </ApproveButton>
+                }}
+               />
             </SecondaryActionAlt>
           </ListItem>
         ))}
@@ -238,8 +248,8 @@ export default function InteractiveList({ market, metadata }) {
   }
 
   useEffect(() => {
-    console.log(metadata)
-  }, [ metadata ])
+    setComponent(<Multi />)
+  }, [ state.balances ])
 
   return (
     <Grid container direction='column' alignItems='center' justify='space-around'>
@@ -263,8 +273,7 @@ export default function InteractiveList({ market, metadata }) {
       <Grid item>
         <div className={classes.altDivider2} />
         <div className={classes.market}>
-          <p> PRICE: <span> $5.31 </span> </p>
-          <p> GAS: <span> $0.21 </span> </p>
+          <p> GAS: <span> </span> </p>
         </div>
         <div className={classes.divider} />
       </Grid>

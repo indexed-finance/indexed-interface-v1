@@ -23,11 +23,17 @@ export async function getPair(web3, tokenAddress){
 }
 
 export async function getBalances(web3, address, array, map){
-  for(let token in array){
-    let contract = toContract(web3, IERC20.abi, array[token])
+  let tokens = array.map(values => { return { ...values }})
+  tokens.push({ symbol: 'ETH', address: WETH })
+
+  for(let token in tokens){
+    let contract = toContract(web3, IERC20.abi, tokens[token].address)
     let balance = await contract.methods.balanceOf(address).call()
 
-    map[array[token]] = balance
+    map[tokens[token].symbol] = {
+      amount: (balance/Math.pow(10,18)).toFixed(2),
+      address: tokens[token].address,
+    }
   }
   return map
 }

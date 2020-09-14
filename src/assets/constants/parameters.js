@@ -29,7 +29,19 @@ export const initialState = {
   categories: {},
   account: null,
   network: null,
-  indexes: {}
+  balances: {
+    'ETH': { amount: 0, address: null },
+    'YFI': { amount: 0, address: null },
+    'COMP': { amount: 0, address: null },
+    'DAI': { amount: 0, address: null },
+    'USDC': { amount: 0, address: null },
+    'USDT': { amount: 0, address: null },
+    'YFI': { amount: 0, address: null },
+    'MKR': { amount: 0, address: null },
+    'LINK': { amount: 0, address: null },
+    'BUSD': { amount: 0, address: null }
+  },
+  indexes: {},
 }
 
 export const tokenMetadata = {

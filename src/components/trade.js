@@ -59,22 +59,24 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function Trade({ market }) {
+export default function Trade({ market, metadata }) {
   const [ contracts, setContracts ] = useState({ router: '', pair: '', token: ''})
   const [ execution, setExecution ] = useState({ f: () => {}, label: 'SWAP' })
+  const [ output, setOutput ] = useState({ amount: null, market: market })
+  const [ input, setInput ] = useState({ amount: null, market: 'ETH' })
   const [ prices, setPrices ] = useState({ input: 0, output: 0})
-  const [ output, setOutput ] = useState(null)
-  const [ input, setInput ] = useState(null)
+  const [ balance, setBalance ] = useState(0)
   const classes = useStyles()
 
   let { dispatch, state } = useContext(store)
 
   const handleChange = (event) => {
-    let { name, value } = event.target
+    let { amount } = event.target.value
 
-    if(name == 'input'){
-      setInput(event.target.value)
-      setOutput(event.target.value * prices.input)
+    if(event.target.name == 'input'){
+      setInput({ ...input, amount })
+      amount = amount * prices.input
+      setOutput({ ...output, amount })
     }
   }
 
@@ -87,8 +89,11 @@ export default function Trade({ market }) {
     let amount1 = convertNumber(output)
 
     await contracts.router.methods.swapTokensForExactTokens(
-      amount1, amount0, [ address, WETH ],
-      state.account, recentBlock.timestamp+3600
+      amount1,
+      amount0,
+      [ address, WETH ],
+      state.account,
+      recentBlock.timestamp + 3600
     ).send({
       from: state.account
     })
@@ -126,6 +131,10 @@ export default function Trade({ market }) {
     } else {
       return toHex(toBN(amount * Math.pow(10, 18)))
     }
+  }
+
+  const parseNumber = (amount) => {
+    return parseFloat(amount/Math.pow(10, 18)).toFixed(2)
   }
 
   useEffect(() => {
@@ -172,7 +181,7 @@ export default function Trade({ market }) {
 
   useEffect(() => {
     const checkAllowance = async() => {
-      if(state.web3.injected){
+      if(contracts.router.options != undefined){
         let allowance = await getAllowance()
 
         if(allowance < input){
@@ -189,6 +198,13 @@ export default function Trade({ market }) {
     checkAllowance()
   }, [ input ])
 
+
+  useEffect(() => {
+    if(state.web3.injected){
+      setBalance(state.balances[input.market].amount)
+    }
+  }, [ state.balances, input.market ])
+
   useEffect(() => {
     setExecution({
       f: swapTokens, label: 'SWAP'
@@ -199,12 +215,12 @@ export default function Trade({ market }) {
     <Grid container direction='column' alignItems='center' justify='space-around'>
       <Grid item>
         <Input className={classes.inputs} label="AMOUNT" variant='outlined'
-          helperText="BALANCE: 0"
+          helperText={`BALANCE: ${balance}`}
           onChange={handleChange}
           name="input"
-          value={input}
+          value={input.amount}
           InputProps={{
-            endAdornment: <Adornment market='ETH'/>,
+            endAdornment: <Adornment market={input.market}/>,
             inputComponent: NumberFormat
           }}
         />
@@ -218,20 +234,19 @@ export default function Trade({ market }) {
         <Input className={classes.altInputs} label="RECIEVE" variant='outlined'
           helperText={`1 ${market} = ${prices.input.toFixed(3)} ETH`}
           onChange={handleChange}
-          value={output}
+          value={output.amount}
           name="output"
           InputProps={{
             inputComponent: NumberFormat,
-            endAdornment: market
+            endAdornment: output.market
           }}
         />
       </Grid>
       <Grid item>
           <div className={classes.divider} />
           <div className={classes.market}>
-            <p> ROUTE: <span> </span> </p>
-            <p> PRICE: <span> </span> </p>
-            <p> PRICE EFFECT: <span>  </span> </p>
+            <p> ROUTE: <span> ETH {'->'} {market}</span> </p>
+            <p> FEE: <span> </span> </p>
             <p> GAS: <span> </span> </p>
           </div>
           <div className={classes.divider} />
