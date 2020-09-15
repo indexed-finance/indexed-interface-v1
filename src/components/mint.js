@@ -11,7 +11,7 @@ import Grid from '@material-ui/core/Grid'
 
 import { tokenMetadata } from '../assets/constants/parameters'
 import { toContract } from '../lib/util/contracts'
-import { getTokenWeights } from '../lib/markets'
+import { getConversionRate, getTokens } from '../lib/markets'
 
 import BPool from '../assets/constants/abi/BPool.json'
 import IERC20 from '../assets/constants/abi/IERC20.json'
@@ -209,9 +209,20 @@ export default function InteractiveList({ market, metadata }) {
   let { state, dispatch } = useContext(store)
 
   const mintTokens = async() => {
+    let rates = await getConversionRate(state.web3.injected, amount, metadata.address)
     let contract = toContract(state.web3.injected, BPool.abi, metadata.address)
-    let amounts = metadata.assets.map(t => convertNumber(getInputValue(t.symbol)))
+    let tokens = await getTokens(state.web3.injected, metadata.address)
     let output = convertNumber(parseFloat(amount))
+    let amounts = []
+
+    console.log(`CONTRACT: ${tokens.map(t => t.symbol)}`)
+    console.log(`SUBGRAPH: ${metadata.assets.map(t => t.symbol)}`)
+
+    for(let x in tokens){
+      if(tokens[x].symbol == rates[x].symbol){
+        amounts.push('0x' + rates[x].amount)
+      }
+    }
 
     await contract.methods.joinPool(output, amounts).send({
       from: state.account
@@ -342,7 +353,7 @@ export default function InteractiveList({ market, metadata }) {
 
   useEffect(() => {
     const verifyAllowance = async() => {
-      if(state.web3.injected){
+      if(state.balances[focus] != undefined){
         let { address } = state.balances[focus]
         let allowance = await getAllowance(address)
         let amount = getInputValue(focus)
@@ -356,6 +367,25 @@ export default function InteractiveList({ market, metadata }) {
     }
     verifyAllowance()
   }, [ focus ])
+
+  useEffect(() => {
+    const getRate = async() => {
+      if(amount != null){
+        let { web3 } = state
+        let { address } = metadata
+        let rates = await getConversionRate(web3.rinkeby, amount, address)
+
+        for(let token in rates){
+          let { symbol, amount } = rates[token]
+          let element = document.getElementsByName(symbol)[0]
+
+          element.value = parseFloat(amount)/Math.pow(10, 18)
+          setFocus(symbol)
+        }
+      }
+    }
+    getRate()
+  }, [ amount ])
 
   useEffect(() => {
     setComponent(<Multi />)
