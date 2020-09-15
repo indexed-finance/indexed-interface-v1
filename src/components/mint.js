@@ -202,16 +202,26 @@ export default function InteractiveList({ market, metadata }) {
   const [ isSelected, setSelection ] = useState(true)
   const [ focus, setFocus ] = useState(null)
   const [ dense, setDense ] = useState(false)
-  const [ inputs, setInputs ] = useState({})
+  const [ amount, setAmount ] = useState(null)
+
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
 
-  const approveTokens = async() => {
-    let { address } = state.balances[focus]
+  const mintTokens = async() => {
+    let contract = toContract(state.web3.injected, BPool.abi, metadata.address)
+    let amounts = metadata.assets.map(t => convertNumber(getInputValue(t.symbol)))
+    let output = convertNumber(parseFloat(amount))
 
+    await contract.methods.joinPool(output, amounts).send({
+      from: state.account
+    })
+  }
+
+  const approveTokens = async(symbol) => {
+    let { address } = state.balances[symbol]
     let contract = toContract(state.web3.injected, IERC20.abi, address)
-    let amount = convertNumber(parseFloat(inputs[focus]))
+    let amount = convertNumber(getInputValue(symbol))
 
     await contract.methods
     .approve(metadata.address, amount).send({
@@ -237,10 +247,16 @@ export default function InteractiveList({ market, metadata }) {
   }
 
   const handleInput = (event) => {
-    let { value, name } = event.target
+    setFocus(event.target.name)
+  }
 
-    setInputs({ ...inputs, [name]: value })
-    setFocus(name)
+  const handleAmount = (event) => {
+    setAmount(event.target.value)
+  }
+
+  const getInputValue = (symbol) => {
+    let element = document.getElementsByName(symbol)[0]
+    return parseFloat(element.value)
   }
 
   const handleBalance  = (symbol) => {
@@ -249,7 +265,6 @@ export default function InteractiveList({ market, metadata }) {
 
     element.value = amount
 
-    setInputs({ ...inputs, [symbol]: amount })
     setFocus(symbol)
   }
 
@@ -282,14 +297,15 @@ export default function InteractiveList({ market, metadata }) {
               onClick={() => handleBalance(token.symbol)}
             />
             <SecondaryActionAlt>
-              <AmountInput variant='outlined' label='AMOUNT'
+              <AmountInput variant='outlined' label='AMOUNT' type='number'
                 InputLabelProps={{ shrink: true }}
-                value={inputs[token.symbol]}
                 onChange={handleInput}
                 name={token.symbol}
                 InputProps={{
                   endAdornment:
-                   <ApproveButton onClick={approveTokens}>
+                   <ApproveButton onClick={
+                     () => approveTokens(token.symbol)
+                   }>
                       APPROVE
                    </ApproveButton>
                 }}
@@ -306,7 +322,7 @@ export default function InteractiveList({ market, metadata }) {
 
     return(
       <div className={classes.single}>
-        <OutputInput label="INPUT" variant='outlined'
+        <OutputInput label="INPUT" variant='outlined' type='number'
           InputProps={{
             endAdornment: <Adornment market={market}/>,
             inputComponent: NumberFormat
@@ -329,11 +345,9 @@ export default function InteractiveList({ market, metadata }) {
       if(state.web3.injected){
         let { address } = state.balances[focus]
         let allowance = await getAllowance(address)
-        let amount = inputs[focus]
+        let amount = getInputValue(focus)
 
-        console.log(inputs)
-
-        if(allowance < parseInt(amount)){
+        if(allowance < parseFloat(amount)){
           setInputState(focus, false)
         } else {
           setInputState(focus, true)
@@ -341,7 +355,7 @@ export default function InteractiveList({ market, metadata }) {
       }
     }
     verifyAllowance()
-  }, [ inputs ])
+  }, [ focus ])
 
   useEffect(() => {
     setComponent(<Multi />)
@@ -350,7 +364,9 @@ export default function InteractiveList({ market, metadata }) {
   return (
     <Grid container direction='column' alignItems='center' justify='space-around'>
       <Grid item>
-        <RecieveInput label="RECIEVE" variant='outlined'
+        <RecieveInput label="RECIEVE" variant='outlined' type='number'
+          onChange={handleAmount}
+          value={amount}
           InputProps={{
             endAdornment: market,
             inputComponent: NumberFormat
@@ -374,7 +390,7 @@ export default function InteractiveList({ market, metadata }) {
         <div className={classes.divider} />
       </Grid>
       <Grid item>
-        <Trigger> APPROVE </Trigger>
+        <Trigger onClick={mintTokens}> APPROVE </Trigger>
       </Grid>
     </Grid>
   );
