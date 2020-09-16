@@ -9,7 +9,7 @@ import TableRow from '@material-ui/core/TableRow'
 import Table from '@material-ui/core/Table'
 import Grid from '@material-ui/core/Grid'
 import { toContract } from '../lib/util/contracts'
-import { getRate, decToWeiHex, getTokens } from '../lib/markets'
+import { getRate, decToWeiHex, getBalances } from '../lib/markets'
 import { store } from '../state'
 
 import { tokenImages } from '../assets/constants/parameters'
@@ -190,18 +190,26 @@ export default function InteractiveList({ market, metadata }) {
   const [ balance, setBalance ] = useState(0)
   const classes = useStyles()
 
-  let { state } = useContext(store)
+  let { state, dispatch } = useContext(store)
 
   const burnTokens = async(input) => {
-    let amounts = await getRate(state.web3.injected, input, metadata.address)
-    let contract = toContract(state.web3.injected, BPool.abi, metadata.address)
-    let output = decToWeiHex(state.web3.injected, input)
+    let { web3, account } = state
+    let { address, assets } = metadata
+    let amounts = await getRate(web3.injected, input, address)
+    let contract = toContract(web3.injected, BPool.abi, address)
+    let output = decToWeiHex(web3.injected, input)
 
     await contract.methods.exitPool(
       output,
       amounts.map(t => t.amount)
     ).send({
-      from: state.account
+      from: account
+    }).on('confirmation', async(conf, receipt) => {
+      let balances = await getBalances(web3.injected, account, assets, state.balances)
+      let tokenBalance = await getBalance()
+
+      await dispatch({ type: 'BAL', payload: { balances } })
+      setBalance(tokenBalance)
     })
   }
 
@@ -340,8 +348,10 @@ export default function InteractiveList({ market, metadata }) {
 
   useEffect(() => {
     const pullBalance = async() => {
-      let balance = await getBalance()
-      setBalance(balance)
+      if(state.web3.injected) {
+        let balance = await getBalance()
+        setBalance(balance)
+      }
     }
     pullBalance()
   }, [ state.web3.injected ])
@@ -372,7 +382,6 @@ export default function InteractiveList({ market, metadata }) {
       <Grid item>
         <div className={classes.market}>
           <p> TOTAL VALUE: <span> </span> </p>
-          <p> GAS: <span> </span> </p>
         </div>
         <div className={classes.divider}/>
       </Grid>

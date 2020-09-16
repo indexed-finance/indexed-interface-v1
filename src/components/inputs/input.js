@@ -32,7 +32,7 @@ const Input = styled(TextField)({
    top: 2.5,
  },
  '& input:valid + fieldset': {
-   borderColor: '#999999',
+   borderColor: '#666666',
    borderWidth: 2,
  },
  '& input:invalid + fieldset': {

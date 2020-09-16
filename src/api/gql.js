@@ -92,6 +92,21 @@ const marketMetadataQuery = (pairAddress) => `
 }
 `
 
+const pairQuery = (pairAddress) => `
+{
+	swaps(where:{ pair: "${pairAddress}"}) {
+    transaction {
+      id
+    }
+    amount0In
+    amount1In
+    amount0Out
+    amount1Out
+    timestamp
+  }
+}
+`
+
 export async function getTokenCategories() {
   const { data: { categories } } = await execRequest(categoriesQuery());
   for (let category of categories) {
@@ -127,4 +142,13 @@ export async function getMarketMetadata(pairAddress) {
     market_url
   );
   return pairs[0];
+}
+
+export async function getMarketTrades(pairAddress) {
+  console.log(pairAddress.toLowerCase())
+  const { data: { swaps } } = await execRequest(
+    pairQuery(pairAddress.toLowerCase()),
+    market_url
+  );
+  return swaps;
 }

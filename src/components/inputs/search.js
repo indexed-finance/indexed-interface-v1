@@ -23,6 +23,7 @@ const AutoFill = styled(Autocomplete)({
 const Field = styled(TextField)({
   '& fieldset': {
    background: 'rgba(0, 0, 0, 0.075)',
+   borderColor: '#666666',
    borderWidth: 2,
    borderRadius: 10,
   },

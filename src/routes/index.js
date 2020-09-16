@@ -188,7 +188,7 @@ export default function Index(){
         {chart}
       </div>
       <div className={classes.metrics}>
-        <Tabs data={metadata.assets}/>
+        <Tabs data={metadata}/>
       </div>
     </Fragment>
   )

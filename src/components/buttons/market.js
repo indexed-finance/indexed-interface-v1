@@ -8,19 +8,15 @@ export default function ButtonMarket(props){
   let { primary, secondary } = theme.palette
 
   const Restyled = styled(Button)({
-    root: {
-      background: primary.main,
-      color: secondary.main,
-      border: 'solid 3px #999999 !important',
-      borderWidth: 3,
-      '&:first-of-type, &:nth-of-type(2)': {
-        borderRight: 'none !important',
-      },
-      '&:hover, &:active': {
-        backgroundColor: 'rgba(112, 245, 112, 0.575) !important',
-        color: 'white !important',
-      },
-    }
+    background: primary.main,
+    color: secondary.main,
+    border: 'solid 2.5px #666666',
+    '&:first-of-type, &:nth-of-type(2)': {
+      borderRight: 'none',
+    },
+    '&:hover, &:active': {
+      fontWeight: 'bold',
+    },
   })
 
   return <Restyled {...props} />

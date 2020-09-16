@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useState, useEffect, useContext } from 'react'
 import PropTypes from 'prop-types'
 
 import { makeStyles, styled } from '@material-ui/core/styles'
@@ -13,22 +13,22 @@ import TransactionButton from './buttons/transaction'
 import Weights from './weights'
 import List from './list'
 
+import { getPair } from '../lib/markets'
+import { getMarketTrades } from '../api/gql'
+import { store } from '../state'
+
 import { marketColumns, rebalanceColumns } from '../assets/constants/parameters'
 
 const Exit = styled(ExitIcon)({
   fontSize: '1rem'
 })
 
-function createData(time, input, output, transaction, fee) {
-  return { time, input, output, transaction, fee }
-}
-
-function createAlt(time, type, price, amount, transaction) {
-  return { time, type, price, amount, transaction }
-}
-
-function hash(value) {
-  return <TransactionButton> <o>{value}</o>&nbsp;<Exit/> </TransactionButton>
+function hash(value, og) {
+  return (
+    <a style={{ 'text-decoration': 'none' }} href={`https://rinkeby.etherscan.io/tx/${og}`} target='_blank'>
+      <TransactionButton> <o>{value}</o>&nbsp;<Exit/> </TransactionButton>
+    </a>
+  )
 }
 
 function a11yProps(index) {
@@ -37,22 +37,6 @@ function a11yProps(index) {
     'aria-controls': `vertical-tabpanel-${index}`,
   }
 }
-
-const marketRows = [
-  createAlt(parseInt(Date.now() * 1), 'SELL', '$5,403.22', '100,001.03 CCI', hash('0x411...641')),
-  createAlt(parseInt(Date.now() * 1.0025), 'SELL', '$5,404.00', '50,023.12 CCI', hash('0x543...431')),
-  createAlt(parseInt(Date.now()* 1.0030), 'BUY', '$5,404.00', '100,420.21', hash('0x861...310')),
-  createAlt(parseInt(Date.now()* 1.0035), 'BUY',  '$5,403.52', '100.21 CCI', hash('0x912...006')),
-  createAlt(parseInt(Date.now()* 1.0040), 'SELL', '$5,403.49', '0.53 CCI', hash('0x444...215')),
-]
-
-const rebalanceRows = [
-  createData(parseInt(Date.now() * 1), '20.31 WBTC', '176.42 COMP', hash('0x411...641'), '$605.64'),
-  createData(parseInt(Date.now() * 1.0025), '2500.34 MKR', '100,341.23 ETH', hash('0x543...431'),  '$5031.02'),
-  createData(parseInt(Date.now()* 1.0030), '7,250,301 DAI', '8,002,319 USDC', hash('0x861...310'), '$800.23'),
-  createData(parseInt(Date.now()* 1.0035), '1.31 WBTC', '600,102.42 SNX', hash('0x912...006'), '$78.12'),
-  createData(parseInt(Date.now()* 1.0040), '7,034,111 LINK', '2,444,120.34 USDT', hash('0x444...215'),  '$240.11'),
-]
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -104,18 +88,62 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function VerticalTabs({ data }) {
+  const [ trades, setTrades ] = useState([])
   const [ value, setValue ] = useState(0)
   const [ meta, setMeta ] = useState([])
   const classes = useStyles()
+
+  let { state } = useContext(store)
+
+  const shortenHash = receipt => {
+    let length = receipt.length
+    let z4 = receipt.substring(0, 4)
+    let l4 = receipt.substring(length-4, length)
+    return `${z4}...${l4}`
+  }
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   }
 
   useEffect(() => {
-    if(data != undefined){
-      setMeta(data)
+    const getTrades = async() => {
+      if(Object.values(data).length > 0){
+        let pair = await getPair(state.web3.rinkeby, data.assets[0].address)
+        let trades = await getMarketTrades(pair.options.address)
+        let history = []
+
+        for(let order in trades){
+          let {
+            amount0In, amount1In, amount0Out, amount1Out, timestamp, transaction
+          } = trades[order]
+
+          let orderType = parseFloat(amount1In) == 0 ? 'SELL' : 'BUY'
+          let short = shortenHash(transaction.id)
+
+          if(orderType == 'BUY'){
+            history.push({
+              output: `${parseFloat(amount0Out).toFixed(2)} ${data.symbol}`,
+              input: `${parseFloat(amount1In).toFixed(2)} ETH`,
+              tx: hash(short, transaction.id),
+              time: Date.now(timestamp*1000),
+              type: orderType
+            })
+          } else {
+            history.push({
+              input: `${parseFloat(amount0In).toFixed(2)} ${data.symbol}`,
+              output: `${parseFloat(amount1Out).toFixed(2)} ETH`,
+              tx: hash(short, transaction.id),
+              time: Date.now(timestamp*1000),
+              type: orderType
+            })
+          }
+        }
+        setTrades(history.reverse())
+        setMeta(data.assets)
+      }
     }
+    getTrades()
   }, [ data ])
 
   return (
@@ -126,11 +154,9 @@ export default function VerticalTabs({ data }) {
           variant="scrollable"
           value={value}
           onChange={handleChange}
-          aria-label="Vertical tabs example"
         >
           <Tab label="ASSETS" {...a11yProps(0)} />
-          <Tab label="TRADES" {...a11yProps(0)} />
-          <Tab label="REBALANCES" {...a11yProps(1)} />
+          <Tab label="TRADES" {...a11yProps(1)} />
         </Tabs>
       </div>
       <TabPanel className={classes.assets} value={value} index={0}>
@@ -139,10 +165,7 @@ export default function VerticalTabs({ data }) {
         </Grid>
       </TabPanel>
       <TabPanel className={classes.panels} value={value} index={1}>
-        <List height={150} columns={marketColumns} data={marketRows} />
-      </TabPanel>
-      <TabPanel className={classes.panels} value={value} index={2}>
-        <List height={150} columns={rebalanceColumns} data={rebalanceRows} />
+        <List height={150} columns={marketColumns} data={trades} />
       </TabPanel>
     </div>
   );
