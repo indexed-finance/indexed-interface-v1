@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 
 import { makeStyles, styled } from '@material-ui/core/styles'
 import TableContainer from '@material-ui/core/TableContainer'
@@ -8,8 +8,13 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Table from '@material-ui/core/Table'
 import Grid from '@material-ui/core/Grid'
+import { toContract } from '../lib/util/contracts'
+import { getRate, decToWeiHex, getTokens } from '../lib/markets'
+import { store } from '../state'
 
 import { tokenImages } from '../assets/constants/parameters'
+import BPool from '../assets/constants/abi/BPool.json'
+import IERC20 from '../assets/constants/abi/IERC20.json'
 import ButtonPrimary from './buttons/primary'
 import Adornment from './inputs/adornment'
 import NumberFormat from '../utils/format'
@@ -178,9 +183,78 @@ const rows = [
 
 
 export default function InteractiveList({ market, metadata }) {
+  const [ execution, setExecution ] = useState({ f: () => {}, label: null })
   const [ component, setComponent ] = useState(<Multi />)
   const [ isSelected, setSelection ] = useState(true)
+  const [ amount, setAmount ] = useState(null)
+  const [ balance, setBalance ] = useState(0)
   const classes = useStyles()
+
+  let { state } = useContext(store)
+
+  const burnTokens = async(input) => {
+    let amounts = await getRate(state.web3.injected, input, metadata.address)
+    let contract = toContract(state.web3.injected, BPool.abi, metadata.address)
+    let output = decToWeiHex(state.web3.injected, input)
+
+    await contract.methods.exitPool(
+      output,
+      amounts.map(t => t.amount)
+    ).send({
+      from: state.account
+    })
+  }
+
+  const approveTokens = async(input) => {
+    let contract = toContract(state.web3.injected, IERC20.abi, metadata.address)
+    let approval = convertNumber(input)
+
+    await contract.methods
+    .approve(metadata.address, approval).send({
+      from: state.account
+    }).on('confirmation', (conf, receipt) => {
+      setExecution({
+        f: burnTokens,
+        label: 'BURN'
+      })
+    })
+  }
+
+  const getAllowance = async() => {
+    let contract = toContract(state.web3.injected, IERC20.abi, metadata.address)
+
+    let allowance = await contract.methods
+    .allowance(state.account, metadata.address).call()
+
+    return allowance/Math.pow(10,18)
+  }
+
+  const getBalance = async() => {
+    let contract = toContract(state.web3.injected, IERC20.abi, metadata.address)
+
+    let balance = await contract.methods
+    .balanceOf(state.account).call()
+
+    return parseFloat(balance/Math.pow(10,18)).toFixed(2)
+  }
+
+  const handleInput = (event) => {
+    setAmount(event.target.value)
+  }
+
+  const parseNumber = (amount) => {
+    return parseFloat(amount/Math.pow(10, 18)).toFixed(2)
+  }
+
+  const convertNumber = (amount) => {
+    let { toHex, toBN } = state.web3.rinkeby.utils
+
+    if(parseInt(amount) == amount) {
+      return toHex(toBN(amount).mul(toBN(1e18)))
+    } else {
+      return toHex(toBN(amount * Math.pow(10, 18)))
+    }
+  }
 
   const handleChange = (event) => {
     if(event.target.checked) setComponent(<Multi />)
@@ -188,7 +262,7 @@ export default function InteractiveList({ market, metadata }) {
     setSelection(event.target.checked)
   }
 
-  function Multi() {
+  function Multi({ data }) {
     return(
       <Table stickyHeader className={classes.table} size="small">
         <TableHead className={classes.header}>
@@ -203,7 +277,9 @@ export default function InteractiveList({ market, metadata }) {
             <TableCell component="th" scope="row">
               {row.symbol}
             </TableCell>
-            <TableCell align="right">0</TableCell>
+            <TableCell align="right">
+              <span id={row.symbol} />
+            </TableCell>
           </TableRow>
         ))}
         </TableBody>
@@ -222,14 +298,65 @@ export default function InteractiveList({ market, metadata }) {
     )
   }
 
+  useEffect(() => {
+    const getOutputs = async() => {
+      if(!isNaN(parseFloat(amount))){
+        let { web3 } = state
+        let { address } = metadata
+        let { toBN } = web3.rinkeby.utils
+
+        let rates = await getRate(web3.rinkeby, amount, address)
+        let payouts = {}
+
+        for(let token in rates){
+          let { symbol, amount } = rates[token]
+          let element = document.getElementById(symbol)
+          let output = toBN(amount).toString()
+
+          element.innerHTML = parseNumber(output)
+        }
+
+        if(web3.injected){
+          let allowance = await getAllowance()
+
+          if(allowance < parseFloat(amount)){
+            setExecution({
+              f: approveTokens,
+              label: 'APPROVE'
+            })
+          }
+        }
+      }
+    }
+    getOutputs()
+  }, [ amount ])
+
+  useEffect(() => {
+    setExecution({
+      f: burnTokens,
+      label: 'BURN'
+    })
+  }, [])
+
+  useEffect(() => {
+    const pullBalance = async() => {
+      let balance = await getBalance()
+      setBalance(balance)
+    }
+    pullBalance()
+  }, [ state.web3.injected ])
+
   return (
     <Grid container direction='column' alignItems='center' justify='space-around'>
       <Grid item>
         <RecieveInput label="DESTROY" variant='outlined'
+          onChange={handleInput}
+          value={amount}
           InputProps={{
             endAdornment: market,
             inputComponent: NumberFormat
           }}
+          helperText={`BALANCE: ${balance.toLocaleString()}`}
         />
       </Grid>
       <Grid item>
@@ -250,7 +377,9 @@ export default function InteractiveList({ market, metadata }) {
         <div className={classes.divider}/>
       </Grid>
       <Grid item>
-        <Trigger> EXECUTE </Trigger>
+        <Trigger onClick={() => execution.f(amount)}>
+          {execution.label}
+        </Trigger>
       </Grid>
     </Grid>
   )

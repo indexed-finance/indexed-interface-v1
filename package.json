@@ -34,6 +34,7 @@
     "cids": "^1.0.0",
     "d3-array": "^2.7.1",
     "d3-time-format": "^3.0.0",
+    "decimal.js": "^10.2.0",
     "fortmatic": "^2.2.1",
     "js-sha3": "^0.8.0",
     "multihashing": "^0.3.3",

@@ -11,7 +11,7 @@ import Grid from '@material-ui/core/Grid'
 
 import { tokenMetadata } from '../assets/constants/parameters'
 import { toContract } from '../lib/util/contracts'
-import { getConversionRate, getTokens } from '../lib/markets'
+import { getRate, decToWeiHex, getTokens } from '../lib/markets'
 
 import BPool from '../assets/constants/abi/BPool.json'
 import IERC20 from '../assets/constants/abi/IERC20.json'
@@ -203,30 +203,32 @@ export default function InteractiveList({ market, metadata }) {
   const [ focus, setFocus ] = useState(null)
   const [ dense, setDense ] = useState(false)
   const [ amount, setAmount ] = useState(null)
-
+  const [ balance, setBalance ] = useState(0)
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
 
   const mintTokens = async() => {
-    let rates = await getConversionRate(state.web3.injected, amount, metadata.address)
+    let amounts = await getRate(state.web3.injected, amount, metadata.address)
     let contract = toContract(state.web3.injected, BPool.abi, metadata.address)
-    let tokens = await getTokens(state.web3.injected, metadata.address)
-    let output = convertNumber(parseFloat(amount))
-    let amounts = []
+    let decimals = await contract.methods.decimals().call()
+    let output = decToWeiHex(state.web3.injected, amount)
 
-    console.log(`CONTRACT: ${tokens.map(t => t.symbol)}`)
-    console.log(`SUBGRAPH: ${metadata.assets.map(t => t.symbol)}`)
-
-    for(let x in tokens){
-      if(tokens[x].symbol == rates[x].symbol){
-        amounts.push('0x' + rates[x].amount)
-      }
-    }
-
-    await contract.methods.joinPool(output, amounts).send({
+    await contract.methods.joinPool(
+      output,
+      amounts.map(t => t.amount)
+    ).send({
       from: state.account
     })
+  }
+
+  const getBalance = async() => {
+    let contract = toContract(state.web3.injected, IERC20.abi, metadata.address)
+
+    let balance = await contract.methods
+    .balanceOf(state.account).call()
+
+    return parseFloat(balance/Math.pow(10,18)).toFixed(2)
   }
 
   const approveTokens = async(symbol) => {
@@ -288,6 +290,18 @@ export default function InteractiveList({ market, metadata }) {
       return toHex(toBN(amount * Math.pow(10, 18)))
     }
   }
+
+  const parseNumber = (amount) => {
+    return parseFloat(amount/Math.pow(10, 18)).toFixed(2)
+  }
+
+  useEffect(() => {
+    const pullBalance = async() => {
+      let balance = await getBalance()
+      setBalance(balance)
+    }
+    pullBalance()
+  }, [ state.web3.injected ])
 
   function Multi() {
     const classes = useStyles()
@@ -369,22 +383,24 @@ export default function InteractiveList({ market, metadata }) {
   }, [ focus ])
 
   useEffect(() => {
-    const getRate = async() => {
+    const getInputs = async() => {
       if(amount != null){
         let { web3 } = state
         let { address } = metadata
-        let rates = await getConversionRate(web3.rinkeby, amount, address)
+        let { toBN } = web3.rinkeby.utils
+        let rates = await getRate(web3.rinkeby, amount, address)
 
         for(let token in rates){
           let { symbol, amount } = rates[token]
           let element = document.getElementsByName(symbol)[0]
+          let output = toBN(amount).toString()
 
-          element.value = parseFloat(amount)/Math.pow(10, 18)
+          element.value = parseNumber(output)
           setFocus(symbol)
         }
       }
     }
-    getRate()
+    getInputs()
   }, [ amount ])
 
   useEffect(() => {
@@ -395,6 +411,7 @@ export default function InteractiveList({ market, metadata }) {
     <Grid container direction='column' alignItems='center' justify='space-around'>
       <Grid item>
         <RecieveInput label="RECIEVE" variant='outlined' type='number'
+          helperText={`BALANCE: ${balance}`}
           onChange={handleAmount}
           value={amount}
           InputProps={{
@@ -420,7 +437,7 @@ export default function InteractiveList({ market, metadata }) {
         <div className={classes.divider} />
       </Grid>
       <Grid item>
-        <Trigger onClick={mintTokens}> APPROVE </Trigger>
+        <Trigger onClick={mintTokens}> MINT </Trigger>
       </Grid>
     </Grid>
   );
