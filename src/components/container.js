@@ -4,7 +4,7 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import { styled, useTheme } from '@material-ui/core/styles'
 
-export default function Container({ margin, title, components, percentage }){
+export default function Container({ children, margin, title, percentage }){
   const theme = useTheme()
 
   const Wrapper = styled(Paper)({
@@ -28,7 +28,7 @@ export default function Container({ margin, title, components, percentage }){
       <header>
         <Typography variant='h5'> {title} </Typography>
       </header>
-      {components}
+      {children}
     </Wrapper>
   )
 }

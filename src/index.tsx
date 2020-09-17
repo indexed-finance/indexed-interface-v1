@@ -9,11 +9,11 @@ import { StateProvider } from './state'
 import BN from 'bn.js'
 
 import Navigation from './components/navigation'
+import Governance from './routes/governance'
 import Categories from './routes/categories'
 import Markets from './routes/markets'
 import Index from './routes/index'
 import Root from './routes/root'
-import Demo from './routes/demo'
 
 import { getTokenCategories, getTokenPriceHistory, getIndexPool } from './api/gql'
 import IERC20 from './assets/constants/abi/IERC20.json'
@@ -210,9 +210,9 @@ function Application(){
           <Route exact path='/'>
             <Root />
           </Route>
-          <Route path='/demo'>
+          <Route path='/governance'>
             <Navigation mode={mode}/>
-            <Demo />
+            <Governance />
           </Route>
         </Switch>
       </Router>

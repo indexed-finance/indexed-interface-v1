@@ -130,9 +130,9 @@ export default function Markets(){
           </Canvas>
         </Grid>
         <Grid item>
-          <Container margin="2em" percentage='11%' title='INDEXES' components={
+          <Container margin="2em" percentage='11%' title='INDEXES'>
             <Table indexes={state.indexes} market={market.symbol} triggerMarket={changeMarket} />
-          }/>
+          </Container>
         </Grid>
       </Grid>
     </Fragment>

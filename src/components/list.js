@@ -40,12 +40,12 @@ const useStyles = (height) => makeStyles({
   }
 });
 
-export default function StickyHeadTable({ height, action, data, columns }) {
+export default function StickyHeadTable({ width, height, action, data, columns }) {
   const classes = useStyles()
 
   return (
     <Fragment>
-      <TableContainer className={classes.container} style={{ maxHeight: height }}>
+      <TableContainer className={classes.container} style={{ width, maxHeight: height }}>
         <Table stickyHeader className={classes.table}>
           <Head className={classes.head}>
             <TableRow>
