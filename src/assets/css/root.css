@@ -81,3 +81,77 @@ input[type=number] {
 .MuiTableRow-root.Mui-selected {
   background-color: rgba(102, 255, 255, 0.1) !important;
 }
+
+#passed span {
+  font-family: 'San Francisco Bold' !important;
+  background: #00e79a !important;
+  padding: 3.75px 7.5px !important;
+  font-size: .875em;
+  text-align: center;
+}
+
+#passed span span {
+  width: 100px;
+}
+
+#active span {
+  font-family: 'San Francisco Bold' !important;
+  background: #645eff !important;
+  padding: 3.75px 7.5px !important;
+  font-size: .875em;
+  text-align: center;
+}
+
+#active span span {
+  width: 100px;
+}
+
+#executed span {
+  font-family: 'San Francisco Bold' !important;
+  background: #66FFFF !important;
+  padding: 3.75px 7.5px !important;
+  font-size: .875em;
+  text-align: center;
+}
+
+#executed span span {
+  width: 100px;
+}
+
+#rejected, #passed, #executed, #active {
+  margin-top: 7.5px;
+}
+
+#rejected o, #passed o, #executed o, #active o {
+  margin-left: 5px;
+  padding-top: 10px;
+  float: 'right';
+}
+
+#rejected o {
+  color: #ff005a!important;
+}
+
+#passed o {
+  color: #00e79a!important;
+}
+
+#executed o {
+  color: #66FFFF !important;
+}
+
+#active o {
+  color: #645eff !important;
+}
+
+#rejected span {
+  font-family: 'San Francisco Bold' !important;
+  background: #ff005a!important;
+  padding: 3.75px 7.5px !important;
+  font-size: .875em;
+  text-align: center;
+}
+
+#rejected span span {
+  width: 100px;
+}

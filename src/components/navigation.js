@@ -152,6 +152,9 @@ export default function Navigation({ mode }) {
         <Link className={classes.href} onClick={connectWeb3}>
           <MenuItem>CONNECT WALLET</MenuItem>
         </Link>
+        <Link className={classes.href} to='/governance' onClick={handleClose}>
+          <MenuItem>GOVERNANCE</MenuItem>
+        </Link>
         <Link className={classes.href} to='/categories' onClick={handleClose}>
           <MenuItem>CATEGORIES</MenuItem>
         </Link>
@@ -167,6 +170,9 @@ export default function Navigation({ mode }) {
 
     return(
       <Fragment>
+        <Link className={classes.href} to='/governance' onClick={handleClose}>
+          <MenuItem>GOVERNANCE</MenuItem>
+        </Link>
         <Link className={classes.href} to='/categories' onClick={handleClose}>
           <MenuItem>CATEGORIES</MenuItem>
         </Link>
