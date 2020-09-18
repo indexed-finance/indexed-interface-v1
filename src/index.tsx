@@ -11,6 +11,7 @@ import BN from 'bn.js'
 import Navigation from './components/navigation'
 import Governance from './routes/governance'
 import Categories from './routes/categories'
+import Proposal from './routes/proposal'
 import Markets from './routes/markets'
 import Index from './routes/index'
 import Root from './routes/root'
@@ -195,6 +196,10 @@ function Application(){
     <ThemeProvider theme={theme}>
       <Router>
         <Switch>
+          <Route path='/proposal/:id'>
+            <Navigation mode={mode}/>
+            <Proposal />
+          </Route>
           <Route path='/index/:name'>
             <Navigation mode={mode}/>
             <Index />

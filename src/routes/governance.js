@@ -29,7 +29,7 @@ import { store } from '../state'
 const selections = [[{ value: 0, label: null }]];
 
 const proposals = [
-  { title: 'New category: Governance', time: '1d, 14hrs REMAINING', phase: 'active', yes: 50, no: 50, participants: 50, for: '5,000.53 NDX', against: '5,001.53 NDX', action: true, label: 'VOTE' },
+  { title: 'New category: Governance', time: '1D, 14HRS REMAINING', phase: 'active', yes: 50, no: 50, participants: 50, for: '5,000.53 NDX', against: '5,001.53 NDX', action: true, label: 'VOTE' },
   { title: 'Increase swap fee to 2.5%', phase: 'passed', time: 'BLOCK: 45423', yes: 75, no: 25, participants: 150, for: '25,562.00 NDX', against: '7,531.05 NDX', action: true, label: 'COUNTER' },
   { title: 'New index: [DEFII10]', phase: 'executed', yes: 90,  time: 'BLOCK: 42112', no: 10, participants: 225, action: false, for: '100,459.66 NDX', against: '10,531.11 NDX', label: 'CONCLUDED' },
   { title: 'Whitelist: [HEX]', phase: 'rejected',  yes: 14.75,  time: 'BLOCK: 40105', no: 85.25, participants: 300, action: false, for: '20,111.33 NDX', against: '500,124.06 NDX', label: 'CONCLUDED' },
@@ -93,6 +93,7 @@ const AddressInput = styled(Input)({
 
 const ListWrapper = styled(List)({
   height: 'calc(100vh - 475px)',
+  flex: '1 1 auto',
   overflowY: 'scroll'
 })
 
@@ -117,8 +118,10 @@ const ListAvatar = styled(ListItemAvatar)({
 const useStyles = makeStyles((theme) => ({
   proposals: {
    backgroundColor: theme.palette.background.paper,
+   width: 'auto'
+ },
+ root: {
    width: '100%',
-   flex: '1 1 auto'
  },
  progress: {
    marginTop: 10,
@@ -247,7 +250,7 @@ export default function Governance(){
 
   return (
     <Fragment>
-      <Grid item direction='column' alignItems='flex-start' justify='space-between'>
+      <Grid container direction='column' alignItems='flex-start' justify='space-between'>
         <Grid item container direction='row' alignItems='flex-start' justify='space-between'>
           <Grid>
             <Canvas>
@@ -279,7 +282,7 @@ export default function Governance(){
             </Canvas>
           </Grid>
         </Grid>
-        <Grid item>
+        <Grid item className={classes.root}>
           <Container margin='3em' title='PROPOSALS' percentage='15%'>
             <ListWrapper dense className={classes.proposals}>
               {proposals.map((value, index) => {

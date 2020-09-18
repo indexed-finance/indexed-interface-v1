@@ -6,6 +6,16 @@ const options = {
   legend: {
     display: false
   },
+  plugins: {
+  datalabels: {
+    textAlign: 'center',
+    formatter: function(value, ctx) {
+      var index = ctx.dataIndex
+      var label = ctx.chart.data.labels[index]
+      return label
+      }
+    }
+  },
   layout: {
     padding: 0,
     margin: 0
@@ -14,12 +24,11 @@ const options = {
 
 const data = {
 	labels: [
-		'ACTIVE',
 		'PASSED',
 		'REJECTED'
 	],
 	datasets: [{
-		data: [10, 60, 30],
+		data: [60, 30],
     borderColor: '#666666',
     borderWidth: 3,
     datalabels: {
@@ -33,12 +42,10 @@ const data = {
          },
     },
 		backgroundColor: [
-    '#645eff',
 		'#00e79a',
 		'#ff005a'
 		],
 		hoverBackgroundColor: [
-    '#645eff',
     '#00e79a',
 		'#ff005a'
 		]
@@ -48,6 +55,6 @@ const data = {
 export default function Donut(){
 
   return (
-    <Doughnut width={300} height={175} options={options} data={data} />
+    <Doughnut width={337.5} height={225} options={options} data={data} />
   );
 }

@@ -23,6 +23,7 @@
     "@vx/gradient": "^0.0.198",
     "@vx/grid": "^0.0.198",
     "@vx/group": "0.0.198",
+    "@vx/heatmap": "0.0.199",
     "@vx/mock-data": "^0.0.198",
     "@vx/responsive": "^0.0.198",
     "@vx/scale": "^0.0.198",
