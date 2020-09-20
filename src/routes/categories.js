@@ -121,7 +121,7 @@ export default function Categories(){
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item>
-          <Container margin="3em" percentage='16%' title='CATEGORIES'
+          <Container margin='3em 3em' padding="1em 2em" percentage='16%' title='CATEGORIES'
              components={
               <Fragment>
                 {Object.values(rows).map((value) => (

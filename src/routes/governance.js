@@ -283,7 +283,7 @@ export default function Governance(){
           </Grid>
         </Grid>
         <Grid item className={classes.root}>
-          <Container margin='3em' title='PROPOSALS' percentage='15%'>
+          <Container margin='3em 3em' padding="1em 2em" title='PROPOSALS' percentage='15%'>
             <ListWrapper dense className={classes.proposals}>
               {proposals.map((value, index) => {
                 return (

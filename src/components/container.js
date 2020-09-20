@@ -4,17 +4,19 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import { styled, useTheme } from '@material-ui/core/styles'
 
-export default function Container({ children, margin, title, percentage }){
+export default function Container({ padding, children, margin, title, percentage,  }){
   const theme = useTheme()
+  let sideMargin = padding == '1em 0em' ? 25 : 0
 
   const Wrapper = styled(Paper)({
-    padding: '1em 2em',
+    padding: padding,
     border: '3px solid #666666',
     borderRadius: 10,
-    margin: `${margin} 3em`,
+    margin: margin,
     color: theme.palette.secondary.main,
     '& header': {
       marginTop: '-2em',
+      marginLeft: sideMargin,
       background: theme.palette.primary.main,
       padding: '0em 1em 0em 1em',
       width: percentage,
