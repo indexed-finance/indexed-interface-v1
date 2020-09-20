@@ -12,6 +12,7 @@ import Navigation from './components/navigation'
 import Governance from './routes/governance'
 import Categories from './routes/categories'
 import Proposal from './routes/proposal'
+import Propose from './routes/propose'
 import Markets from './routes/markets'
 import Index from './routes/index'
 import Root from './routes/root'
@@ -203,6 +204,10 @@ function Application(){
           <Route path='/index/:name'>
             <Navigation mode={mode}/>
             <Index />
+          </Route>
+          <Route path='/propose'>
+            <Navigation mode={mode}/>
+            <Propose />
           </Route>
           <Route path='/categories'>
             <Navigation mode={mode}/>

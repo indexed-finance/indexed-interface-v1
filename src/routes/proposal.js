@@ -373,9 +373,9 @@ export default function Proposal(){
               </div>
             </div>
           </Main>
-          </Grid>
-          <Grid item>
-            <div className={classes.column}>
+        </Grid>
+        <Grid item>
+          <div className={classes.column}>
             <Modal>
               <div className={classes.modal}>
                 <label>
@@ -389,62 +389,61 @@ export default function Proposal(){
                 </ButtonPrimary>
               </div>
             </Modal>
-            </div>
-          </Grid>
+          </div>
         </Grid>
-        <Grid item container direction='row' alignItems='flex-start' justify='space-between'>
-          <Grid item>
-            <Secondary title='DETAILS' margin='2em 3em' padding="1em 0em" percentage="17.5%">
-              <div className={classes.body}>
-                <div className={classes.metadata}>
-                  <ul>
-                    {metadata.map((action, index) => (
-                      <Fragment>
-                        <span> {index}. </span>
+      </Grid>
+      <Grid item container direction='row' alignItems='flex-start' justify='space-between'>
+        <Grid item>
+           <Secondary title='DETAILS' margin='2em 3em' padding="1em 0em" percentage="17.5%">
+            <div className={classes.body}>
+              <div className={classes.metadata}>
+                <ul>
+                  {metadata.map((action, index) => (
+                    <Fragment>
+                      <span> {index}. </span>
                         <li>
                           Call <ReactMarkdown source={" `" + action.function + "` "}/> in
                           <ReactMarkdown source={" [" + action.contract + "] "}/>
                           with parameters;
                           <ReactMarkdown source={" `" + action.parameters.join(', ') + "` "}/>
                         </li>
-                      </Fragment>
-                    ))}
-                  </ul>
-                </div>
-                <div className={classes.markdown}>
-                  <ReactMarkdown source={source} />
-                </div>
-             </div>
-            </Secondary>
-          </Grid>
-          <Grid>
-            <Log>
-              <div className={classes.log}>
-                <List dense classes={classes.table}>
-                  {votes.map((value) => {
-                    let { address, choice, weight} = value
-
-                    let color = choice == 'FOR' ? '#00e79a' : '#ff005a'
-
-                    return (
-                      <ListItem key={value.address} button>
-                          <ListItemAvatar>
-                            <Blockie border='3px' width={35} id={address} address={address} />
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={`${address.substring(0, 6)}...${address.substring(38, 64)}`}
-                            secondary={<b style={{ color }}>{value.choice}</b>}
-                          />
-                          <ListItemSecondaryAction />
-                        </ListItem>
-                      );
-                    })}
-                  </List>
+                    </Fragment>
+                  ))}
+                </ul>
               </div>
-            </Log>
-          </Grid>
+              <div className={classes.markdown}>
+                <ReactMarkdown source={source} />
+              </div>
+            </div>
+          </Secondary>
+        </Grid>
+        <Grid>
+          <Log>
+            <div className={classes.log}>
+              <List dense classes={classes.table}>
+                {votes.map((value) => {
+                   let { address, choice, weight } = value
+                   const color = choice == 'FOR' ? '#00e79a' : '#ff005a'
+
+                   return (
+                     <ListItem key={value.address} button>
+                       <ListItemAvatar>
+                         <Blockie border='3px' width={35} id={address} address={address} />
+                       </ListItemAvatar>
+                        <ListItemText
+                          primary={`${address.substring(0, 6)}...${address.substring(38, 64)}`}
+                          secondary={<b style={{ color }}>{value.choice}</b>}
+                        />
+                        <ListItemSecondaryAction />
+                     </ListItem>
+                    )
+                  })}
+              </List>
+            </div>
+          </Log>
         </Grid>
       </Grid>
-    </Fragment>
+    </Grid>
+  </Fragment>
   )
 }

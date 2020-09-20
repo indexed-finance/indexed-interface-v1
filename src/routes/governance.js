@@ -20,7 +20,6 @@ import ButtonPrimary from '../components/buttons/primary'
 import Container from '../components/container'
 import Input from '../components/inputs/input'
 import Select from '../components/inputs/select'
-import Donut from '../components/charts/donut'
 import Canvas from '../components/canvas'
 import Stacked from '../components/charts/stacked'
 

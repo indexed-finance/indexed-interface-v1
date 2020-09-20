@@ -35,12 +35,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function Option({ label, selections }){
-  const [ value, setValue ] = useState('')
+export default function Option({ label, selections, onChange }){
+  const [ value, setValue ] = useState(null)
   const classes = useStyles()
 
   const handleChange = (event) => {
     setValue(event.target.value)
+    onChange(event.target.value, label)
   }
 
   return(
@@ -48,12 +49,9 @@ export default function Option({ label, selections }){
        <InputLabel className={classes.label}>{label}</InputLabel>
        <InputSelect
          value={value}
-         onChange={setValue}
+         onChange={handleChange}
          label={label}
        >
-       <MenuItem value="">
-       <em>None</em>
-       </MenuItem>
        {selections.map((option) => (
         <MenuItem value={option.value}>
           {option.label}
