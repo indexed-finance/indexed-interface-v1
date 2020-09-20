@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   formControl: {
     marginTop: 10,
     marginBottom: 10,
-    width: '87.5%'
+    width: '100%'
   },
   label: {
     top: -5

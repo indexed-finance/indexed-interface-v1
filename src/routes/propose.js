@@ -1,10 +1,16 @@
-import React, { Fragment, useEffect, useContext, useState } from 'react'
+import React, { Fragment, useEffect, useContext, useState, useRef } from 'react'
+import ReactDOM from 'react-dom'
 
 import BPool from '../assets/constants/abi/BPool.json'
 
 import { makeStyles, styled, withStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
+import IconButton from '@material-ui/core/IconButton'
+import Clear from '@material-ui/icons/Clear'
+import TextareaAutosize from '@material-ui/core/TextareaAutosize';
+import ReactMarkdown from 'react-markdown'
 
+import ButtonPrimary from '../components/buttons/primary'
 import Select from '../components/inputs/select'
 import Input from '../components/inputs/input'
 import Container from '../components/container'
@@ -15,14 +21,15 @@ const sources = [ BPool ]
 
 const Entry = styled(Input)({
   marginBottom: 25,
-  width: '87.5%'
+  width: '100%'
 })
 
 const useStyles = makeStyles((theme) => ({
   form: {
     width: 750,
     height: 'auto',
-    padding: 50
+    padding: 50,
+    paddingBottom: 75
   },
   select: {
     marginBottom: 25
@@ -31,9 +38,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Propose(){
   const [ selection, setSelection ] = useState({ functionList: [] })
-  const [ entries, setEntries ] = useState(<Fragment />)
   const [ metadata, setMetadata ] = useState({})
   const [ contracts, setContracts ] = useState([])
+  const [ description, setDescription ] = useState(null)
   const [ executions, setExecutions ] = useState([])
 
   const classes = useStyles()
@@ -68,14 +75,39 @@ export default function Propose(){
     return { functions, functionList }
   }
 
-  const onContractChange = (value, label) => {
+  const onContractChange = (value) => {
     setSelection(metadata[value])
   }
 
-  const onFunctionChange = (value, label) => {
-    let newFunctions = executions
+  const handleDescription = (event) => {
+    ReactDOM.render(
+      <ReactMarkdown source={event.target.value} />,
+      document.getElementById('preview')
+    )
+  }
+
+  const onFunctionChange = (value) => {
+    let newFunctions = []
+
+    if(executions.length != 0){
+      for(let index in executions){
+        newFunctions.push(executions[index])
+      }
+    }
 
     newFunctions.push(selection.functions[value])
+    setExecutions(newFunctions)
+  }
+
+  const removeFunction = (index) => {
+    let newFunctions = []
+
+    if(executions.length != 0){
+      for(let i in executions){
+        if(i != index) newFunctions.push(executions[i])
+      }
+    }
+
     setExecutions(newFunctions)
   }
 
@@ -83,14 +115,16 @@ export default function Propose(){
     const [ mapping, setMapping ] = useState(data)
 
     useEffect(() => {
-      console.log(data)
       setMapping(data)
-    }, [data])
+    }, [ data ])
 
     return(
       <Fragment>
-        {mapping.map(value =>
+        {mapping.map((value, index) =>
           <Fragment>
+            <IconButton onClick={() => removeFunction(index)}>
+              <Clear color='secondary'/>
+            </IconButton>
             <b> {value.name} </b>
             {value.inputs.map(f => (
               <Grid item>
@@ -135,6 +169,18 @@ export default function Propose(){
               </div>
             </Grid>
             <Entries data={executions} />
+            <Grid item>
+              <p> PREVIEW: </p>
+              <div className={classes.preview} id='preview' />
+            </Grid>
+            <Grid item>
+              <Entry onChange={handleDescription} multiline variant='outlined' label="Description" rows={4} />
+            </Grid>
+            <Grid item>
+              <ButtonPrimary variant='outlined'>
+                SUBMIT
+              </ButtonPrimary>
+            </Grid>
           </div>
         </Container>
       </Grid>

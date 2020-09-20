@@ -25,7 +25,7 @@ const Input = styled(TextField)({
     top: -5,
   },
   '&:hover fieldset': {
-   borderColor: '#999999',
+   borderColor: '#666666',
  },
  '& label.Mui-focused': {
    color: '#666666',
@@ -41,15 +41,25 @@ const Input = styled(TextField)({
  },
  '& input:valid:focus + fieldset': {
    borderWidth: 2,
-   borderColor: '#999999',
+   borderColor: '#666666',
    paddingRight: '5px !important',
    paddingLeft: '8px !important',
  },
  '& input:active + fieldset': {
-   color: '#999999'
+   color: '#999999',
+   borderColor: '#666666'
+ },
+ '& input:focus + fieldset': {
+   color: '#999999',
+   borderColor: '#666666'
  },
  '& .MuiOutlinedInput-notchedOutline': {
    border: '2px solid #666666'
+ },
+ '& .MuiOutlinedInput-root.Mui-focused': {
+    '&  .MuiOutlinedInput-notchedOutline': {
+      border: '2px solid #666666 !important'
+    }
  }
 })
 
