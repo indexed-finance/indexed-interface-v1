@@ -40,6 +40,7 @@
     "fortmatic": "^2.2.1",
     "js-sha3": "^0.8.0",
     "multihashing": "^0.3.3",
+    "randomcolor": "^0.6.2",
     "react": "16.11.0",
     "react-chartjs-2": "^2.10.0",
     "react-dom": "16.11.0",

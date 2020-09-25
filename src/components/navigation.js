@@ -152,6 +152,9 @@ export default function Navigation({ mode }) {
         <Link className={classes.href} onClick={connectWeb3}>
           <MenuItem>CONNECT WALLET</MenuItem>
         </Link>
+        <Link className={classes.href} to='/propose' onClick={handleClose}>
+          <MenuItem>CREATE PROPOSAL</MenuItem>
+        </Link>
         <Link className={classes.href} to='/governance' onClick={handleClose}>
           <MenuItem>GOVERNANCE</MenuItem>
         </Link>
@@ -160,6 +163,9 @@ export default function Navigation({ mode }) {
         </Link>
         <Link className={classes.href} to='/markets' onClick={handleClose}>
           <MenuItem>MARKETS</MenuItem>
+        </Link>
+        <Link className={classes.href} to='/pools' onClick={handleClose}>
+          <MenuItem>POOLS</MenuItem>
         </Link>
       </Fragment>
     )
@@ -170,6 +176,9 @@ export default function Navigation({ mode }) {
 
     return(
       <Fragment>
+        <Link className={classes.href} to='/propose' onClick={handleClose}>
+          <MenuItem>CREATE PROPOSAL</MenuItem>
+        </Link>
         <Link className={classes.href} to='/governance' onClick={handleClose}>
           <MenuItem>GOVERNANCE</MenuItem>
         </Link>
@@ -178,6 +187,9 @@ export default function Navigation({ mode }) {
         </Link>
         <Link className={classes.href} to='/markets' onClick={handleClose}>
           <MenuItem>MARKETS</MenuItem>
+        </Link>
+        <Link className={classes.href} to='/pools' onClick={handleClose}>
+          <MenuItem>POOLS</MenuItem>
         </Link>
       </Fragment>
     )

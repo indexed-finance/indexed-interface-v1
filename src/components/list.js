@@ -40,7 +40,7 @@ const useStyles = (height) => makeStyles({
   }
 });
 
-export default function StickyHeadTable({ width, height, action, data, columns }) {
+export default function StickyHeadTable({ width, height, action, data, columns, props }) {
   const classes = useStyles()
 
   return (
@@ -69,9 +69,11 @@ export default function StickyHeadTable({ width, height, action, data, columns }
                     const value = row[column.id];
 
                     if(column.id === 'action') {
+                      let Action = action
+
                       return (
                         <TableCell key={column.id} align={column.align}>
-                          {action}
+                          <Action metadata={props[row.symbol]} />
                         </TableCell>
                       )
                     } else {

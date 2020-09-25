@@ -121,30 +121,28 @@ export default function Categories(){
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item>
-          <Container margin='3em 3em' padding="1em 2em" percentage='16%' title='CATEGORIES'
-             components={
-              <Fragment>
-                {Object.values(rows).map((value) => (
-                  <div className={classes.category}>
-                    <h3> {value.name} [{value.symbol}]</h3>
-                    <p>
-                      {value.indexes.map((index) =>
-                        state.indexes[index].assets.map((token) => (
-                          <img src={tokenMetadata[token.symbol].image} className={classes.asset} />
-                      )))}
-                    </p>
-                    <div className={classes.divider} />
-                    <List data={Object.values(filtered(state.indexes, value.indexes))}
-                      action={ <Liquidity> EXPAND </Liquidity>}
-                      columns={columns}
-                      height={250}
-                    />
-                  </div>
-                 )
-               )}
-             </Fragment>
-            }
-          />
+          <Container margin='3em 3em' padding="1em 2em" percentage='16%' title='CATEGORIES'>
+            <Fragment>
+              {Object.values(rows).map((value) => (
+                <div className={classes.category}>
+                  <h3> {value.name} [{value.symbol}]</h3>
+                  <p>
+                    {value.indexes.map((index) =>
+                      state.indexes[index].assets.map((token) => (
+                        <img src={tokenMetadata[token.symbol].image} className={classes.asset} />
+                    )))}
+                  </p>
+                  <div className={classes.divider} />
+                  <List data={Object.values(filtered(state.indexes, value.indexes))}
+                    action={ <Liquidity> EXPAND </Liquidity>}
+                    columns={columns}
+                    height={250}
+                  />
+                </div>
+               )
+              )}
+            </Fragment>
+          </Container>
         </Grid>
       </Grid>
     </Fragment>
