@@ -153,8 +153,7 @@ function generate(element) {
 }
 
 export default function InteractiveList({ market, metadata }) {
-  const [ component, setComponent ] = useState(<span />)
-  const [ isSelected, setSelection ] = useState(true)
+  const [ isSelected, setSelection ] = useState(null)
   const [ focus, setFocus ] = useState(null)
   const [ dense, setDense ] = useState(false)
   const [ amount, setAmount ] = useState(null)
@@ -164,13 +163,6 @@ export default function InteractiveList({ market, metadata }) {
   let { state, dispatch } = useContext(store)
 
   const handleChange = (event) => {
-    if(event.target.checked) {
-      setComponent(
-        <Approvals metadata={metadata} amount={amount} />
-      )
-    } else {
-      setComponent(<Single />)
-    }
     setSelection(event.target.checked)
   }
 
@@ -178,18 +170,35 @@ export default function InteractiveList({ market, metadata }) {
     setAmount(event.target.value)
   }
 
-  const convertNumber = (amount) => {
-    let { toHex, toBN } = state.web3.rinkeby.utils
+  const mintTokens = async() => {
+    let { web3, account } = state
+    let { address, assets } = metadata
+    let amounts = await getRate(web3.injected, amount, address)
+    let contract = toContract(web3.injected, BPool.abi, address)
+    let decimals = await contract.methods.decimals().call()
+    let output = decToWeiHex(web3.injected, amount)
 
-    if(parseInt(amount) == amount) {
-      return toHex(toBN(amount).mul(toBN(1e18)))
-    } else {
-      return toHex(toBN(amount * Math.pow(10, 18)))
-    }
+    await contract.methods.joinPool(
+      output,
+      amounts.map(t => t.amount))
+    .send({
+      from: account
+    }).on('confirmation', async(conf, receipt) => {
+      let balances = await getBalances(web3.injected, account, assets, state.balances)
+      let tokenBalance = await getBalance()
+
+      await dispatch({ type: 'BAL', payload: { balances } })
+      setBalance(tokenBalance)
+    })
   }
 
-  const parseNumber = (amount) => {
-    return parseFloat(amount/Math.pow(10, 18)).toFixed(2)
+  const getBalance = async() => {
+    let contract = toContract(state.web3.injected, IERC20.abi, metadata.address)
+
+    let balance = await contract.methods
+    .balanceOf(state.account).call()
+
+    return parseFloat(balance/Math.pow(10,18)).toFixed(2)
   }
 
   function Single() {
@@ -208,8 +217,18 @@ export default function InteractiveList({ market, metadata }) {
   }
 
   useEffect(() => {
-    setComponent(<Approvals metadata={metadata} amount={amount} />)
-  }, [ state.balances, amount ])
+    setSelection(true)
+  }, [  ])
+
+  useEffect(() => {
+    const pullBalance = async() => {
+      if(state.web3.injected) {
+        let balance = await getBalance()
+        setBalance(balance)
+      }
+    }
+    pullBalance()
+  }, [ state.web3.injected ])
 
   return (
     <Grid container direction='column' alignItems='center' justify='space-around'>
@@ -230,14 +249,18 @@ export default function InteractiveList({ market, metadata }) {
       <Grid item>
         <div className={classes.altDivider1} />
         <div className={classes.demo}>
-          {component}
+          {isSelected && (
+            <Approvals width='417.5px' input={amount} height='235px' metadata={metadata} />
+          )}
+          {isSelected == null && ( <span /> )}
+          {!isSelected && ( <Single /> )}
         </div>
       </Grid>
       <Grid item>
         <div className={classes.altDivider2} />
       </Grid>
       <Grid item>
-        <Trigger> MINT </Trigger>
+        <Trigger onClick={mintTokens}> MINT </Trigger>
       </Grid>
     </Grid>
   );

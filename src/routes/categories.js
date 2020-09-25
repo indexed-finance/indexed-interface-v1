@@ -47,6 +47,13 @@ const columns = [
     format: (value) => `${value.toLocaleString('en-US')}`,
   },
   {
+    id: 'marketcap',
+    label: 'MARKETCAP',
+    minWidth: 150,
+    align: 'center',
+    format: (value) => `${value.toLocaleString('en-US')}`,
+  },
+  {
     id: 'supply',
     label: 'TOTAL SUPPLY',
     minWidth: 125,
@@ -58,12 +65,7 @@ const columns = [
     label: 'ASSETS',
     minWidth: 100,
     align: 'center',
-  },
-  {
-    id: 'action',
-    minWidth: 150,
-    align: 'right',
-  },
+  }
 ];
 
 const filtered = (raw, targets) =>
@@ -125,6 +127,7 @@ export default function Categories(){
             <Fragment>
               {Object.values(rows).map((value) => (
                 <div className={classes.category}>
+                  {console.log(value)}
                   <h3> {value.name} [{value.symbol}]</h3>
                   <p>
                     {value.indexes.map((index) =>
@@ -134,9 +137,10 @@ export default function Categories(){
                   </p>
                   <div className={classes.divider} />
                   <List data={Object.values(filtered(state.indexes, value.indexes))}
-                    action={ <Liquidity> EXPAND </Liquidity>}
                     columns={columns}
+                    props={state.indexes}
                     height={250}
+                    href
                   />
                 </div>
                )

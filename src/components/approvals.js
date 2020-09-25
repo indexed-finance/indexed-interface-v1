@@ -101,7 +101,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 0,
     padding: 0,
     overflowY: 'scroll',
-    height: 235,
+    height: 'auto',
     width: '100%'
   },
   item: {
@@ -190,47 +190,15 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function Approvals({ metadata, height }){
+export default function Approvals({ balance, metadata, height, width, input }){
   const [ component, setComponent ] = useState(<span />)
   const [ isSelected, setSelection ] = useState(true)
   const [ focus, setFocus ] = useState(null)
   const [ dense, setDense ] = useState(false)
   const [ amount, setAmount ] = useState(null)
-  const [ balance, setBalance ] = useState(0)
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
-
-  const mintTokens = async() => {
-    let { web3, account } = state
-    let { address, assets } = metadata
-    let amounts = await getRate(web3.injected, amount, address)
-    let contract = toContract(web3.injected, BPool.abi, address)
-    let decimals = await contract.methods.decimals().call()
-    let output = decToWeiHex(web3.injected, amount)
-
-    await contract.methods.joinPool(
-      output,
-      amounts.map(t => t.amount))
-    .send({
-      from: account
-    }).on('confirmation', async(conf, receipt) => {
-      let balances = await getBalances(web3.injected, account, assets, state.balances)
-      let tokenBalance = await getBalance()
-
-      await dispatch({ type: 'BAL', payload: { balances } })
-      setBalance(tokenBalance)
-    })
-  }
-
-  const getBalance = async() => {
-    let contract = toContract(state.web3.injected, IERC20.abi, metadata.address)
-
-    let balance = await contract.methods
-    .balanceOf(state.account).call()
-
-    return parseFloat(balance/Math.pow(10,18)).toFixed(2)
-  }
 
   const approveTokens = async(symbol) => {
     let { address } = state.balances[symbol]
@@ -317,11 +285,11 @@ export default function Approvals({ metadata, height }){
 
   useEffect(() => {
     const getInputs = async() => {
-      if(amount != null){
+      if(input != null){
         let { web3 } = state
         let { address } = metadata
         let { toBN } = web3.rinkeby.utils
-        let rates = await getRate(web3.rinkeby, amount, address)
+        let rates = await getRate(web3.rinkeby, input, address)
 
         for(let token in rates){
           let { symbol, amount } = rates[token]
@@ -334,20 +302,10 @@ export default function Approvals({ metadata, height }){
       }
     }
     getInputs()
-  }, [ amount ])
-
-  useEffect(() => {
-    const pullBalance = async() => {
-      if(state.web3.injected) {
-        let balance = await getBalance()
-        setBalance(balance)
-      }
-    }
-    pullBalance()
-  }, [ state.web3.injected ])
+  }, [ input ])
 
   return (
-    <List className={classes.list} style={{ height }} dense={dense}>
+    <List className={classes.list} style={{ height, width }} dense={dense}>
       {metadata.assets.map((token, index) => {
         let label;
 
@@ -371,6 +329,7 @@ export default function Approvals({ metadata, height }){
               InputLabelProps={{ shrink: true }}
               onChange={handleInput}
               name={token.symbol}
+              helperText='DESIRED: 1,000'
               InputProps={{
                 endAdornment:
                  <ApproveButton onClick={

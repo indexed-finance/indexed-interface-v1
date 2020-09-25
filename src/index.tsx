@@ -9,9 +9,11 @@ import { StateProvider } from './state'
 import BN from 'bn.js'
 
 import Navigation from './components/navigation'
+import Loader from './components/loader'
 import Governance from './routes/governance'
 import Categories from './routes/categories'
 import Proposal from './routes/proposal'
+import Error404 from './routes/404'
 import Propose from './routes/propose'
 import Markets from './routes/markets'
 import Index from './routes/index'
@@ -78,6 +80,7 @@ const getTheme = condition => createMuiTheme({
 });
 
 function Application(){
+  const [ request, setRequest ] = useState(false)
   let { state, dispatch } = useContext(store)
   let { dark } = state
 
@@ -189,13 +192,16 @@ function Application(){
       await dispatch({ type: 'INIT',
         payload: { categories, indexes, changeTheme  }
       })
+      setRequest(true)
     }
     setBackground(state.background, state.color)
     retrieveCategories({}, {})
   }, [ ])
 
-
-  return(
+  if(!request){
+    return <Loader />
+  } else if(request) {
+    return(
     <ThemeProvider theme={theme}>
       <Router>
         <Switch>
@@ -234,10 +240,14 @@ function Application(){
             <Navigation mode={mode}/>
             <Governance />
           </Route>
+          <Route>
+            <Error404 />
+          </Route>
         </Switch>
       </Router>
     </ThemeProvider>
-  )
+    )
+  }
 }
 
 ReactDOM.render(

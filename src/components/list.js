@@ -10,6 +10,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import { styled } from '@material-ui/core/styles'
+import { useHistory } from "react-router-dom";
 
 const Row = styled(TableRow)({
   borderBottom: '2px solid #666666 !important',
@@ -40,8 +41,9 @@ const useStyles = (height) => makeStyles({
   }
 });
 
-export default function StickyHeadTable({ width, height, action, data, columns, props }) {
+export default function StickyHeadTable({ width, height, action, data, columns, props, href }) {
   const classes = useStyles()
+  const history = useHistory()
 
   return (
     <Fragment>
@@ -63,8 +65,14 @@ export default function StickyHeadTable({ width, height, action, data, columns, 
           </Head>
           <TableBody className={classes.body}>
             {data.map((row) => {
+              let funct = () => {}
+
+              if(href){
+                funct = () => history.push(`/pool/${row.address}`)
+              }
+
               return (
-                <Row hover tabIndex={-1} key={row.code}>
+                <Row hover tabIndex={-1} key={row.code} onClick={funct}>
                   {columns.map((column) => {
                     const value = row[column.id];
 

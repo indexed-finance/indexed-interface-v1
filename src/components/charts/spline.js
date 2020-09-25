@@ -15,7 +15,6 @@ const renameKeys = (keysMap, obj) =>
 
  function hexToRgb(hex) {
   var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  console.log(result)
   return (
     `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
   )

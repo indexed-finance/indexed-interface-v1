@@ -35,7 +35,7 @@ const columns = [
   {
     id: 'action',
     minWidth: 600,
-    align: 'right',
+    align: 'center',
   },
 ]
 
@@ -84,6 +84,7 @@ export default function Pools(){
                 action={Donut}
                 columns={columns}
                 height='100%'
+                href
               />
             </div>
           </Container>
