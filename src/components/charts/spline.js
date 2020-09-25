@@ -13,6 +13,14 @@ const renameKeys = (keysMap, obj) =>
    )
  )
 
+ function hexToRgb(hex) {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  console.log(result)
+  return (
+    `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+  )
+}
+
 const options = {
   bezierCurve: true,
   responsive: true,
@@ -73,7 +81,7 @@ const options = {
 }
 
 
-export default function Spline({ metadata, height }){
+export default function Spline({ metadata, height, color }){
   const [ component, setComponent ] = useState(<Fragment />)
 
   const getConfig = (canvas) => {
@@ -81,12 +89,13 @@ export default function Spline({ metadata, height }){
     var gradient = ctx.createLinearGradient(0,337.5,0, 25)
     let length = metadata.history.length
     let array = metadata.history
+    let rgb = hexToRgb(color)
 
-    gradient.addColorStop(1, 'rgba(	138, 239, 255, .5)')
-    gradient.addColorStop(0.7, 'rgba(	138, 239, 255, 0.25)')
-    gradient.addColorStop(0.6, 'rgba(	138, 239, 255, 0.125)')
-    gradient.addColorStop(0.5, 'rgba(	138, 239, 255, 0.075)')
-    gradient.addColorStop(0.25, 'rgba(	255, 255, 255, 0)')
+    gradient.addColorStop(1, `rgba(${rgb}, .5)`)
+    gradient.addColorStop(0.7, `rgba(${rgb}, 0.25)`)
+    gradient.addColorStop(0.6, `rgba(${rgb}, 0.125)`)
+    gradient.addColorStop(0.5, `rgba(${rgb}, 0.075)`)
+    gradient.addColorStop(0.25, `rgba(${rgb}, 0)`)
 
     let data = renameKeys(
       { close: 'y', date: 'x' }, array.slice(length-8, length)
@@ -98,7 +107,7 @@ export default function Spline({ metadata, height }){
         backgroundColor: gradient,
         fill: true,
         borderWidth: 3,
-        borderColor: "#66FFFF",
+        borderColor: color,
         pointHoverBorderWidth: 15,
         pointRadius: 4,
         data: data

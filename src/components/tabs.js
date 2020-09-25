@@ -17,7 +17,7 @@ import { getPair } from '../lib/markets'
 import { getMarketTrades } from '../api/gql'
 import { store } from '../state'
 
-import { marketColumns, rebalanceColumns } from '../assets/constants/parameters'
+import { marketColumns } from '../assets/constants/parameters'
 
 const Exit = styled(ExitIcon)({
   fontSize: '1rem'

@@ -110,7 +110,7 @@ export default function Markets(){
               <h3> {market.price} </h3>
             </div>
             <div style={{ 'z-index': 1, float: 'left', width: '75%'}}>
-              <Spline height={68} metadata={market} />
+              <Spline color='#66FFFF' height={68} metadata={market} />
             </div>
             <Wrapper>
               <Pie metadata={market} />

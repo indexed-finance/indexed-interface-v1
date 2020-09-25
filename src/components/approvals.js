@@ -110,6 +110,11 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: 17.5,
     fontSize: 12
   },
+  last: {
+    paddingBottom: 17.5,
+    paddingTop: 17.5,
+    fontSize: 12
+  },
   divider: {
     borderTop: '#666666 solid 1px',
     borderBottom: '#666666 solid 1px',
@@ -185,7 +190,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function Approvals({ metadata }){
+export default function Approvals({ metadata, height }){
   const [ component, setComponent ] = useState(<span />)
   const [ isSelected, setSelection ] = useState(true)
   const [ focus, setFocus ] = useState(null)
@@ -342,9 +347,15 @@ export default function Approvals({ metadata }){
   }, [ state.web3.injected ])
 
   return (
-    <List className={classes.list} dense={dense}>
-      {metadata.assets.map(token => (
-        <ListItem className={classes.item}>
+    <List className={classes.list} style={{ height }} dense={dense}>
+      {metadata.assets.map((token, index) => {
+        let label;
+
+        if(index == metadata.assets.length-1) label = 'last'
+        else label = 'item'
+
+       return(
+        <ListItem className={classes[label]}>
           <ListItemAvatar className={classes.wrapper}>
             <Avatar className={classes.avatar}
               src={tokenMetadata[token.symbol].image}
@@ -371,7 +382,9 @@ export default function Approvals({ metadata }){
              />
           </SecondaryActionAlt>
         </ListItem>
-      ))}
+        )
+       }
+      )}
     </List>
   )
 }

@@ -134,33 +134,19 @@ export const marketColumns = [
   }
 ]
 
-export const rebalanceColumns = [
+export const eventColumns = [
   { id: 'time', label: 'TIME', minWidth: 100 },
   {
-    id: 'input',
-    label: 'TRADE IN',
+    id: 'event',
+    label: 'EVENT',
     minWidth: 125,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
-    id: 'output',
-    label: 'TRADE OUT',
-    minWidth: 125,
-    align: 'center',
-    format: (value) => `${value.toLocaleString('en-US')}%`,
-  },
-  {
-    id: 'transaction',
+    id: 'tx',
     label: 'TRANSACTION',
     minWidth: 100,
     align: 'center'
-  },
-  {
-    id: 'fee',
-    label: 'Fee',
-    minWidth: 75,
-    align: 'center',
-    format: (value) => `$${value.toLocaleString('en-US')}`,
   },
 ]
