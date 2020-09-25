@@ -17,6 +17,7 @@ import Markets from './routes/markets'
 import Index from './routes/index'
 import Root from './routes/root'
 import Pools from './routes/pools'
+import Pool from './routes/pool'
 
 import { getTokenCategories, getTokenPriceHistory, getIndexPool } from './api/gql'
 import IERC20 from './assets/constants/abi/IERC20.json'
@@ -209,6 +210,10 @@ function Application(){
           <Route path='/propose'>
             <Navigation mode={mode}/>
             <Propose />
+          </Route>
+          <Route path='/pool/:address'>
+            <Navigation mode={mode}/>
+            <Pool />
           </Route>
           <Route path='/pools'>
             <Navigation mode={mode}/>

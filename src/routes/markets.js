@@ -109,7 +109,9 @@ export default function Markets(){
               <h2> {market.name} [{market.symbol}] </h2>
               <h3> {market.price} </h3>
             </div>
-            <Spline metadata={market} />
+            <div style={{ 'z-index': 1, float: 'left', width: '75%'}}>
+              <Spline height={68} metadata={market} />
+            </div>
             <Wrapper>
               <Pie metadata={market} />
               <ul className={classes.options}>

@@ -73,7 +73,7 @@ const options = {
 }
 
 
-export default function Spline({ metadata }){
+export default function Spline({ metadata, height }){
   const [ component, setComponent ] = useState(<Fragment />)
 
   const getConfig = (canvas) => {
@@ -109,13 +109,9 @@ export default function Spline({ metadata }){
 
   useEffect(() => {
     setComponent(
-      <Line height={68} options={options} data={getConfig} redraw />
+      <Line height={height} options={options} data={getConfig} redraw />
     )
   }, [ metadata ])
 
-  return (
-    <div style={{ 'z-index': 1, float: 'left', width: '75%'}}>
-      {component}
-    </div>
-  )
+  return component
 }

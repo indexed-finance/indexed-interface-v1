@@ -21,6 +21,7 @@ import ButtonTransaction from './buttons/transaction'
 import Adornment from './inputs/adornment'
 import Input from './inputs/input'
 import Radio from './inputs/radio'
+import Approvals from './approvals'
 
 import { store } from '../state'
 
@@ -30,35 +31,6 @@ const OutputInput = styled(Input)({
   marginTop: 75
 })
 
-const ApproveButton = styled(ButtonTransaction)({
-  fontSize: 10,
-  paddingRight: 5
-})
-
-const AmountInput = styled(Input)({
-  width: 150,
-  '& label': {
-    fontSize: 12
-  },
-  '& fieldset': {
-    borderWidth: 1,
-  },
-  '& input:valid + fieldset': {
-    borderColor: '#999999',
-    borderWidth: '1px !important',
-  },
-  '& input:invalid + fieldset': {
-    borderColor: 'red',
-    borderWidth: '1px !important',
-  },
-  '& input:valid:focus + fieldset': {
-    borderWidth: '1px !important',
-  },
-  '& input': {
-    padding: '.75em 0 .75em .75em',
-  }
-})
-
 const RecieveInput = styled(Input)({
   width: 250,
   marginLeft: -22.5
@@ -66,27 +38,6 @@ const RecieveInput = styled(Input)({
 
 const Trigger = styled(ButtonPrimary)({
   marginTop: -7.5
-})
-
-const SecondaryActionAlt = styled(ListItemSecondaryAction)({
-  top: '50%',
-  maringLeft: 25,
-  cursor: 'pointer'
-})
-
-const SecondaryItemText =  styled(ListItemText)({
-  margin: 0,
-  marginRight: '35%',
-  paddingLeft: 0,
-  '& span': {
-    fontSize: 12
-  },
-  '& .MuiListItemText-secondary': {
-    fontSize: 12
-  },
-  '& .MuiListItemText-primary': {
-    fontSize: 10
-  }
 })
 
 const useStyles = makeStyles((theme) => ({
@@ -212,85 +163,19 @@ export default function InteractiveList({ market, metadata }) {
 
   let { state, dispatch } = useContext(store)
 
-  const mintTokens = async() => {
-    let { web3, account } = state
-    let { address, assets } = metadata
-    let amounts = await getRate(web3.injected, amount, address)
-    let contract = toContract(web3.injected, BPool.abi, address)
-    let decimals = await contract.methods.decimals().call()
-    let output = decToWeiHex(web3.injected, amount)
-
-    await contract.methods.joinPool(
-      output,
-      amounts.map(t => t.amount))
-    .send({
-      from: account
-    }).on('confirmation', async(conf, receipt) => {
-      let balances = await getBalances(web3.injected, account, assets, state.balances)
-      let tokenBalance = await getBalance()
-
-      await dispatch({ type: 'BAL', payload: { balances } })
-      setBalance(tokenBalance)
-    })
-  }
-
-  const getBalance = async() => {
-    let contract = toContract(state.web3.injected, IERC20.abi, metadata.address)
-
-    let balance = await contract.methods
-    .balanceOf(state.account).call()
-
-    return parseFloat(balance/Math.pow(10,18)).toFixed(2)
-  }
-
-  const approveTokens = async(symbol) => {
-    let { address } = state.balances[symbol]
-    let contract = toContract(state.web3.injected, IERC20.abi, address)
-    let amount = convertNumber(getInputValue(symbol))
-
-    await contract.methods
-    .approve(metadata.address, amount).send({
-      from: state.account
-    }).on('confirmation', (conf, receipt) => {
-      setInputState(symbol, true)
-    })
-  }
-
-  const getAllowance = async(address) => {
-    let contract = toContract(state.web3.injected, IERC20.abi, address)
-
-    let allowance = await contract.methods
-    .allowance(state.account, metadata.address).call()
-
-    return allowance/Math.pow(10,18)
-  }
-
   const handleChange = (event) => {
-    if(event.target.checked) setComponent(<Multi />)
-    else setComponent(<Single />)
+    if(event.target.checked) {
+      setComponent(
+        <Approvals metadata={metadata} amount={amount} />
+      )
+    } else {
+      setComponent(<Single />)
+    }
     setSelection(event.target.checked)
-  }
-
-  const handleInput = (event) => {
-    setFocus(event.target.name)
   }
 
   const handleAmount = (event) => {
     setAmount(event.target.value)
-  }
-
-  const getInputValue = (symbol) => {
-    let element = document.getElementsByName(symbol)[0]
-    return parseFloat(element.value)
-  }
-
-  const handleBalance  = (symbol) => {
-    let { amount } = state.balances[symbol]
-    let element = document.getElementsByName(symbol)[0]
-
-    element.value = amount
-
-    setFocus(symbol)
   }
 
   const convertNumber = (amount) => {
@@ -305,45 +190,6 @@ export default function InteractiveList({ market, metadata }) {
 
   const parseNumber = (amount) => {
     return parseFloat(amount/Math.pow(10, 18)).toFixed(2)
-  }
-
-  function Multi() {
-    const classes = useStyles()
-    let { balances } = state
-
-    return(
-      <List className={classes.list} dense={dense}>
-        {metadata.assets.map(token => (
-          <ListItem className={classes.item}>
-            <ListItemAvatar className={classes.wrapper}>
-              <Avatar className={classes.avatar}
-                src={tokenMetadata[token.symbol].image}
-               />
-            </ListItemAvatar>
-            <ListItemText primary={token.symbol} />
-            <SecondaryItemText primary="BALANCE"
-              secondary={balances[token.symbol].amount}
-              onClick={() => handleBalance(token.symbol)}
-            />
-            <SecondaryActionAlt>
-              <AmountInput variant='outlined' label='AMOUNT' type='number'
-                InputLabelProps={{ shrink: true }}
-                onChange={handleInput}
-                name={token.symbol}
-                InputProps={{
-                  endAdornment:
-                   <ApproveButton onClick={
-                     () => approveTokens(token.symbol)
-                   }>
-                      APPROVE
-                   </ApproveButton>
-                }}
-               />
-            </SecondaryActionAlt>
-          </ListItem>
-        ))}
-      </List>
-    )
   }
 
   function Single() {
@@ -361,65 +207,9 @@ export default function InteractiveList({ market, metadata }) {
     )
   }
 
-  const setInputState = (name, bool) => {
-    let element = document.getElementsByName(name)[0]
-    let { nextSibling } = element.nextSibling
-
-    if(bool) nextSibling.style.borderColor = '#009966'
-    else nextSibling.style.borderColor = 'red'
-  }
-
   useEffect(() => {
-    const verifyAllowance = async() => {
-      if(state.balances[focus] != undefined){
-        let { address } = state.balances[focus]
-        let allowance = await getAllowance(address)
-        let amount = getInputValue(focus)
-
-        if(allowance < parseFloat(amount)){
-          setInputState(focus, false)
-        } else {
-          setInputState(focus, true)
-        }
-      }
-    }
-    verifyAllowance()
-  }, [ focus ])
-
-  useEffect(() => {
-    const getInputs = async() => {
-      if(amount != null){
-        let { web3 } = state
-        let { address } = metadata
-        let { toBN } = web3.rinkeby.utils
-        let rates = await getRate(web3.rinkeby, amount, address)
-
-        for(let token in rates){
-          let { symbol, amount } = rates[token]
-          let element = document.getElementsByName(symbol)[0]
-          let output = toBN(amount).toString()
-
-          element.value = parseNumber(output)
-          setFocus(symbol)
-        }
-      }
-    }
-    getInputs()
-  }, [ amount ])
-
-  useEffect(() => {
-    const pullBalance = async() => {
-      if(state.web3.injected) {
-        let balance = await getBalance()
-        setBalance(balance)
-      }
-    }
-    pullBalance()
-  }, [ state.web3.injected ])
-
-  useEffect(() => {
-    setComponent(<Multi />)
-  }, [ state.balances ])
+    setComponent(<Approvals metadata={metadata} amount={amount} />)
+  }, [ state.balances, amount ])
 
   return (
     <Grid container direction='column' alignItems='center' justify='space-around'>
@@ -447,7 +237,7 @@ export default function InteractiveList({ market, metadata }) {
         <div className={classes.altDivider2} />
       </Grid>
       <Grid item>
-        <Trigger onClick={mintTokens}> MINT </Trigger>
+        <Trigger> MINT </Trigger>
       </Grid>
     </Grid>
   );
