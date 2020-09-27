@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react'
+import React, { Fragment, useEffect, useState, useContext } from 'react'
 
 import { makeStyles, styled, withStyles } from '@material-ui/core/styles'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
@@ -15,12 +15,15 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Checkbox from '@material-ui/core/Checkbox';
 import Avatar from '@material-ui/core/Avatar';
+import { useParams } from 'react-router-dom'
 
 import ButtonPrimary from '../components/buttons/primary'
 import Donut from '../components/charts/donut'
 import Heatmap from '../components/charts/heatmap'
 import Container from '../components/container'
 import Canvas from '../components/canvas'
+
+import { store } from '../state'
 
 const Main = styled(Canvas)({
   marginTop: '3em',
@@ -169,6 +172,9 @@ const useStyles = makeStyles((theme) => ({
   column: {
     float: 'right',
   },
+  lozenge: {
+    float: 'left'
+  },
   metadata: {
     lineHeight: 1.5,
     '& p': {
@@ -197,11 +203,9 @@ const useStyles = makeStyles((theme) => ({
     },
     '& a': {
       color: 'orange'
-    }
+    },
   }
 }))
-
-let ADDRESS = "0xc2edad668740f1aa35e4d8f227fb8e17dca888cd"
 
 const ProgressFor = withStyles((theme) => ({
   root: {
@@ -255,7 +259,7 @@ const ForRadio = withStyles({
   checked: {},
 })((props) => <Radio color="default" {...props} />);
 
-const metadata = [
+const proposal = [
   { function: 'addCategory()', contract: 'PoolController', parameters: ['GOVERNANCE', 'GOV'] },
   { function: 'deployIndex()', contract: 'PoolController', parameters: ['GOVERNANCE INDEX 3', 'GOVI3', '100'] },
   { function: 'startLiquidityOffering()', contract: 'BPool', parameters: ['GOVI3', '0x455543'] }
@@ -309,8 +313,11 @@ Cast your votes people, to agree or disagree is up to you.
 `
 
 export default function Proposal(){
-  const classes = useStyles()
+  let { state } = useContext(store)
+  let { tx } = useParams()
 
+  const [ metadata, setMetadata ] = useState(state.proposals[tx])
+  const classes = useStyles()
 
   function Blockie({ address, id, width, border }) {
     let classes = useStyles()
@@ -344,30 +351,30 @@ export default function Proposal(){
             <Main>
               <div className={classes.proposal}>
                 <div className={classes.header}>
-                  <Blockie border='5px' width={67.5} id='blockie' address={ADDRESS} />
+                  <Blockie border='5px' width={67.5} id='blockie' address={metadata.author} />
                   <div className={classes.title}>
-                  <div id='active'>
-                    <Lozenge isBold>
-                      ACTIVE
-                    </Lozenge>
-                  </div>
-                  <h3> New category; Governance </h3>
-                  <div className={classes.reciept}>
-                    <span>{ADDRESS.substring(0, 6)}...{ADDRESS.substring(38, 64)} • </span> 1D, 23HRS REMAINING
-                  </div>
+                    <div className={classes.lozenge}>
+                      <div id={metadata.phase}>
+                        <Lozenge isBold> {metadata.phase} </Lozenge>
+                      </div>
+                    </div>
+                    <h3> {metadata.title}</h3>
+                    <div className={classes.reciept}>
+                      <span>{metadata.author.substring(0, 6)}...{metadata.author.substring(38, 64)} • </span> {metadata.time}
+                    </div>
                 </div>
               </div>
               <div className={classes.results}>
                 <div className={classes.option}>
                   <div className={classes.vote}> AGAINST </div>
                   <span className={classes.progress}>
-                    <ProgressAgainst variant="determinate" value={30} /> <span> 5,233.00 NDX</span>
+                    <ProgressAgainst variant="determinate" value={metadata.no} /> <span> {metadata.against}</span>
                   </span>
                 </div>
                 <div className={classes.option}>
                   <div className={classes.vote}> FOR </div>
                   <span className={classes.progress}>
-                    <ProgressFor variant="determinate" value={70} /> <span> 25,196.41 NDX </span>
+                    <ProgressFor variant="determinate" value={metadata.yes} /> <span> {metadata.for}</span>
                   </span>
                 </div>
               </div>
@@ -382,8 +389,8 @@ export default function Proposal(){
                   <b style={{ float: 'left'}}> FOR <ForRadio /></b>
                   <b style={{ float: 'right'}}> AGAINST <AgainstRadio /></b>
                 </label>
-                <p> WEIGHT: 1,050.42 NDX </p>
-                <p> IMPACT: <span> 3.42% </span> </p>
+                <p> WEIGHT: 0 NDX </p>
+                <p> IMPACT: <span> 0% </span> </p>
                 <ButtonPrimary variant='outlined'>
                   VOTE
                 </ButtonPrimary>
@@ -398,7 +405,7 @@ export default function Proposal(){
             <div className={classes.body}>
               <div className={classes.metadata}>
                 <ul>
-                  {metadata.map((action, index) => (
+                  {proposal.map((action, index) => (
                     <Fragment>
                       <span> {index}. </span>
                         <li>

@@ -65,14 +65,14 @@ export default function StickyHeadTable({ width, height, action, data, columns, 
           </Head>
           <TableBody className={classes.body}>
             {data.map((row) => {
-              let funct = () => {}
+              let f = () => {}
 
               if(href){
-                funct = () => history.push(`/pool/${row.address}`)
+                f = () => history.push(`/pool/${row.address}`)
               }
 
               return (
-                <Row hover tabIndex={-1} key={row.code} onClick={funct}>
+                <Row hover tabIndex={-1} key={row.code} onClick={f}>
                   {columns.map((column) => {
                     const value = row[column.id];
 

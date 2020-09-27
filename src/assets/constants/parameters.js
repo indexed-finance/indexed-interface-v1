@@ -41,7 +41,14 @@ export const initialState = {
     'LINK': { amount: 0, address: null },
     'BUSD': { amount: 0, address: null }
   },
+  proposals: {
+    "0xcd5edd521b1b3b7511b3e968e3d322c875d1cd17b13cd89c9a74fd9086d005f8": { author: '0xc2edad668740f1aa35e4d8f227fb8e17dca888cd', title: 'New category: Governance', time: '1D, 14HRS REMAINING', phase: 'active', yes: 50, no: 50, participants: 50, for: '5,000.53 NDX', against: '5,001.53 NDX', action: true, label: 'VOTE' },
+    "0xe6858db4c58879821936c5a88df647251814c0520a5da5d2afd8c26a946bed04": { author: '0xc2edad668740f1aa35e4d8f227fb8e17dca888cd', title: 'Increase swap fee to 2.5%', phase: 'passed', time: 'BLOCK: 45423', yes: 75, no: 25, participants: 150, for: '25,562.00 NDX', against: '7,531.05 NDX', action: true, label: 'COUNTER' },
+    "0xcd5edd521b1b3b7511b3e968e3d322c875d1cd17b13cd89c9a74fd9086d005f8": { author: '0xc2edad668740f1aa35e4d8f227fb8e17dca888cd', title: 'New index: [DEFII10]', phase: 'executed', yes: 90,  time: 'BLOCK: 42112', no: 10, participants: 225, action: false, for: '100,459.66 NDX', against: '10,531.11 NDX', label: 'CONCLUDED' },
+    "0xa9a01f59b454058d700253430ee234794bde8e04dbe5bb03c10133192543bc09": { author: '0xc2edad668740f1aa35e4d8f227fb8e17dca888cd', title: 'Whitelist: [HEX]', phase: 'rejected',  yes: 14.75,  time: 'BLOCK: 40105', no: 85.25, participants: 300, action: false, for: '20,111.33 NDX', against: '500,124.06 NDX', label: 'CONCLUDED' }
+  },
   indexes: {},
+
 }
 
 export const tokenMetadata = {

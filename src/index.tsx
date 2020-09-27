@@ -205,7 +205,7 @@ function Application(){
     <ThemeProvider theme={theme}>
       <Router>
         <Switch>
-          <Route path='/proposal/:id'>
+          <Route path='/proposal/:tx'>
             <Navigation mode={mode}/>
             <Proposal />
           </Route>

@@ -15,6 +15,7 @@ import Checkbox from '@material-ui/core/Checkbox'
 import Avatar from '@material-ui/core/Avatar'
 import Lozenge from '@atlaskit/lozenge'
 import LinearProgress from '@material-ui/core/LinearProgress'
+import { useHistory } from "react-router-dom";
 
 import ButtonPrimary from '../components/buttons/primary'
 import Container from '../components/container'
@@ -26,13 +27,6 @@ import Stacked from '../components/charts/stacked'
 import { store } from '../state'
 
 const selections = [[{ value: 0, label: null }]];
-
-const proposals = [
-  { title: 'New category: Governance', time: '1D, 14HRS REMAINING', phase: 'active', yes: 50, no: 50, participants: 50, for: '5,000.53 NDX', against: '5,001.53 NDX', action: true, label: 'VOTE' },
-  { title: 'Increase swap fee to 2.5%', phase: 'passed', time: 'BLOCK: 45423', yes: 75, no: 25, participants: 150, for: '25,562.00 NDX', against: '7,531.05 NDX', action: true, label: 'COUNTER' },
-  { title: 'New index: [DEFII10]', phase: 'executed', yes: 90,  time: 'BLOCK: 42112', no: 10, participants: 225, action: false, for: '100,459.66 NDX', against: '10,531.11 NDX', label: 'CONCLUDED' },
-  { title: 'Whitelist: [HEX]', phase: 'rejected',  yes: 14.75,  time: 'BLOCK: 40105', no: 85.25, participants: 300, action: false, for: '20,111.33 NDX', against: '500,124.06 NDX', label: 'CONCLUDED' },
-]
 
 const Liquidity = styled(Button)({
   border: '2px solid #009966',
@@ -209,23 +203,10 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function Governance(){
+  const [ proposals, setProposals ] = useState([])
   const [ chart, setChart ] = useState(<span/>)
-  const [ checked, setChecked ] = useState([1])
+  const history = useHistory()
   const classes = useStyles()
-
-  const handleToggle = (value) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    setChecked(newChecked);
-  }
-
 
   let { dispatch, state } = useContext(store)
 
@@ -245,6 +226,7 @@ export default function Governance(){
 
   useEffect(() => {
     setChart(renderChart())
+    setProposals(state.proposals)
   }, [])
 
   return (
@@ -284,16 +266,18 @@ export default function Governance(){
         <Grid item className={classes.root}>
           <Container margin='3em 3em' padding="1em 2em" title='PROPOSALS' percentage='15%'>
             <ListWrapper dense className={classes.proposals}>
-              {proposals.map((value, index) => {
+              {Object.entries(proposals).map(([key, value], index) => {
+                let f = () => history.push(`/proposal/${key}`)
+
                 return (
-                  <Item key={value.title} button>
+                  <Item key={key} button onClick={f}>
                     <ListItemText primary={<label>{value.title}</label>}
                       secondary={
                         <div id={value.phase}>
                           <Lozenge isBold>
                             {value.phase}
                             </Lozenge>
-                          <o> {proposals.length - (parseInt(index) + 1)} • {value.time}</o>
+                          <o> {Object.keys(proposals).length - (parseInt(index) + 1)} • {value.time}</o>
                         </div>
                       }
                     />
