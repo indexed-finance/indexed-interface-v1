@@ -11,7 +11,7 @@ const { getERC20 } = require('./erc20');
 const { toBN } = require('./util/bn');
 const { toContract } = require('./util/contracts');
 
-module.exports = class Uniswap {
+export default class Uniswap {
   constructor(web3, contracts, from = null) {
     this.web3 = web3;
     this.from = from;

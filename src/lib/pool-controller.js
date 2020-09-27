@@ -14,7 +14,7 @@ const { toBN } = require('./util/bn');
 const { init } = require('../server/src/express');
 const { getERC20 } = require('./erc20');
 
-class PoolController {
+export default class PoolController {
   constructor(web3, poolController, oracle, from) {
     this.web3 = web3;
     this.from = from;
@@ -116,5 +116,3 @@ class PoolController {
     return toContract(this.web3, BPoolABI, pool);
   }
 }
-
-module.exports = PoolController;

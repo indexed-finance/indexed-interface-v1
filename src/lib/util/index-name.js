@@ -1,9 +1,7 @@
-function indexNameAndSymbol(categoryMetadata, indexSize) {
+export function indexNameAndSymbol(categoryMetadata, indexSize) {
   const { name, symbol } = categoryMetadata;
   return {
     name: `${name} ${indexSize}`,
     symbol: `${symbol}${indexSize}`
   };
 }
-
-module.exports = indexNameAndSymbol;

@@ -27,7 +27,7 @@ const sortTokens = (arr) => arr.sort((a, b) => {
   return 0;
 });
 
-module.exports = class MarketOracle {
+export default class MarketOracle {
   /**
    * @param {Web3} web3 - web3 object
    * @param {string} address - address of the market oracle

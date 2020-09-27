@@ -1,4 +1,4 @@
-function deploy(web3, from, abi, bytecode, args = []) {
+export function deploy(web3, from, abi, bytecode, args = []) {
   return new web3.eth.Contract(abi).deploy({
     data: bytecode,
     arguments: args,
@@ -6,11 +6,6 @@ function deploy(web3, from, abi, bytecode, args = []) {
   .send({ from, gas: 6e6 });
 }
 
-const toContract = (web3, abi, address) => {
+export const toContract = (web3, abi, address) => {
   return new web3.eth.Contract(abi, address);
 }
-
-module.exports = {
-  deploy,
-  toContract
-};

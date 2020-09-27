@@ -33,16 +33,22 @@ const useStyles = makeStyles((theme) => ({
   },
   select: {
     marginBottom: 25
+  },
+  functions: {
+    width: '80%',
+    float: 'right'
   }
 }))
 
 export default function Propose(){
-  const [ selection, setSelection ] = useState({ functionList: [] })
+  const [ selection, setSelection ] = useState({ address: null, name: null })
+  const [ entries, setEntries ] = useState(<span />)
   const [ metadata, setMetadata ] = useState({})
   const [ contracts, setContracts ] = useState([])
   const [ description, setDescription ] = useState(null)
   const [ executions, setExecutions ] = useState([])
-
+  const [ targets, setTargets ] = useState([])
+  const [ focus, setFocus ] = useState(null)
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
@@ -76,7 +82,40 @@ export default function Propose(){
   }
 
   const onContractChange = (value) => {
-    setSelection(metadata[value])
+    setSelection(value)
+  }
+
+  const removeContract = (key) => {
+    let activeExecutions = executions
+    let newTargets = []
+
+    for(let index in targets){
+      if(targets[index] != key) {
+        newTargets.push(targets[index])
+      }
+    }
+
+    delete activeExecutions[key]
+
+    setEntries(renderEntries(activeExecutions))
+    setExecutions(activeExecutions)
+    setTargets(newTargets)
+  }
+
+  const onFocusChange = (value) => {
+    let newExecutions = executions
+    let newTargets = targets
+
+    newExecutions[value] = {
+      abi: metadata[selection],
+      name: selection,
+      functions: [],
+    }
+    newTargets.push(value)
+
+    setEntries(renderEntries(newExecutions))
+    setExecutions(newExecutions)
+    setTargets(newTargets)
   }
 
   const handleDescription = (event) => {
@@ -86,72 +125,107 @@ export default function Propose(){
     )
   }
 
-  const onFunctionChange = (value) => {
-    let newFunctions = []
+  const onFunctionChange = (key, value) => {
+    let newExecutions = executions
+    let { functions, abi } = newExecutions[key]
 
-    if(executions.length != 0){
-      for(let index in executions){
-        newFunctions.push(executions[index])
-      }
-    }
+    functions.push(abi.functions[value])
 
-    newFunctions.push(selection.functions[value])
-    setExecutions(newFunctions)
+    setEntries(renderEntries(newExecutions))
+    setExecutions(newExecutions)
   }
 
-  const removeFunction = (index) => {
-    let newFunctions = []
+  const removeFunction = (key, index) => {
+    let newExecutions = executions
+    let { functions, abi } = newExecutions[key]
 
-    if(executions.length != 0){
-      for(let i in executions){
-        if(i != index) newFunctions.push(executions[i])
-      }
-    }
+    functions[index] = functions[functions.length-1]
+    functions.length--
 
-    setExecutions(newFunctions)
+    setEntries(renderEntries(newExecutions))
+    setExecutions(newExecutions)
   }
 
-  function Entries({ data }) {
+  function Entries({ data, pair }) {
     const [ mapping, setMapping ] = useState(data)
 
     useEffect(() => {
       setMapping(data)
-    }, [ data ])
+    }, [ data, pair ])
 
     return(
       <Fragment>
-        {mapping.map((value, index) =>
-          <Fragment>
-            <IconButton onClick={() => removeFunction(index)}>
-              <Clear color='secondary'/>
-            </IconButton>
-            <b> {value.name} </b>
-            {value.inputs.map(f => (
-              <Grid item>
-                <Entry label={f.type} variant='outlined' />
-              </Grid>
-            ))}
-          </Fragment>
-        )}
+        <Grid item>
+          <div className={classes.select}>
+            <Select
+               selections={mapping.abi.functionList}
+               onChange={(e) => onFunctionChange(pair, e)}
+               label='Function'
+            />
+          </div>
+        </Grid>
+        <div className={classes.functions}>
+          {mapping.functions.map((value, index) => (
+            <Fragment>
+              <IconButton onClick={() => removeFunction(pair, index)}>
+                <Clear color='secondary'/>
+              </IconButton>
+              <b> {value.name} </b>
+              {value.inputs.map(f => (
+                <Grid item>
+                  <Entry label={f.type} variant='outlined' />
+                </Grid>
+              ))}
+           </Fragment>
+          ))}
+        </div>
       </Fragment>
     )
   }
 
+  const renderEntries = (meta) => {
+    return(
+      <Fragment>
+        {Object.entries(meta).map(([key, value]) => (
+          <Fragment>
+            <IconButton onClick={() => removeContract(key)}>
+              <Clear color='secondary'/>
+            </IconButton>
+            <b> {value.name} {key.substring(0, 6)}...{key.substring(38, 64)}</b>
+            <Entries pair={key} data={value} />
+          </Fragment>
+        ))}
+     </Fragment>
+    )
+  }
+
   useEffect(() => {
-    let instances = []
-    let mapping = {}
+    const sortAbis =  () => {
+      let instances = []
+      let calls = []
+      let mapping = {}
 
-    for(let contract in sources){
-      let { abi, contractName } = sources[contract]
+      for(let contract in sources){
+        let { abi, contractName } = sources[contract]
 
-      instances.push({ value: contractName, label: contractName })
-      mapping[contractName] = parseAbi(abi)
+        instances.push({ value: contractName, label: contractName })
+        mapping[contractName] = parseAbi(abi)
+      }
+
+      Object.entries(state.indexes).map(o =>
+        calls.push({
+          label: `${o[1].address} [${o[1].symbol}]`,
+          value: o[1].address,
+        })
+      )
+
+      setSelection(mapping['BPool'])
+      setContracts(instances)
+      setMetadata(mapping)
+      setTargets(calls)
     }
-
-    setSelection(mapping['BPool'])
-    setContracts(instances)
-    setMetadata(mapping)
-  }, [])
+    sortAbis()
+  }, [ state.indexes ])
 
   return (
     <Fragment>
@@ -159,23 +233,23 @@ export default function Propose(){
         <Container margin="3em 3em" padding="1em 2em" title="CREATE PROPOSAL" percentage="37.5%">
           <div className={classes.form}>
             <Grid item>
-              <div className={classes.select}>
-                <Select label='Contract' selections={contracts} onChange={onContractChange}/>
-              </div>
-            </Grid>
-            <Grid item>
-              <div className={classes.select}>
-                <Select label='Function' selections={selection.functionList} onChange={onFunctionChange} />
-              </div>
-            </Grid>
-            <Entries data={executions} />
-            <Grid item>
               <p> PREVIEW: </p>
               <div className={classes.preview} id='preview' />
             </Grid>
             <Grid item>
               <Entry onChange={handleDescription} multiline variant='outlined' label="Description" rows={4} />
             </Grid>
+            <Grid item>
+              <div className={classes.select}>
+                <Select label='Contract' selections={contracts} onChange={onContractChange}/>
+              </div>
+            </Grid>
+            <Grid item>
+              <div className={classes.select}>
+                <Select label='Target' selections={targets} onChange={onFocusChange} />
+              </div>
+            </Grid>
+            {entries}
             <Grid item>
               <ButtonPrimary variant='outlined'>
                 SUBMIT

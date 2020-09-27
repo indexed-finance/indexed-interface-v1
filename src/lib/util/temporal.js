@@ -7,7 +7,7 @@ const rp = require('request-promise-native');
 /**
  * Temporal JS API
  */
-class Temporal {
+export default class Temporal {
   constructor() {
     this.endpoint = 'https://api.temporal.cloud';
     this.version = 'v2';
@@ -428,5 +428,3 @@ class Temporal {
       });
   }
 }
-
-module.exports = Temporal;

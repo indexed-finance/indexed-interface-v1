@@ -12,12 +12,10 @@ function sortObjectKeys(obj){
   },{});
 }
 
-const stringify = (obj) => {
+export const stringify = (obj) => {
   let sortedObject = sortObjectKeys(obj);
   let jsonstring = JSON.stringify(sortedObject, function(k, v) { return v === undefined ? "undef" : v; });
   // Remove all whitespace
   // let jsonstringNoWhitespace = jsonstring.replace(/\s+/g, '');
   return jsonstring;
 }
-
-module.exports = stringify;

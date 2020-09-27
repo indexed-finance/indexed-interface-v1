@@ -19,7 +19,7 @@ export default function LoadingAnimation(){
     <Grid container direction='column' alignItems='center' justify='center'>
       <Grid item>
         <div className={classes.container}>
-          <Loader size="Large" color="#66FFFF" type="line-scale-pulse-out-rapid" active />
+          <Loader size="Large" color="#666666" type="line-scale-pulse-out-rapid" active />
         </div>
       </Grid>
     </Grid>

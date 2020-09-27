@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { Fragment, useState, useEffect, useContext } from 'react'
 
 import { makeStyles, styled } from '@material-ui/core/styles'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
@@ -263,7 +263,8 @@ export default function Approvals({ balance, metadata, height, width, input }){
     let { nextSibling } = element.nextSibling
 
     if(bool) nextSibling.style.borderColor = '#009966'
-    else nextSibling.style.borderColor = 'red'
+    else if (!bool) nextSibling.style.borderColor = 'red'
+    else nextSibling.style.borderColor = 'orange'
   }
 
   useEffect(() => {
@@ -304,6 +305,45 @@ export default function Approvals({ balance, metadata, height, width, input }){
     getInputs()
   }, [ input ])
 
+  function Phase({ token }) {
+    const [component, setComponent] = useState(null)
+
+    const handleTrigger = () => {
+      // approveTokens(symbol)
+      setComponent(renderAction())
+    }
+
+    const renderInput = () => {
+      return(
+        <AmountInput variant='outlined' label='AMOUNT' type='number'
+          InputLabelProps={{ shrink: true }}
+          onChange={handleInput}
+          name={token.symbol}
+          InputProps={{
+            endAdornment:
+             <ApproveButton onClick={handleTrigger}>
+                APPROVE
+             </ApproveButton>
+          }}
+         />
+      )
+    }
+
+    const renderAction = () => {
+      return (
+        <ButtonPrimary variant='outlined'>
+           SUPPLY
+        </ButtonPrimary>
+      )
+    }
+
+    useEffect(() => {
+      setComponent(renderInput())
+    }, [ token.symbol ])
+
+    return component
+  }
+
   return (
     <List className={classes.list} style={{ height, width }} dense={dense}>
       {metadata.assets.map((token, index) => {
@@ -325,20 +365,7 @@ export default function Approvals({ balance, metadata, height, width, input }){
             onClick={() => handleBalance(token.symbol)}
           />
           <SecondaryActionAlt>
-            <AmountInput variant='outlined' label='AMOUNT' type='number'
-              InputLabelProps={{ shrink: true }}
-              onChange={handleInput}
-              name={token.symbol}
-              helperText='DESIRED: 1,000'
-              InputProps={{
-                endAdornment:
-                 <ApproveButton onClick={
-                   () => approveTokens(token.symbol)
-                 }>
-                    APPROVE
-                 </ApproveButton>
-              }}
-             />
+            <Phase token={token} />
           </SecondaryActionAlt>
         </ListItem>
         )

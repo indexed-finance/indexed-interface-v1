@@ -3,7 +3,7 @@ const { abi: IPoolABI } = require('../artifacts/BPool.json');
 const { abi: Erc20ABI } = require('../artifacts/IERC20.json');
 const { getERC20 } = require('./erc20');
 
-module.exports = class IndexFund {
+export default class IndexFund {
   constructor(web3, from, poolAddress, uniswap) {
     this.web3 = web3;
     this.from = from;
