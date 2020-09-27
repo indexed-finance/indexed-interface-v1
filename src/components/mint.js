@@ -250,7 +250,7 @@ export default function InteractiveList({ market, metadata }) {
         <div className={classes.altDivider1} />
         <div className={classes.demo}>
           {isSelected && (
-            <Approvals width='417.5px' input={amount} height='235px' metadata={metadata} />
+            <Approvals param='RECIEVE' width='417.5px' input={amount} height='235px' metadata={metadata} />
           )}
           {isSelected == null && ( <span /> )}
           {!isSelected && ( <Single /> )}

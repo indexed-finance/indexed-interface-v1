@@ -8,6 +8,8 @@ import ListItem from '@material-ui/core/ListItem'
 import Avatar from '@material-ui/core/Avatar'
 import List from '@material-ui/core/List'
 import Grid from '@material-ui/core/Grid'
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import Checkbox from '@material-ui/core/Checkbox';
 
 import { tokenMetadata } from '../assets/constants/parameters'
 import { toContract } from '../lib/util/contracts'
@@ -25,6 +27,10 @@ import Input from './inputs/input'
 const ApproveButton = styled(ButtonTransaction)({
   fontSize: 10,
   paddingRight: 5
+})
+
+const Tick = styled(ListItemIcon)({
+  minWidth: 35,
 })
 
 const AmountInput = styled(Input)({
@@ -61,14 +67,14 @@ const Trigger = styled(ButtonPrimary)({
 })
 
 const SecondaryActionAlt = styled(ListItemSecondaryAction)({
-  top: '50%',
+  top: '57.5%',
   maringLeft: 25,
   cursor: 'pointer'
 })
 
 const SecondaryItemText =  styled(ListItemText)({
   margin: 0,
-  marginRight: '35%',
+  marginRight: '27.5%',
   paddingLeft: 0,
   '& span': {
     fontSize: 12
@@ -106,13 +112,15 @@ const useStyles = makeStyles((theme) => ({
   },
   item: {
     borderBottom: 'solid 2px #666666',
-    paddingBottom: 17.5,
-    paddingTop: 17.5,
+    paddingBottom: 25,
+    paddingTop: 25,
+    height: 100,
     fontSize: 12
   },
   last: {
-    paddingBottom: 17.5,
-    paddingTop: 17.5,
+    paddingBottom: 25,
+    paddingTop: 25,
+    height: 100,
     fontSize: 12
   },
   divider: {
@@ -159,6 +167,8 @@ const useStyles = makeStyles((theme) => ({
   },
   wrapper: {
     minWidth: 45,
+    paddingLeft: 0,
+    marginLeft: 0
   },
   text: {
     fontSize: 12,
@@ -169,6 +179,9 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 12.5,
     marginLeft: 50,
     width: 250
+  },
+  helper: {
+    fontSize: 10
   },
   market: {
     width: '100%',
@@ -190,15 +203,29 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function Approvals({ balance, metadata, height, width, input }){
+export default function Approvals({ balance, metadata, height, width, input, param }){
   const [ component, setComponent ] = useState(<span />)
   const [ isSelected, setSelection ] = useState(true)
+  const [ checked, setChecked ] = useState([0])
   const [ focus, setFocus ] = useState(null)
   const [ dense, setDense ] = useState(false)
   const [ amount, setAmount ] = useState(null)
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
+
+  const handleToggle = (value) => () => {
+    const currentIndex = checked.indexOf(value);
+    const newChecked = [...checked];
+
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+
+    setChecked(newChecked);
+  };
 
   const approveTokens = async(symbol) => {
     let { address } = state.balances[symbol]
@@ -258,12 +285,12 @@ export default function Approvals({ balance, metadata, height, width, input }){
     return parseFloat(amount/Math.pow(10, 18)).toFixed(2)
   }
 
-  const setInputState = (name, bool) => {
+  const setInputState = (name, type) => {
     let element = document.getElementsByName(name)[0]
     let { nextSibling } = element.nextSibling
 
-    if(bool) nextSibling.style.borderColor = '#009966'
-    else if (!bool) nextSibling.style.borderColor = 'red'
+    if(type == 0) nextSibling.style.borderColor = '#009966'
+    else if (type == 1) nextSibling.style.borderColor = 'red'
     else nextSibling.style.borderColor = 'orange'
   }
 
@@ -275,9 +302,9 @@ export default function Approvals({ balance, metadata, height, width, input }){
         let amount = getInputValue(focus)
 
         if(allowance < parseFloat(amount)){
-          setInputState(focus, false)
+          setInputState(focus, 1)
         } else {
-          setInputState(focus, true)
+          setInputState(focus, 0)
         }
       }
     }
@@ -294,78 +321,75 @@ export default function Approvals({ balance, metadata, height, width, input }){
 
         for(let token in rates){
           let { symbol, amount } = rates[token]
-          let element = document.getElementsByName(symbol)[0]
+          let element = document.getElementById(symbol)
           let output = toBN(amount).toString()
 
-          element.value = parseNumber(output)
+          element.innerHTML = parseNumber(output)
           setFocus(symbol)
         }
       }
     }
-    getInputs()
+    const setInputs = () => {
+      if(metadata.assets.length > 0){
+        for(let token in metadata.assets){
+          let { symbol, desired } = metadata.assets[token]
+          let element = document.getElementById(symbol)
+
+          if(desired == 0) element.innerHTML = desired
+        }
+      }
+    }
+    if(param == 'RECIEVE') getInputs()
+    else if(param == 'DESIRED') setInputs()
   }, [ input ])
-
-  function Phase({ token }) {
-    const [component, setComponent] = useState(null)
-
-    const handleTrigger = () => {
-      // approveTokens(symbol)
-      setComponent(renderAction())
-    }
-
-    const renderInput = () => {
-      return(
-        <AmountInput variant='outlined' label='AMOUNT' type='number'
-          InputLabelProps={{ shrink: true }}
-          onChange={handleInput}
-          name={token.symbol}
-          InputProps={{
-            endAdornment:
-             <ApproveButton onClick={handleTrigger}>
-                APPROVE
-             </ApproveButton>
-          }}
-         />
-      )
-    }
-
-    const renderAction = () => {
-      return (
-        <ButtonPrimary variant='outlined'>
-           SUPPLY
-        </ButtonPrimary>
-      )
-    }
-
-    useEffect(() => {
-      setComponent(renderInput())
-    }, [ token.symbol ])
-
-    return component
-  }
 
   return (
     <List className={classes.list} style={{ height, width }} dense={dense}>
       {metadata.assets.map((token, index) => {
+        let statement = token.desired != 0 && param == 'DESIRED'
+        let component;
         let label;
 
         if(index == metadata.assets.length-1) label = 'last'
         else label = 'item'
 
        return(
-        <ListItem className={classes[label]}>
+        <ListItem className={classes[label]} button onClick={handleToggle(token.symbol)}>
+          <Tick>
+            <Checkbox
+              edge="start"
+              checked={checked.indexOf(token.symbol) !== -1 && !statement}
+              disabled={statement}
+              tabIndex={-1}
+              disableRipple
+            />
+          </Tick>
           <ListItemAvatar className={classes.wrapper}>
             <Avatar className={classes.avatar}
               src={tokenMetadata[token.symbol].image}
              />
           </ListItemAvatar>
           <ListItemText primary={token.symbol} />
-          <SecondaryItemText primary="BALANCE"
-            secondary={state.balances[token.symbol].amount}
-            onClick={() => handleBalance(token.symbol)}
+          <SecondaryItemText primary={param}
+            secondary={<span id={token.symbol} />}
           />
           <SecondaryActionAlt>
-            <Phase token={token} />
+            <AmountInput variant='outlined' label='AMOUNT' type='number'
+              helperText={
+                <o className={classes.helper} onClick={() => handleBalance(token.symbol)}>
+                  BALANCE: {state.balances[token.symbol].amount}
+               </o>}
+              InputLabelProps={{ shrink: true }}
+              onChange={handleInput}
+              disabled={statement}
+              name={token.symbol}
+              InputProps={{
+                endAdornment:
+                <ApproveButton onClick={() => approveTokens(token.symbol)}>
+                  APPROVE
+               </ApproveButton>
+             }}
+            />
           </SecondaryActionAlt>
         </ListItem>
         )

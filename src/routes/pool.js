@@ -4,6 +4,7 @@ import { makeStyles, styled } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import ExitIcon from '@material-ui/icons/ExitToApp'
+import { useParams } from 'react-router-dom'
 
 import Container from '../components/container'
 import Spline from '../components/charts/spline'
@@ -113,10 +114,14 @@ export default function Pools(){
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
+  let { address } = useParams()
 
   useEffect(() => {
     if(Object.keys(state.indexes).length > 0){
-      setData(state.indexes['DEFII5'])
+      let target = Object.entries(state.indexes)
+      .find(x => x[1].address == address)
+
+      setData(target[1])
     }
   }, [ state.indexes ])
 
@@ -168,7 +173,7 @@ export default function Pools(){
           <div className={classes.assets}>
             <Container margin='0em 3em' padding="1em 0em" percentage='27.5%' title='ASSETS'>
               <div className={classes.container}>
-                <Approvals height='100%' metadata={data} />
+                <Approvals input={0} param='DESIRED' height='100%' metadata={data} />
               </div>
             </Container>
           </div>
