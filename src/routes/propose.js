@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useContext, useState, useRef } from 'react'
 import ReactDOM from 'react-dom'
 
+import GovernorAlpha from '../assets/constants/abi/GovernorAlpha.json'
 import BPool from '../assets/constants/abi/BPool.json'
 
 import { makeStyles, styled, withStyles } from '@material-ui/core/styles'
@@ -9,15 +10,19 @@ import IconButton from '@material-ui/core/IconButton'
 import Clear from '@material-ui/icons/Clear'
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import ReactMarkdown from 'react-markdown'
+import { ethers } from "ethers"
 
 import ButtonPrimary from '../components/buttons/primary'
 import Select from '../components/inputs/select'
 import Input from '../components/inputs/input'
 import Container from '../components/container'
 
+import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
 
 const sources = [ BPool ]
+
+const encoder = ethers.utils.defaultAbiCoder
 
 const Entry = styled(Input)({
   marginBottom: 25,
@@ -146,6 +151,42 @@ export default function Propose(){
     setExecutions(newExecutions)
   }
 
+  const handleEntryInput = (key, index, param, event) => {
+    let newExecutions = executions
+    let input = event.target.value
+
+    newExecutions[key].functions[index].inputs[param].value = input
+    setExecutions(newExecutions)
+  }
+
+  const submitProposal = async() => {
+    let [ signatures, calldata, values ] = [ [], [], [] ]
+    let { encodeParameters } = state.web3.rinkeby.eth.abi
+    let addresses = Object.keys(executions)
+
+    await new Promise(resolve => {
+      for(let address in addresses){
+        let source = addresses[address]
+        let { functions } = executions[source]
+
+        for(let f in functions){
+          let { signature, inputs } = functions[f]
+
+          values.push(inputs.length)
+          signatures.push(signature)
+
+          for(let i in inputs){
+            let { type, value } = inputs[i]
+            let parameter = encoder.encode([type], [value])
+
+            calldata.push(parameter)
+          }
+        }
+      }
+      resolve()
+    })
+  }
+
   function Entries({ data, pair }) {
     const [ mapping, setMapping ] = useState(data)
 
@@ -171,9 +212,13 @@ export default function Propose(){
                 <Clear color='secondary'/>
               </IconButton>
               <b> {value.name} </b>
-              {value.inputs.map(f => (
+              {value.inputs.map((f, p) => (
                 <Grid item>
-                  <Entry label={f.type} variant='outlined' />
+                  <Entry
+                    onChange={(e) => handleEntryInput(pair, index, p, e)}
+                    variant='outlined'
+                    label={f.type}
+                  />
                 </Grid>
               ))}
            </Fragment>
@@ -251,7 +296,7 @@ export default function Propose(){
             </Grid>
             {entries}
             <Grid item>
-              <ButtonPrimary variant='outlined'>
+              <ButtonPrimary variant='outlined' onClick={submitProposal}>
                 SUBMIT
               </ButtonPrimary>
             </Grid>
