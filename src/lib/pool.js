@@ -39,9 +39,9 @@ export default class Pool {
     const totalDenorm = tokens.map(t => fromWei(t.denorm)).reduce((a,b) => a+b, 0);
 
     for (let t of tokens) {
-      this.tokens.push(t.address);
+      this.tokens.push(t.address.toLowerCase());
       const weight = (fromWei(t.denorm)) / totalDenorm;
-      this.records[t.address] = {
+      this.records[t.address.toLowerCase()] = {
         balance: fromWei(t.balance),
         weight
       };
@@ -49,6 +49,10 @@ export default class Pool {
 
     this.totalWeight = totalDenorm;
     this.totalSupply = fromWei(totalSupply)
+  }
+
+  getRecord(token) {
+    return this.records[token.toLowerCase()];
   }
 
   fromWei(_bn) {
@@ -86,8 +90,8 @@ export default class Pool {
   // Calculate amount of `outToken` you can get for `inAmount` of `inToken`
   calcOutGivenIn(inToken, outToken, inAmount) {
     inAmount = this.fromWei(inAmount)
-    const { balance: bI, weight: wI } = this.records[inToken];
-    const { balance: bO, weight: wO } = this.records[outToken];
+    const { balance: bI, weight: wI } = this.getRecord(inToken);
+    const { balance: bO, weight: wO } = this.getRecord(outToken);
     const outAmount = calcOutGivenIn(bI, wI, bO, wO, inAmount, swapFee);
     return this.decToWeiHex(outAmount);
   }
@@ -95,8 +99,8 @@ export default class Pool {
   // Calculate amount of `inToken` you must give for `outAmount` of `outToken`
   calcInGivenOut(inToken, outToken, outAmount) {
     outAmount = this.fromWei(outAmount);
-    const { balance: bI, weight: wI } = this.records[inToken];
-    const { balance: bO, weight: wO } = this.records[outToken];
+    const { balance: bI, weight: wI } = this.getRecord(inToken);
+    const { balance: bO, weight: wO } = this.getRecord(outToken);
     const inAmount = calcInGivenOut(bI, wI, bO, wO, outAmount, swapFee);
     return this.decToWeiHex(inAmount);
   }
@@ -104,7 +108,7 @@ export default class Pool {
   // Calculate amount of `inToken` you must give to mint `poolAmountOut` pool tokens
   calcSingleInGivenPoolOut(inToken, poolAmountOut) {
     poolAmountOut = this.fromWei(poolAmountOut)
-    const { balance: bI, weight: wI } = this.records[inToken];
+    const { balance: bI, weight: wI } = this.getRecord(inToken);
     const inAmount = calcSingleInGivenPoolOut(
       bI, wI, this.totalSupply, this.totalWeight, poolAmountOut, swapFee
     );
@@ -112,8 +116,8 @@ export default class Pool {
   }
 
   calcSpotPrice(inToken, outToken) {
-    const { balance: bI, weight: wI } = this.records[inToken];
-    const { balance: bO, weight: wO } = this.records[outToken];
+    const { balance: bI, weight: wI } = this.getRecord(inToken);
+    const { balance: bO, weight: wO } = this.getRecord(outToken);
     const spotPrice = calcSpotPrice(
       bI, wI, bO, wO, swapFee
     );
@@ -123,7 +127,7 @@ export default class Pool {
   // Calculate amount of pool tokens you can mint for `inAmount` of `inToken`
   calcPoolOutGivenSingleIn(inToken, inAmount) {
     inAmount = this.fromWei(inAmount)
-    const { balance: bI, weight: wI } = this.records[inToken];
+    const { balance: bI, weight: wI } = this.getRecord(inToken);
     const poolAmountOut = calcPoolOutGivenSingleIn(
       bI,
       wI,
@@ -138,7 +142,7 @@ export default class Pool {
   // Calculate the amount of `outToken` you can get by burning `poolAmountIn` pool tokens
   calcSingleOutGivenPoolIn(outToken, poolAmountIn) {
     poolAmountIn = this.fromWei(poolAmountIn);
-    const { balance: bO, weight: wO } = this.records[outToken];
+    const { balance: bO, weight: wO } = this.getRecord(outToken);
     const tokenAmountOut = calcSingleOutGivenPoolIn(
       bO,
       wO,
