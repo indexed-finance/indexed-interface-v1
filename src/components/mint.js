@@ -9,9 +9,9 @@ import Avatar from '@material-ui/core/Avatar'
 import List from '@material-ui/core/List'
 import Grid from '@material-ui/core/Grid'
 
+import { getRateMulti, getRateSingle, getBalances, decToWeiHex } from '../lib/markets'
 import { tokenMetadata } from '../assets/constants/parameters'
 import { toContract } from '../lib/util/contracts'
-import { getRate, decToWeiHex, getTokens, getBalances } from '../lib/markets'
 
 import BPool from '../assets/constants/abi/BPool.json'
 import IERC20 from '../assets/constants/abi/IERC20.json'
@@ -158,6 +158,7 @@ export default function InteractiveList({ market, metadata }) {
   const [ dense, setDense ] = useState(false)
   const [ amount, setAmount ] = useState(null)
   const [ balance, setBalance ] = useState(0)
+  const [ rates, setRates ] = useState([])
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
@@ -170,21 +171,48 @@ export default function InteractiveList({ market, metadata }) {
     setAmount(event.target.value)
   }
 
+  const handleRates = (arr) => {
+    setRates(arr)
+  }
+
   const mintTokens = async() => {
     let { web3, account } = state
     let { address, assets } = metadata
-    let amounts = await getRate(web3.injected, amount, address)
+    let input = decToWeiHex(web3.injected, amount)
     let contract = toContract(web3.injected, BPool.abi, address)
-    let decimals = await contract.methods.decimals().call()
-    let output = decToWeiHex(web3.injected, amount)
 
-    await contract.methods.joinPool(
-      output,
-      amounts.map(t => t.amount))
+    if(rates.length > 1) {
+      await mintSingle(contract, rates[0].address, rates, input)
+    } else {
+      await mintMultiple(contract, rates, input)
+    }
+  }
+
+  const mintMultiple = async(contract, conversions, input) => {
+    let { web3, account, balances } = state
+    let { assets } = metadata
+
+    await contract.methods.joinPool(input, conversions.map(t => t.amount))
     .send({
       from: account
     }).on('confirmation', async(conf, receipt) => {
       let balances = await getBalances(web3.injected, account, assets, state.balances)
+      let tokenBalance = await getBalance()
+
+      await dispatch({ type: 'BAL', payload: { balances } })
+      setBalance(tokenBalance)
+    })
+  }
+
+  const mintSingle = async(contract, tokenAddress, conversions, input) => {
+    let { web3, account, balances } = state
+    let { assets } = metadata
+
+    await contract.methods.joinswapPoolAmountOut(tokenAddress, conversions[0].amount, input)
+    .send({
+      from: account
+    }).on('confirmation', async(conf, receipt) => {
+      let balances = await getBalances(web3.injected, account, assets, balances)
       let tokenBalance = await getBalance()
 
       await dispatch({ type: 'BAL', payload: { balances } })
@@ -199,21 +227,6 @@ export default function InteractiveList({ market, metadata }) {
     .balanceOf(state.account).call()
 
     return parseFloat(balance/Math.pow(10,18)).toFixed(2)
-  }
-
-  function Single() {
-    const classes = useStyles()
-
-    return(
-      <div className={classes.single}>
-        <OutputInput label="INPUT" variant='outlined' type='number'
-          InputProps={{
-            endAdornment: <Adornment market={market}/>,
-            inputComponent: NumberFormat
-          }}
-        />
-      </div>
-    )
   }
 
   useEffect(() => {
@@ -246,7 +259,11 @@ export default function InteractiveList({ market, metadata }) {
       <Grid item>
         <div className={classes.altDivider1} />
         <div className={classes.demo}>
-          <Approvals param='REQUIRED' width='417.5px' input={amount} height='235px' metadata={metadata} />
+          <Approvals param='REQUIRED' width='417.5px' height='235px'
+            metadata={metadata}
+            set={handleRates}
+            input={amount}
+          />
         </div>
       </Grid>
       <Grid item>

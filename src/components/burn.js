@@ -9,7 +9,7 @@ import TableRow from '@material-ui/core/TableRow'
 import Table from '@material-ui/core/Table'
 import Grid from '@material-ui/core/Grid'
 import { toContract } from '../lib/util/contracts'
-import { getRate, decToWeiHex, getBalances } from '../lib/markets'
+import { getRateMulti, decToWeiHex, getBalances } from '../lib/markets'
 import { store } from '../state'
 
 import { tokenImages } from '../assets/constants/parameters'
@@ -177,17 +177,15 @@ export default function InteractiveList({ market, metadata }) {
 
   let { state, dispatch } = useContext(store)
 
-  const burnTokens = async(input) => {
+  const burnTokens = async() => {
     let { web3, account } = state
     let { address, assets } = metadata
-    let amounts = await getRate(web3.injected, input, address)
+    let input = decToWeiHex(web3.injected, amount)
+    let amounts = await getRateMulti(web3.injected, address, input)
     let contract = toContract(web3.injected, BPool.abi, address)
-    let output = decToWeiHex(web3.injected, input)
 
-    await contract.methods.exitPool(
-      output,
-      amounts.map(t => t.amount)
-    ).send({
+    await contract.methods.exitPool(input, amounts.map(t => t.amount))
+    .send({
       from: account
     }).on('confirmation', async(conf, receipt) => {
       let balances = await getBalances(web3.injected, account, assets, state.balances)
@@ -298,7 +296,7 @@ export default function InteractiveList({ market, metadata }) {
         let { address } = metadata
         let { toBN } = web3.rinkeby.utils
 
-        let rates = await getRate(web3.rinkeby, amount, address)
+        let rates = await getRateMulti(web3.rinkeby, address, decToWeiHex(amount))
         let payouts = {}
 
         for(let token in rates){

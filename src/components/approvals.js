@@ -11,7 +11,7 @@ import Grid from '@material-ui/core/Grid'
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import { getRate, getSpecificRate, decToWeiHex, getTokens, getBalances } from '../lib/markets'
+import { getRateSingle, getRateMulti } from '../lib/markets'
 import { tokenMetadata } from '../assets/constants/parameters'
 import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
@@ -203,7 +203,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function Approvals({ balance, metadata, height, width, input, param }){
+export default function Approvals({ balance, metadata, height, width, input, param, set }){
   const [ component, setComponent ] = useState(<span />)
   const [ isSelected, setSelection ] = useState(true)
   const [ checked, setChecked ] = useState([0])
@@ -257,10 +257,6 @@ export default function Approvals({ balance, metadata, height, width, input, par
 
   const handleInput = (event) => {
     setFocus(event.target.name)
-  }
-
-  const handleAmount = (event) => {
-    setAmount(event.target.value)
   }
 
   const getInputValue = (symbol) => {
@@ -322,13 +318,14 @@ export default function Approvals({ balance, metadata, height, width, input, par
       if(input != null){
         let { web3 } = state
         let { address } = metadata
-        let { toBN } = web3.rinkeby.utils
+        let { fromWei, toBN } = web3.rinkeby.utils
+        let amount = fromWei(toBN(input).toString(10))
         let rates;
 
         if(targets.length == 1){
-          rates = await getSpecificRate(web3.rinkeby, address, targets[0], input)
+          rates = await getRateSingle(web3.rinkeby, address, targets[0], input)
         } else {
-          rates = await getRate(web3.rinkeby, input, address)
+          rates = await getRateMulti(web3.rinkeby, address, input)
         }
 
         for(let token in rates){
@@ -339,6 +336,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
           element.innerHTML = parseNumber(output)
           setFocus(symbol)
         }
+        set(rates)
       }
     }
     const setInputs = () => {
@@ -360,8 +358,8 @@ export default function Approvals({ balance, metadata, height, width, input, par
   return (
     <List className={classes.list} style={{ height, width }} dense={dense}>
       {metadata.assets.map((token, index) => {
-        let statement = param == 'DESIRED'
         let selected = checked.indexOf(token.symbol) !== -1
+        let statement = param == 'DESIRED'
         let f = handleToggle(token)
         let condition = false
         let label

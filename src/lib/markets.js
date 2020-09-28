@@ -17,6 +17,7 @@ const ROUTER = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
 
 const fromWei = (web3, _bn) => Decimal(web3.utils.fromWei(web3.utils.toBN(_bn).toString(10)));
 const toWei = (web3, _bn) => Decimal(web3.utils.toWei(web3.utils.toBN(_bn).toString(10)));
+const oneToken = new BN('de0b6b3a7640000', 'hex');
 
 // Convert a decimal value to a big number, multiplying by 1e18
 
@@ -29,46 +30,6 @@ export const decToWeiHex = (web3, dec) => {
     }
   }
   return `0x` + new BN(web3.utils.toWei(str)).toString('hex');
-}
-
-export async function getWeights(contract) {
-  return await contract.methods.getCurrentTokens().call();
-}
-
-export async function getUsedBalances(web3, contract, tokens) {
-  let proms = [];
-  for (let token of tokens) {
-    proms.push(
-      contract.methods.getUsedBalance(token).call()
-      .then((o) => fromWei(web3, o))
-    )
-  }
-  return await Promise.all(proms);
-}
-
-export async function getRate(web3, poolTokensToMint, poolAddress) {
-  let contract = toContract(web3, BPool.abi, poolAddress)
-  let tokens = await getWeights(contract)
-  let usedBalances = await getUsedBalances(web3, contract, tokens)
-  let totalSupply = await contract.methods.totalSupply().call()
-  .then((o) => fromWei(web3, o))
-  let ratio = Decimal(poolTokensToMint).div(totalSupply)
-  let inputs = []
-
-  for (let i = 0; i < tokens.length; i++) {
-    let token = tokens[i]
-    let bal = usedBalances[i]
-    let asset = toContract(web3, IERC20.abi, token)
-    let symbol = await asset.methods.symbol().call()
-    // add 1% to be extra craeful about math
-    let inputAmount = bal.mul(ratio).mul(0.99)
-
-    inputs.push({
-      amount: decToWeiHex(web3, inputAmount),
-      symbol: symbol
-    })
-  }
-  return inputs;
 }
 
 export async function getPair(web3, tokenAddress){
@@ -101,32 +62,30 @@ export async function getRouter(web3){
   return toContract(web3, UniswapV2Router.abi, ROUTER)
 }
 
-export async function getTokens(web3, poolAddress) {
-  let contract = toContract(web3, BPool.abi, poolAddress)
-  let tokens = await contract.methods.getCurrentTokens().call()
-  let array = []
-
-  for(let token in tokens){
-    let address = tokens[token]
-    let asset = toContract(web3, IERC20.abi, tokens[token])
-    let symbol = await asset.methods.symbol().call()
-
-    array.push({ address, symbol })
-  }
-  return array
-}
-
-export async function getSpecificRate(web3, poolAddress, tokenAddress, poolTokensToMint) {
+export async function getRateSingle(web3, poolAddress, tokenAddress, poolTokensToMint) {
   let contract = toContract(web3, BPool.abi, poolAddress)
   let asset = toContract(web3, IERC20.abi, tokenAddress)
-  const oneToken = new BN('de0b6b3a7640000', 'hex');
-  let input = oneToken.muln(poolTokensToMint);
   let pool = await Pool.getPool(web3, contract)
-
+  let input = oneToken.muln(+poolTokensToMint)
+  let amount = await pool.calcPoolOutGivenSingleIn(tokenAddress, input)
   let symbol = await asset.methods.symbol().call()
-  let amount = await pool.calcPoolOutGivenSingleIn(tokenAddress, poolTokensToMint * Math.pow(10, 18))
-
-  console.log(amount)
 
   return [{ amount, symbol }]
+}
+
+export async function getRateMulti(web3, poolAddress, poolTokensToMint){
+  let contract = toContract(web3, BPool.abi, poolAddress)
+  let pool = await Pool.getPool(web3, contract)
+  let input = oneToken.muln(+poolTokensToMint)
+  let output = await pool.calcAllOutGivenPoolIn(input)
+  let rates = []
+
+  for(let token in rates){
+    let { amount, address } = rates[token]
+    let asset = toContract(web3, IERC20.abi, address)
+    let symbol = await asset.methods.symbol().call()
+
+    rates.push({ amount, symbol })
+  }
+  return rates
 }
