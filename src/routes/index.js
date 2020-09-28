@@ -148,7 +148,7 @@ export default function Index(){
       }
     }
     getMetadata()
-  }, [ state.indexes, state.web3.injected ])
+  }, [ state.web3.injected ])
 
 
   useEffect(() => {

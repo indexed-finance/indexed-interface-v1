@@ -80,8 +80,8 @@ export async function getRateMulti(web3, poolAddress, poolTokensToMint){
   let output = await pool.calcAllOutGivenPoolIn(input)
   let rates = []
 
-  for(let token in rates){
-    let { amount, address } = rates[token]
+  for(let token in output){
+    let { amount, address } = output[token]
     let asset = toContract(web3, IERC20.abi, address)
     let symbol = await asset.methods.symbol().call()
 

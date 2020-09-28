@@ -11,7 +11,7 @@ import Grid from '@material-ui/core/Grid'
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import { getRateSingle, getRateMulti } from '../lib/markets'
+import { getRateSingle, getRateMulti, toWei } from '../lib/markets'
 import { tokenMetadata } from '../assets/constants/parameters'
 import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
@@ -247,7 +247,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
   }
 
   const getAllowance = async(address) => {
-    let contract = toContract(state.web3.injected, IERC20.abi, address)
+    let contract = toContract(state.web3.rinkeby, IERC20.abi, address)
 
     let allowance = await contract.methods
     .allowance(state.account, metadata.address).call()
@@ -256,7 +256,9 @@ export default function Approvals({ balance, metadata, height, width, input, par
   }
 
   const handleInput = (event) => {
-    setFocus(event.target.name)
+    if(state.balances[event.target.name].address != null){
+      setFocus(event.target.name)
+    }
   }
 
   const getInputValue = (symbol) => {
@@ -297,35 +299,18 @@ export default function Approvals({ balance, metadata, height, width, input, par
   }
 
   useEffect(() => {
-    const verifyAllowance = async() => {
-      if(state.balances[focus] != undefined){
-        let { address } = state.balances[focus]
-        let allowance = await getAllowance(address)
-        let amount = getInputValue(focus)
-
-        if(allowance < parseFloat(amount)){
-          setInputState(focus, 1)
-        } else {
-          setInputState(focus, 0)
-        }
-      }
-    }
-    verifyAllowance()
-  }, [ focus ])
-
-  useEffect(() => {
     const getInputs = async() => {
       if(input != null){
         let { web3 } = state
         let { address } = metadata
-        let { fromWei, toBN } = web3.rinkeby.utils
-        let amount = fromWei(toBN(input).toString(10))
+        let { toBN } = web3.rinkeby.utils
+        let amount = toBN(input)
         let rates;
 
         if(targets.length == 1){
-          rates = await getRateSingle(web3.rinkeby, address, targets[0], input)
+          rates = await getRateSingle(web3.rinkeby, address, targets[0], amount)
         } else {
-          rates = await getRateMulti(web3.rinkeby, address, input)
+          rates = await getRateMulti(web3.rinkeby, address, amount)
         }
 
         for(let token in rates){
@@ -334,9 +319,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
           let output = toBN(amount).toString()
 
           element.innerHTML = parseNumber(output)
-          setFocus(symbol)
         }
-        set(rates)
       }
     }
     const setInputs = () => {
@@ -354,6 +337,24 @@ export default function Approvals({ balance, metadata, height, width, input, par
     if(param == 'REQUIRED') getInputs()
     else if(param == 'DESIRED') setInputs()
   }, [ input ])
+
+  useEffect(() => {
+    const verifyAllowance = async() => {
+      if(focus != null){
+        console.log(state.balances)
+        let { address } = state.balances[focus]
+        let allowance = await getAllowance(address)
+        let amount = getInputValue(focus)
+
+        if(allowance < parseFloat(amount)){
+          setInputState(focus, 1)
+        } else {
+          setInputState(focus, 0)
+        }
+      }
+    }
+    verifyAllowance()
+  }, [ focus ])
 
   return (
     <List className={classes.list} style={{ height, width }} dense={dense}>

@@ -9,7 +9,7 @@ import TableRow from '@material-ui/core/TableRow'
 import Table from '@material-ui/core/Table'
 import Grid from '@material-ui/core/Grid'
 import { toContract } from '../lib/util/contracts'
-import { getRateMulti, decToWeiHex, getBalances } from '../lib/markets'
+import { getRateMulti, getBalances } from '../lib/markets'
 import { store } from '../state'
 
 import { tokenImages } from '../assets/constants/parameters'
@@ -180,7 +180,8 @@ export default function InteractiveList({ market, metadata }) {
   const burnTokens = async() => {
     let { web3, account } = state
     let { address, assets } = metadata
-    let input = decToWeiHex(web3.injected, amount)
+    let { toBN } = web3.rinkeby.utils
+    let input = toBN(amount)
     let amounts = await getRateMulti(web3.injected, address, input)
     let contract = toContract(web3.injected, BPool.abi, address)
 
@@ -295,8 +296,9 @@ export default function InteractiveList({ market, metadata }) {
         let { web3 } = state
         let { address } = metadata
         let { toBN } = web3.rinkeby.utils
+        let input = toBN(amount)
 
-        let rates = await getRateMulti(web3.rinkeby, address, decToWeiHex(amount))
+        let rates = await getRateMulti(web3.rinkeby, address, input)
         let payouts = {}
 
         for(let token in rates){

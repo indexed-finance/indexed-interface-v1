@@ -9,7 +9,7 @@ import Avatar from '@material-ui/core/Avatar'
 import List from '@material-ui/core/List'
 import Grid from '@material-ui/core/Grid'
 
-import { getRateMulti, getRateSingle, getBalances, decToWeiHex } from '../lib/markets'
+import { getRateMulti, getRateSingle, getBalances } from '../lib/markets'
 import { tokenMetadata } from '../assets/constants/parameters'
 import { toContract } from '../lib/util/contracts'
 
@@ -178,8 +178,9 @@ export default function InteractiveList({ market, metadata }) {
   const mintTokens = async() => {
     let { web3, account } = state
     let { address, assets } = metadata
-    let input = decToWeiHex(web3.injected, amount)
+    let { toWei, toBN } = web3.rinkeby.utils
     let contract = toContract(web3.injected, BPool.abi, address)
+    let input = toBN(amount)
 
     if(rates.length > 1) {
       await mintSingle(contract, rates[0].address, rates, input)
