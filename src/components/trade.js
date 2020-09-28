@@ -247,7 +247,6 @@ export default function Trade({ market, metadata }) {
           <div className={classes.market}>
             <p> ROUTE: <span> ETH {'->'} {market}</span> </p>
             <p> FEE: <span> </span> </p>
-            <p> GAS: <span> </span> </p>
           </div>
           <div className={classes.divider} />
       </Grid>

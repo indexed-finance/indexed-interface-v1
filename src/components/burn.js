@@ -115,6 +115,9 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: -32.5,
     marginBottom: 20
   },
+  reciept: {
+    paddingTop: 25,
+  },
   secondary: {
     root: {
       top: '75%'
@@ -162,23 +165,7 @@ const useStyles = makeStyles((theme) => ({
       color: '#333333'
     }
   }
-}));
-
-function createData(asset, recieve) {
-  return { asset, recieve }
-}
-
-const rows = [
-  createData('LINK', '242,123.22'),
-  createData('SNX', '1,023,123.76'),
-  createData('DAI', '2,500.00'),
-  createData('USDC', '1750.04'),
-  createData('ETH', '12.52'),
-  createData('COMP', '0.19'),
-  createData('AMPL', '10,232,510.23'),
-  createData('USDT', '3,000.33'),
-];
-
+}))
 
 export default function InteractiveList({ market, metadata }) {
   const [ execution, setExecution ] = useState({ f: () => {}, label: null })
@@ -378,9 +365,11 @@ export default function InteractiveList({ market, metadata }) {
         </TableContainer>
       </Grid>
       <Grid item>
-        <Trigger onClick={() => execution.f(amount)}>
-          {execution.label}
-        </Trigger>
+        <div className={classes.reciept}>
+          <ButtonPrimary onClick={() => execution.f(amount)}>
+            {execution.label}
+          </ButtonPrimary>
+        </div>
       </Grid>
     </Grid>
   )

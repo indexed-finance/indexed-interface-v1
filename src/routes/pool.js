@@ -195,7 +195,7 @@ export default function Pools(){
           <div className={classes.assets}>
             <Container margin='0em 3em' padding="1em 0em" percentage='27.5%' title='ASSETS'>
               <div className={classes.container}>
-                <Approvals input={0} param='DESIRED' height='100%' metadata={data} />
+                <Approvals input={0} param='DESIRED' height={250} metadata={data} />
               </div>
               <div className={classes.reciept}>
                 <p> ENTITLED TO: </p>

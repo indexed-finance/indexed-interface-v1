@@ -11,9 +11,9 @@ import Grid from '@material-ui/core/Grid'
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Checkbox from '@material-ui/core/Checkbox';
 
+import { getRate, getSpecificRate, decToWeiHex, getTokens, getBalances } from '../lib/markets'
 import { tokenMetadata } from '../assets/constants/parameters'
 import { toContract } from '../lib/util/contracts'
-import { getRate, decToWeiHex, getTokens, getBalances } from '../lib/markets'
 import { store } from '../state'
 
 import BPool from '../assets/constants/abi/BPool.json'
@@ -210,21 +210,27 @@ export default function Approvals({ balance, metadata, height, width, input, par
   const [ focus, setFocus ] = useState(null)
   const [ dense, setDense ] = useState(false)
   const [ amount, setAmount ] = useState(null)
+  const [ targets, setTargets ] = useState([])
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
 
   const handleToggle = (value) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
+    let { symbol, address } = value
+    const currentIndex = checked.indexOf(symbol)
+    const newChecked = [...checked]
+    const newTargets = targets
 
     if (currentIndex === -1) {
-      newChecked.push(value);
+      newTargets.push(address)
+      newChecked.push(symbol)
     } else {
-      newChecked.splice(currentIndex, 1);
+      newChecked.splice(currentIndex, 1)
+      newTargets.splice(currentIndex, 1)
     }
 
-    setChecked(newChecked);
+    setTargets(newTargets)
+    setChecked(newChecked)
   };
 
   const approveTokens = async(symbol) => {
@@ -317,7 +323,13 @@ export default function Approvals({ balance, metadata, height, width, input, par
         let { web3 } = state
         let { address } = metadata
         let { toBN } = web3.rinkeby.utils
-        let rates = await getRate(web3.rinkeby, input, address)
+        let rates;
+
+        if(targets.length == 1){
+          rates = await getSpecificRate(web3.rinkeby, address, targets[0], input)
+        } else {
+          rates = await getRate(web3.rinkeby, input, address)
+        }
 
         for(let token in rates){
           let { symbol, amount } = rates[token]
@@ -350,7 +362,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
       {metadata.assets.map((token, index) => {
         let statement = param == 'DESIRED'
         let selected = checked.indexOf(token.symbol) !== -1
-        let f = handleToggle(token.symbol)
+        let f = handleToggle(token)
         let condition = false
         let label
 

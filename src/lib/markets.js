@@ -45,24 +45,22 @@ export async function getUsedBalances(web3, contract, tokens) {
   return await Promise.all(proms);
 }
 
-// `poolTokensToMint` should be a js number, e.g. 10, NOT bn(10 * 1e18);
-// output will be an array of big numbers you can use as `maxAmountsIn`export
 export async function getRate(web3, poolTokensToMint, poolAddress) {
   let contract = toContract(web3, BPool.abi, poolAddress)
   let tokens = await getWeights(contract)
   let usedBalances = await getUsedBalances(web3, contract, tokens)
   let totalSupply = await contract.methods.totalSupply().call()
   .then((o) => fromWei(web3, o))
-  let ratio = Decimal(poolTokensToMint).div(totalSupply);
-  let inputs = [];
+  let ratio = Decimal(poolTokensToMint).div(totalSupply)
+  let inputs = []
 
   for (let i = 0; i < tokens.length; i++) {
-    let token = tokens[i];
-    let bal = usedBalances[i];
+    let token = tokens[i]
+    let bal = usedBalances[i]
     let asset = toContract(web3, IERC20.abi, token)
     let symbol = await asset.methods.symbol().call()
     // add 1% to be extra craeful about math
-    let inputAmount = bal.mul(ratio).mul(0.99);
+    let inputAmount = bal.mul(ratio).mul(0.99)
 
     inputs.push({
       amount: decToWeiHex(web3, inputAmount),
@@ -115,4 +113,17 @@ export async function getTokens(web3, poolAddress) {
     array.push({ address, symbol })
   }
   return array
+}
+
+export async function getSpecificRate(web3, poolAddress, tokenAddress, poolTokensToMint) {
+  let contract = toContract(web3, BPool.abi, poolAddress)
+  let asset = toContract(web3, IERC20.abi, tokenAddress)
+  let input = decToWeiHex(web3, poolTokensToMint)
+
+  let symbol = await asset.methods.symbol().call()
+  let amount = await contract.methods.joinswapPoolAmountOut(
+    tokenAddress, input, 0
+  ).call()
+
+  return [{ amount, symbol }]
 }
