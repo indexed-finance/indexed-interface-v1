@@ -7,6 +7,7 @@ import BPool from '../assets/constants/abi/BPool.json'
 import Uniswap from './uniswap'
 import MarketOracle from './market-oracle'
 import { toContract } from './util/contracts'
+import Pool from './pool.js'
 import Decimal from 'decimal.js'
 import BN from 'bn.js'
 
@@ -118,12 +119,14 @@ export async function getTokens(web3, poolAddress) {
 export async function getSpecificRate(web3, poolAddress, tokenAddress, poolTokensToMint) {
   let contract = toContract(web3, BPool.abi, poolAddress)
   let asset = toContract(web3, IERC20.abi, tokenAddress)
-  let input = decToWeiHex(web3, poolTokensToMint)
+  const oneToken = new BN('de0b6b3a7640000', 'hex');
+  let input = oneToken.muln(poolTokensToMint);
+  let pool = await Pool.getPool(web3, contract)
 
   let symbol = await asset.methods.symbol().call()
-  let amount = await contract.methods.joinswapPoolAmountOut(
-    tokenAddress, input, 0
-  ).call()
+  let amount = await pool.calcPoolOutGivenSingleIn(tokenAddress, poolTokensToMint * Math.pow(10, 18))
+
+  console.log(amount)
 
   return [{ amount, symbol }]
 }
