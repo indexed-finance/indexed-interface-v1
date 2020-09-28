@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
   altDivider1: {
     borderTop: '#666666 solid 1px',
     borderBottom: '#666666 solid 1px',
-    margin: '1.5em 0em 0em 0em',
+    margin: '.5em 0em 0em 0em',
     width: '27.5em',
   },
   altDivider2: {
@@ -244,16 +244,9 @@ export default function InteractiveList({ market, metadata }) {
         />
       </Grid>
       <Grid item>
-        <Radio selected={isSelected} triggerChange={handleChange} />
-      </Grid>
-      <Grid item>
         <div className={classes.altDivider1} />
         <div className={classes.demo}>
-          {isSelected && (
-            <Approvals param='RECIEVE' width='417.5px' input={amount} height='235px' metadata={metadata} />
-          )}
-          {isSelected == null && ( <span /> )}
-          {!isSelected && ( <Single /> )}
+          <Approvals param='REQUIRED' width='417.5px' input={amount} height='235px' metadata={metadata} />
         </div>
       </Grid>
       <Grid item>

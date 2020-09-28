@@ -339,7 +339,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
         }
       }
     }
-    if(param == 'RECIEVE') getInputs()
+    if(param == 'REQUIRED') getInputs()
     else if(param == 'DESIRED') setInputs()
   }, [ input ])
 
@@ -347,18 +347,25 @@ export default function Approvals({ balance, metadata, height, width, input, par
     <List className={classes.list} style={{ height, width }} dense={dense}>
       {metadata.assets.map((token, index) => {
         let statement = token.desired != 0 && param == 'DESIRED'
-        let component;
-        let label;
+        let selected = checked.indexOf(token.symbol) !== -1
+        let f = handleToggle(token.symbol)
+        let condition = false
+        let label
 
         if(index == metadata.assets.length-1) label = 'last'
         else label = 'item'
 
+        if(param == 'DESIRED') condition = statement
+        else condition = !selected
+
+        if(statement) f = () => {}
+
        return(
-        <ListItem className={classes[label]} button onClick={handleToggle(token.symbol)}>
+        <ListItem className={classes[label]} button onClick={f}>
           <Tick>
             <Checkbox
               edge="start"
-              checked={checked.indexOf(token.symbol) !== -1 && !statement}
+              checked={selected}
               disabled={statement}
               tabIndex={-1}
               disableRipple
@@ -380,8 +387,8 @@ export default function Approvals({ balance, metadata, height, width, input, par
                   BALANCE: {state.balances[token.symbol].amount}
                </o>}
               InputLabelProps={{ shrink: true }}
+              disabled={condition}
               onChange={handleInput}
-              disabled={statement}
               name={token.symbol}
               InputProps={{
                 endAdornment:
