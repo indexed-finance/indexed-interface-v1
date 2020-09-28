@@ -11,7 +11,8 @@ import Spline from '../components/charts/spline'
 import Canvas from '../components/canvas'
 import Approvals from '../components/approvals'
 import List from '../components/list'
-import TransactionButton from '../components/buttons/transaction'
+import ButtonTransaction from '../components/buttons/transaction'
+import ButtonPrimary from '../components/buttons/primary'
 
 import { eventColumns } from '../assets/constants/parameters'
 import { store } from '../state'
@@ -30,7 +31,7 @@ const dummy = {
 function hash(value, og) {
   return (
     <a style={{ 'text-decoration': 'none' }} href={`https://rinkeby.etherscan.io/tx/${og}`} target='_blank'>
-      <TransactionButton> <o>{value}</o>&nbsp;<Exit/> </TransactionButton>
+      <ButtonTransaction> <o>{value}</o>&nbsp;<Exit/> </ButtonTransaction>
     </a>
   )
 }
@@ -84,13 +85,34 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   assets: {
-    marginTop: -305
+    marginTop: -305,
   },
   container: {
+    borderBottom: '2px solid #666666',
     width: '30em',
   },
   events: {
     width: '41.25em'
+  },
+  submit: {
+    padding: '12.5px 25px',
+    height: 50
+  },
+  reciept: {
+    padding: '10px 12.5px',
+    borderBottom: '2px solid #666666',
+    width: 'auto',
+    '& p': {
+      fontSize: 14,
+      marginLeft: 12.5
+    },
+    '& p span': {
+      float: 'right',
+      fontFamily: "San Francisco Bold",
+      fontWeight: 500,
+      marginRight: 50,
+      color: '#333333'
+    }
   },
   market: {
     position: 'absolute',
@@ -128,7 +150,7 @@ export default function Pools(){
   function hash(value, og) {
     return (
       <a style={{ 'text-decoration': 'none' }} href={`https://rinkeby.etherscan.io/tx/${og}`} target='_blank'>
-        <TransactionButton> <o>{value}</o>&nbsp;<Exit/> </TransactionButton>
+        <ButtonTransaction> <o>{value}</o>&nbsp;<Exit/> </ButtonTransaction>
       </a>
     )
   }
@@ -174,6 +196,15 @@ export default function Pools(){
             <Container margin='0em 3em' padding="1em 0em" percentage='27.5%' title='ASSETS'>
               <div className={classes.container}>
                 <Approvals input={0} param='DESIRED' height='100%' metadata={data} />
+              </div>
+              <div className={classes.reciept}>
+                <p> ENTITLED TO: </p>
+                <p> PLEDGE: </p>
+              </div>
+              <div className={classes.submit}>
+                <ButtonPrimary variant='outlined'>
+                  INITIALISE
+                </ButtonPrimary>
               </div>
             </Container>
           </div>

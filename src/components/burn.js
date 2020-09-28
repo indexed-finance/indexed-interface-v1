@@ -101,10 +101,8 @@ const useStyles = makeStyles((theme) => ({
   container: {
     borderBottom: 'solid 2px #666666',
     borderTop: 'solid 2px #666666',
-    flex: '1 1 auto',
-    width: '25.5em',
-    marginLeft: -32.5,
-    height: 175,
+    width: 412.5,
+    height: 200,
     margin: 0,
     padding: 0
   },
@@ -378,12 +376,6 @@ export default function InteractiveList({ market, metadata }) {
         <TableContainer className={classes.container}>
           {component}
         </TableContainer>
-      </Grid>
-      <Grid item>
-        <div className={classes.market}>
-          <p> TOTAL VALUE: <span> </span> </p>
-        </div>
-        <div className={classes.divider}/>
       </Grid>
       <Grid item>
         <Trigger onClick={() => execution.f(amount)}>

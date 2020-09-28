@@ -335,7 +335,9 @@ export default function Approvals({ balance, metadata, height, width, input, par
           let { symbol, desired } = metadata.assets[token]
           let element = document.getElementById(symbol)
 
-          if(desired == 0) element.innerHTML = desired
+          if(desired == 0) {
+            element.innerHTML = desired
+          }
         }
       }
     }
@@ -346,7 +348,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
   return (
     <List className={classes.list} style={{ height, width }} dense={dense}>
       {metadata.assets.map((token, index) => {
-        let statement = token.desired != 0 && param == 'DESIRED'
+        let statement = param == 'DESIRED'
         let selected = checked.indexOf(token.symbol) !== -1
         let f = handleToggle(token.symbol)
         let condition = false
@@ -355,10 +357,14 @@ export default function Approvals({ balance, metadata, height, width, input, par
         if(index == metadata.assets.length-1) label = 'last'
         else label = 'item'
 
-        if(param == 'DESIRED') condition = statement
-        else condition = !selected
-
-        if(statement) f = () => {}
+        if(param == 'DESIRED') {
+          statement = token.desired != 0
+          if(statement) f = () => {}
+          else selected = true
+          condition = statement
+        } else {
+          condition = !selected
+        }
 
        return(
         <ListItem className={classes[label]} button onClick={f}>
