@@ -9,7 +9,7 @@ import Avatar from '@material-ui/core/Avatar'
 import List from '@material-ui/core/List'
 import Grid from '@material-ui/core/Grid'
 
-import { getRateMulti, getRateSingle, getBalances } from '../lib/markets'
+import { getRateMulti, getRateSingle, getBalances, decToWeiHex } from '../lib/markets'
 import { tokenMetadata } from '../assets/constants/parameters'
 import { toContract } from '../lib/util/contracts'
 
@@ -183,9 +183,9 @@ export default function InteractiveList({ market, metadata }) {
     let { address, assets } = metadata
     let { toWei, toBN } = web3.rinkeby.utils
     let contract = toContract(web3.injected, BPool.abi, address)
-    let input = toBN(amount)
+    let input = decToWeiHex(web3.rinkeby, amount)
 
-    if(rates.length > 1) {
+    if(rates.length == 1) {
       await mintSingle(contract, rates[0].address, rates, input)
     } else {
       await mintMultiple(contract, rates, input)
@@ -196,14 +196,16 @@ export default function InteractiveList({ market, metadata }) {
     let { web3, account, balances } = state
     let { assets } = metadata
 
+    console.log(input, conversions)
+
     await contract.methods.joinPool(input, conversions.map(t => t.amount))
     .send({
       from: account
     }).on('confirmation', async(conf, receipt) => {
-      let balances = await getBalances(web3.injected, account, assets, state.balances)
+      let newBalances = await getBalances(web3.injected, account, assets, balances)
       let tokenBalance = await getBalance()
 
-      await dispatch({ type: 'BAL', payload: { balances } })
+      await dispatch({ type: 'BAL', payload: { balances: newBalances } })
       setBalance(tokenBalance)
     })
   }
@@ -216,10 +218,10 @@ export default function InteractiveList({ market, metadata }) {
     .send({
       from: account
     }).on('confirmation', async(conf, receipt) => {
-      let balances = await getBalances(web3.injected, account, assets, balances)
+      let newBalances = await getBalances(web3.injected, account, assets, balances)
       let tokenBalance = await getBalance()
 
-      await dispatch({ type: 'BAL', payload: { balances } })
+      await dispatch({ type: 'BAL', payload: { balances: newBalances } })
       setBalance(tokenBalance)
     })
   }

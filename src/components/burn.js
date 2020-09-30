@@ -9,7 +9,7 @@ import TableRow from '@material-ui/core/TableRow'
 import Table from '@material-ui/core/Table'
 import Grid from '@material-ui/core/Grid'
 import { toContract } from '../lib/util/contracts'
-import { getRateMulti, getBalances } from '../lib/markets'
+import { getRateMulti, getBalances, decToWeiHex } from '../lib/markets'
 import { store } from '../state'
 
 import { tokenImages } from '../assets/constants/parameters'
@@ -164,6 +164,9 @@ const useStyles = makeStyles((theme) => ({
       marginRight: 50,
       color: '#333333'
     }
+  },
+  helper: {
+    cursor: 'pointer'
   }
 }))
 
@@ -177,22 +180,22 @@ export default function InteractiveList({ market, metadata }) {
 
   let { state, dispatch } = useContext(store)
 
-  const burnTokens = async() => {
+  const burnTokens = async(rates) => {
     let { web3, account } = state
     let { address, assets } = metadata
     let { toBN } = web3.rinkeby.utils
     let input = toBN(amount)
-    let amounts = await getRateMulti(web3.injected, address, input)
     let contract = toContract(web3.injected, BPool.abi, address)
 
-    await contract.methods.exitPool(input, amounts.map(t => t.amount))
+    console.log(decToWeiHex(web3.rinkeby, input), rates.map(t => t.amount))
+
+    await contract.methods.exitPool(
+      decToWeiHex(web3.rinkeby, input), rates.map(t => t.amount))
     .send({
       from: account
     }).on('confirmation', async(conf, receipt) => {
-      let balances = await getBalances(web3.injected, account, assets, state.balances)
       let tokenBalance = await getBalance()
 
-      await dispatch({ type: 'BAL', payload: { balances } })
       setBalance(tokenBalance)
     })
   }
@@ -232,6 +235,10 @@ export default function InteractiveList({ market, metadata }) {
 
   const handleInput = (event) => {
     setAmount(event.target.value)
+  }
+
+  const handleBalance = () => {
+    setAmount(balance)
   }
 
   const parseNumber = (amount) => {
@@ -298,15 +305,15 @@ export default function InteractiveList({ market, metadata }) {
         let { toBN } = web3.rinkeby.utils
         let input = toBN(amount)
 
-        let rates = await getRateMulti(web3.rinkeby, address, input)
+        let rates = await getRateMulti(web3.rinkeby, address, input, false)
         let payouts = {}
 
         for(let token in rates){
           let { symbol, amount } = rates[token]
           let element = document.getElementById(symbol)
-          let output = toBN(amount).toString()
+          let o = toBN(amount).toString()
 
-          element.innerHTML = parseNumber(output)
+          element.innerHTML = parseNumber(o)
         }
 
         if(web3.injected){
@@ -316,6 +323,11 @@ export default function InteractiveList({ market, metadata }) {
             setExecution({
               f: approveTokens,
               label: 'APPROVE'
+            })
+          } else {
+            setExecution({
+              f: () => burnTokens(rates),
+              label: 'BURN'
             })
           }
         }
@@ -347,11 +359,14 @@ export default function InteractiveList({ market, metadata }) {
         <RecieveInput label="DESTROY" variant='outlined'
           onChange={handleInput}
           value={amount}
+          name='burn-input'
           InputProps={{
             endAdornment: market,
             inputComponent: NumberFormat
           }}
-          helperText={`BALANCE: ${balance.toLocaleString()}`}
+          helperText={<o className={classes.helper} onClick={handleBalance}>
+            BALANCE: {balance}
+          </o>}
         />
       </Grid>
       <Grid item>

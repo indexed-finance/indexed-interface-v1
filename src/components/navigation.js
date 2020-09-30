@@ -40,7 +40,7 @@ const useStyles = makeStyles(({ spacing, palette }) => ({
     boxShadow: 'none',
     padding: spacing(2,0),
     background: palette.primary.main,
-    color: palette.secondary.main
+    color: palette.secondary.main,
   },
   menuButton: {
     marginRight: spacing(1)
@@ -200,7 +200,7 @@ export default function Navigation({ mode }) {
 
   return (
     <div className={classes.root}>
-      <AppBar className={classes.appBar} position="static">
+      <AppBar className={classes.appBar} position="fixed">
         <Toolbar>
           <Grid container direction='row' alignItems='center' justify='space-between'>
             <Grid item>

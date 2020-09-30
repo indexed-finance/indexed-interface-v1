@@ -92,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
     width: '30em',
   },
   events: {
-    width: '41.25em'
+    width: '40em'
   },
   submit: {
     padding: '12.5px 25px',

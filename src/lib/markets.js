@@ -73,15 +73,16 @@ export async function getRateSingle(web3, poolAddress, tokenAddress, poolTokensT
   let input = oneToken.muln(+poolTokensToMint)
   let amount = await pool.calcPoolOutGivenSingleIn(tokenAddress, input)
   let symbol = await asset.methods.symbol().call()
+  let address = tokenAddress
 
-  return [{ amount, symbol }]
+  return [{ amount, symbol, address }]
 }
 
-export async function getRateMulti(web3, poolAddress, poolTokensToMint){
+export async function getRateMulti(web3, poolAddress, poolTokensToMint, opt){
   let contract = toContract(web3, BPool.abi, poolAddress)
   let pool = await Pool.getPool(web3, contract)
   let input = oneToken.muln(+poolTokensToMint)
-  let output = await pool.calcAllOutGivenPoolIn(input)
+  let output = await pool.calcAllOutGivenPoolIn(input, opt)
   let rates = []
 
   for(let token in output){
@@ -89,7 +90,7 @@ export async function getRateMulti(web3, poolAddress, poolTokensToMint){
     let asset = toContract(web3, IERC20.abi, address)
     let symbol = await asset.methods.symbol().call()
 
-    rates.push({ amount, symbol })
+    rates.push({ amount, symbol, address })
   }
   return rates
 }

@@ -319,7 +319,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
         if(targets.length == 1){
           rates = await getRateSingle(web3.rinkeby, address, targets[0], amount)
         } else {
-          rates = await getRateMulti(web3.rinkeby, address, amount)
+          rates = await getRateMulti(web3.rinkeby, address, amount, true)
         }
 
         for(let token in rates){
@@ -329,6 +329,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
 
           element.innerHTML = parseNumber(output)
         }
+        set(rates)
       }
     }
     const setInputs = () => {

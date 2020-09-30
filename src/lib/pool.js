@@ -156,7 +156,7 @@ export default class Pool {
 
   // Calculate the amounts of each underlying token you can get by burning `poolAmountIn` pool tokens
   // Returns an array of { address, amount }
-  calcAllOutGivenPoolIn(poolAmountIn) {
+  calcAllOutGivenPoolIn(poolAmountIn, opt) {
     poolAmountIn = this.fromWei(poolAmountIn);
     const poolTotal = this.totalSupply;
     const ratio = poolAmountIn / poolTotal;
@@ -164,9 +164,12 @@ export default class Pool {
     for (let t of this.tokens) {
       const { balance: bO } = this.records[t];
       const tokenAmountOut = ratio * bO;
+
+      const finalOut = opt ? tokenAmountOut * 1.01 : tokenAmountOut * 0.99
+
       amountsOut.push({
         address: t,
-        amount: this.decToWeiHex(tokenAmountOut)
+        amount: this.decToWeiHex(finalOut)
       });
     }
     return amountsOut;

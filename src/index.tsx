@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import Web3 from 'web3'
 
-import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
+import { createMuiTheme, makeStyles, ThemeProvider, styled } from '@material-ui/core/styles';
 import {  Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 import * as serviceWorker from './utils/serviceWorker'
 import { StateProvider } from './state'
@@ -55,6 +55,14 @@ const oneToken = new BN('de0b6b3a7640000', 'hex')
 const isNight = () => {
   let currentTime = (new Date()).getHours()
   return (currentTime > 20 || currentTime < 6)
+}
+
+function Main({ children }) {
+  return(
+    <div style={{ paddingTop: '6em'}}>
+      {children}
+    </div>
+  )
 }
 
 const getTheme = condition => createMuiTheme({
@@ -204,47 +212,42 @@ function Application(){
     return(
     <ThemeProvider theme={theme}>
       <Router>
-        <Switch>
-          <Route path='/proposal/:tx'>
-            <Navigation mode={mode}/>
-            <Proposal />
-          </Route>
-          <Route path='/index/:name'>
-            <Navigation mode={mode}/>
-            <Index />
-          </Route>
-          <Route path='/propose'>
-            <Navigation mode={mode}/>
-            <Propose />
-          </Route>
-          <Route path='/pool/:address'>
-            <Navigation mode={mode}/>
-            <Pool />
-          </Route>
-          <Route path='/pools'>
-            <Navigation mode={mode}/>
-            <Pools />
-          </Route>
-          <Route path='/categories'>
-            <Navigation mode={mode}/>
-            <Categories />
-          </Route>
-          <Route path='/markets'>
-            <Navigation mode={mode}/>
-            <Markets />
-          </Route>
-          <Route exact path='/'>
-            <Root />
-          </Route>
-          <Route path='/governance'>
-            <Navigation mode={mode}/>
-            <Governance />
-          </Route>
-          <Route>
-            <Error404 />
-          </Route>
-        </Switch>
-      </Router>
+        <Navigation mode={mode}/>
+          <Main>
+            <Switch>
+              <Route path='/proposal/:tx'>
+                <Proposal />
+              </Route>
+              <Route path='/index/:name'>
+                <Index />
+              </Route>
+              <Route path='/propose'>
+                <Propose />
+              </Route>
+              <Route path='/pool/:address'>
+                <Pool />
+              </Route>
+              <Route path='/pools'>
+                <Pools />
+              </Route>
+              <Route path='/categories'>
+                <Categories />
+              </Route>
+              <Route path='/markets'>
+                <Markets />
+              </Route>
+              <Route exact path='/'>
+                <Root />
+              </Route>
+              <Route path='/governance'>
+                <Governance />
+              </Route>
+              <Route>
+                <Error404 />
+              </Route>
+            </Switch>
+          </Main>
+       </Router>
     </ThemeProvider>
     )
   }
