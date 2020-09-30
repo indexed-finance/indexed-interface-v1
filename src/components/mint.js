@@ -141,6 +141,9 @@ const useStyles = makeStyles((theme) => ({
   },
   single: {
     height: 205
+  },
+  helper: {
+    cursor: 'pointer'
   }
 }));
 
@@ -230,6 +233,10 @@ export default function InteractiveList({ market, metadata }) {
     return parseFloat(balance/Math.pow(10,18)).toFixed(2)
   }
 
+  const handleBalance = () => {
+    setAmount(balance)
+  }
+
   useEffect(() => {
     setSelection(true)
   }, [  ])
@@ -248,8 +255,11 @@ export default function InteractiveList({ market, metadata }) {
     <Grid container direction='column' alignItems='center' justify='space-around'>
       <Grid item>
         <RecieveInput label="RECIEVE" variant='outlined' type='number'
-          helperText={`BALANCE: ${balance}`}
+          helperText={<o className={classes.helper} onClick={handleBalance}>
+            BALANCE: {balance}
+          </o>}
           onChange={handleAmount}
+          name='mint-input'
           value={amount}
           InputProps={{
             endAdornment: market,

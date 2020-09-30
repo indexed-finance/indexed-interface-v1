@@ -126,7 +126,7 @@ const useStyles = makeStyles((theme) => ({
  chart: {
     paddingTop: 20,
     height: 200,
-    width: 750
+    width: 725
   },
   stats: {
     position: 'absolute',
@@ -142,7 +142,7 @@ const useStyles = makeStyles((theme) => ({
   },
   legend: {
     position: 'absolute',
-    paddingLeft: '35em',
+    paddingLeft: '33em',
     marginTop: -18.75,
     '& ul': {
       padding: 0,

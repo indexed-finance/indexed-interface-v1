@@ -16,7 +16,7 @@ const FACTORY = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'
 const ROUTER = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
 
 const fromWei = (web3, _bn) => Decimal(web3.utils.fromWei(web3.utils.toBN(_bn).toString(10)));
-const toWei = (web3, _bn) => Decimal(web3.utils.toWei(web3.utils.toBN(_bn).toString(10)));
+export const toWei = (web3, _bn) => Decimal(web3.utils.toWei(web3.utils.toBN(_bn).toString(10)));
 const oneToken = new BN('de0b6b3a7640000', 'hex');
 
 // Convert a decimal value to a big number, multiplying by 1e18
@@ -43,12 +43,16 @@ export async function getPair(web3, tokenAddress){
 }
 
 export async function getBalances(web3, address, array, map){
-  let tokens = array.map(values => { return { ...values }})
-  tokens.push({ symbol: 'ETH', address: WETH })
+  let tokens = array.map(v => { return { address: v.address, symbol: v.symbol }})
+  tokens.push({ address: WETH, symbol: 'ETH' })
 
   for(let token in tokens){
     let contract = toContract(web3, IERC20.abi, tokens[token].address)
     let balance = await contract.methods.balanceOf(address).call()
+
+    if(tokens[token].address == WETH){
+      balance = await web3.eth.getBalance(address)
+    }
 
     map[tokens[token].symbol] = {
       amount: (balance/Math.pow(10,18)).toFixed(2),

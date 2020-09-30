@@ -11,8 +11,8 @@ import Grid from '@material-ui/core/Grid'
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import { getRateSingle, getRateMulti, toWei } from '../lib/markets'
-import { tokenMetadata } from '../assets/constants/parameters'
+import { getRateSingle, getRateMulti, decToWeiHex } from '../lib/markets'
+import { tokenMetadata, initialState } from '../assets/constants/parameters'
 import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
 
@@ -181,7 +181,11 @@ const useStyles = makeStyles((theme) => ({
     width: 250
   },
   helper: {
+    cursor: 'pointer',
     fontSize: 10
+  },
+  balance: {
+    cursor: 'pointer',
   },
   market: {
     width: '100%',
@@ -242,7 +246,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
     .approve(metadata.address, amount).send({
       from: state.account
     }).on('confirmation', (conf, receipt) => {
-      setInputState(symbol, true)
+      setInputState(symbol, 1)
     })
   }
 
@@ -256,9 +260,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
   }
 
   const handleInput = (event) => {
-    if(state.balances[event.target.name].address != null){
-      setFocus(event.target.name)
-    }
+    setFocus(event.target.name)
   }
 
   const getInputValue = (symbol) => {
@@ -273,6 +275,13 @@ export default function Approvals({ balance, metadata, height, width, input, par
     element.value = amount
 
     setFocus(symbol)
+  }
+
+  const handleRequired = (symbol) => {
+    let target = document.getElementById(symbol)
+    let element = document.getElementsByName(symbol)[0]
+
+    element.value = target.innerHTML
   }
 
   const convertNumber = (amount) => {
@@ -303,8 +312,8 @@ export default function Approvals({ balance, metadata, height, width, input, par
       if(input != null){
         let { web3 } = state
         let { address } = metadata
-        let { toBN } = web3.rinkeby.utils
-        let amount = toBN(input)
+        let { toBN, toHex } = web3.rinkeby.utils
+        let amount = parseFloat(input)
         let rates;
 
         if(targets.length == 1){
@@ -341,7 +350,6 @@ export default function Approvals({ balance, metadata, height, width, input, par
   useEffect(() => {
     const verifyAllowance = async() => {
       if(focus != null){
-        console.log(state.balances)
         let { address } = state.balances[focus]
         let allowance = await getAllowance(address)
         let amount = getInputValue(focus)
@@ -395,7 +403,10 @@ export default function Approvals({ balance, metadata, height, width, input, par
           </ListItemAvatar>
           <ListItemText primary={token.symbol} />
           <SecondaryItemText primary={param}
-            secondary={<span id={token.symbol} />}
+            secondary={<span onClick={() => handleRequired(token.symbol)}
+                id={token.symbol}
+              />
+            }
           />
           <SecondaryActionAlt>
             <AmountInput variant='outlined' label='AMOUNT' type='number'

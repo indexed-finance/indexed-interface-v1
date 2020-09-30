@@ -130,6 +130,20 @@ export default function Index(){
       </ParentSize>
     )
   }
+    useEffect(() => {
+      const retrieveBalances = async() => {
+        let { account, indexes, web3 } = state
+
+        if(web3.injected){
+          let balances = await getBalances(
+            web3.rinkeby, account, indexes[name].assets, {}
+          )
+
+          await dispatch({ type: 'BAL', payload: { balances } })
+        }
+     }
+     retrieveBalances()
+  }, [ state.web3.injected ])
 
   useEffect(() => {
     const getMetadata = async() => {
@@ -138,17 +152,10 @@ export default function Index(){
       if(Object.keys(indexes).length > 0){
         setChart(renderChart(indexes[name].history))
         setMetadata(indexes[name])
-
-        if(web3.injected){
-          let balances = await getBalances(
-            web3.injected, account, indexes[name].assets, {}
-          )
-          await dispatch({ type: 'BAL', payload: { balances } })
-        }
       }
     }
     getMetadata()
-  }, [ state.web3.injected ])
+  }, [ state.indexes ])
 
 
   useEffect(() => {

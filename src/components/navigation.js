@@ -32,6 +32,9 @@ const useStyles = makeStyles(({ spacing, palette }) => ({
     color: `${palette.secondary.main} !important`,
     textDecoration: 'none !important',
   },
+  menu: {
+    position: 'absolute'
+  },
   appBar: {
     borderBottom: 'solid 3px #666666',
     boxShadow: 'none',
@@ -210,14 +213,25 @@ export default function Navigation({ mode }) {
               <Search selections={state.indexes} />
             </Grid>
             <Grid item>
-              <Menu
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-              >
-                {menuItems}
-              </Menu>
+              <div className={classes.menu}>
+                <Menu
+                  anchorEl={anchorEl}
+                  keepMounted
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  getContentAnchorEl={null}
+                >
+                  {menuItems}
+                </Menu>
+              </div>
               <IconButton onClick={handleClick} className={classes.menuButton}>
                 <MenuIcon color='secondary'/>
               </IconButton>

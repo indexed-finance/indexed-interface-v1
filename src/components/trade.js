@@ -13,7 +13,7 @@ import Input from './inputs/input'
 import IERC20 from '../assets/constants/abi/IERC20.json'
 import { toContract } from '../lib/util/contracts'
 import { getMarketMetadata } from '../api/gql'
-import { getPair, getRouter } from '../lib/markets'
+import { getPair, getRouter, getBalances, decToWeiHex } from '../lib/markets'
 import { store } from '../state'
 
 const WETH = '0x554dfe146305944e3d83ef802270b640a43eed44'
@@ -34,7 +34,8 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   swap: {
-    marginLeft: -22.5
+    textAlign: 'center',
+    alignItems: 'center'
   },
   divider: {
     borderTop: '#666666 solid 1px',
@@ -56,7 +57,10 @@ const useStyles = makeStyles((theme) => ({
       marginRight: 50,
       color: '#333333'
     }
-  }
+  },
+  helper: {
+    cursor: 'pointer'
+  },
 }));
 
 export default function Trade({ market, metadata }) {
@@ -71,22 +75,34 @@ export default function Trade({ market, metadata }) {
   let { dispatch, state } = useContext(store)
 
   const handleChange = (event) => {
-    let { amount } = event.target.value
+    let { name, value } = event.target
 
-    if(event.target.name == 'input'){
-      setInput({ ...input, amount })
-      amount = amount * prices.input
-      setOutput({ ...output, amount })
-    }
+    if(name == 'input') setRate(value)
+  }
+
+  const setRate = (entry) => {
+    setInput({ ...input, amount: entry })
+    let amount = entry * prices.input
+    setOutput({ ...output, amount })
+  }
+
+  const getBalance = async() => {
+    let contract = toContract(state.web3.injected, IERC20.abi, metadata.address)
+
+    let balance = await contract.methods
+    .balanceOf(state.account).call()
+
+    return parseFloat(balance/Math.pow(10,18)).toFixed(2)
   }
 
   const swapTokens = async() => {
+    let { web3 } = state
     let { address } = contracts.token.options
-    let { eth } = state.web3.injected
+    let { eth } = web3.injected
 
     let recentBlock = await eth.getBlock('latest')
-    let amount0 = convertNumber(input)
-    let amount1 = convertNumber(output)
+    let amount0 = decToWeiHex(web3.injected, input.amount)
+    let amount1 = decToWeiHex(web3.injected, output.amount)
 
     await contracts.router.methods.swapTokensForExactTokens(
       amount1,
@@ -96,6 +112,12 @@ export default function Trade({ market, metadata }) {
       recentBlock.timestamp + 3600
     ).send({
       from: state.account
+    }).on('confirmation', async(conf, reciept) => {
+       if(conf > 2) {
+         let newBalance = await getBalance()
+
+         setBalance(newBalance)
+       }
     })
   }
 
@@ -135,6 +157,12 @@ export default function Trade({ market, metadata }) {
 
   const parseNumber = (amount) => {
     return parseFloat(amount/Math.pow(10, 18)).toFixed(2)
+  }
+
+  const handleBalance  = () => {
+    let { amount } = state.balances[input.market]
+
+    setRate(amount)
   }
 
   useEffect(() => {
@@ -181,10 +209,12 @@ export default function Trade({ market, metadata }) {
 
   useEffect(() => {
     const checkAllowance = async() => {
-      if(contracts.router.options != undefined){
+      if(contracts.router.options != undefined
+        && state.web3.injected != false){
         let allowance = await getAllowance()
+        let { amount } = input
 
-        if(allowance < input){
+        if(allowance < parseFloat(amount)){
           setExecution({
             f: approveTokens, label: 'APPROVE'
           })
@@ -196,14 +226,19 @@ export default function Trade({ market, metadata }) {
       }
     }
     checkAllowance()
-  }, [ input ])
-
+  }, [ input.amount ])
 
   useEffect(() => {
-    if(state.web3.injected){
-      setBalance(state.balances[input.market].amount)
+    const retrieveBalance = async() => {
+      if(state.web3.injected != false
+        && metadata != undefined){
+        let newBalance = await getBalance()
+
+        setBalance(newBalance)
+      }
     }
-  }, [ state.balances, input.market ])
+    retrieveBalance()
+  }, [ contracts ])
 
   useEffect(() => {
     setExecution({
@@ -215,7 +250,10 @@ export default function Trade({ market, metadata }) {
     <Grid container direction='column' alignItems='center' justify='space-around'>
       <Grid item>
         <Input className={classes.inputs} label="AMOUNT" variant='outlined'
-          helperText={`BALANCE: ${balance}`}
+          helperText={
+            <o className={classes.helper} onClick={handleBalance}>
+              BALANCE: {state.balances[input.market].amount}
+            </o>}
           onChange={handleChange}
           name="input"
           value={input.amount}
@@ -228,12 +266,15 @@ export default function Trade({ market, metadata }) {
       <Grid item>
         <div className={classes.swap}>
           <IconButton> <Swap/> </IconButton>
+          <p>1 {market} = {prices.input.toFixed(3)} ETH</p>
         </div>
       </Grid>
       <Grid item>
         <Input className={classes.altInputs} label="RECIEVE" variant='outlined'
-          helperText={`1 ${market} = ${prices.input.toFixed(3)} ETH`}
-          onChange={handleChange}
+          helperText={
+          <o className={classes.helper}>
+            BALANCE: {balance}
+          </o>}
           value={output.amount}
           name="output"
           InputProps={{
