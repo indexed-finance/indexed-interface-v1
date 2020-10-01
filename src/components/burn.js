@@ -173,7 +173,7 @@ const useStyles = makeStyles((theme) => ({
 const WETH = '0x554Dfe146305944e3D83eF802270b640A43eED44'
 
 export default function InteractiveList({ market, metadata }) {
-  const [ output, setOutput ] = useState({ symbol: 'ETH', amount: 0, address: WETH  })
+  const [ output, setOutput ] = useState({ symbol: null, amount: 0, address: null  })
   const [ execution, setExecution ] = useState({ f: () => {}, label: null })
   const [ balances, setBalances ] = useState({ input: 0, output: 0 })
   const [ component, setComponent ] = useState(<Multi />)
@@ -187,15 +187,32 @@ export default function InteractiveList({ market, metadata }) {
     let { web3, account } = state
     let { address, assets } = metadata
     let { toBN } = web3.rinkeby.utils
-    let input = decToWeiHex(web3.rinkeby, toBN(amount))
+    let input = decToWeiHex(web3.rinkeby, parseFloat(amount))
     let contract = toContract(web3.injected, BPool.abi, address)
 
     if(selection) await burnToMultiple(contract, input, rates)
-    else await burnToSingle(contract)
+    else await burnToSingle(contract, input, rates[0].amount)
   }
 
-  const burnToSingle = async(contract) => {
+  const burnToSingle = async(contract, input, recieve) => {
+    console.log(input)
+    console.log(recieve)
+    
+    await contract.methods.exitswapPoolAmountIn(
+      output.address, recieve, input
+    ).send({
+      from: state.account
+    }).on('confirmation', async(conf, receipt) => {
+      if(conf > 2) {
+        let inputBalance = await getBalance(metadata.address)
+        let outputBalance = await getBalance(output.address)
 
+        setBalances({
+          input: inputBalance,
+          output: outputBalance
+        })
+      }
+    })
   }
 
   const burnToMultiple = async(contract, input, outputs) => {
@@ -273,7 +290,7 @@ export default function InteractiveList({ market, metadata }) {
 
   const handleChange = (event) => {
     if(event.target.checked) setComponent(<Multi />)
-    else setComponent(<Single />)
+    else setComponent(<Single data={output} />)
     setSelection(event.target.checked)
   }
 
@@ -302,15 +319,15 @@ export default function InteractiveList({ market, metadata }) {
     )
   }
 
-  function Single() {
+  function Single({ data }) {
     return(
       <OutputInput label="RECIEVE" variant='outlined'
-        value={output.amount}
+        value={data.amount}
         helperText={<o className={classes.helper} onClick={handleBalance}>
           BALANCE: {balances.output}
         </o>}
         InputProps={{
-          endAdornment: <Adornment market={output.symbol}/>,
+          endAdornment: <Adornment market={data.symbol}/>,
           inputComponent: NumberFormat
         }}
       />
@@ -337,10 +354,11 @@ export default function InteractiveList({ market, metadata }) {
               element.innerHTML = parseNumber(o)
             }
         } else {
-            console.log(web3.rinkeby, address, output.address, input)
-            
             rates = await getRateSingle(web3.rinkeby, address, output.address, input)
-            setOutput({ ...rates[0]  })
+            let amount = parseNumber(rates[0].amount)
+
+            setComponent(<Single data={{ ...rates[0], amount }} />)
+            setOutput({ ...rates[0], amount })
         }
 
         if(web3.injected){
@@ -373,8 +391,10 @@ export default function InteractiveList({ market, metadata }) {
   useEffect(() => {
     const pullBalance = async() => {
       if(state.web3.injected) {
+        let { address } = metadata.assets[2]
+
         let inputBalance = await getBalance(metadata.address)
-        let outputBalance = await getBalance(output.address)
+        let outputBalance = await getBalance(address)
 
         setBalances({
           input: inputBalance,
@@ -384,6 +404,14 @@ export default function InteractiveList({ market, metadata }) {
     }
     pullBalance()
   }, [ state.web3.injected ])
+
+  useEffect(() => {
+    if(metadata != undefined) {
+      let { symbol, address } = metadata.assets[2]
+
+      setOutput({ ...output, symbol, address })
+    }
+  }, [ metadata ])
 
   return (
     <Grid container direction='column' alignItems='center' justify='space-around'>
