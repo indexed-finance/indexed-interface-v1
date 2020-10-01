@@ -22,15 +22,14 @@ export default function CurrencySelect({ market, onSelect }) {
   }
 
   useEffect(() => {
-    setCurrency('ETH')
+    setCurrency(market)
   }, [ market ])
 
   return(
     <InputAdornment style={{ paddingRight: 5 }} position="end">
       <Selection value={currency} onChange={handleChange} >
         <MenuItem value='ETH'>ETH</MenuItem>
-        <MenuItem value='WBTC'>WBTC</MenuItem>
-        <MenuItem value='DAI'>DAI</MenuItem>
+        <MenuItem value={market}>{market}</MenuItem>
       </Selection>
     </InputAdornment>
   )

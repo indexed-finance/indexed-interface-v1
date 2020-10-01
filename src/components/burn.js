@@ -9,7 +9,7 @@ import TableRow from '@material-ui/core/TableRow'
 import Table from '@material-ui/core/Table'
 import Grid from '@material-ui/core/Grid'
 import { toContract } from '../lib/util/contracts'
-import { getRateMulti, getBalances, decToWeiHex } from '../lib/markets'
+import { getRateMulti, getRateSingle, getBalances, decToWeiHex } from '../lib/markets'
 import { store } from '../state'
 
 import { tokenImages } from '../assets/constants/parameters'
@@ -170,12 +170,15 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
+const WETH = '0x554Dfe146305944e3D83eF802270b640A43eED44'
+
 export default function InteractiveList({ market, metadata }) {
+  const [ output, setOutput ] = useState({ symbol: 'ETH', amount: 0, address: WETH  })
   const [ execution, setExecution ] = useState({ f: () => {}, label: null })
+  const [ balances, setBalances ] = useState({ input: 0, output: 0 })
   const [ component, setComponent ] = useState(<Multi />)
-  const [ isSelected, setSelection ] = useState(true)
+  const [ selection, setSelection ] = useState(true)
   const [ amount, setAmount ] = useState(null)
-  const [ balance, setBalance ] = useState(0)
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
@@ -184,19 +187,32 @@ export default function InteractiveList({ market, metadata }) {
     let { web3, account } = state
     let { address, assets } = metadata
     let { toBN } = web3.rinkeby.utils
-    let input = toBN(amount)
+    let input = decToWeiHex(web3.rinkeby, toBN(amount))
     let contract = toContract(web3.injected, BPool.abi, address)
 
-    console.log(decToWeiHex(web3.rinkeby, input), rates.map(t => t.amount))
+    if(selection) await burnToMultiple(contract, input, rates)
+    else await burnToSingle(contract)
+  }
 
+  const burnToSingle = async(contract) => {
+
+  }
+
+  const burnToMultiple = async(contract, input, outputs) => {
     await contract.methods.exitPool(
-      decToWeiHex(web3.rinkeby, input), rates.map(t => t.amount))
+      input, outputs.map(t => t.amount))
     .send({
-      from: account
+      from: state.account
     }).on('confirmation', async(conf, receipt) => {
-      let tokenBalance = await getBalance()
+      if(conf > 2) {
+        let inputBalance = await getBalance(metadata.address)
+        let outputBalance = await getBalance(output.address)
 
-      setBalance(tokenBalance)
+        setBalances({
+          input: inputBalance,
+          output: outputBalance
+        })
+      }
     })
   }
 
@@ -224,8 +240,8 @@ export default function InteractiveList({ market, metadata }) {
     return allowance/Math.pow(10,18)
   }
 
-  const getBalance = async() => {
-    let contract = toContract(state.web3.injected, IERC20.abi, metadata.address)
+  const getBalance = async(address) => {
+    let contract = toContract(state.web3.injected, IERC20.abi, address)
 
     let balance = await contract.methods
     .balanceOf(state.account).call()
@@ -238,7 +254,7 @@ export default function InteractiveList({ market, metadata }) {
   }
 
   const handleBalance = () => {
-    setAmount(balance)
+    setAmount(balances.input)
   }
 
   const parseNumber = (amount) => {
@@ -289,8 +305,12 @@ export default function InteractiveList({ market, metadata }) {
   function Single() {
     return(
       <OutputInput label="RECIEVE" variant='outlined'
+        value={output.amount}
+        helperText={<o className={classes.helper} onClick={handleBalance}>
+          BALANCE: {balances.output}
+        </o>}
         InputProps={{
-          endAdornment: <Adornment market='ETH'/>,
+          endAdornment: <Adornment market={output.symbol}/>,
           inputComponent: NumberFormat
         }}
       />
@@ -303,17 +323,24 @@ export default function InteractiveList({ market, metadata }) {
         let { web3 } = state
         let { address } = metadata
         let { toBN } = web3.rinkeby.utils
-        let input = toBN(amount)
+        let input = parseFloat(amount)
+        let rates;
 
-        let rates = await getRateMulti(web3.rinkeby, address, input, false)
-        let payouts = {}
+        if(selection){
+            rates = await getRateMulti(web3.rinkeby, address, input, false)
 
-        for(let token in rates){
-          let { symbol, amount } = rates[token]
-          let element = document.getElementById(symbol)
-          let o = toBN(amount).toString()
+            for(let token in rates){
+              let { symbol, amount } = rates[token]
+              let element = document.getElementById(symbol)
+              let o = toBN(amount).toString()
 
-          element.innerHTML = parseNumber(o)
+              element.innerHTML = parseNumber(o)
+            }
+        } else {
+            console.log(web3.rinkeby, address, output.address, input)
+            
+            rates = await getRateSingle(web3.rinkeby, address, output.address, input)
+            setOutput({ ...rates[0]  })
         }
 
         if(web3.injected){
@@ -346,8 +373,13 @@ export default function InteractiveList({ market, metadata }) {
   useEffect(() => {
     const pullBalance = async() => {
       if(state.web3.injected) {
-        let balance = await getBalance()
-        setBalance(balance)
+        let inputBalance = await getBalance(metadata.address)
+        let outputBalance = await getBalance(output.address)
+
+        setBalances({
+          input: inputBalance,
+          output: outputBalance
+        })
       }
     }
     pullBalance()
@@ -359,19 +391,18 @@ export default function InteractiveList({ market, metadata }) {
         <RecieveInput label="DESTROY" variant='outlined'
           onChange={handleInput}
           value={amount}
-          name='burn-input'
           InputProps={{
             endAdornment: market,
             inputComponent: NumberFormat
           }}
           helperText={<o className={classes.helper} onClick={handleBalance}>
-            BALANCE: {balance}
+            BALANCE: {balances.input}
           </o>}
         />
       </Grid>
       <Grid item>
         <div className={classes.radio}>
-          <Radio selected={isSelected} triggerChange={handleChange} />
+          <Radio selected={selection} triggerChange={handleChange} />
         </div>
       </Grid>
       <Grid item>

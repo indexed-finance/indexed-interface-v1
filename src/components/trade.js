@@ -16,7 +16,7 @@ import { getMarketMetadata } from '../api/gql'
 import { getPair, getRouter, getBalances, decToWeiHex } from '../lib/markets'
 import { store } from '../state'
 
-const WETH = '0x554dfe146305944e3d83ef802270b640a43eed44'
+const WETH = '0x554Dfe146305944e3D83eF802270b640A43eED44'
 
 const useStyles = makeStyles((theme) => ({
   inputs: {
@@ -64,12 +64,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Trade({ market, metadata }) {
+  const [ output, setOutput ] = useState({ amount: null, market: market, address: null })
+  const [ input, setInput ] = useState({ amount: null, market: 'ETH', address: WETH })
   const [ contracts, setContracts ] = useState({ router: '', pair: '', token: ''})
   const [ execution, setExecution ] = useState({ f: () => {}, label: 'SWAP' })
-  const [ output, setOutput ] = useState({ amount: null, market: market })
-  const [ input, setInput ] = useState({ amount: null, market: 'ETH' })
-  const [ prices, setPrices ] = useState({ input: 0, output: 0})
-  const [ balance, setBalance ] = useState(0)
+  const [ prices, setPrices ] = useState({ input: 0, output: 0 })
+  const [ balances, setBalances ] = useState({ input: 0, output: 0 })
   const classes = useStyles()
 
   let { dispatch, state } = useContext(store)
@@ -86,18 +86,31 @@ export default function Trade({ market, metadata }) {
     setOutput({ ...output, amount })
   }
 
-  const getBalance = async() => {
-    let contract = toContract(state.web3.injected, IERC20.abi, metadata.address)
+  const getBalance = async(address) => {
+    let { injected, rinkeby } = state.web3
+    let provider = injected != false ? injected : rinkeby
+    let target = injected != false ? state.account : '0x0000000000000000000000000000000000000001'
 
-    let balance = await contract.methods
-    .balanceOf(state.account).call()
+    let contract = toContract(provider, IERC20.abi, address)
+
+    let balance = await contract.methods.balanceOf(target).call()
 
     return parseFloat(balance/Math.pow(10,18)).toFixed(2)
   }
 
+  const changeOrder = () => {
+    let { injected, rinkeby } = state.web3
+    let provider = injected != false ? injected : rinkeby
+    let token = toContract(provider, IERC20.abi, output.address)
+
+    setPrices({ input: prices.output, output: prices.input })
+    setContracts({ ...contracts, token })
+    setInput({ ...output })
+    setOutput({ ...input })
+  }
+
   const swapTokens = async() => {
-    let { web3 } = state
-    let { address } = contracts.token.options
+    let { web3, indexes } = state
     let { eth } = web3.injected
 
     let recentBlock = await eth.getBlock('latest')
@@ -107,16 +120,20 @@ export default function Trade({ market, metadata }) {
     await contracts.router.methods.swapTokensForExactTokens(
       amount1,
       amount0,
-      [ address, WETH ],
+      [ output.address, input.address ],
       state.account,
       recentBlock.timestamp + 3600
     ).send({
       from: state.account
     }).on('confirmation', async(conf, reciept) => {
        if(conf > 2) {
-         let newBalance = await getBalance()
+         let inputBalance = await getBalance(input.address)
+         let outputBalance = await getBalance(output.address)
 
-         setBalance(newBalance)
+         setBalances({
+           output: outputBalance,
+           input: inputBalance
+         })
        }
     })
   }
@@ -169,18 +186,25 @@ export default function Trade({ market, metadata }) {
     const getPairMetadata = async() => {
       if(state.indexes[market]) {
         let { web3, indexes } = state
-        let { address } = indexes[market].assets[0]
+        let { address } = indexes[market]
 
         let router = await getRouter(web3.rinkeby)
         let pair = await getPair(web3.rinkeby, address)
         let token = toContract(web3.rinkeby, IERC20.abi, address)
         let pricing = await getMarketMetadata(pair.options.address)
+        let outputBalance = await getBalance(address)
+        let inputBalance = await getBalance(WETH)
 
+        setOutput({ ...output, address: indexes[market].address })
         setPrices({
           input: parseFloat(pricing.token0Price),
           output: parseFloat(pricing.token1Price)
         })
         setContracts({ pair, token, router })
+        setBalances({
+          output: outputBalance,
+          input: inputBalance
+        })
       }
     }
     getPairMetadata()
@@ -229,15 +253,19 @@ export default function Trade({ market, metadata }) {
   }, [ input.amount ])
 
   useEffect(() => {
-    const retrieveBalance = async() => {
+    const retrieveBalances = async() => {
       if(state.web3.injected != false
-        && metadata != undefined){
-        let newBalance = await getBalance()
+          && output.address != null){
+        let inputBalance = await getBalance(input.address)
+        let outputBalance = await getBalance(output.address)
 
-        setBalance(newBalance)
+        setBalances({
+          input: inputBalance,
+          output: outputBalance
+        })
       }
     }
-    retrieveBalance()
+    retrieveBalances()
   }, [ contracts ])
 
   useEffect(() => {
@@ -252,7 +280,7 @@ export default function Trade({ market, metadata }) {
         <Input className={classes.inputs} label="AMOUNT" variant='outlined'
           helperText={
             <o className={classes.helper} onClick={handleBalance}>
-              BALANCE: {state.balances[input.market].amount}
+              BALANCE: {balances.input}
             </o>}
           onChange={handleChange}
           name="input"
@@ -265,15 +293,15 @@ export default function Trade({ market, metadata }) {
       </Grid >
       <Grid item>
         <div className={classes.swap}>
-          <IconButton> <Swap/> </IconButton>
-          <p>1 {market} = {prices.input.toFixed(3)} ETH</p>
+          <IconButton onClick={changeOrder}> <Swap/> </IconButton>
+          <p>1 {input.market} = {prices.input.toFixed(3)} {output.market}</p>
         </div>
       </Grid>
       <Grid item>
         <Input className={classes.altInputs} label="RECIEVE" variant='outlined'
           helperText={
           <o className={classes.helper}>
-            BALANCE: {balance}
+            BALANCE: {balances.output}
           </o>}
           value={output.amount}
           name="output"

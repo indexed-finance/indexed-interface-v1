@@ -109,9 +109,11 @@ export default function VerticalTabs({ data }) {
   useEffect(() => {
     const getTrades = async() => {
       if(Object.values(data).length > 0){
-        let pair = await getPair(state.web3.rinkeby, data.assets[0].address)
+        let pair = await getPair(state.web3.rinkeby, data.address)
         let trades = await getMarketTrades(pair.options.address)
         let history = []
+
+        console.log(trades)
 
         for(let order in trades){
           let {

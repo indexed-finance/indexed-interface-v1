@@ -30,7 +30,7 @@ const selected = {
 
 const useStyles = makeStyles(({ palette }) => ({
   header: {
-    width: '65vw',
+    width: '63.5vw',
     minHeight: '10vh',
     borderBottom: 'solid 3px #666666',
     padding: '0vw 2.5vw',
@@ -51,7 +51,7 @@ const useStyles = makeStyles(({ palette }) => ({
     color: 'red'
   },
   chart: {
-    width: '70vw',
+    width: '68.75vw',
     borderBottom: 'solid 3px #666666',
     height: '55vh'
   },

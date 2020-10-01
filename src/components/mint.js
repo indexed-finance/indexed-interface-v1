@@ -196,8 +196,6 @@ export default function InteractiveList({ market, metadata }) {
     let { web3, account, balances } = state
     let { assets } = metadata
 
-    console.log(input, conversions)
-
     await contract.methods.joinPool(input, conversions.map(t => t.amount))
     .send({
       from: account
