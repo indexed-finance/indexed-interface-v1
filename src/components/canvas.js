@@ -7,6 +7,7 @@ const Canvas = styled(Paper)({
   border: '3px solid #666666',
   borderRadius: 10,
   margin: '3em 3em .5em 3em',
+  height: '100%',
   overflow: 'auto',
 })
 

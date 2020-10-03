@@ -27,18 +27,20 @@ const dummy = {
 }
 
 const Trigger = styled(ButtonPrimary)({
-  padding: '.3em 2.125em',
+  padding: '.1vw .25vw',
   marginTop: 25,
   marginLeft: 'auto',
+  fontSize: '.875vw',
   float: 'right',
 })
 
 const useStyles = makeStyles(({ spacing, palette }) => ({
   market: {
     position: 'absolute',
-    paddingLeft: '1.75em',
+    paddingLeft: '2em',
+    paddingTop: '.5em',
     '& h2': {
-      marginBottom: 0
+      marginBottom: 0,
     },
     '& h3': {
       marginTop: 10,
@@ -49,11 +51,12 @@ const useStyles = makeStyles(({ spacing, palette }) => ({
     listStyle: 'none',
     color: '#999999',
     paddingRight: 15,
+    paddingLeft: 0,
     width: '50%',
     paddingTop: 5,
-    fontSize: 14,
     float: 'right',
     '& li': {
+      fontSize: '1vw',
       marginBottom: 7.5,
       '& span': {
         color: palette.secondary.main,
@@ -83,12 +86,12 @@ export default function Markets(){
     borderBottomLeftRadius: 200,
     borderTopRightRadius: 10,
     borderBottomRightRadius: 10,
-    width: '32.5%',
-    height: '13.5em',
+    width: '37.5%',
+    height: 'auto',
     boxShadow: 'none',
-    position: 'absolute',
-    marginTop: '-.2em',
-    right: '3.5%'
+    position: 'relative',
+    marginTop: '0en',
+    float: 'right',
   })
 
   const changeMarket = (m) => {
@@ -108,17 +111,16 @@ export default function Markets(){
   return (
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>
-        <Grid item>
+        <Grid item xs={12} md={12} lg={12} xl={12}>
           <Canvas>
+            <div style={{'z-index': 1, float: 'left', width: '65%', position: 'absolute', paddingTop: 102.5}}>
+              <Spline color='#66FFFF' metadata={market} />
+            </div>
             <div className={classes.market}>
               <h2> {market.name} [{market.symbol}] </h2>
               <h3> {market.price} </h3>
             </div>
-            <div style={{ 'z-index': 1, float: 'left', width: '75%'}}>
-              <Spline color='#66FFFF' height={68} metadata={market} />
-            </div>
             <Wrapper>
-              <Pie metadata={market} />
               <ul className={classes.options}>
                 <li>ADDRESS:
                   <span>
@@ -133,10 +135,11 @@ export default function Markets(){
                   <Trigger> EXPAND </Trigger>
                 </Link>
               </ul>
+              <Pie metadata={market} />
             </Wrapper>
           </Canvas>
         </Grid>
-        <Grid item>
+        <Grid item xs={12} md={12} lg={12} xl={12}>
           <Container margin='2em 3em' padding="1em 2em" percentage='11%' title='INDEXES'>
             <Table indexes={state.indexes} market={market.symbol} triggerMarket={changeMarket} />
           </Container>

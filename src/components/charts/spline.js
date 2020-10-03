@@ -23,6 +23,8 @@ const renameKeys = (keysMap, obj) =>
 const options = {
   bezierCurve: true,
   responsive: true,
+  maintainAspectRatio: true,
+  aspectRatio: 6,
   plugins: {
      datalabels: false
  },
@@ -33,9 +35,9 @@ const options = {
   },
   layout: {
     padding: {
+      top: 0,
       left: -12.5,
       right: 0,
-      top: 100,
       bottom: 0
     }
   },
@@ -117,7 +119,7 @@ export default function Spline({ metadata, height, color }){
 
   useEffect(() => {
     setComponent(
-      <Line height={height} options={options} data={getConfig} redraw />
+      <Line height='35%' options={options} data={getConfig} redraw />
     )
   }, [ metadata ])
 

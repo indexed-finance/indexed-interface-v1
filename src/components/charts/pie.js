@@ -40,7 +40,8 @@ export default function PieChart({ metadata }){
         labels: {
              title: {
                  font: {
-                     weight: 'bold'
+                     weight: 'bold',
+                     size: 10
                  }
              },
            },
@@ -67,12 +68,12 @@ export default function PieChart({ metadata }){
 
   useEffect(() => {
     setComponent(
-      <Pie height={175} options={options} data={chartConfig(metadata)} />
+      <Pie height={175} width={175} options={options} data={chartConfig(metadata)} />
     )
   }, [ metadata ])
 
   return (
-    <div style={{ position: 'absolute', right: '42.5%', top: '8.75%' }}>
+    <div style={{ position: 'relative', float: 'left', width: '30%', top: '1.5em', left: '1em'}}>
       {component}
     </div>
   )
