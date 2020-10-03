@@ -20,8 +20,8 @@ let stock = appleStock.slice(800);
 
 export const background = '#666666';
 export const background2 = '#FFFFFF';
-export const accentColor = '#999999';
-export const accentColorDark = '#666666';
+export const accentColor = '#666666';
+export const accentColorDark = '#c2d9fe';
 const tooltipStyles = {
   ...defaultStyles,
   background,
@@ -121,7 +121,7 @@ export default withTooltip<AreaProps, TooltipData>(
             scale={stockValueScale}
             width={xMax}
             strokeDasharray="3,3"
-            stroke={accentColor}
+            stroke='#999999'
             strokeOpacity={0.3}
             pointerEvents="none"
           />
@@ -129,7 +129,7 @@ export default withTooltip<AreaProps, TooltipData>(
             scale={dateScale}
             height={yMax}
             strokeDasharray="3,3"
-            stroke={accentColor}
+            stroke='#999999'
             strokeOpacity={0.3}
             pointerEvents="none"
           />

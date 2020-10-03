@@ -42,6 +42,9 @@ const useStyles = makeStyles((theme) => ({
   functions: {
     width: '80%',
     float: 'right'
+  },
+  item: {
+    marginBottom: 50
   }
 }))
 
@@ -230,7 +233,7 @@ export default function Propose(){
 
   const renderEntries = (meta) => {
     return(
-      <Fragment>
+      <div className={classes.item}>
         {Object.entries(meta).map(([key, value]) => (
           <Fragment>
             <IconButton onClick={() => removeContract(key)}>
@@ -240,7 +243,7 @@ export default function Propose(){
             <Entries pair={key} data={value} />
           </Fragment>
         ))}
-     </Fragment>
+     </div>
     )
   }
 
