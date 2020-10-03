@@ -58,11 +58,7 @@ const isNight = () => {
 }
 
 function Main({ children }) {
-  return(
-    <div style={{ paddingTop: '6em'}}>
-      {children}
-    </div>
-  )
+  return children
 }
 
 const getTheme = condition => createMuiTheme({

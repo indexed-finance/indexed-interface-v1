@@ -1,28 +1,10 @@
 import React, { useState } from 'react'
 
-import { makeStyles, styled } from '@material-ui/core/styles'
+import { makeStyles, styled, useTheme } from '@material-ui/core/styles'
 import InputLabel from '@material-ui/core/InputLabel'
 import FormControl from '@material-ui/core/FormControl'
 import MenuItem from '@material-ui/core/MenuItem'
 import Select from '@material-ui/core/Select'
-
-const InputSelect = styled(Select)({
-  borderRadius: 5,
-  borderWidth: 2,
-  backgroundColor: 'white',
-  '& fieldset': {
-    border: 'solid 2px #999999',
-  },
-  '& .MuiOutlinedInput-input': {
-    padding: '.75em 1em !important',
-  },
-  '&input:hover': {
-    backgroundColor: 'white'
-  },
-  '&input:active': {
-    backgroundColor: 'white'
-  }
-})
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -38,11 +20,30 @@ const useStyles = makeStyles((theme) => ({
 export default function Option({ label, selections, onChange }){
   const [ value, setValue ] = useState(null)
   const classes = useStyles()
+  const theme = useTheme()
 
   const handleChange = (event) => {
     setValue(event.target.value)
     onChange(event.target.value, label)
   }
+
+  const InputSelect = styled(Select)({
+    borderRadius: 5,
+    borderWidth: 2,
+    backgroundColor: theme.palette.primary.main,
+    '& fieldset': {
+      border: 'solid 2px #999999',
+    },
+    '& .MuiOutlinedInput-input': {
+      padding: '.75em 1em !important',
+    },
+    '&input:hover': {
+      backgroundColor: theme.palette.primary.main
+    },
+    '&input:active': {
+      backgroundColor: theme.palette.primary.main
+    }
+  })
 
   return(
     <FormControl variant="outlined" className={classes.formControl}>

@@ -56,22 +56,13 @@ const columns = [
   },
 ];
 
-function createData(name, symbol, price, delta, marketcap, liquidity, volume ) {
-  return { name, symbol, price, delta, marketcap, liquidity, volume }
-}
-
-const rows = [
-  createData('Cryptocurrency', 'CCI', 7232.23, 4.34, 125000.18, 304321.22, 1232232.34),
-  createData('Decentralized Finance', 'DEFII', 10553.11, 2.11, 100232.18, 1250023.11, 1204232.23),
-  createData('Governance', 'GOVI', 25731.23, 1.12, 75000.11, 100000.11, 500000.12)
-];
-
 const useStyles = makeStyles({
   root: {
     width: '100%',
   },
   container: {
     maxHeight: 'calc(100vh - 280px)',
+    overflowX: 'hidden'
   },
 })
 

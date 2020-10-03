@@ -3,7 +3,7 @@ import React, { Fragment, useState, useEffect, useContext } from "react";
 import { styled, useTheme, makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 
 import ButtonPrimary from '../components/buttons/primary'
 import Container from '../components/container'
@@ -69,6 +69,7 @@ export default function Markets(){
   const [ pie, setPie ] = useState(<Fragment />)
   const classes = useStyles()
   const theme = useTheme()
+  const history = useHistory()
 
   let { state, dispatch } = useContext(store)
 
@@ -90,8 +91,12 @@ export default function Markets(){
     right: '3.5%'
   })
 
-  const changeMarket = (market) => {
-    setMarket(state.indexes[market])
+  const changeMarket = (m) => {
+    if(market.symbol == m){
+      history.push(`index/${m.toLowerCase()}`)
+    } else {
+      setMarket(state.indexes[m])
+    }
   }
 
   useEffect(() => {
@@ -125,7 +130,7 @@ export default function Markets(){
                 <li>INFLOW: <span></span></li>
                 <li>TVL: <span>{market.marketcap}</span></li>
                 <Link to={`index/${market.symbol.toLowerCase()}`}>
-                  <Trigger> EXPLORE </Trigger>
+                  <Trigger> EXPAND </Trigger>
                 </Link>
               </ul>
             </Wrapper>

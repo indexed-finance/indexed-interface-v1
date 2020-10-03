@@ -275,7 +275,7 @@ export default function Propose(){
   return (
     <Fragment>
       <Grid container direction='column' alignItems='center' justify='center'>
-        <Container margin="3em 3em" padding="1em 2em" title="CREATE PROPOSAL" percentage="37.5%">
+        <Container margin="3em 3em" padding="1em 2em" title="CREATE PROPOSAL" percentage="35%">
           <div className={classes.form}>
             <Grid item>
               <p> PREVIEW: </p>

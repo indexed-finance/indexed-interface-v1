@@ -14,6 +14,7 @@ import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import NightsStayIcon from '@material-ui/icons/NightsStay';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
+import { useLocation } from 'react-router-dom'
 import jazzicon from '@metamask/jazzicon'
 
 import { toChecksumAddress } from '../assets/constants/functions'
@@ -27,6 +28,7 @@ const useStyles = makeStyles(({ spacing, palette }) => ({
   root: {
     flexGrow: 1,
     fontFamily: 'San Fransico',
+    marginBottom: '6em'
   },
   href: {
     color: `${palette.secondary.main} !important`,
@@ -91,8 +93,10 @@ const useStyles = makeStyles(({ spacing, palette }) => ({
 
 export default function Navigation({ mode }) {
   const [ component, setComponent ] = useState(<Fragment/>)
+  const [ display, setDisplay ] = useState(<Fragment />)
   const [ menuItems, setItems ] = useState(<LoggedOut />)
   const [ anchorEl, setAnchorEl ] = useState(null)
+  const location = useLocation()
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
@@ -198,8 +202,61 @@ export default function Navigation({ mode }) {
     )
   }
 
+  function Navbar() {
+    return(
+      <div className={classes.root}>
+        <AppBar className={classes.appBar} position="fixed">
+          <Toolbar>
+            <Grid container direction='row' alignItems='center' justify='space-between'>
+              <Grid item>
+                <Link to='/'>
+                  <img className={classes.logo} src={indexed} />
+                  <Typography variant='h4' className={classes.title}> INDEXED </Typography>
+                </Link>
+              </Grid>
+              <Grid item>
+                <Search selections={state.indexes} />
+              </Grid>
+              <Grid item>
+                <div className={classes.menu}>
+                  <Menu
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "center",
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    getContentAnchorEl={null}
+                  >
+                    {menuItems}
+                  </Menu>
+                </div>
+                <IconButton onClick={handleClick} className={classes.menuButton}>
+                  <MenuIcon color='secondary'/>
+                </IconButton>
+                <IconButton onClick={() => state.changeTheme(mode)}>
+                  {mode && (<Brightness4Icon color='secondary' />)}
+                  {!mode && (<NightsStayIcon color='secondary' />)}
+                </IconButton>
+               {component}
+              </Grid>
+            </Grid>
+          </Toolbar>
+        </AppBar>
+      </div>
+    )
+  }
+
   return (
-    <div className={classes.root}>
+    <div>
+    { location.pathname != '/' && (
+      <div className={classes.root}>
       <AppBar className={classes.appBar} position="fixed">
         <Toolbar>
           <Grid container direction='row' alignItems='center' justify='space-between'>
@@ -245,5 +302,8 @@ export default function Navigation({ mode }) {
         </Toolbar>
       </AppBar>
     </div>
-  );
+   )}
+  {location.pathname == '/' && (<Fragment />)}
+  </div>
+ )
 }
