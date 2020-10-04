@@ -97,7 +97,6 @@ export default function Navigation({ mode }) {
   const [ display, setDisplay ] = useState(<Fragment />)
   const [ menuItems, setItems ] = useState(<LoggedOut />)
   const [ anchorEl, setAnchorEl ] = useState(null)
-  const [ res, setRes ] = useState(window.innerWidth)
   const location = useLocation()
   const classes = useStyles()
 
@@ -204,11 +203,6 @@ export default function Navigation({ mode }) {
     )
   }
 
-  useEffect(() => {
-    window.addEventListener("resize",
-      () => setRes(window.innerWidth))
-  }, [])
-
   return (
     <div>
     { location.pathname != '/' && (
@@ -219,10 +213,10 @@ export default function Navigation({ mode }) {
             <Grid item>
               <Link to='/'>
                 <img className={classes.logo} src={indexed} />
-                <Typography variant={res > 675 ? 'h4' : 'h5' } className={classes.title}> INDEXED </Typography>
+                <Typography variant={!state.native ? 'h4' : 'h5' } className={classes.title}> INDEXED </Typography>
               </Link>
             </Grid>
-            {res > 674 && (
+            {!state.native && (
               <Grid item>
                 <Search selections={state.indexes} />
               </Grid>

@@ -141,6 +141,14 @@ function Application(){
     document.body.style.color = color
   }
 
+  const onResize = () => dispatch({
+    type: 'RESIZE',
+    payload: {
+      height: window.innerHeight,
+      width: window.innerWidth
+    }
+  })
+
   useEffect(() => {
     const retrieveCategories = async(indexes, categories) => {
       let tokenCategories = await getTokenCategories()
@@ -193,7 +201,7 @@ function Application(){
           }
         }
       }
-      await dispatch({ type: 'INIT',
+      await dispatch({ type: 'GENERIC',
         payload: { categories, indexes, changeTheme  }
       })
       setRequest(true)
@@ -201,6 +209,11 @@ function Application(){
     setBackground(state.background, state.color)
     retrieveCategories({}, {})
   }, [ ])
+
+  useEffect(() => {
+    window.addEventListener("resize", onResize)
+    onResize()
+  }, [])
 
   if(!request){
     return <Loader />

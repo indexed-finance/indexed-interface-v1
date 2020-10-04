@@ -139,7 +139,9 @@ export default function Index(){
             web3.rinkeby, account, indexes[name].assets, {}
           )
 
-          await dispatch({ type: 'BAL', payload: { balances } })
+          await dispatch({ type: 'GENERIC',
+            payload: { balances }
+          })
         }
      }
      retrieveBalances()

@@ -1,6 +1,7 @@
 import React, { createContext, useReducer } from 'react';
 
 import { initialState } from '../assets/constants/parameters'
+import { isNative } from '../assets/constants/functions'
 
 const store = createContext(initialState)
 const { Provider } = store
@@ -8,9 +9,9 @@ const { Provider } = store
 const StateProvider = ( { children } ) => {
   const [state, dispatch] = useReducer((state, action) => {
     switch(action.type) {
-      case 'INIT':
-        return { ...state, ...action.payload }
-      case 'BAL':
+      case 'RESIZE':
+        return { ...state, native: isNative({ ...action.payload })  }
+      case 'GENERIC':
         return { ...state, ...action.payload }
       case 'WEB3':
         return {

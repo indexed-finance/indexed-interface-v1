@@ -14,6 +14,8 @@ import yfi from '../images/yfi.png'
 import usdt from '../images/tether.png'
 import usdc from '../images/usdc.png'
 
+import { isNative } from './functions'
+
 let currentTime = (new Date()).getHours()
 let isNight = (currentTime > 20 || currentTime < 6)
 
@@ -25,6 +27,7 @@ export const initialState = {
   },
   background: isNight ? '#111111' : '#ffffff',
   color: isNight ? '#ffffff' : '#333333',
+  native: false,
   dark: isNight,
   categories: {},
   account: null,
