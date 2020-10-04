@@ -41,10 +41,12 @@ const useStyles = makeStyles(({ spacing, palette }) => ({
     paddingTop: '.5em',
     '& h2': {
       marginBottom: 0,
+      fontSize: '1.75vw'
     },
     '& h3': {
       marginTop: 10,
       color: '#999999',
+      fontSize: '1.5vw'
     }
   },
   options: {
@@ -87,10 +89,8 @@ export default function Markets(){
     borderTopRightRadius: 10,
     borderBottomRightRadius: 10,
     width: '37.5%',
-    height: 'auto',
     boxShadow: 'none',
     position: 'relative',
-    marginTop: '0en',
     float: 'right',
   })
 
@@ -140,7 +140,7 @@ export default function Markets(){
           </Canvas>
         </Grid>
         <Grid item xs={12} md={12} lg={12} xl={12}>
-          <Container margin='2em 3em' padding="1em 2em" percentage='11%' title='INDEXES'>
+          <Container margin='.5em 3em' padding="1em 2em" percentage='11%' title='INDEXES'>
             <Table indexes={state.indexes} market={market.symbol} triggerMarket={changeMarket} />
           </Container>
         </Grid>

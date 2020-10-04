@@ -14,7 +14,7 @@ const Adornment = styled(InputAdornment)({
 })
 
 const AutoFill = styled(Autocomplete)({
-  marginRight: 100,
+  marginRight: 0,
   paddingLeft: 0,
   paddingRight: 0,
   marginLeft: 0

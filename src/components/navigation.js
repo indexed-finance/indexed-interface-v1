@@ -50,7 +50,7 @@ const useStyles = makeStyles(({ spacing, palette }) => ({
   title: {
     fontFamily: 'San Francisco Bold',
     marginLeft: spacing(2),
-    marginTop: spacing(1),
+    marginTop: spacing(1.5),
     letterSpacing: 5,
     flexGrow: 1,
     float: 'right',
@@ -59,6 +59,7 @@ const useStyles = makeStyles(({ spacing, palette }) => ({
   logo: {
     width: 50,
     marginLeft: spacing(1),
+    paddingTop: '.25vh'
   },
   search: {
     '&:hover fieldset': {
@@ -96,6 +97,7 @@ export default function Navigation({ mode }) {
   const [ display, setDisplay ] = useState(<Fragment />)
   const [ menuItems, setItems ] = useState(<LoggedOut />)
   const [ anchorEl, setAnchorEl ] = useState(null)
+  const [ res, setRes ] = useState(window.innerWidth)
   const location = useLocation()
   const classes = useStyles()
 
@@ -131,7 +133,7 @@ export default function Navigation({ mode }) {
     let classes = useStyles()
 
     useEffect(() => {
-      let element = document.getElementById('blockie')
+      let element = document.getElementById('profile-blockie')
       let parsed =  parseInt(address.slice(2, 10), 16)
       let blockie = jazzicon(35, parsed)
 
@@ -145,7 +147,7 @@ export default function Navigation({ mode }) {
     return(
       <div className={classes.profile}>
         <a target='_blank' href={`https://etherscan.io/address/${address}`}>
-          <div id="blockie" />
+          <div id="profile-blockie" />
         </a>
       </div>
     )
@@ -202,56 +204,10 @@ export default function Navigation({ mode }) {
     )
   }
 
-  function Navbar() {
-    return(
-      <div className={classes.root}>
-        <AppBar className={classes.appBar} position="fixed">
-          <Toolbar>
-            <Grid container direction='row' alignItems='center' justify='space-between'>
-              <Grid item>
-                <Link to='/'>
-                  <img className={classes.logo} src={indexed} />
-                  <Typography variant='h4' className={classes.title}> INDEXED </Typography>
-                </Link>
-              </Grid>
-              <Grid item>
-                <Search selections={state.indexes} />
-              </Grid>
-              <Grid item>
-                <div className={classes.menu}>
-                  <Menu
-                    anchorEl={anchorEl}
-                    keepMounted
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "center",
-                    }}
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                    getContentAnchorEl={null}
-                  >
-                    {menuItems}
-                  </Menu>
-                </div>
-                <IconButton onClick={handleClick} className={classes.menuButton}>
-                  <MenuIcon color='secondary'/>
-                </IconButton>
-                <IconButton onClick={() => state.changeTheme(mode)}>
-                  {mode && (<Brightness4Icon color='secondary' />)}
-                  {!mode && (<NightsStayIcon color='secondary' />)}
-                </IconButton>
-               {component}
-              </Grid>
-            </Grid>
-          </Toolbar>
-        </AppBar>
-      </div>
-    )
-  }
+  useEffect(() => {
+    window.addEventListener("resize",
+      () => setRes(window.innerWidth))
+  }, [])
 
   return (
     <div>
@@ -263,12 +219,14 @@ export default function Navigation({ mode }) {
             <Grid item>
               <Link to='/'>
                 <img className={classes.logo} src={indexed} />
-                <Typography variant='h4' className={classes.title}> INDEXED </Typography>
+                <Typography variant={res > 675 ? 'h4' : 'h5' } className={classes.title}> INDEXED </Typography>
               </Link>
             </Grid>
-            <Grid item>
-              <Search selections={state.indexes} />
-            </Grid>
+            {res > 674 && (
+              <Grid item>
+                <Search selections={state.indexes} />
+              </Grid>
+            )}
             <Grid item>
               <div className={classes.menu}>
                 <Menu
