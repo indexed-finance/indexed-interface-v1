@@ -71,6 +71,14 @@ const useStyles = makeStyles(({ spacing, palette }) => ({
 
 }))
 
+const native = {
+  width: '100%'
+}
+
+const desktop = {
+   width: '30%'
+}
+
 export default function Markets(){
   const [ market, setMarket ] = useState(dummy)
   const [ pie, setPie ] = useState(<Fragment />)
@@ -110,9 +118,14 @@ export default function Markets(){
     }
   }, [ state.indexes ])
 
+  let resolution = !state.native ? 200 : 75
 
   let top = !state.native ? 'calc(102px - .375vw)' : '75px'
+  let margin = !state.native ? '.5em 3em' : '.5em 1.5em'
   let height = !state.native ? '38%' : '77.5%'
+  let percent = !state.native ? '11%' : '55%'
+
+  if(state.native && window.innerWidth > 400) top = '82.5px'
 
   return (
     <Fragment>
@@ -153,12 +166,14 @@ export default function Markets(){
                   </Link>
                 </ul>
               )}
-              <Pie metadata={market} />
+              <div style={{ position: 'relative', float: 'left', width: !state.native ? '40%' : '100%' }}>
+                <Pie height={resolution} metadata={market} />
+              </div>
             </Wrapper>
           </Canvas>
         </Grid>
         <Grid item xs={12} md={12} lg={12} xl={12}>
-          <Container margin='.5em 3em' padding="1em 2em" percentage='11%' title='INDEXES'>
+          <Container margin={margin} padding="1em 2em" percentage={percent} title='INDEXES'>
             <Table indexes={state.indexes} market={market.symbol} triggerMarket={changeMarket} />
           </Container>
         </Grid>

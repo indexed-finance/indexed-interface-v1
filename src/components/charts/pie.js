@@ -24,23 +24,15 @@ const options = {
   },
   layout: {
     padding: {
-      right: 10,
-      left: 10,
-      top: 10,
-      bottom: 10
+      right: 15,
+      left: 15,
+      top: 15,
+      bottom: 15
     }
   }
 }
 
-const native = {
-  width: '100%'
-}
-
-const desktop = {
-  top: '1.5em', left: '1em', width: '30%'
-}
-
-export default function PieChart({ metadata }){
+export default function PieChart({ metadata, height }){
   const [ component, setComponent ] = useState(<Fragment />)
   const theme = useTheme()
 
@@ -86,16 +78,5 @@ export default function PieChart({ metadata }){
   	}]
   })
 
-  useEffect(() => {
-    let resolution = !state.native ? 200 : 75
-    let styles = !state.native ? desktop : native
-
-    setComponent(
-      <div style={{ position: 'relative', float: 'left', ...styles }}>
-        <Pie height={resolution} width={resolution} options={options} data={chartConfig(metadata)} />
-      </div>
-    )
-  }, [ metadata, state.native ])
-
-  return component
+  return  <Pie height={height} width={height} options={options} data={chartConfig(metadata)} />
 }

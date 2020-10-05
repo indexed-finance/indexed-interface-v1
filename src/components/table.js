@@ -62,7 +62,6 @@ const useStyles = makeStyles({
   },
   container: {
     height: 'calc(100vh - 500px)',
-    overflowX: 'hidden'
   },
 })
 
