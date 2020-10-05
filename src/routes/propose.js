@@ -31,7 +31,7 @@ const Entry = styled(Input)({
 
 const useStyles = makeStyles((theme) => ({
   form: {
-    width: 750,
+    width: '45vw',
     height: 'auto',
     padding: 50,
     paddingBottom: 75
@@ -199,7 +199,7 @@ export default function Propose(){
 
     return(
       <Fragment>
-        <Grid item>
+        <Grid item >
           <div className={classes.select}>
             <Select
                selections={mapping.abi.functionList}
@@ -275,10 +275,13 @@ export default function Propose(){
     sortAbis()
   }, [ state.indexes ])
 
+  let margin = !state.native ? '3em 3em' : '2em 1.5em'
+  let percent = !state.native ? '35%' : '70%'
+
   return (
     <Fragment>
-      <Grid container direction='column' alignItems='center' justify='center'>
-        <Container margin="3em 3em" padding="1em 2em" title="CREATE PROPOSAL" percentage="35%">
+      <Grid container direction='column' alignItems='center' justify='center' >
+        <Container margin={margin} padding="1em 2em" title="CREATE PROPOSAL" percentage={percent}>
           <div className={classes.form}>
             <Grid item>
               <p> PREVIEW: </p>

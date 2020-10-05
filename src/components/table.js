@@ -56,16 +56,18 @@ const columns = [
   },
 ];
 
-const useStyles = makeStyles({
-  root: {
-    width: '100%',
-  },
-  container: {
-    height: 'calc(100vh - 500px)',
-  },
-})
+export default function StickyHeadTable({ indexes, market, triggerMarket, native }) {
 
-export default function StickyHeadTable({ indexes, market, triggerMarket }) {
+  const useStyles = makeStyles({
+    root: {
+      width: '100%',
+    },
+    container: {
+      overflowX: !native ? 'hidden' : 'scroll',
+      height: !native ? 'calc(100vh - 500px)' : 'calc(100vh - 400px)',
+    },
+  })
+
   const classes = useStyles()
 
   return (

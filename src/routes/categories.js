@@ -119,15 +119,17 @@ export default function Categories(){
     }
   }, [ state.indexes ])
 
+  let margin = !state.native ? '3em 3em' : '2em 1.5em'
+  let percent = !state.native ? '16%' : '70%'
+
   return (
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>
-        <Grid item>
-          <Container margin='3em 3em' padding="1em 2em" percentage='16%' title='CATEGORIES'>
+        <Grid item xs={12} md={12} lg={12} xl={12}>
+          <Container margin={margin} padding="1em 2em" percentage={percent} title='CATEGORIES'>
             <Fragment>
               {Object.values(rows).map((value) => (
                 <div className={classes.category}>
-                  {console.log(value)}
                   <h3> {value.name} [{value.symbol}]</h3>
                   <p>
                     {value.indexes.map((index) =>

@@ -18,7 +18,6 @@ import Propose from './routes/propose'
 import Markets from './routes/markets'
 import Index from './routes/index'
 import Root from './routes/root'
-import Pools from './routes/pools'
 import Pool from './routes/pool'
 
 import { getTokenCategories, getTokenPriceHistory, getIndexPool } from './api/gql'
@@ -235,9 +234,6 @@ function Application(){
               </Route>
               <Route path='/pool/:address'>
                 <Pool />
-              </Route>
-              <Route path='/pools'>
-                <Pools />
               </Route>
               <Route path='/categories'>
                 <Categories />

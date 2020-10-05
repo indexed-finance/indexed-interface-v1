@@ -131,7 +131,7 @@ export default function Markets(){
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item xs={12} md={12} lg={12} xl={12}>
-          <Canvas isMobile={state.native}>
+          <Canvas native={state.native}>
             <div style={{'z-index': 1, float: 'left', width: '62.5%', paddingTop: top , position: 'absolute'}}>
               <Spline height={height} color='#66FFFF' metadata={market} />
             </div>
@@ -174,7 +174,7 @@ export default function Markets(){
         </Grid>
         <Grid item xs={12} md={12} lg={12} xl={12}>
           <Container margin={margin} padding="1em 2em" percentage={percent} title='INDEXES'>
-            <Table indexes={state.indexes} market={market.symbol} triggerMarket={changeMarket} />
+            <Table native={state.native} indexes={state.indexes} market={market.symbol} triggerMarket={changeMarket} />
           </Container>
         </Grid>
       </Grid>
