@@ -111,7 +111,7 @@ const ListAvatar = styled(ListItemAvatar)({
 const useStyles = makeStyles((theme) => ({
   proposals: {
    backgroundColor: theme.palette.background.paper,
-   width: 'auto'
+   overflow: 'scroll'
  },
  root: {
    width: '100%',
@@ -125,8 +125,6 @@ const useStyles = makeStyles((theme) => ({
  },
  chart: {
     paddingTop: 20,
-    height: 200,
-    width: 725
   },
   stats: {
     position: 'absolute',
@@ -154,7 +152,6 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   wallet: {
-    width: 350,
     height: 250,
     paddingLeft: 25,
     paddingRight: 25,
@@ -200,6 +197,9 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: 25,
     height: 250
   },
+  list: {
+    width: 1000
+  }
 }))
 
 export default function Governance(){
@@ -210,12 +210,6 @@ export default function Governance(){
 
   let { dispatch, state } = useContext(store)
 
-  const renderChart = () => {
-    return(
-      <Stacked />
-    )
-  }
-
   const renderActivate = () => {
     return(
       <p> You have not setup your wallet for voting yet,
@@ -225,16 +219,19 @@ export default function Governance(){
   }
 
   useEffect(() => {
-    setChart(renderChart())
     setProposals(state.proposals)
   }, [])
+
+  let height = !state.native ? 110 : 200
+  let margin = !state.native ? '3em 3em' : '3em 1.5em'
+  let percent = !state.native ? '15%' : '57.5%'
 
   return (
     <Fragment>
       <Grid container direction='column' alignItems='flex-start' justify='space-between'>
-        <Grid item container direction='row' alignItems='flex-start' justify='space-between'>
-          <Grid>
-            <Canvas>
+        <Grid item xs={12} md={12} lg={12} xl={12} container direction='row' alignItems='flex-start' justify='space-between'>
+          <Grid item xs={12} md={5} lg={5} xl={5}>
+            <Canvas native={state.native}>
               <div className={classes.wallet}>
                 <h3> BALANCE: 1,541.09 NDX </h3>
                 <h4> STATUS: <span>ACTIVE</span></h4>
@@ -244,28 +241,31 @@ export default function Governance(){
               </div>
             </Canvas>
           </Grid>
-          <Grid item>
-            <Canvas>
+          <Grid item xs={12} md={7} lg={7} xl={7}>
+            <Canvas native={state.native}>
               <div className={classes.chart}>
                 <div className={classes.stats}>
                   <h3> TOTAL VOTERS: 384</h3>
                   <h4> SHARE VALUE: $250.34</h4>
                 </div>
-                <div className={classes.legend}>
-                  <ul>
-                    <li> 50,124.35 NDX<div className={classes.one}/> </li>
-                    <li> 15,433.07 NDX<div className={classes.two}/></li>
-                    <li> 680.44 NDX<div className={classes.three}/> </li>
-                  </ul>
-                </div>
-                {chart}
+                {!state.native && (
+                  <div className={classes.legend}>
+                    <ul>
+                      <li> 50,124.35 NDX<div className={classes.one}/> </li>
+                      <li> 15,433.07 NDX<div className={classes.two}/></li>
+                      <li> 680.44 NDX<div className={classes.three}/> </li>
+                    </ul>
+                  </div>
+                )}
+                <Stacked height={height} />
               </div>
             </Canvas>
           </Grid>
         </Grid>
-        <Grid item className={classes.root}>
-          <Container margin='3em 3em' padding="1em 2em" title='PROPOSALS' percentage='15%'>
-            <ListWrapper dense className={classes.proposals}>
+        <Grid item xs={12} md={12} lg={12} xl={12} className={classes.root}>
+          <Container margin={margin} padding="1em 2em" title='PROPOSALS' percentage={percent}>
+           <div className={classes.proposals}>
+            <ListWrapper className={classes.list} dense >
               {Object.entries(proposals).map(([key, value], index) => {
                 let f = () => history.push(`/proposal/${key}`)
 
@@ -307,6 +307,7 @@ export default function Governance(){
                 );
               })}
             </ListWrapper>
+           </div>
           </Container>
         </Grid>
       </Grid>

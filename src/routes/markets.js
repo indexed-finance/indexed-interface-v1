@@ -120,7 +120,7 @@ export default function Markets(){
 
   let resolution = !state.native ? 200 : 75
 
-  let top = !state.native ? 'calc(102px - .375vw)' : '75px'
+  let top = !state.native ? 'calc(105px - .375vw)' : '75px'
   let margin = !state.native ? '.5em 3em' : '.5em 1.5em'
   let height = !state.native ? '38%' : '77.5%'
   let percent = !state.native ? '11%' : '55%'
@@ -132,7 +132,7 @@ export default function Markets(){
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item xs={12} md={12} lg={12} xl={12}>
           <Canvas native={state.native}>
-            <div style={{'z-index': 1, float: 'left', width: '62.5%', paddingTop: top , position: 'absolute'}}>
+            <div style={{'z-index': 1, float: 'left', width: '65%', paddingTop: top , position: 'absolute'}}>
               <Spline height={height} color='#66FFFF' metadata={market} />
             </div>
             <div className={classes.market}>
