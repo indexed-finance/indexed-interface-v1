@@ -63,10 +63,9 @@ const useStyles = makeStyles((theme) => ({
   },
   proposal: {
     paddingTop: 25,
-    width: 850
   },
   body: {
-    width: 850,
+    width: '100%',
     paddingTop: 25,
   },
   markdown: {
@@ -119,7 +118,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   modal: {
-    width: 275,
     height: 250,
     paddingLeft: 25,
     paddingTop: 12.5,
@@ -170,7 +168,6 @@ const useStyles = makeStyles((theme) => ({
     color: '#999999'
   },
   column: {
-    float: 'right',
   },
   lozenge: {
     float: 'left'
@@ -343,12 +340,14 @@ export default function Proposal(){
     )
   }
 
+  let margin = !state.native ? '2em 1.5em' : '1.5em 1.5em'
+
   return (
     <Fragment>
       <Grid container direction='column' alignItems='flex-start' justify='space-evenly'>
-        <Grid item container direction='row' alignItems='flex-start' justify='space-between'>
-          <Grid item>
-            <Main>
+        <Grid item xs={12} md={12} lg={12} xl={12} container direction='row' alignItems='flex-start' justify='space-between'>
+          <Grid item xs={12} md={8} lg={8} xl={8}>
+            <Main native={state.native}>
               <div className={classes.proposal}>
                 <div className={classes.header}>
                   <Blockie border='5px' width={67.5} id='blockie' address={metadata.author} />
@@ -381,9 +380,9 @@ export default function Proposal(){
             </div>
           </Main>
         </Grid>
-        <Grid item>
+        <Grid item xs={12} md={4} lg={4} xl={4}>
           <div className={classes.column}>
-            <Modal>
+            <Modal native={state.native}>
               <div className={classes.modal}>
                 <label>
                   <b style={{ float: 'left'}}> FOR <ForRadio /></b>
@@ -399,9 +398,9 @@ export default function Proposal(){
           </div>
         </Grid>
       </Grid>
-      <Grid item container direction='row' alignItems='flex-start' justify='space-between'>
-        <Grid item>
-           <Secondary title='DETAILS' margin='2em 3em' padding="1em 0em" percentage="17.5%">
+      <Grid item xs={12} md={12} lg={12} xl={12} container direction='row' alignItems='flex-start' justify='space-between'>
+        <Grid item xs={12} md={8} lg={8} xl={8}>
+           <Secondary title='DETAILS' margin={margin} padding="1em 0em" percentage="17.5%">
             <div className={classes.body}>
               <div className={classes.metadata}>
                 <ul>
@@ -424,8 +423,8 @@ export default function Proposal(){
             </div>
           </Secondary>
         </Grid>
-        <Grid>
-          <Log>
+        <Grid item xs={12} md={4} lg={4} xl={4}>
+          <Log native={state.native}>
             <div className={classes.log}>
               <List dense classes={classes.table}>
                 {votes.map((value) => {
