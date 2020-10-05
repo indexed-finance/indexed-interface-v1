@@ -37,16 +37,18 @@ const Trigger = styled(ButtonPrimary)({
 const useStyles = makeStyles(({ spacing, palette }) => ({
   market: {
     position: 'absolute',
-    paddingLeft: '2em',
-    paddingTop: '.5em',
+    paddingLeft: '2.5%',
+    paddingTop: 0,
     '& h2': {
       marginBottom: 0,
-      fontSize: '1.75vw'
     },
     '& h3': {
       marginTop: 10,
+      marginBottom: 5
+    },
+    '& h4': {
+      marginTop: 5,
       color: '#999999',
-      fontSize: '1.5vw'
     }
   },
   options: {
@@ -88,7 +90,7 @@ export default function Markets(){
     borderBottomLeftRadius: 200,
     borderTopRightRadius: 10,
     borderBottomRightRadius: 10,
-    width: '37.5%',
+    width: '40%',
     boxShadow: 'none',
     position: 'relative',
     float: 'right',
@@ -108,33 +110,49 @@ export default function Markets(){
     }
   }, [ state.indexes ])
 
+
+  let top = !state.native ? 'calc(102px - .375vw)' : '75px'
+  let height = !state.native ? '38%' : '77.5%'
+
   return (
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item xs={12} md={12} lg={12} xl={12}>
-          <Canvas>
-            <div style={{'z-index': 1, float: 'left', width: '65%', position: 'absolute', paddingTop: 102.5}}>
-              <Spline color='#66FFFF' metadata={market} />
+          <Canvas isMobile={state.native}>
+            <div style={{'z-index': 1, float: 'left', width: '62.5%', paddingTop: top , position: 'absolute'}}>
+              <Spline height={height} color='#66FFFF' metadata={market} />
             </div>
             <div className={classes.market}>
-              <h2> {market.name} [{market.symbol}] </h2>
-              <h3> {market.price} </h3>
+              {!state.native && (
+                 <Fragment>
+                  <h2> {market.name} [{market.symbol}] </h2>
+                  <h3 color='#333333'> {market.price} </h3>
+                </Fragment>
+              )}
+              {state.native && (
+                 <Fragment>
+                  <h3> [{market.symbol}] </h3>
+                  <h4> {market.price} </h4>
+                </Fragment>
+              )}
             </div>
             <Wrapper>
-              <ul className={classes.options}>
-                <li>ADDRESS:
-                  <span>
-                    {market.address.substring(0, 6)}...{market.address.substring(38, 64)}
-                  </span>
-                </li>
-                <li>SUPPLY: <span>{market.supply}</span> </li>
-                <li>OUTFLOW: <span></span> </li>
-                <li>INFLOW: <span></span></li>
-                <li>TVL: <span>{market.marketcap}</span></li>
-                <Link to={`index/${market.symbol.toLowerCase()}`}>
-                  <Trigger> EXPAND </Trigger>
-                </Link>
-              </ul>
+              {!state.native && (
+                <ul className={classes.options}>
+                  <li>ADDRESS:
+                    <span>
+                      {market.address.substring(0, 6)}...{market.address.substring(38, 64)}
+                    </span>
+                  </li>
+                  <li>SUPPLY: <span>{market.supply}</span> </li>
+                  <li>OUTFLOW: <span></span> </li>
+                  <li>INFLOW: <span></span></li>
+                  <li>TVL: <span>{market.marketcap}</span></li>
+                  <Link to={`index/${market.symbol.toLowerCase()}`}>
+                    <Trigger> EXPAND </Trigger>
+                  </Link>
+                </ul>
+              )}
               <Pie metadata={market} />
             </Wrapper>
           </Canvas>

@@ -120,7 +120,7 @@ export default function Search({ selections }) {
         </Link>
       }
       style={{
-        width: 250
+        width: 225
       }}
       freeSolo
       renderInput={(params) => (

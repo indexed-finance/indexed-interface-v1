@@ -119,9 +119,11 @@ export default function Spline({ metadata, height, color }){
 
   useEffect(() => {
     setComponent(
-      <Line height='35%' options={options} data={getConfig} redraw />
+      <Line height={height} options={options} data={getConfig} redraw />
     )
-  }, [ metadata ])
+  }, [ metadata, height ])
+
+
 
   return component
 }

@@ -1,8 +1,10 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useState, useEffect, useContext } from 'react'
 
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { Pie, defaults } from 'react-chartjs-2'
 import { useTheme } from '@material-ui/core/styles'
+
+import { store } from '../../state'
 
 defaults.global.defaultFontFamily = 'San Francisco';
 
@@ -19,12 +21,30 @@ const options = {
       return label
       }
     }
+  },
+  layout: {
+    padding: {
+      right: 10,
+      left: 10,
+      top: 10,
+      bottom: 10
+    }
   }
+}
+
+const native = {
+  width: '100%'
+}
+
+const desktop = {
+  top: '1.5em', left: '1em', width: '30%'
 }
 
 export default function PieChart({ metadata }){
   const [ component, setComponent ] = useState(<Fragment />)
   const theme = useTheme()
+
+  let { state } = useContext(store)
 
   const chartConfig = metadata => ({
     labels: metadata.assets.map(value => value.symbol),
@@ -67,14 +87,15 @@ export default function PieChart({ metadata }){
   })
 
   useEffect(() => {
-    setComponent(
-      <Pie height={175} width={175} options={options} data={chartConfig(metadata)} />
-    )
-  }, [ metadata ])
+    let resolution = !state.native ? 200 : 75
+    let styles = !state.native ? desktop : native
 
-  return (
-    <div style={{ position: 'relative', float: 'left', width: '30%', top: '1.5em', left: '1em'}}>
-      {component}
-    </div>
-  )
+    setComponent(
+      <div style={{ position: 'relative', float: 'left', ...styles }}>
+        <Pie height={resolution} width={resolution} options={options} data={chartConfig(metadata)} />
+      </div>
+    )
+  }, [ metadata, state.native ])
+
+  return component
 }
