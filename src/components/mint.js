@@ -27,13 +27,11 @@ import { store } from '../state'
 
 const OutputInput = styled(Input)({
   width: 250,
-  marginLeft: 85,
   marginTop: 75
 })
 
 const RecieveInput = styled(Input)({
   width: 250,
-  marginLeft: -22.5
 })
 
 const Trigger = styled(ButtonPrimary)({
@@ -47,8 +45,11 @@ const useStyles = makeStyles((theme) => ({
   },
   demo: {
     backgroundColor: theme.palette.background.paper,
+    borderBottom: 'solid 2px #666666',
+    borderTop: 'solid 2px #666666',
     paddingBottom: 0,
-    marginBottom: 0
+    marginBottom: 25,
+    marginTop: 25
   },
   title: {
     margin: theme.spacing(4, 0, 2),
@@ -60,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 0,
     padding: 0,
     overflowY: 'scroll',
-    height: 235,
+    height: 'calc(20em - 75px)',
     width: 410
   },
   item: {
@@ -121,7 +122,6 @@ const useStyles = makeStyles((theme) => ({
   input: {
     marginTop: 0,
     marginBottom: 12.5,
-    marginLeft: 50,
     width: 250
   },
   market: {
@@ -251,9 +251,11 @@ export default function InteractiveList({ market, metadata }) {
     pullBalance()
   }, [ state.web3.injected ])
 
+  let width = !state.native ? '417.5px' : '100vw'
+
   return (
     <Grid container direction='column' alignItems='center' justify='space-around'>
-      <Grid item>
+      <Grid item xs={12} md={12} lg={12} xl={12}>
         <RecieveInput label="RECIEVE" variant='outlined' type='number'
           helperText={<o className={classes.helper} onClick={handleBalance}>
             BALANCE: {balance}
@@ -267,20 +269,18 @@ export default function InteractiveList({ market, metadata }) {
           }}
         />
       </Grid>
-      <Grid item>
-        <div className={classes.altDivider1} />
+      <Grid item xs={12} md={12} lg={12} xl={12}>
         <div className={classes.demo}>
-          <Approvals param='REQUIRED' width='417.5px' height='235px'
+          <Approvals param='REQUIRED'
+            width={width}
+            height='calc(20em - 87.5px)'
             metadata={metadata}
             set={handleRates}
             input={amount}
           />
         </div>
       </Grid>
-      <Grid item>
-        <div className={classes.altDivider2} />
-      </Grid>
-      <Grid item>
+      <Grid item xs={12} md={12} lg={12} xl={12}>
         <Trigger onClick={mintTokens}> MINT </Trigger>
       </Grid>
     </Grid>

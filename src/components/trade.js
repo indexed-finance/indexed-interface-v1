@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, styled } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import Swap from '@material-ui/icons/SwapCalls'
 import IconButton from '@material-ui/core/IconButton'
@@ -18,16 +18,18 @@ import { store } from '../state'
 
 const WETH = '0x554Dfe146305944e3D83eF802270b640A43eED44'
 
+const Trigger = styled(ButtonPrimary)({
+  marginTop: '25px !important'
+})
+
 const useStyles = makeStyles((theme) => ({
   inputs: {
-    marginLeft: -22.5,
     width: 250,
     '& .MuiOutlinedInput-adornedEnd': {
       paddingRight: 0
     },
   },
   altInputs: {
-    marginLeft: -22.5,
     width: 250,
     '& .MuiOutlinedInput-adornedEnd': {
       paddingRight: 32.5
@@ -39,13 +41,14 @@ const useStyles = makeStyles((theme) => ({
   },
   divider: {
     borderTop: '#666666 solid 1px',
-    borderBottom: '#666666 solid 1px',
     margin: '1.5em 0em 1.5em 0em',
     width: '27.5em',
   },
   market: {
     width: '100%',
     color: '#666666',
+    borderTop: '#666666 solid 2px',
+    borderBottom: '#666666 solid 2px',
     '& p': {
       fontSize: 14,
       marginLeft: 12.5
@@ -60,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
   },
   helper: {
     cursor: 'pointer'
-  },
+  }
 }));
 
 export default function Trade({ market, metadata }) {
@@ -274,9 +277,11 @@ export default function Trade({ market, metadata }) {
     })
   }, [])
 
+  let width = !state.native ? '412.5px' : '100vw'
+
   return(
     <Grid container direction='column' alignItems='center' justify='space-around'>
-      <Grid item>
+      <Grid item xs={12} md={12} lg={12} xl={12}>
         <Input className={classes.inputs} label="AMOUNT" variant='outlined'
           helperText={
             <o className={classes.helper} onClick={handleBalance}>
@@ -291,13 +296,13 @@ export default function Trade({ market, metadata }) {
           }}
         />
       </Grid >
-      <Grid item>
+      <Grid item xs={12} md={12} lg={12} xl={12}>
         <div className={classes.swap}>
           <IconButton onClick={changeOrder}> <Swap/> </IconButton>
           <p>1 {input.market} = {prices.input.toFixed(3)} {output.market}</p>
         </div>
       </Grid>
-      <Grid item>
+      <Grid item xs={12} md={12} lg={12} xl={12}>
         <Input className={classes.altInputs} label="RECIEVE" variant='outlined'
           helperText={
           <o className={classes.helper}>
@@ -311,18 +316,16 @@ export default function Trade({ market, metadata }) {
           }}
         />
       </Grid>
-      <Grid item>
-          <div className={classes.divider} />
-          <div className={classes.market}>
+      <Grid item xs={12} md={12} lg={12} xl={12}>
+          <div className={classes.market} style={{ width }}>
             <p> ROUTE: <span> ETH {'->'} {market}</span> </p>
             <p> FEE: <span> </span> </p>
           </div>
-          <div className={classes.divider} />
       </Grid>
-      <Grid item>
-        <ButtonPrimary onClick={execution.f}>
+      <Grid item xs={12} md={12} lg={12} xl={12}>
+        <Trigger onClick={execution.f}>
           {execution.label}
-        </ButtonPrimary>
+        </Trigger>
       </Grid>
     </Grid>
   )

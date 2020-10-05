@@ -83,6 +83,10 @@ const useStyles = makeStyles(({ palette }) => ({
       marginRight: 50,
       color: '#333333'
     }
+  },
+  nav: {
+    marginTop: 12.5,
+    marginBottom: 12.5
   }
 }))
 
@@ -165,6 +169,23 @@ export default function Index(){
       ...clearSelections(), [execution]: selected
     })
   }, [ theme ])
+
+  if(state.native) return(
+      <Grid container direction='column' alignItems='center' justify='space-between'>
+        <Grid item>
+          <div className={classes.nav}>
+            <ButtonGroup disableElevation variant='outlined'>
+              <ButtonMarket style={styles.trade} className='trade' onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
+              <ButtonMarket style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
+              <ButtonMarket style={styles.burn} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
+            </ButtonGroup>
+          </div>
+        </Grid>
+        <Grid item>
+          {component}
+        </Grid>
+      </Grid>
+  )
 
   return (
     <Fragment>

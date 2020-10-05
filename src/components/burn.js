@@ -49,12 +49,10 @@ const AmountInput = styled(Input)({
 const RecieveInput = styled(Input)({
   width: 250,
   marginBottom: 20,
-  marginLeft: -27.5
 })
 
 const OutputInput = styled(Input)({
   width: 250,
-  marginLeft: 82.5,
   marginTop: 75
 })
 
@@ -69,16 +67,6 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     margin: theme.spacing(4, 0, 2),
-  },
-  list: {
-    marginTop: 20,
-    marginBottom: 20,
-    border: 'solid 2px #666666',
-    borderRadius: 10,
-    paddingTop: 0,
-    paddingBottom: 0,
-    overflowY: 'scroll',
-    height: 325
   },
   item: {
     borderBottom: 'solid 2px #666666',
@@ -101,8 +89,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     borderBottom: 'solid 2px #666666',
     borderTop: 'solid 2px #666666',
-    width: 412.5,
-    height: 200,
+    height: 'calc(20em - 87.5px)',
     margin: 0,
     padding: 0
   },
@@ -112,7 +99,6 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 12
   },
   radio: {
-    marginLeft: -32.5,
     marginBottom: 20
   },
   reciept: {
@@ -144,7 +130,6 @@ const useStyles = makeStyles((theme) => ({
   input: {
     marginTop: 0,
     marginBottom: 12.5,
-    marginLeft: 50,
     width: 250
   },
   table: {
@@ -195,9 +180,6 @@ export default function InteractiveList({ market, metadata }) {
   }
 
   const burnToSingle = async(contract, input, recieve) => {
-    console.log(input)
-    console.log(recieve)
-    
     await contract.methods.exitswapPoolAmountIn(
       output.address, recieve, input
     ).send({
@@ -413,9 +395,11 @@ export default function InteractiveList({ market, metadata }) {
     }
   }, [ metadata ])
 
+  let width = !state.native ? '417.5px' : '100vw'
+
   return (
     <Grid container direction='column' alignItems='center' justify='space-around'>
-      <Grid item>
+      <Grid item xs={12} md={12} lg={12} xl={12}>
         <RecieveInput label="DESTROY" variant='outlined'
           onChange={handleInput}
           value={amount}
@@ -428,17 +412,17 @@ export default function InteractiveList({ market, metadata }) {
           </o>}
         />
       </Grid>
-      <Grid item>
+      <Grid item xs={12} md={12} lg={12} xl={12}>
         <div className={classes.radio}>
           <Radio selected={selection} triggerChange={handleChange} />
         </div>
       </Grid>
-      <Grid item>
-        <TableContainer className={classes.container}>
+      <Grid item xs={12} md={12} lg={12} xl={12}>
+        <TableContainer className={classes.container} style={{ width }}>
           {component}
         </TableContainer>
       </Grid>
-      <Grid item>
+      <Grid item xs={12} md={12} lg={12} xl={12}>
         <div className={classes.reciept}>
           <ButtonPrimary onClick={() => execution.f(amount)}>
             {execution.label}
