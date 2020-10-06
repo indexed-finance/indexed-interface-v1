@@ -1,17 +1,18 @@
 import React, { Fragment, useState, useEffect } from 'react'
 
 import { Line } from 'react-chartjs-2'
+import { useTheme } from '@material-ui/core/styles'
 
 import ContentLoader from "react-content-loader"
 
-const MyLoader = (props) => (
-  <div style={{ position: 'absolute', width: '65%', paddingTop: 10 }}>
+const Loader = ({ theme, padding, height }) => (
+  <div style={{ 'z-index': 1, float: 'left', position: 'absolute', width: '65%', paddingTop: padding, overflow: 'hidden' }}>
     <ContentLoader
       speed={1}
-      viewBox="0 0 1440 320"
-      backgroundColor="#ffffff"
-      foregroundColor="#ecebeb"
-      {...props}
+      height={height}
+      viewBox={`0 0 1440 350`}
+      backgroundColor={theme.palette.primary.main}
+      foregroundColor='rgba(153, 153, 153, 0.5)'
     >
       <path fill="#0099ff" fill-opacity="1" d="M0,256L48,229.3C96,203,192,149,288,154.7C384,160,480,224,576,218.7C672,213,768,139,864,128C960,117,1056,171,1152,197.3C1248,224,1344,224,1392,224L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
     </ContentLoader>
@@ -98,8 +99,8 @@ const options = {
 }
 
 
-export default function Spline({ metadata, height, color, padding, ready }){
-  const [ component, setComponent ] = useState(<MyLoader />)
+export default function Spline({ metadata, height, color, padding, state }){
+  const theme = useTheme()
 
   const getConfig = (canvas) => {
     const ctx = canvas.getContext("2d")
@@ -133,7 +134,10 @@ export default function Spline({ metadata, height, color, padding, ready }){
     }
   }
 
-  if(!ready) return <MyLoader />
+  let h = !state.native ? 'auto' : 125
+  let p = !state.native ? 15 : 22.5
+
+  if(!state.request) return <Loader height={h} padding={p} theme={theme} />
 
   return (
     <div style={{'z-index': 1, float: 'left', width: '65%', paddingTop: padding , position: 'absolute'}}>

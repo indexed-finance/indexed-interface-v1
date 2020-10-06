@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, useTheme } from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table'
 import TableContainer from '@material-ui/core/TableContainer'
 import TableBody from '@material-ui/core/TableBody'
@@ -8,6 +8,7 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import { styled } from '@material-ui/core/styles'
+import ContentLoader from "react-content-loader"
 
 const Row = styled(TableRow)({
   border: '3px solid #666666',
@@ -16,6 +17,23 @@ const Row = styled(TableRow)({
     backgroundColor: '#66FFFF !important'
   }
 })
+
+const Loader = ({ theme }) => (
+    <ContentLoader
+      speed={1}
+      width={1250}
+      height={300}
+      viewBox="0 0 1250 300"
+      backgroundColor={theme.palette.primary.main}
+      foregroundColor='rgba(153, 153, 153, 0.5)'
+    >
+      <rect x="0" y="5" rx="3" ry="3" width="100%" height="45" />
+      <rect x="0" y="55" rx="3" ry="3" width="100%" height="45" />
+      <rect x="0" y="105" rx="3" ry="3" width="100%" height="45" />
+      <rect x="0" y="155" rx="3" ry="3" width="100%" height="45" />
+      <rect x="0" y="205" rx="3" ry="3" width="100%" height="45" />
+    </ContentLoader>
+)
 
 const columns = [
   { id: 'name', label: 'CATEGORY', minWidth: 225 },
@@ -56,19 +74,20 @@ const columns = [
   },
 ];
 
-export default function StickyHeadTable({ indexes, market, triggerMarket, native }) {
+export default function StickyHeadTable({ state, market, triggerMarket }) {
 
   const useStyles = makeStyles({
     root: {
       width: '100%',
     },
     container: {
-      overflowX: !native ? 'hidden' : 'scroll',
-      height: !native ? 'calc(100vh - 500px)' : 'calc(100vh - 400px)',
+      overflowX: !state.native ? 'hidden' : 'scroll',
+      height: !state.native ? 'calc(100vh - 500px)' : 'calc(100vh - 400px)',
     },
   })
 
   const classes = useStyles()
+  const theme = useTheme()
 
   return (
     <Fragment className={classes.root}>
@@ -88,7 +107,7 @@ export default function StickyHeadTable({ indexes, market, triggerMarket, native
             </TableRow>
           </TableHead>
           <TableBody>
-            {Object.values(indexes).map((row, index) => {
+            {state.request && Object.values(state.indexes).map((row, index) => {
 
               return (
                 <Row selected={market == row.symbol} onClick={() => triggerMarket(row.symbol)} hover tabIndex={-1} key={row.code}>
@@ -103,6 +122,9 @@ export default function StickyHeadTable({ indexes, market, triggerMarket, native
                 </Row>
               );
             })}
+            {!state.request && (
+              <Loader theme={theme} />
+            )}
           </TableBody>
         </Table>
       </TableContainer>

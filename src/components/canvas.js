@@ -10,7 +10,6 @@ export default function Canvas({ native, children }){
   const Wrapper = styled(Paper)({
     border: '3px solid #666666',
     borderRadius: 10,
-    height: '100%',
     overflow: 'auto',
     margin
   })

@@ -5,8 +5,22 @@ import { Pie, defaults } from 'react-chartjs-2'
 import { useTheme } from '@material-ui/core/styles'
 
 import { store } from '../../state'
+import ContentLoader from "react-content-loader"
 
 defaults.global.defaultFontFamily = 'San Francisco';
+
+const Loader = ({ height, theme }) => (
+    <div style={{ padding: 15 }}>
+      <ContentLoader
+        viewBox={`0 0 ${height} ${height}`}
+        backgroundColor={theme.palette.primary.main}
+        foregroundColor='rgba(153, 153, 153, 0.5)'
+        speed={1}
+      >
+        <circle cx={height /2} cy={height /2} r={height /2 } />
+      </ContentLoader>
+    </div>
+)
 
 const options = {
   legend: {
@@ -32,11 +46,8 @@ const options = {
   }
 }
 
-export default function PieChart({ metadata, height }){
-  const [ component, setComponent ] = useState(<Fragment />)
+export default function PieChart({ metadata, height, ready }){
   const theme = useTheme()
-
-  let { state } = useContext(store)
 
   const chartConfig = metadata => ({
     labels: metadata.assets.map(value => value.symbol),
@@ -77,6 +88,8 @@ export default function PieChart({ metadata, height }){
   		]
   	}]
   })
+
+  if(!ready) return <Loader theme={theme} height={height} />
 
   return  <Pie height={height} width={height} options={options} data={chartConfig(metadata)} />
 }

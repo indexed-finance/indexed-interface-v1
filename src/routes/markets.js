@@ -57,7 +57,6 @@ const useStyles = makeStyles(({ spacing, palette }) => ({
     color: '#999999',
     paddingRight: 15,
     paddingLeft: 0,
-    width: '50%',
     paddingTop: 5,
     float: 'right',
     '& li': {
@@ -120,11 +119,12 @@ export default function Markets(){
   }, [ state.indexes ])
 
   let resolution = !state.native ? 200 : 75
-
   let top = !state.native ? 'calc(105px - .375vw)' : '75px'
   let margin = !state.native ? '.5em 3em' : '.5em 1.5em'
   let height = !state.native ? '38%' : '77.5%'
   let percent = !state.native ? '11%' : '55%'
+  let pre = !state.request ? 'auto' : '50%'
+  let pre2 = !state.request && state.native ? '25vh' : 'auto'
 
   if(state.native && window.innerWidth > 400) top = '82.5px'
 
@@ -132,8 +132,9 @@ export default function Markets(){
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item xs={12} md={12} lg={12} xl={12}>
+          <div style={{ height: pre2 }}>
           <Canvas native={state.native}>
-            <Spline ready={state.request} height={height} color='#66FFFF' metadata={market} padding={top} />
+            <Spline state={state} height={height} color='#66FFFF' metadata={market} padding={top} />
             <div className={classes.market}>
               {!state.native && (
                  <Fragment>
@@ -150,7 +151,7 @@ export default function Markets(){
             </div>
             <Wrapper>
               {!state.native && (
-                <ul className={classes.options}>
+                <ul className={classes.options} style={{ width: pre }}>
                   <li>ADDRESS:
                     <span>
                       {market.address.substring(0, 6)}...{market.address.substring(38, 64)}
@@ -166,14 +167,15 @@ export default function Markets(){
                 </ul>
               )}
               <div style={{ position: 'relative', float: 'left', width: !state.native ? '40%' : '100%' }}>
-                <Pie height={resolution} metadata={market} />
+                <Pie ready={state.request} height={resolution} metadata={market} />
               </div>
             </Wrapper>
           </Canvas>
+         </div>
         </Grid>
         <Grid item xs={12} md={12} lg={12} xl={12}>
           <Container margin={margin} padding="1em 2em" percentage={percent} title='INDEXES'>
-            <Table native={state.native} indexes={state.indexes} market={market.symbol} triggerMarket={changeMarket} />
+            <Table state={state} market={market.symbol} triggerMarket={changeMarket} />
           </Container>
         </Grid>
       </Grid>
