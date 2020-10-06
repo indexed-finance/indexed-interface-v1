@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, Suspense, lazy } from 'react'
 import ReactDOM from 'react-dom'
 import Web3 from 'web3'
 
@@ -10,15 +10,6 @@ import BN from 'bn.js'
 
 import Navigation from './components/navigation'
 import Loader from './components/loader'
-import Governance from './routes/governance'
-import Categories from './routes/categories'
-import Proposal from './routes/proposal'
-import Error404 from './routes/404'
-import Propose from './routes/propose'
-import Markets from './routes/markets'
-import Index from './routes/index'
-import Root from './routes/root'
-import Pool from './routes/pool'
 
 import { getTokenCategories, getTokenPriceHistory, getIndexPool } from './api/gql'
 import IERC20 from './assets/constants/abi/IERC20.json'
@@ -26,6 +17,16 @@ import { tokenMetadata } from './assets/constants/parameters'
 import { store } from './state'
 
 import './assets/css/root.css'
+
+const Governance = lazy(() => import('./routes/governance'))
+const Categories = lazy(() => import('./routes/categories'))
+const Proposal = lazy(() => import('./routes/proposal'))
+const Propose = lazy(() => import('./routes/propose'))
+const Markets = lazy(() => import('./routes/markets'))
+const Index = lazy(() => import('./routes/index'))
+const Pool = lazy(() => import('./routes/pool'))
+const Root = lazy(() => import('./routes/root'))
+const Error404 = lazy(() => import('./routes/404'))
 
 const renameKeys = (keysMap, obj) =>
   obj.map(value =>
@@ -214,48 +215,46 @@ function Application(){
     onResize()
   }, [])
 
-  if(!request){
-    return <Loader />
-  } else if(request) {
     return(
     <ThemeProvider theme={theme}>
       <Router>
         <Navigation mode={mode}/>
           <Main>
-            <Switch>
-              <Route path='/proposal/:tx'>
-                <Proposal />
-              </Route>
-              <Route path='/index/:name'>
-                <Index />
-              </Route>
-              <Route path='/propose'>
-                <Propose />
-              </Route>
-              <Route path='/pool/:address'>
-                <Pool />
-              </Route>
-              <Route path='/categories'>
-                <Categories />
-              </Route>
-              <Route path='/markets'>
-                <Markets />
-              </Route>
-              <Route exact path='/'>
-                <Root />
-              </Route>
-              <Route path='/governance'>
-                <Governance />
-              </Route>
-              <Route>
-                <Error404 />
-              </Route>
-            </Switch>
+            <Suspense fallback={<Loader />}>
+              <Switch>
+                <Route path='/proposal/:tx'>
+                  <Proposal />
+                </Route>
+                <Route path='/index/:name'>
+                  <Index />
+                </Route>
+                <Route path='/propose'>
+                  <Propose />
+                </Route>
+                <Route path='/pool/:address'>
+                  <Pool />
+                </Route>
+                <Route path='/categories'>
+                  <Categories />
+                </Route>
+                <Route path='/markets'>
+                  <Markets />
+                </Route>
+                <Route exact path='/'>
+                  <Root />
+                </Route>
+                <Route path='/governance'>
+                  <Governance />
+                </Route>
+                <Route>
+                  <Error404 />
+                </Route>
+              </Switch>
+            </Suspense>
           </Main>
        </Router>
     </ThemeProvider>
     )
-  }
 }
 
 ReactDOM.render(

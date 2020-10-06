@@ -173,7 +173,6 @@ const useStyles = makeStyles((theme) => ({
   pie: {
     width: 350,
     padding: 25,
-
   },
   two: {
     float: 'right',
@@ -197,9 +196,6 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: 25,
     height: 250
   },
-  list: {
-    width: 1000
-  }
 }))
 
 export default function Governance(){
@@ -225,6 +221,7 @@ export default function Governance(){
   let height = !state.native ? 110 : 200
   let margin = !state.native ? '3em 3em' : '3em 1.5em'
   let percent = !state.native ? '15%' : '57.5%'
+  let width = !state.native ? '100%' : 1000
 
   return (
     <Fragment>
@@ -265,7 +262,7 @@ export default function Governance(){
         <Grid item xs={12} md={12} lg={12} xl={12} className={classes.root}>
           <Container margin={margin} padding="1em 2em" title='PROPOSALS' percentage={percent}>
            <div className={classes.proposals}>
-            <ListWrapper className={classes.list} dense >
+            <ListWrapper dense style={{ width }}>
               {Object.entries(proposals).map(([key, value], index) => {
                 let f = () => history.push(`/proposal/${key}`)
 

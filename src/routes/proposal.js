@@ -18,8 +18,6 @@ import Avatar from '@material-ui/core/Avatar';
 import { useParams } from 'react-router-dom'
 
 import ButtonPrimary from '../components/buttons/primary'
-import Donut from '../components/charts/donut'
-import Heatmap from '../components/charts/heatmap'
 import Container from '../components/container'
 import Canvas from '../components/canvas'
 
