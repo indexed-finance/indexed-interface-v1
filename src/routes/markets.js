@@ -11,6 +11,7 @@ import Spline from '../components/charts/spline'
 import Pie from '../components/charts/pie'
 import Canvas from '../components/canvas'
 import Table from '../components/table'
+import Loader from '../components/loader'
 
 import indexed from '../assets/images/indexed.png'
 import { store } from '../state'
@@ -132,9 +133,7 @@ export default function Markets(){
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item xs={12} md={12} lg={12} xl={12}>
           <Canvas native={state.native}>
-            <div style={{'z-index': 1, float: 'left', width: '65%', paddingTop: top , position: 'absolute'}}>
-              <Spline height={height} color='#66FFFF' metadata={market} />
-            </div>
+            <Spline ready={state.request} height={height} color='#66FFFF' metadata={market} padding={top} />
             <div className={classes.market}>
               {!state.native && (
                  <Fragment>

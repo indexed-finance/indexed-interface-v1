@@ -84,7 +84,6 @@ const getTheme = condition => createMuiTheme({
 });
 
 function Application(){
-  const [ request, setRequest ] = useState(false)
   let { state, dispatch } = useContext(store)
   let { dark } = state
 
@@ -202,9 +201,8 @@ function Application(){
         }
       }
       await dispatch({ type: 'GENERIC',
-        payload: { categories, indexes, changeTheme  }
+        payload: { request: true , categories, indexes, changeTheme }
       })
-      setRequest(true)
     }
     setBackground(state.background, state.color)
     retrieveCategories({}, {})

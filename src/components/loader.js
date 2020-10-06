@@ -1,24 +1,20 @@
-import React from 'react'
+import React, { useContext } from 'react'
 
-import { makeStyles } from '@material-ui/core/styles'
-import {Loader} from 'react-loaders'
+import { Loader } from 'react-loaders'
 import Grid from '@material-ui/core/Grid'
+import { store } from '../state'
 
 import 'loaders.css'
 
-const useStyles = makeStyles(() => ({
-  container: {
-    paddingTop: '50vh',
-  }
-}))
-
 export default function LoadingAnimation(){
-  const classes = useStyles()
+  let { state } = useContext(store)
+
+  let paddingTop = !state.native ? '50vh' : '30vh'
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
       <Grid item>
-        <div className={classes.container}>
+        <div style={{ paddingTop }}>
           <Loader size="Large" color="#666666" type="line-scale-pulse-out-rapid" active />
         </div>
       </Grid>
