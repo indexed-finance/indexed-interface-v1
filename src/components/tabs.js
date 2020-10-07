@@ -8,6 +8,7 @@ import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
+import ContentLoader from "react-content-loader"
 
 import TransactionButton from './buttons/transaction'
 import Weights from './weights'
@@ -22,6 +23,25 @@ import { marketColumns } from '../assets/constants/parameters'
 const Exit = styled(ExitIcon)({
   fontSize: '1rem'
 })
+
+const Loader = ({ color, height, width }) => (
+    <ContentLoader
+      speed={1}
+      height={500}
+      width={1000}
+      backgroundColor={color}
+      foregroundColor='rgba(153, 153, 153, 0.5)'
+    >
+      <rect x="115" y="40" rx="3" ry="3" width="200" height="25" />
+      <circle cx="65" cy="50" r="30" />
+      <rect x="490" y="40" rx="3" ry="3" width="200" height="25" />
+      <circle cx="440" cy="50" r="30" />
+      <rect x="115" y="130" rx="3" ry="3" width="200" height="25" />
+      <circle cx="65" cy="140" r="30" />
+      <rect x="490" y="130" rx="3" ry="3" width="200" height="25" />
+      <circle cx="440" cy="140" r="30" />
+  </ContentLoader>
+)
 
 function hash(value, og) {
   return (
@@ -163,7 +183,8 @@ export default function VerticalTabs({ data }) {
       </div>
       <TabPanel className={classes.assets} value={value} index={0}>
         <Grid item container direction='row' alignItems='flex-start' justify='space-around' spacing={4}>
-          {meta.map(asset => (<Grid item> <Weights asset={asset} /> </Grid> ))}
+          {state.request && meta.map(asset => (<Grid item> <Weights asset={asset} /> </Grid> ))}
+          {!state.request && (<Loader color={state.background} />)}
         </Grid>
       </TabPanel>
       <TabPanel className={classes.panels} value={value} index={1}>

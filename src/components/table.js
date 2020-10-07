@@ -27,11 +27,11 @@ const Loader = ({ theme }) => (
       backgroundColor={theme.palette.primary.main}
       foregroundColor='rgba(153, 153, 153, 0.5)'
     >
-      <rect x="0" y="5" rx="3" ry="3" width="100%" height="45" />
-      <rect x="0" y="55" rx="3" ry="3" width="100%" height="45" />
-      <rect x="0" y="105" rx="3" ry="3" width="100%" height="45" />
-      <rect x="0" y="155" rx="3" ry="3" width="100%" height="45" />
-      <rect x="0" y="205" rx="3" ry="3" width="100%" height="45" />
+      <rect x="0" y="0" rx="3" ry="3" width="100%" height="45" />
+      <rect x="0" y="50" rx="3" ry="3" width="100%" height="45" />
+      <rect x="0" y="100" rx="3" ry="3" width="100%" height="45" />
+      <rect x="0" y="150" rx="3" ry="3" width="100%" height="45" />
+      <rect x="0" y="200" rx="3" ry="3" width="100%" height="45" />
     </ContentLoader>
 )
 

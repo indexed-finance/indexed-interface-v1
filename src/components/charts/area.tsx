@@ -40,6 +40,7 @@ const bisectDate = bisector(d => new Date(d.date)).left;
 export type AreaProps = {
   width: number;
   height: number;
+  color: string;
   margin?: { top: number; right: number; bottom: number; left: number },
   data: AppleStock[];
 };
