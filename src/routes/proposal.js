@@ -5,9 +5,7 @@ import ParentSize from '@vx/responsive/lib/components/ParentSize'
 import Grid from '@material-ui/core/Grid'
 import Lozenge from '@atlaskit/lozenge'
 import jazzicon from '@metamask/jazzicon'
-import LinearProgress from '@material-ui/core/LinearProgress'
 import ReactMarkdown from 'react-markdown'
-import Radio from '@material-ui/core/Radio';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
@@ -19,41 +17,11 @@ import { useParams } from 'react-router-dom'
 
 import ButtonPrimary from '../components/buttons/primary'
 import Container from '../components/container'
+import Radio from '../components/inputs/radio'
+import Progress from '../components/progress'
 import Canvas from '../components/canvas'
 
 import { store } from '../state'
-
-const Main = styled(Canvas)({
-  marginTop: '3em',
-  marginBottom: '1em'
-})
-
-const Secondary = styled(Container)({
-  marginTop: '1em',
-  marginBottom: '.5em'
-})
-
-const Map = styled(Canvas)({
-  marginTop: '1.5em',
-  marginRight: '1.5em'
-})
-
-const Modal = styled(Canvas)({
-  marginTop: '3em',
-  marginRight: '3em',
-  marginLeft: '0em'
-})
-
-const Log = styled(Canvas)({
-  marginTop: '-4.25em',
-  marginRight: '3em',
-  marginLeft: '0em'
-})
-
-const GraphCanvas = styled(Canvas)({
-  marginTop: '1.5em',
-  marginLeft: 0
-})
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,25 +43,16 @@ const useStyles = makeStyles((theme) => ({
       color: 'orange'
     }
   },
-  pie: {
-    paddingTop: 25,
-    paddingBottom: 25
-  },
-  heatmap: {
-    width: 200,
-    height: 200,
-    marginTop: -26.75,
-    marginRight: -12.5,
-    '& svg': {
-      transform: 'rotate(-.05deg)'
-    }
-
-  },
   header: {
     borderBottom: '2px solid #666666',
     overflow: 'hidden',
     paddingBottom: 25,
-    paddingLeft: 30
+    paddingLeft: 30,
+    '& p:first-of-type': {
+      fontSize: '.75em',
+      marginTop: -30,
+      marginLeft: -10
+    }
   },
   profile: {
     marginRight: 50
@@ -116,7 +75,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   modal: {
-    height: 250,
     paddingLeft: 25,
     paddingTop: 12.5,
     paddingRight: 25,
@@ -201,58 +159,6 @@ const useStyles = makeStyles((theme) => ({
     },
   }
 }))
-
-const ProgressFor = withStyles((theme) => ({
-  root: {
-    height: 15,
-    borderRadius: 10,
-    width: 325,
-    float: 'left'
-  },
-  colorPrimary: {
-    backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? 200 : 700],
-  },
-  bar: {
-    borderRadius: 5,
-    backgroundColor: '#00e79a',
-  },
-}))(LinearProgress)
-
-const ProgressAgainst = withStyles((theme) => ({
-  root: {
-    height: 15,
-    borderRadius: 10,
-    width: 325,
-    float: 'left'
-  },
-  colorPrimary: {
-    backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? 200 : 700],
-  },
-  bar: {
-    borderRadius: 5,
-    backgroundColor: '#ff005a',
-  },
-}))(LinearProgress)
-
-const AgainstRadio = withStyles({
-  root: {
-    color: '#ff005a',
-    '&$checked': {
-      color: '#ff005a',
-    },
-  },
-  checked: {},
-})((props) => <Radio color="default" {...props} />);
-
-const ForRadio = withStyles({
-  root: {
-    color: '#00e79a',
-    '&$checked': {
-      color: '#00e79a',
-    },
-  },
-  checked: {},
-})((props) => <Radio color="default" {...props} />);
 
 const proposal = [
   { function: 'addCategory()', contract: 'PoolController', parameters: ['GOVERNANCE', 'GOV'] },
@@ -339,66 +245,78 @@ export default function Proposal(){
   }
 
   let margin = !state.native ? '2em 1.5em' : '1.5em 1.5em'
+  let width = !state.native ? 'auto' : '65%'
+  let progress = !state.native ? 325 : 275
+  let radius = !state.native ? 67.5 : 60
+  let percent = !state.native ? '17.5%' : '45%'
 
   return (
     <Fragment>
       <Grid container direction='column' alignItems='flex-start' justify='space-evenly'>
         <Grid item xs={12} md={12} lg={12} xl={12} container direction='row' alignItems='flex-start' justify='space-between'>
           <Grid item xs={12} md={8} lg={8} xl={8}>
-            <Main native={state.native}>
+            <Canvas native={state.native}>
               <div className={classes.proposal}>
                 <div className={classes.header}>
-                  <Blockie border='5px' width={67.5} id='blockie' address={metadata.author} />
-                  <div className={classes.title}>
+                  <Blockie border='5px' width={radius} id='blockie' address={metadata.author} />
+                  <div className={classes.title} style={{ width }}>
                     <div className={classes.lozenge}>
                       <div id={metadata.phase}>
                         <Lozenge isBold> {metadata.phase} </Lozenge>
                       </div>
                     </div>
                     <h3> {metadata.title}</h3>
-                    <div className={classes.reciept}>
-                      <span>{metadata.author.substring(0, 6)}...{metadata.author.substring(38, 64)} • </span> {metadata.time}
-                    </div>
-                </div>
+                    {!state.native && (
+                      <div className={classes.reciept}>
+                        <span>{metadata.author.substring(0, 6)}...{metadata.author.substring(38, 64)} • </span>  {metadata.time}
+                      </div>
+                    )}
+                  </div>
+                  {state.native && (
+                    <p>{metadata.author.substring(0, 4)}...{metadata.author.substring(38, 64)} </p>
+                  )}
+                  {state.native && (
+                    <p>{metadata.time} </p>
+                  )}
               </div>
               <div className={classes.results}>
                 <div className={classes.option}>
                   <div className={classes.vote}> AGAINST </div>
                   <span className={classes.progress}>
-                    <ProgressAgainst variant="determinate" value={metadata.no} /> <span> {metadata.against}</span>
+                    <Progress color='#ff005a' width={progress} variant="determinate" value={metadata.no} /> <span> {metadata.against}</span>
                   </span>
                 </div>
                 <div className={classes.option}>
                   <div className={classes.vote}> FOR </div>
                   <span className={classes.progress}>
-                    <ProgressFor variant="determinate" value={metadata.yes} /> <span> {metadata.for}</span>
+                    <Progress color='#00e79a' width={progress} variant="determinate" value={metadata.yes} /> <span> {metadata.for}</span>
                   </span>
                 </div>
               </div>
             </div>
-          </Main>
+          </Canvas>
         </Grid>
         <Grid item xs={12} md={4} lg={4} xl={4}>
           <div className={classes.column}>
-            <Modal native={state.native}>
+            <Canvas native={state.native}>
               <div className={classes.modal}>
                 <label>
-                  <b style={{ float: 'left'}}> FOR <ForRadio /></b>
-                  <b style={{ float: 'right'}}> AGAINST <AgainstRadio /></b>
+                  <b style={{ float: 'left'}}> FOR <Radio color='#00e79a' /></b>
+                  <b style={{ float: 'right'}}> AGAINST <Radio color='#ff005a' /></b>
                 </label>
                 <p> WEIGHT: 0 NDX </p>
                 <p> IMPACT: <span> 0% </span> </p>
-                <ButtonPrimary variant='outlined'>
+                <ButtonPrimary variant='outlined' style={{ marginBottom: 25 }}>
                   VOTE
                 </ButtonPrimary>
               </div>
-            </Modal>
+            </Canvas>
           </div>
         </Grid>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} container direction='row' alignItems='flex-start' justify='space-between'>
         <Grid item xs={12} md={8} lg={8} xl={8}>
-           <Secondary title='DETAILS' margin={margin} padding="1em 0em" percentage="17.5%">
+           <Container title='DETAILS' margin={margin} padding="1em 0em" percentage={percent}>
             <div className={classes.body}>
               <div className={classes.metadata}>
                 <ul>
@@ -419,10 +337,10 @@ export default function Proposal(){
                 <ReactMarkdown source={source} />
               </div>
             </div>
-          </Secondary>
+          </Container>
         </Grid>
         <Grid item xs={12} md={4} lg={4} xl={4}>
-          <Log native={state.native}>
+          <Canvas native={state.native}>
             <div className={classes.log}>
               <List dense classes={classes.table}>
                 {votes.map((value) => {
@@ -444,7 +362,7 @@ export default function Proposal(){
                   })}
               </List>
             </div>
-          </Log>
+          </Canvas>
         </Grid>
       </Grid>
     </Grid>

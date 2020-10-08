@@ -18,7 +18,7 @@ import IERC20 from '../assets/constants/abi/IERC20.json'
 import ButtonPrimary from './buttons/primary'
 import Adornment from './inputs/adornment'
 import NumberFormat from '../utils/format'
-import Radio from './inputs/radio'
+import Toggle from './inputs/toggle'
 import Input from './inputs/input'
 
 const Trigger = styled(ButtonPrimary)({
@@ -414,7 +414,7 @@ export default function InteractiveList({ market, metadata }) {
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
         <div className={classes.radio}>
-          <Radio selected={selection} triggerChange={handleChange} />
+          <Toggle selected={selection} triggerChange={handleChange} />
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>

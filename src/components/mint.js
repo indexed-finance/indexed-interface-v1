@@ -20,7 +20,6 @@ import ButtonPrimary from './buttons/primary'
 import ButtonTransaction from './buttons/transaction'
 import Adornment from './inputs/adornment'
 import Input from './inputs/input'
-import Radio from './inputs/radio'
 import Approvals from './approvals'
 
 import { store } from '../state'
