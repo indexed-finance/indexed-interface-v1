@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles'
 
 import markets from './routes/markets'
-import categories from './routes/markets'
+import categories from './routes/categories'
 import pool from './routes/pool'
 import governance from './routes/governance'
 import propose from './routes/propose'
@@ -18,6 +18,7 @@ import list from './components/list'
 import navigation from './components/navigation'
 
 let styles = {
+  categories,
   markets,
   governance,
   proposal,
