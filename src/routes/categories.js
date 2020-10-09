@@ -12,24 +12,12 @@ import Input from '../components/inputs/input'
 import List from '../components/list'
 
 import { tokenMetadata } from '../assets/constants/parameters'
+import getStyles from '../assets/css'
 import { store } from '../state'
 
 const selections = [[{ value: 0, label: null }]]
 
-const useStyles = makeStyles((theme) => ({
-    category: {
-      width: '100%',
-      marginBottom: '2.5em'
-    },
-    divider: {
-      borderBottom: '#666666 solid 3px',
-    },
-    asset: {
-      width: 25,
-      marginRight: 10
-    }
-  })
-)
+const useStyles = getStyles('categories')
 
 const columns = [
   {

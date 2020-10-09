@@ -18,6 +18,7 @@ import Input from '../components/inputs/input'
 import Container from '../components/container'
 
 import { toContract } from '../lib/util/contracts'
+import getStyles from '../assets/css'
 import { store } from '../state'
 
 const sources = [ BPool ]
@@ -29,24 +30,7 @@ const Entry = styled(Input)({
   width: '100%'
 })
 
-const useStyles = makeStyles((theme) => ({
-  form: {
-    width: '45vw',
-    height: 'auto',
-    padding: 50,
-    paddingBottom: 75
-  },
-  select: {
-    marginBottom: 25
-  },
-  functions: {
-    width: '80%',
-    float: 'right'
-  },
-  item: {
-    marginBottom: 50
-  }
-}))
+const useStyles = getStyles('propose')
 
 export default function Propose(){
   const [ selection, setSelection ] = useState({ address: null, name: null })

@@ -14,6 +14,7 @@ import Table from '../components/table'
 import Loader from '../components/loader'
 
 import indexed from '../assets/images/indexed.png'
+import getStyles from '../assets/css'
 import { store } from '../state'
 
 const dummy = {
@@ -35,41 +36,7 @@ const Trigger = styled(ButtonPrimary)({
   float: 'right',
 })
 
-const useStyles = makeStyles(({ spacing, palette }) => ({
-  market: {
-    position: 'absolute',
-    paddingLeft: '2.5%',
-    paddingTop: 0,
-    '& h2': {
-      marginBottom: 0,
-    },
-    '& h3': {
-      marginTop: 10,
-      marginBottom: 5
-    },
-    '& h4': {
-      marginTop: 5,
-      color: '#999999',
-    }
-  },
-  options: {
-    listStyle: 'none',
-    color: '#999999',
-    paddingRight: 15,
-    paddingLeft: 0,
-    paddingTop: 5,
-    float: 'right',
-    '& li': {
-      fontSize: '1vw',
-      marginBottom: 7.5,
-      '& span': {
-        color: palette.secondary.main,
-        float: 'right'
-      }
-    }
-  }
-
-}))
+const useStyles = getStyles('markets')
 
 const native = {
   width: '100%'

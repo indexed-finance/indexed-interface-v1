@@ -16,6 +16,7 @@ import Burn from '../components/burn'
 import Tabs from '../components/tabs'
 
 import { getBalances } from '../lib/markets'
+import getStyles from '../assets/css'
 import { store } from '../state'
 
 const WETH = '0x554dfe146305944e3d83ef802270b640a43eed44'
@@ -44,67 +45,7 @@ const selected = {
   background: '#666666'
 }
 
-const useStyles = makeStyles(({ palette }) => ({
-  header: {
-    width: '63.5vw',
-    minHeight: '10vh',
-    borderBottom: 'solid 3px #666666',
-    padding: '0vw 2.5vw',
-    display: 'flex'
-  },
-  title: {
-    textTransform: 'capitalize',
-    margin: 0
-  },
-  price: {
-    margin: 0
-  },
-  alternative: {
-    margin: 0,
-    fontSize: 14,
-  },
-  delta: {
-    color: 'red'
-  },
-  chart: {
-    width: '68.75vw',
-    borderBottom: 'solid 3px #666666',
-    height: '55vh'
-  },
-  sidebar: {
-    float: 'right',
-    height: '87.5vh',
-    width: '30vw',
-    borderLeft: 'solid 3px #666666',
-    top: 0,
-    clear: 'both',
-    marginTop: '-10.5vh',
-    alignItems: 'center'
-  },
-  selections: {
-    padding: '1em 6.4em'
-  },
-  market: {
-    padding: '.125em 0em',
-    width: '100%',
-    color: palette.secondary.main,
-    '& p': {
-      fontSize: 14,
-      marginLeft: 12.5
-    },
-    '& p span': {
-      float: 'right',
-      fontFamily: "San Francisco Bold",
-      fontWeight: 500,
-      marginRight: 50,
-      color: '#333333'
-    }
-  },
-  nav: {
-    marginTop: 12.5,
-    marginBottom: 12.5
-  }
-}))
+const useStyles = getStyles('index')
 
 export default function Index(){
   let { state, dispatch } = useContext(store)
@@ -196,7 +137,7 @@ export default function Index(){
   )
 
   return (
-    <Fragment>
+    <div className={classes.root}>
       <div className={classes.header}>
         <Grid container direction='row' alignItems='center' justify='space-between'>
           <Grid item>
@@ -235,6 +176,6 @@ export default function Index(){
       <div className={classes.metrics}>
         <Tabs data={metadata}/>
       </div>
-    </Fragment>
+    </div>
   )
 }

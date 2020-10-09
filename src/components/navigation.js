@@ -28,7 +28,7 @@ const useStyles = makeStyles(({ spacing, palette }) => ({
   root: {
     flexGrow: 1,
     fontFamily: 'San Fransico',
-    marginBottom: '6em'
+    marginBottom: '6em',
   },
   href: {
     color: `${palette.secondary.main} !important`,
@@ -86,8 +86,7 @@ const useStyles = makeStyles(({ spacing, palette }) => ({
   },
   profile: {
     float: 'right',
-    paddingTop: 2.5,
-    marginLeft: 15
+    paddingTop: 2.5
   }
 }))
 
@@ -95,7 +94,7 @@ const useStyles = makeStyles(({ spacing, palette }) => ({
 export default function Navigation({ mode }) {
   const [ component, setComponent ] = useState(<Fragment/>)
   const [ display, setDisplay ] = useState(<Fragment />)
-  const [ menuItems, setItems ] = useState(<LoggedOut />)
+  const [ login, setLogin ] = useState(false)
   const [ anchorEl, setAnchorEl ] = useState(null)
   const location = useLocation()
   const classes = useStyles()
@@ -118,7 +117,8 @@ export default function Navigation({ mode }) {
     let account = toChecksumAddress(accounts[0])
 
     setComponent(<Blockie address={account} />)
-    setItems(<LoggedIn />)
+    setAnchorEl(null)
+    setLogin(true)
 
     dispatch({
       type: 'WEB3',
@@ -144,12 +144,15 @@ export default function Navigation({ mode }) {
     }, [])
 
     return(
-      <div className={classes.profile}>
         <a target='_blank' href={`https://etherscan.io/address/${address}`}>
           <div id="profile-blockie" />
         </a>
-      </div>
     )
+  }
+
+  const changeTheme = () => {
+    state.changeTheme(mode)
+    setAnchorEl(null)
   }
 
   function LoggedOut() {
@@ -160,9 +163,11 @@ export default function Navigation({ mode }) {
         <Link className={classes.href} onClick={connectWeb3}>
           <MenuItem>CONNECT WALLET</MenuItem>
         </Link>
-        <Link className={classes.href} to='/propose' onClick={handleClose}>
-          <MenuItem>CREATE PROPOSAL</MenuItem>
-        </Link>
+        {state.native && (
+          <Link className={classes.href} onClick={changeTheme}>
+            <MenuItem>LIGHT/DARK MODE</MenuItem>
+          </Link>
+        )}
         <Link className={classes.href} to='/governance' onClick={handleClose}>
           <MenuItem>GOVERNANCE</MenuItem>
         </Link>
@@ -176,7 +181,7 @@ export default function Navigation({ mode }) {
     )
   }
 
-  function LoggedIn() {
+  function LoggedIn({ trigger }) {
     const classes = useStyles()
 
     return(
@@ -184,6 +189,11 @@ export default function Navigation({ mode }) {
         <Link className={classes.href} to='/propose' onClick={handleClose}>
           <MenuItem>CREATE PROPOSAL</MenuItem>
         </Link>
+        {state.native && (
+          <Link className={classes.href} onClick={changeTheme}>
+            <MenuItem>LIGHT/DARK MODE</MenuItem>
+          </Link>
+        )}
         <Link className={classes.href} to='/governance' onClick={handleClose}>
           <MenuItem>GOVERNANCE</MenuItem>
         </Link>
@@ -196,6 +206,8 @@ export default function Navigation({ mode }) {
       </Fragment>
     )
   }
+
+  let marginLeft = !state.native ? 15: 0
 
   return (
     <div>
@@ -232,17 +244,22 @@ export default function Navigation({ mode }) {
                   }}
                   getContentAnchorEl={null}
                 >
-                  {menuItems}
+                  {login && (<LoggedIn />)}
+                  {!login && (<LoggedOut />)}
                 </Menu>
               </div>
               <IconButton onClick={handleClick} className={classes.menuButton}>
                 <MenuIcon color='secondary'/>
               </IconButton>
-              <IconButton onClick={() => state.changeTheme(mode)}>
-                {mode && (<Brightness4Icon color='secondary' />)}
-                {!mode && (<NightsStayIcon color='secondary' />)}
-              </IconButton>
-             {component}
+              {!state.native && (
+                <IconButton onClick={() => state.changeTheme(mode)}>
+                  {mode && (<Brightness4Icon color='secondary' />)}
+                  {!mode && (<NightsStayIcon color='secondary' />)}
+                </IconButton>
+              )}
+              <div className={classes.profile} style={{ marginLeft }}>
+                {component}
+              </div>
             </Grid>
           </Grid>
         </Toolbar>

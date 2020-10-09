@@ -201,7 +201,7 @@ function Application(){
         }
       }
       await dispatch({ type: 'GENERIC',
-        payload: { request: true , categories, indexes, changeTheme }
+        payload: { request: true , categories, indexes }
       })
     }
     setBackground(state.background, state.color)
@@ -210,6 +210,9 @@ function Application(){
 
   useEffect(() => {
     window.addEventListener("resize", onResize)
+    dispatch({ type: 'GENERIC',
+      payload: { changeTheme }
+    })
     onResize()
   }, [])
 
