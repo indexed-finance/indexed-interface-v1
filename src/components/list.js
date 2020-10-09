@@ -12,6 +12,8 @@ import TableRow from '@material-ui/core/TableRow';
 import { styled } from '@material-ui/core/styles'
 import { useHistory } from "react-router-dom";
 
+import getStyles from '../assets/css'
+
 const Row = styled(TableRow)({
   borderBottom: '2px solid #666666 !important',
   borderTop: '2px solid #666666 !important',
@@ -25,21 +27,7 @@ const Head = styled(TableHead)({
   zIndex: 1
 })
 
-const useStyles = (height) => makeStyles({
-  root: {
-    width: '100%',
-    padding: 0
-  },
-  container: {
-    maxHeight: 'calc(100v - 150px)',
-    padding: 0
-  },
-  table: {
-    margin: 0,
-    padding: 0,
-    margin: 0
-  }
-});
+const useStyles = getStyles('list')
 
 export default function StickyHeadTable({ width, height, action, data, columns, props, href }) {
   const classes = useStyles()

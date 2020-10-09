@@ -20,76 +20,12 @@ import jazzicon from '@metamask/jazzicon'
 import { toChecksumAddress } from '../assets/constants/functions'
 import indexed from '../assets/images/indexed.png'
 import getWeb3 from '../utils/getWeb3'
+import getStyles from '../assets/css'
 import Search from './inputs/search'
 
 import { store } from '../state'
 
-const useStyles = makeStyles(({ spacing, palette }) => ({
-  root: {
-    flexGrow: 1,
-    fontFamily: 'San Fransico',
-    marginBottom: '6em',
-  },
-  href: {
-    color: `${palette.secondary.main} !important`,
-    textDecoration: 'none !important',
-  },
-  menu: {
-    position: 'absolute'
-  },
-  appBar: {
-    borderBottom: 'solid 3px #666666',
-    boxShadow: 'none',
-    padding: spacing(2,0),
-    background: palette.primary.main,
-    color: palette.secondary.main,
-  },
-  menuButton: {
-    marginRight: spacing(1)
-  },
-  title: {
-    fontFamily: 'San Francisco Bold',
-    marginLeft: spacing(2),
-    marginTop: spacing(1.5),
-    letterSpacing: 5,
-    flexGrow: 1,
-    float: 'right',
-    color: palette.secondary.main
-  },
-  logo: {
-    width: 50,
-    marginLeft: spacing(1),
-    paddingTop: '.25vh'
-  },
-  search: {
-    '&:hover fieldset': {
-      borderColor: '#666666 !important',
-    },
-    '& label': {
-      color: palette.secondary.main
-    },
-    '& label.Mui-focused': {
-      color: palette.secondary.main
-    },
-    '& input:valid + fieldset': {
-      borderWidth: 2,
-    },
-    '& input:invalid + fieldset': {
-      borderColor: 'red',
-      borderWidth: 2,
-    },
-    '& input:valid:focus + fieldset': {
-      borderWidth: 2,
-      paddingRight: '5px !important',
-      paddingLeft: '8px !important',
-    }
-  },
-  profile: {
-    float: 'right',
-    paddingTop: 2.5
-  }
-}))
-
+const useStyles = getStyles('navigation')
 
 export default function Navigation({ mode }) {
   const [ component, setComponent ] = useState(<Fragment/>)

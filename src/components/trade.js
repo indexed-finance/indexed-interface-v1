@@ -14,6 +14,7 @@ import IERC20 from '../assets/constants/abi/IERC20.json'
 import { toContract } from '../lib/util/contracts'
 import { getMarketMetadata } from '../api/gql'
 import { getPair, getRouter, getBalances, decToWeiHex } from '../lib/markets'
+import getStyles from '../assets/css'
 import { store } from '../state'
 
 const WETH = '0x554Dfe146305944e3D83eF802270b640A43eED44'
@@ -22,49 +23,7 @@ const Trigger = styled(ButtonPrimary)({
   marginTop: '25px !important'
 })
 
-const useStyles = makeStyles((theme) => ({
-  inputs: {
-    width: 250,
-    '& .MuiOutlinedInput-adornedEnd': {
-      paddingRight: 0
-    },
-  },
-  altInputs: {
-    width: 250,
-    '& .MuiOutlinedInput-adornedEnd': {
-      paddingRight: 32.5
-    }
-  },
-  swap: {
-    textAlign: 'center',
-    alignItems: 'center'
-  },
-  divider: {
-    borderTop: '#666666 solid 1px',
-    margin: '1.5em 0em 1.5em 0em',
-    width: '27.5em',
-  },
-  market: {
-    width: '100%',
-    color: '#666666',
-    borderTop: '#666666 solid 2px',
-    borderBottom: '#666666 solid 2px',
-    '& p': {
-      fontSize: 14,
-      marginLeft: 12.5
-    },
-    '& p span': {
-      float: 'right',
-      fontFamily: "San Francisco Bold",
-      fontWeight: 500,
-      marginRight: 50,
-      color: '#333333'
-    }
-  },
-  helper: {
-    cursor: 'pointer'
-  }
-}));
+const useStyles = getStyles('trade')
 
 export default function Trade({ market, metadata }) {
   const [ output, setOutput ] = useState({ amount: null, market: market, address: null })
