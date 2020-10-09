@@ -13,6 +13,7 @@ import Canvas from '../components/canvas'
 import Table from '../components/table'
 import Loader from '../components/loader'
 
+import style from '../assets/css/routes/markets'
 import indexed from '../assets/images/indexed.png'
 import getStyles from '../assets/css'
 import { store } from '../state'
@@ -36,7 +37,7 @@ const Trigger = styled(ButtonPrimary)({
   float: 'right',
 })
 
-const useStyles = getStyles('markets')
+const useStyles = getStyles(style)
 
 const native = {
   width: '100%'

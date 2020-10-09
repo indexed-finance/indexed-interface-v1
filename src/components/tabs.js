@@ -14,6 +14,7 @@ import TransactionButton from './buttons/transaction'
 import Weights from './weights'
 import List from './list'
 
+import style from '../assets/css/components/tabs'
 import { getPair } from '../lib/markets'
 import { getMarketTrades } from '../api/gql'
 import { store } from '../state'
@@ -85,7 +86,7 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 }
 
-const useStyles = getStyles('tabs')
+const useStyles = getStyles(style)
 
 export default function VerticalTabs({ data }) {
   const [ trades, setTrades ] = useState([])

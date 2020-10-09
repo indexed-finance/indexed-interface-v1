@@ -13,6 +13,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 
 import { getRateSingle, getRateMulti, decToWeiHex } from '../lib/markets'
 import { tokenMetadata, initialState } from '../assets/constants/parameters'
+import style from '../assets/css/components/approvals'
 import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
@@ -88,7 +89,7 @@ const SecondaryItemText =  styled(ListItemText)({
   }
 })
 
-const useStyles = getStyles('approvals')
+const useStyles = getStyles(style)
 
 export default function Approvals({ balance, metadata, height, width, input, param, set }){
   const [ component, setComponent ] = useState(<span />)

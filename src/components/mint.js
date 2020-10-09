@@ -11,6 +11,7 @@ import Grid from '@material-ui/core/Grid'
 
 import { getRateMulti, getRateSingle, getBalances, decToWeiHex } from '../lib/markets'
 import { tokenMetadata } from '../assets/constants/parameters'
+import style from '../assets/css/components/mint'
 import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 
@@ -38,7 +39,7 @@ const Trigger = styled(ButtonPrimary)({
   marginTop: -7.5
 })
 
-const useStyles = getStyles('mint')
+const useStyles = getStyles(style)
 
 function generate(element) {
   return [0, 1, 2].map((value) =>

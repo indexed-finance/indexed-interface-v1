@@ -17,6 +17,7 @@ import Select from '../components/inputs/select'
 import Input from '../components/inputs/input'
 import Container from '../components/container'
 
+import style from '../assets/css/routes/propose'
 import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
@@ -30,7 +31,7 @@ const Entry = styled(Input)({
   width: '100%'
 })
 
-const useStyles = getStyles('propose')
+const useStyles = getStyles(style)
 
 export default function Propose(){
   const [ selection, setSelection ] = useState({ address: null, name: null })

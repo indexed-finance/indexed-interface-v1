@@ -13,6 +13,7 @@ import { getRateMulti, getRateSingle, getBalances, decToWeiHex } from '../lib/ma
 import getStyles from '../assets/css'
 import { store } from '../state'
 
+import style from '../assets/css/components/burn'
 import { tokenImages } from '../assets/constants/parameters'
 import BPool from '../assets/constants/abi/BPool.json'
 import IERC20 from '../assets/constants/abi/IERC20.json'
@@ -57,7 +58,7 @@ const OutputInput = styled(Input)({
   marginTop: 75
 })
 
-const useStyles = getStyles('burn')
+const useStyles = getStyles(style)
 
 const WETH = '0x554Dfe146305944e3D83eF802270b640A43eED44'
 

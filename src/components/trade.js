@@ -13,6 +13,7 @@ import Input from './inputs/input'
 import IERC20 from '../assets/constants/abi/IERC20.json'
 import { toContract } from '../lib/util/contracts'
 import { getMarketMetadata } from '../api/gql'
+import style from '../assets/css/components/trade'
 import { getPair, getRouter, getBalances, decToWeiHex } from '../lib/markets'
 import getStyles from '../assets/css'
 import { store } from '../state'
@@ -23,7 +24,7 @@ const Trigger = styled(ButtonPrimary)({
   marginTop: '25px !important'
 })
 
-const useStyles = getStyles('trade')
+const useStyles = getStyles(style)
 
 export default function Trade({ market, metadata }) {
   const [ output, setOutput ] = useState({ amount: null, market: market, address: null })

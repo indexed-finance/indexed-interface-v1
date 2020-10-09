@@ -19,13 +19,14 @@ import jazzicon from '@metamask/jazzicon'
 
 import { toChecksumAddress } from '../assets/constants/functions'
 import indexed from '../assets/images/indexed.png'
+import style from '../assets/css/components/navigation'
 import getWeb3 from '../utils/getWeb3'
 import getStyles from '../assets/css'
 import Search from './inputs/search'
 
 import { store } from '../state'
 
-const useStyles = getStyles('navigation')
+const useStyles = getStyles(style)
 
 export default function Navigation({ mode }) {
   const [ component, setComponent ] = useState(<Fragment/>)

@@ -12,12 +12,13 @@ import Input from '../components/inputs/input'
 import List from '../components/list'
 
 import { tokenMetadata } from '../assets/constants/parameters'
+import style from '../assets/css/routes/categories'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
 const selections = [[{ value: 0, label: null }]]
 
-const useStyles = getStyles('categories')
+const useStyles = getStyles(style)
 
 const columns = [
   {

@@ -24,6 +24,7 @@ import Select from '../components/inputs/select'
 import Canvas from '../components/canvas'
 import Stacked from '../components/charts/stacked'
 
+import style from '../assets/css/routes/governance'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
@@ -109,7 +110,7 @@ const ListAvatar = styled(ListItemAvatar)({
   marginRight: 25
 })
 
-const useStyles = getStyles('governance')
+const useStyles = getStyles(style)
 
 export default function Governance(){
   const [ proposals, setProposals ] = useState([])

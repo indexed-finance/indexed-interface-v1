@@ -21,10 +21,11 @@ import Radio from '../components/inputs/radio'
 import Progress from '../components/progress'
 import Canvas from '../components/canvas'
 
+import style from '../assets/css/routes/proposal'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
-const useStyles = getStyles('proposal')
+const useStyles = getStyles(style)
 
 const proposal = [
   { function: 'addCategory()', contract: 'PoolController', parameters: ['GOVERNANCE', 'GOV'] },

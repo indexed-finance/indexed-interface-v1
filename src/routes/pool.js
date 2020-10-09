@@ -14,6 +14,7 @@ import List from '../components/list'
 import ButtonTransaction from '../components/buttons/transaction'
 import ButtonPrimary from '../components/buttons/primary'
 
+import style from '../assets/css/routes/pool'
 import { eventColumns } from '../assets/constants/parameters'
 import getStyles from '../assets/css'
 import { store } from '../state'
@@ -60,7 +61,7 @@ const Exit = styled(ExitIcon)({
   fontSize: '1rem'
 })
 
-const useStyles = getStyles('pool')
+const useStyles = getStyles(style)
 
 export default function Pools(){
   const [ data, setData ] = useState(dummy)

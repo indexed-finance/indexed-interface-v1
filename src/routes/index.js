@@ -15,6 +15,7 @@ import Mint from '../components/mint'
 import Burn from '../components/burn'
 import Tabs from '../components/tabs'
 
+import style from '../assets/css/routes/index'
 import { getBalances } from '../lib/markets'
 import getStyles from '../assets/css'
 import { store } from '../state'
@@ -45,7 +46,7 @@ const selected = {
   background: '#666666'
 }
 
-const useStyles = getStyles('index')
+const useStyles = getStyles(style)
 
 export default function Index(){
   let { state, dispatch } = useContext(store)

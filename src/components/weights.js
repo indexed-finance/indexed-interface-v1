@@ -5,9 +5,10 @@ import LinearProgress from '@material-ui/core/LinearProgress'
 import { usePalette } from 'react-palette'
 
 import { tokenMetadata } from '../assets/constants/parameters'
+import style from '../assets/css/components/weights'
 import getStyles from '../assets/css'
 
-const useStyles = getStyles('weights')
+const useStyles = getStyles(style)
 
 export default function Weight({ asset }) {
   let { image } = tokenMetadata[asset.symbol]
