@@ -124,9 +124,18 @@ function onWindowResize(event) {
 	renderer.setSize(canvasWidth, canvasHeight);
 }
 
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
+
 function animate() {
   if(shouldRender) render();
-	requestAnimationFrame(animate);
+
+  requestAnimationFrame(animate)
 }
 
 function render() {
@@ -146,7 +155,7 @@ function render() {
 
 
 	var normTime = (elaspedSeconds % maxTime) / maxTime;
-  var targetElement = document.getElementById('landing-main')
+  var targetElement = document.getElementById('canvas')
   var targetButton = document.getElementById('landing-button')
   var lightImage = document.getElementById('dark')
   var darkImage = document.getElementById('light')

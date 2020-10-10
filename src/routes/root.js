@@ -37,7 +37,20 @@ export default function Root(){
 
   return (
     <div id="canvas">
-      <div id='landing-main' style={{ fontSize: secondary, position: 'absolute', top: '35%', left }}>
+      <nav style={{ position: 'absolute '}}>
+        <ul style={{ display: 'inline-block', listStyleType: 'none', margin: 0, padding: 25, fontSize: '1.25em' }}>
+          <Link onClick={stopRender}>
+            <li style={{ float: 'left', marginRight: 25}}> ABOUT </li>
+          </Link >
+          <Link onClick={stopRender} to='/markets'>
+            <li style={{ float: 'left',  marginRight: 25 }}> MARKETS </li>
+          </Link>
+          <Link onClick={stopRender} to='/swap'>
+            <li style={{ float: 'left' }}> SWAP </li>
+          </Link>
+        </ul>
+      </nav>
+      <div style={{ fontSize: secondary, position: 'absolute', top: '35%', left }}>
         <div>
           <div style={{ float: 'left', marginTop: '-.75em', marginRight }}>
             <img src={ndxDark} id='dark' style={{ display: 'none', width }} />
@@ -46,9 +59,17 @@ export default function Root(){
           <span style={{ float, fontSize }}> INDEXED </span>
         </div>
         <p style={{ float: 'right', paddingRight: 25, width: textWidth }}> A FINANCIAL MANAGEMENT PROTOCOL. </p>
-        <Link to='/markets' onClick={stopRender} style={{ float: 'right' }}>
+        <Link onClick={stopRender} style={{ float: 'right' }} to='/markets'>
           <ButtonPrimary id='landing-button'> ENTER </ButtonPrimary>
         </Link>
+      </div>
+      <div class="mouse_wave">
+
+
+      			<span class="scroll_arrows one"></span>
+      			<span class="scroll_arrows two"></span>
+      			<span class="scroll_arrows three"></span>
+
       </div>
     </div>
   )
