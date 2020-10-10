@@ -108,6 +108,14 @@ export default function Categories(){
     }
   }, [ state.indexes ])
 
+  useEffect(() => {
+    if(!state.load){
+      dispatch({
+        type: 'LOAD', payload: true
+      })
+    }
+  }, [ ])
+
   let margin = !state.native ? '3em 3em' : '2em 1.5em'
   let percent = !state.native ? '16%' : '70%'
 

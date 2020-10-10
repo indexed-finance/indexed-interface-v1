@@ -4,6 +4,7 @@ import { styled, useTheme, makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 import { Link, useHistory } from 'react-router-dom'
+import BN from 'bn.js'
 
 import ButtonPrimary from '../components/buttons/primary'
 import Container from '../components/container'
@@ -86,6 +87,14 @@ export default function Markets(){
     }
   }, [ state.indexes ])
 
+  useEffect(() => {
+    if(!state.load){
+      dispatch({
+        type: 'LOAD', payload: true
+      })
+    }
+  }, [ ])
+
   let resolution = !state.native ? 200 : 75
   let top = !state.native ? 'calc(105px - .375vw)' : '75px'
   let margin = !state.native ? '.5em 3em' : '.5em 1.5em'
@@ -102,7 +111,7 @@ export default function Markets(){
         <Grid item xs={12} md={12} lg={12} xl={12}>
           <div style={{ height: pre2 }}>
           <Canvas native={state.native}>
-            <Spline state={state} height={height} color='#66FFFF' metadata={market} padding={top} />
+            <Spline absolute state={state} height={height} color='#66FFFF' metadata={market} padding={top} />
             <div className={classes.market}>
               {!state.native && (
                  <Fragment>

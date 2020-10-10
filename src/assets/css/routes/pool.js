@@ -1,6 +1,5 @@
 const setStyle = (theme) => ({
   chart: {
-    width: '45em',
   },
   stats: {
     borderTop: '3px solid #666666',
@@ -23,15 +22,12 @@ const setStyle = (theme) => ({
       },
     },
   },
-  assets: {
-    marginTop: -305,
-  },
   container: {
     borderBottom: '2px solid #666666',
-    width: '30em',
+
   },
   events: {
-    width: '40em'
+    overflow: 'hidden'
   },
   submit: {
     padding: '12.5px 25px',

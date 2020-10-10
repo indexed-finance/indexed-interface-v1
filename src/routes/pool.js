@@ -95,38 +95,55 @@ export default function Pools(){
     { time: Date.now(), event: 'MINT 1,000 USDI3', tx: hash(shortenHash(txs[4]), txs[4]) },
   ]
 
+  useEffect(() => {
+    if(!state.load){
+      dispatch({
+        type: 'LOAD', payload: true
+      })
+    }
+  }, [ ])
+
+  let marginX = !state.native ? '-13em 0em 0em 3em': '.5em 1.5em'
+  let margin = !state.native ? '3em 3em': '3em 1.5em'
+  let width = !state.native ? '40em': '100%'
+  let padding = !state.native ? 100 : 112.5
+  let height = !state.native ? 75 : 200
+  let fontSize = !state.native ? 'inherit' : '.875em'
+
   return (
     <Fragment>
-      <Grid item container direction='column' alignItems='flex-start' justify='space-between'>
-        <Grid item>
-          <Chart>
-            <div className={classes.market}>
-              <h2> {data.name} [{data.symbol}] </h2>
-              <h3> {data.address.substring(0, 6)}...{data.address.substring(38, 64)} </h3>
-            </div>
-            <div className={classes.chart}>
-              <Spline color='#ffa500' metadata={data} height={100} />
-            </div>
-            <div className={classes.stats}>
-              <ul>
-                <li> LIQUIDITY: {data.marketcap} </li>
-                <li> MARKETCAP : {data.marketcap} </li>
-              </ul>
-            </div>
-          </Chart>
-        </Grid>
-      <Grid item container direction='row' alignItems='flex-start' justify='space-between'>
-        <Grid item>
-          <Container margin='2em 0em 1.5em 3em' padding="1em 2em" percentage='20%' title='EVENTS'>
-            <div className={classes.events}>
-              <List height={200} columns={eventColumns} data={events} />
-            </div>
-          </Container>
-        </Grid>
-        <Grid item>
-          <div className={classes.assets}>
-            <Container margin='0em 3em' padding="1em 0em" percentage='27.5%' title='ASSETS'>
-              <div className={classes.container}>
+      <Grid container direction='column' alignItems='flex-start' justify='stretch'>
+        <Grid item xs={12} md={12} lg={12} xl={12} container direction='row' alignItems='flex-start' justify='space-between'>
+          <Grid item xs={12} md={7} lg={7} xl={7}>
+            <Chart native={state.native}>
+              <div className={classes.market}>
+                {!state.native && (
+                  <Fragment>
+                    <h2> {data.name} [{data.symbol}] </h2>
+                    <h3> {data.address.substring(0, 6)}...{data.address.substring(38, 64)} </h3>
+                  </Fragment>
+                )}
+                {state.native && (
+                  <Fragment>
+                    <h3> {data.name} [{data.symbol}] </h3>
+                    <h4> {data.address.substring(0, 6)}...{data.address.substring(38, 64)} </h4>
+                  </Fragment>
+                )}
+              </div>
+              <div className={classes.chart}>
+                <Spline padding={padding} state={state} color='#ffa500' metadata={data} height={height} />
+              </div>
+              <div className={classes.stats} style={{ fontSize }}>
+                <ul>
+                  <li> LIQUIDITY: {data.marketcap} </li>
+                  <li> MARKETCAP : {data.marketcap} </li>
+                </ul>
+              </div>
+            </Chart>
+          </Grid>
+          <Grid item xs={12} md={5} lg={5} xl={5}>
+            <Container margin={margin} padding="1em 0em" percentage='27.5%' title='ASSETS'>
+              <div className={classes.container} style={{ width }}>
                 <Approvals input={0} param='DESIRED' height={250} metadata={data} />
               </div>
               <div className={classes.reciept}>
@@ -139,9 +156,15 @@ export default function Pools(){
                 </ButtonPrimary>
               </div>
             </Container>
-          </div>
+          </Grid>
         </Grid>
-      </Grid>
+        <Grid item xs={12} md={7} lg={7} xl={7}>
+          <Container margin={marginX} padding="1em 2em" percentage='20%' title='EVENTS'>
+            <div className={classes.events}>
+              <List height={200} columns={eventColumns} data={events} />
+            </div>
+          </Container>
+        </Grid>
       </Grid>
     </Fragment>
   )

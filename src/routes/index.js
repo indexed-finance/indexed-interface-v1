@@ -113,12 +113,19 @@ export default function Index(){
     getMetadata()
   }, [ state.indexes ])
 
-
   useEffect(() => {
     setStyles({
       ...clearSelections(), [execution]: selected
     })
   }, [ theme ])
+
+  useEffect(() => {
+    if(!state.load){
+      dispatch({
+        type: 'LOAD', payload: true
+      })
+    }
+  }, [ ])
 
   if(state.native) return(
       <Grid container direction='column' alignItems='center' justify='space-between'>

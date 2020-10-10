@@ -11,6 +11,8 @@ const StateProvider = ( { children } ) => {
     switch(action.type) {
       case 'RESIZE':
         return { ...state, native: isNative({ ...action.payload })  }
+      case 'LOAD':
+        return { ...state, load: action.payload }
       case 'GENERIC':
         return { ...state, ...action.payload }
       case 'WEB3':

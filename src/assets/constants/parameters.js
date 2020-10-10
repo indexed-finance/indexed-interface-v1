@@ -29,6 +29,7 @@ export const initialState = {
   color: isNight ? '#ffffff' : '#333333',
   native: isNative({ width: null }),
   request: false,
+  load: false,
   dark: isNight,
   categories: {},
   account: null,

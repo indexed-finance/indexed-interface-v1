@@ -4,17 +4,17 @@ import Web3 from 'web3'
 
 import { createMuiTheme, makeStyles, ThemeProvider, styled } from '@material-ui/core/styles';
 import {  Switch, Route, BrowserRouter as Router } from 'react-router-dom'
-import * as serviceWorker from './utils/serviceWorker'
-import { StateProvider } from './state'
-import BN from 'bn.js'
 
+import IERC20 from './assets/constants/abi/IERC20.json'
+import { StateProvider } from './state'
 import Navigation from './components/navigation'
 import Loader from './components/loader'
 
 import { getTokenCategories, getTokenPriceHistory, getIndexPool } from './api/gql'
-import IERC20 from './assets/constants/abi/IERC20.json'
+import * as serviceWorker from './utils/serviceWorker'
 import { tokenMetadata } from './assets/constants/parameters'
 import { store } from './state'
+import BN from 'bn.js'
 
 import './assets/css/root.css'
 
@@ -28,6 +28,11 @@ const Pool = lazy(() => import('./routes/pool'))
 const Root = lazy(() => import('./routes/root'))
 const Error404 = lazy(() => import('./routes/404'))
 
+const isNight = () => {
+  let currentTime = (new Date()).getHours()
+  return (currentTime > 20 || currentTime < 6)
+}
+
 const renameKeys = (keysMap, obj) =>
   obj.map(value =>
     Object.keys(value).reduce(
@@ -36,12 +41,12 @@ const renameKeys = (keysMap, obj) =>
         ...{ [keysMap[key] || key]: value[key] }
       }),
     {}
-   )
- )
+  )
+)
 
- const replace = { priceUSD: 'close', date: 'date' }
+const replace = { priceUSD: 'close', date: 'date' }
 
- const toBN = (bn) => {
+const toBN = (bn) => {
   if (BN.isBN(bn)) return bn;
   if (bn._hex) return new BN(bn._hex.slice(2), 'hex');
   if (typeof bn == 'string' && bn.slice(0, 2) == '0x') {
@@ -51,11 +56,6 @@ const renameKeys = (keysMap, obj) =>
 };
 
 const oneToken = new BN('de0b6b3a7640000', 'hex')
-
-const isNight = () => {
-  let currentTime = (new Date()).getHours()
-  return (currentTime > 20 || currentTime < 6)
-}
 
 function Main({ children }) {
   return children
@@ -204,11 +204,11 @@ function Application(){
         payload: { request: true , categories, indexes }
       })
     }
-    setBackground(state.background, state.color)
     retrieveCategories({}, {})
-  }, [ ])
+  }, [ state.load ])
 
   useEffect(() => {
+    setBackground(state.background, state.color)
     window.addEventListener("resize", onResize)
     dispatch({ type: 'GENERIC',
       payload: { changeTheme }

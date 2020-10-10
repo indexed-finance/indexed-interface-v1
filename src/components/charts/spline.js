@@ -6,7 +6,6 @@ import { useTheme } from '@material-ui/core/styles'
 import ContentLoader from "react-content-loader"
 
 const Loader = ({ theme, padding, height }) => (
-  <div style={{ 'z-index': 1, float: 'left', position: 'absolute', width: '65%', paddingTop: padding, overflow: 'hidden' }}>
     <ContentLoader
       speed={1}
       height={height}
@@ -16,7 +15,6 @@ const Loader = ({ theme, padding, height }) => (
     >
       <path fill="#0099ff" fill-opacity="1" d="M0,256L48,229.3C96,203,192,149,288,154.7C384,160,480,224,576,218.7C672,213,768,139,864,128C960,117,1056,171,1152,197.3C1248,224,1344,224,1392,224L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
     </ContentLoader>
-  </div>
 )
 
 const renameKeys = (keysMap, obj) =>
@@ -37,7 +35,7 @@ const renameKeys = (keysMap, obj) =>
   )
 }
 
-const options = {
+const options = (padding) => ({
   bezierCurve: true,
   responsive: true,
   maintainAspectRatio: true,
@@ -52,7 +50,7 @@ const options = {
   },
   layout: {
     padding: {
-      top: 0,
+      top: padding,
       left: -12.5,
       right: 0,
       bottom: 0
@@ -96,10 +94,9 @@ const options = {
         }
      }]
   },
-}
+})
 
-
-export default function Spline({ metadata, height, color, padding, state }){
+export default function Spline({ metadata, height, color, padding, state, absolute }){
   const theme = useTheme()
 
   const getConfig = (canvas) => {
@@ -137,11 +134,24 @@ export default function Spline({ metadata, height, color, padding, state }){
   let h = !state.native ? 'auto' : 125
   let p = !state.native ? 15 : 22.5
 
-  if(!state.request) return <Loader height={h} padding={p} theme={theme} />
+  if(absolute){
+    if(!state.request) padding = p
 
-  return (
-    <div style={{'z-index': 1, float: 'left', width: '65%', paddingTop: padding , position: 'absolute'}}>
-      <Line height={height} options={options} data={getConfig} redraw />
-    </div>
-  )
+    return(
+      <div style={{'z-index': 1, float: 'left', width: '65%', paddingTop: padding , position: 'absolute', overflow: 'hidden'}}>
+        {state.request && (<Line height={height} options={options(0)} data={getConfig} redraw />)}
+        {!state.request && (<Loader height={h} theme={theme} />)}
+      </div>
+    )
+  } else {
+    let paddingTop = 30
+    p = -20
+
+    return (
+      <Fragment>
+        {!state.request && (<div style={{ marginBottom: p, paddingTop }}> <Loader height={h} theme={theme} /> </div>)}
+        {state.request && (<Line height={height} options={options(padding)} data={getConfig} redraw />)}
+      </Fragment>
+    )
+  }
 }
