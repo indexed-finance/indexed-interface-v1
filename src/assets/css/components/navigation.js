@@ -31,9 +31,7 @@ const setStyle = (theme) => ({
     color: theme.palette.secondary.main
   },
   logo: {
-    width: 50,
     marginLeft: theme.spacing(1),
-    paddingTop: '.25vh'
   },
   search: {
     '&:hover fieldset': {

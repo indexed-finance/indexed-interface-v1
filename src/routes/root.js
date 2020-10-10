@@ -5,6 +5,9 @@ import { renderCanvas, stopRender } from '../utils/canvas'
 import { styled } from '@material-ui/core/styles'
 import { store } from '../state'
 
+import ndxDark from '../assets/images/indexed-dark.png'
+import ndxLight from '../assets/images/indexed-light.png'
+
 import ButtonPrimary from '../components/buttons/primary'
 
 const Button = styled(ButtonPrimary)({
@@ -18,22 +21,32 @@ export default function Root(){
     renderCanvas()
   }, [ ])
 
-  let fontSize = !state.native ? '7.5em' : '5em'
+  let fontSize = !state.native ? '6em' : '3.5em'
   let left = !state.native ? '40%' : '7.5%'
+  let width = !state.native ? '6.5em' : '4.5em'
+  let marginRight = !state.native ? '2.5em': '1em'
+  let textWidth = !state.native ? '75%': 'auto'
 
   let secondary = !state.native ? '1em' : '.9em'
-
+  let float = !state.native ? 'right' : 'auto'
   if(state.native && window.innerWidth < 400) {
-    left = '6.75%'
-    fontSize = '4em'
+
+    left = '5%'
+    fontSize = '3.75em'
   }
 
   return (
     <div id="canvas">
       <div id='landing-main' style={{ fontSize: secondary, position: 'absolute', top: '35%', left }}>
-        <span style={{ fontSize }}> INDEXED </span>
-        <p> A FINANCIAL MANAGEMENT PROTOCOL. </p>
-        <Link to='/markets' onClick={stopRender}>
+        <div>
+          <div style={{ float: 'left', marginTop: '-.75em', marginRight }}>
+            <img src={ndxDark} id='dark' style={{ display: 'block', width }} />
+            <img src={ndxLight} id='light' style={{ display: 'none', width }} />
+          </div>
+          <span style={{ float, fontSize }}> INDEXED </span>
+        </div>
+        <p style={{ float: 'right', paddingRight: 25, width: textWidth }}> A FINANCIAL MANAGEMENT PROTOCOL. </p>
+        <Link to='/markets' onClick={stopRender} style={{ float: 'right' }}>
           <ButtonPrimary id='landing-button'> ENTER </ButtonPrimary>
         </Link>
       </div>

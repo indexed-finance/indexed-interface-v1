@@ -70,6 +70,15 @@ input[type=number] {
   border: 2px solid #666666;
 }
 
+@media only screen and (max-width: 600px) {
+
+  #landing-button {
+    margin-left: 50px !important;
+    margin-right: 25px !important;
+  }
+
+}
+
 .MuiInput-underline:before, .MuiInput-underline:active:before {
   border: none !important;
 }

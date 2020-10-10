@@ -18,7 +18,8 @@ import { useLocation } from 'react-router-dom'
 import jazzicon from '@metamask/jazzicon'
 
 import { toChecksumAddress } from '../assets/constants/functions'
-import indexed from '../assets/images/indexed.png'
+import ndxLight from '../assets/images/indexed-light.png'
+import ndxDark from '../assets/images/indexed-dark.png'
 import style from '../assets/css/components/navigation'
 import getWeb3 from '../utils/getWeb3'
 import getStyles from '../assets/css'
@@ -33,6 +34,7 @@ export default function Navigation({ mode }) {
   const [ display, setDisplay ] = useState(<Fragment />)
   const [ login, setLogin ] = useState(false)
   const [ anchorEl, setAnchorEl ] = useState(null)
+  const [ logo, setLogo ] = useState(<img />)
   const location = useLocation()
   const classes = useStyles()
 
@@ -146,6 +148,14 @@ export default function Navigation({ mode }) {
 
   let marginLeft = !state.native ? 15: 0
 
+  useEffect(() =>{
+    let image = mode ? ndxDark : ndxLight
+
+    setLogo(
+      <img className={classes.logo} src={image} />
+    )
+  }, [])
+
   return (
     <div>
     { location.pathname != '/' && (
@@ -155,7 +165,8 @@ export default function Navigation({ mode }) {
           <Grid container direction='row' alignItems='center' justify='space-between'>
             <Grid item>
               <Link to='/'>
-                <img className={classes.logo} src={indexed} />
+                {mode && (<img className={classes.logo} style={{ width: !state.native ? 40 : 30,  paddingTop: !state.native ? '.75vh': '1vh' }} src={ndxDark} />)}
+                {!mode && (<img className={classes.logo} style={{ width: !state.native ? 40 : 30, paddingTop: !state.native ? '.75vh': '1.5vh'}} src={ndxLight} />)}
                 <Typography variant={!state.native ? 'h4' : 'h5' } className={classes.title}> INDEXED </Typography>
               </Link>
             </Grid>

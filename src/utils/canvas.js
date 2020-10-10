@@ -148,13 +148,19 @@ function render() {
 	var normTime = (elaspedSeconds % maxTime) / maxTime;
   var targetElement = document.getElementById('landing-main')
   var targetButton = document.getElementById('landing-button')
+  var lightImage = document.getElementById('dark')
+  var darkImage = document.getElementById('light')
 
   if(normTime > .225) {
-    targetElement.style.color = 'black'
-    targetButton.style.color = 'black'
+    targetElement.style.color = '#333333'
+    targetButton.style.color = '#333333'
+    lightImage.style.display = 'none'
+    darkImage.style.display = 'block'
   } if(normTime > .6) {
     targetElement.style.color = 'white'
     targetButton.style.color = 'white'
+    darkImage.style.display = 'none'
+    lightImage.style.display = 'block'
   }
 
 	uniforms.time.value = normTime;
