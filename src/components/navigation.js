@@ -165,7 +165,7 @@ export default function Navigation({ mode }) {
           <Grid container direction='row' alignItems='center' justify='space-between'>
             <Grid item>
               <Link to='/'>
-                {mode && (<img className={classes.logo} style={{ width: !state.native ? 40 : 30,  paddingTop: !state.native ? '.75vh': '1vh' }} src={ndxDark} />)}
+                {mode && (<img className={classes.logo} style={{ width: !state.native ? 40 : 30,  paddingTop: !state.native ? '.75vh': '1.5vh' }} src={ndxDark} />)}
                 {!mode && (<img className={classes.logo} style={{ width: !state.native ? 40 : 30, paddingTop: !state.native ? '.75vh': '1.5vh'}} src={ndxLight} />)}
                 <Typography variant={!state.native ? 'h4' : 'h5' } className={classes.title}> INDEXED </Typography>
               </Link>

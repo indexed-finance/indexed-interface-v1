@@ -154,14 +154,16 @@ function render() {
   if(normTime > .225) {
     targetElement.style.color = '#333333'
     targetButton.style.color = '#333333'
+  } if(normTime > .25) {
     lightImage.style.display = 'none'
     darkImage.style.display = 'block'
   } if(normTime > .6) {
     targetElement.style.color = 'white'
     targetButton.style.color = 'white'
-    darkImage.style.display = 'none'
-    lightImage.style.display = 'block'
-  }
+  }if(normTime > .7) {
+     lightImage.style.display = 'block'
+     darkImage.style.display = 'none'
+   }
 
 	uniforms.time.value = normTime;
 	uniforms.count.value = boucle;
