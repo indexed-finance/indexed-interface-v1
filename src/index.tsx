@@ -13,6 +13,7 @@ import Loader from './components/loader'
 import { getTokenCategories, getTokenPriceHistory, getIndexPool } from './api/gql'
 import * as serviceWorker from './utils/serviceWorker'
 import { tokenMetadata } from './assets/constants/parameters'
+import { getIPFSFile } from './api/ipfs'
 import { store } from './state'
 import BN from 'bn.js'
 
@@ -107,6 +108,7 @@ function Application(){
        let supply = await contract.methods.totalSupply().call()
           .then((supply) => supply/Math.pow(10, 18))
        let history = await getTokenPriceHistory(address, 30)
+
        let [{ priceUSD }] = history
 
        array.push({
@@ -153,10 +155,9 @@ function Application(){
       let tokenCategories = await getTokenCategories()
 
       for(let category in tokenCategories) {
-        let { id, name, symbol, indexPools } = tokenCategories[category]
+        let { id, metadataHash, indexPools } = tokenCategories[category]
+        let { name, symbol } = await getIPFSFile(metadataHash)
         let tokenCategoryId = id
-
-        name = name.toUpperCase()
 
         if(!categories[symbol]){
           categories[tokenCategoryId] = { indexes: [], symbol, name }
@@ -171,18 +172,23 @@ function Application(){
           var supply = totalSupply/Math.pow(10, 18)
           let ticker = `${symbol}I${size}`
           var price = (value/supply)
+          let active = true
           let history = []
+          let change = 0
 
-          tokens[0].history.map((meta, index) =>
-            history.push({
-              close: ((meta.close * tokens[0].balance) +
-                tokens.slice(1).reduce((a, b) => a + b.balance * b.history[index].close , 0)
-              )/supply,
-              date: meta.date * 1000
-            })
-          )
-
-          var change = price/history[history.length-2].close
+          try {
+            tokens[0].history.map((meta, index) =>
+              history.push({
+                close: ((meta.close * tokens[0].balance) +
+                  tokens.slice(1).reduce((a, b, i) => a + b.balance * b.history[i].close, 0)
+                )/supply,
+                date: meta.date * 1000
+              })
+            )
+            change = price/history[history.length-2].close
+          } catch (e) {
+            active = true
+          }
 
           categories[tokenCategoryId].indexes.push(ticker)
           indexes[ticker] = {
@@ -197,6 +203,7 @@ function Application(){
             history: history,
             assets: tokens,
             symbol: ticker,
+            active
           }
         }
       }

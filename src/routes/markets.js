@@ -83,7 +83,9 @@ export default function Markets(){
 
   useEffect(() => {
     if(Object.keys(state.indexes).length > 0){
-      setMarket(state.indexes['DEFII5'])
+      let keys = Object.keys(state.indexes)
+      
+      setMarket(state.indexes[keys[0]])
     }
   }, [ state.indexes ])
 

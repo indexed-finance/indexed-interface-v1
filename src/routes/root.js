@@ -64,12 +64,9 @@ export default function Root(){
         </Link>
       </div>
       <div class="mouse_wave">
-
-
-      			<span class="scroll_arrows one"></span>
-      			<span class="scroll_arrows two"></span>
-      			<span class="scroll_arrows three"></span>
-
+      	<span class="scroll_arrows one"></span>
+      	<span class="scroll_arrows two"></span>
+      	<span class="scroll_arrows three"></span>
       </div>
     </div>
   )

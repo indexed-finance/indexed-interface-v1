@@ -11,7 +11,7 @@ import Pool from './pool.js'
 import Decimal from 'decimal.js'
 import BN from 'bn.js'
 
-const WETH = '0x554Dfe146305944e3D83eF802270b640A43eED44'
+const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
 const FACTORY = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'
 const ROUTER = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
 

@@ -21,7 +21,9 @@ const categoriesQuery = () => `
   categories {
     id
     metadataHash
-    tokens
+    tokens {
+      id
+    }
     indexPools {
       id
       size
@@ -108,8 +110,10 @@ const pairQuery = (pairAddress) => `
 `
 
 export async function getTokenCategories() {
-  const { data: { categories } } = await execRequest(categoriesQuery());
-  for (let category of categories) {
+  const r = await execRequest(categoriesQuery());
+  console.log(r)
+  let categories = r.data.categories
+    for (let category of categories) {
     const { name, symbol, description } = await getIPFSFile(category.metadataHash);
     Object.assign(category, { name, symbol, description });
   }

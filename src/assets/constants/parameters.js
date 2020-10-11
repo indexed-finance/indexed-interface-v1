@@ -13,6 +13,7 @@ import snx from '../images/synthetix.png'
 import yfi from '../images/yfi.png'
 import usdt from '../images/tether.png'
 import usdc from '../images/usdc.png'
+import uni from '../images/uni.png'
 
 import { isNative } from './functions'
 
@@ -44,7 +45,9 @@ export const initialState = {
     'YFI': { amount: 0, address: null },
     'MKR': { amount: 0, address: null },
     'LINK': { amount: 0, address: null },
-    'BUSD': { amount: 0, address: null }
+    'BUSD': { amount: 0, address: null },
+    'UNI': { amount: 0, address: null },
+    'WBTC': { amount: 0, address: null }
   },
   proposals: {
     "0xcd5edd521b1b3b7511b3e968e3d322c875d1cd17b13cd89c9a74fd9086d005f8": { author: '0xc2edad668740f1aa35e4d8f227fb8e17dca888cd', title: 'New category: Governance', time: '1D, 14HRS REMAINING', phase: 'active', yes: 50, no: 50, participants: 50, for: '5,000.53 NDX', against: '5,001.53 NDX', action: true, label: 'VOTE' },
@@ -106,6 +109,7 @@ export const tokenMetadata = {
     image: snx
   },
   "WBTC": {
+    address: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
     name: "Wrapped Bitcoin",
     image: wbtc
   },
@@ -113,6 +117,11 @@ export const tokenMetadata = {
     name: "Ampleforth",
     image: ampl
   },
+  "UNI": {
+    address: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
+    name: 'Uniswap',
+    image: uni
+  }
 }
 
 export const marketColumns = [

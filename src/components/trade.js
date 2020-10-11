@@ -18,7 +18,7 @@ import { getPair, getRouter, getBalances, decToWeiHex } from '../lib/markets'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
-const WETH = '0x554Dfe146305944e3D83eF802270b640A43eED44'
+const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
 
 const Trigger = styled(ButtonPrimary)({
   marginTop: '25px !important'
@@ -56,7 +56,8 @@ export default function Trade({ market, metadata }) {
 
     let contract = toContract(provider, IERC20.abi, address)
 
-    let balance = await contract.methods.balanceOf(target).call()
+    let balance = address == WETH ? await rinkeby.eth.getBalance(target)
+    : await contract.methods.balanceOf(target).call()
 
     return parseFloat(balance/Math.pow(10,18)).toFixed(2)
   }
@@ -152,6 +153,7 @@ export default function Trade({ market, metadata }) {
         let { address } = indexes[market]
 
         let router = await getRouter(web3.rinkeby)
+
         let pair = await getPair(web3.rinkeby, address)
         let token = toContract(web3.rinkeby, IERC20.abi, address)
         let pricing = await getMarketMetadata(pair.options.address)
