@@ -9,7 +9,7 @@ import Avatar from '@material-ui/core/Avatar'
 import List from '@material-ui/core/List'
 import Grid from '@material-ui/core/Grid'
 
-import { getRateMulti, getRateSingle, getBalances, decToWeiHex } from '../lib/markets'
+import { getRateMulti, getRateSingle, decToWeiHex } from '../lib/markets'
 import { tokenMetadata } from '../assets/constants/parameters'
 import style from '../assets/css/components/mint'
 import { toContract } from '../lib/util/contracts'
@@ -94,10 +94,9 @@ export default function InteractiveList({ market, metadata }) {
     .send({
       from: account
     }).on('confirmation', async(conf, receipt) => {
-      let newBalances = await getBalances(web3.injected, account, assets, balances)
       let tokenBalance = await getBalance()
 
-      await dispatch({ type: 'BAL', payload: { balances: newBalances } })
+      await dispatch({ type: 'BALANCE', payload: { assets } })
       setBalance(tokenBalance)
     })
   }
@@ -110,10 +109,9 @@ export default function InteractiveList({ market, metadata }) {
     .send({
       from: account
     }).on('confirmation', async(conf, receipt) => {
-      let newBalances = await getBalances(web3.injected, account, assets, balances)
       let tokenBalance = await getBalance()
 
-      await dispatch({ type: 'BAL', payload: { balances: newBalances } })
+      await dispatch({ type: 'BALANCE', payload: { assets } })
       setBalance(tokenBalance)
     })
   }

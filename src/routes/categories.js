@@ -116,9 +116,8 @@ export default function Categories(){
     }
   }, [ ])
 
-  let margin = !state.native ? '3em 3em' : '2em 1.5em'
-  let percent = !state.native ? '16%' : '70%'
-
+  let { margin, percent } = style.getFormatting(state)
+  
   return (
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>

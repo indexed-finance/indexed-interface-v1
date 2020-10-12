@@ -16,7 +16,6 @@ import Burn from '../components/burn'
 import Tabs from '../components/tabs'
 
 import style from '../assets/css/routes/index'
-import { getBalances } from '../lib/markets'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
@@ -88,14 +87,11 @@ export default function Index(){
     useEffect(() => {
       const retrieveBalances = async() => {
         let { account, indexes, web3 } = state
+        let { assets } = indexes[name].assets
 
         if(web3.injected){
-          let balances = await getBalances(
-            web3.rinkeby, account, indexes[name].assets, {}
-          )
-
-          await dispatch({ type: 'GENERIC',
-            payload: { balances }
+          await dispatch({ type: 'BALANCE',
+            payload: { assets }
           })
         }
      }

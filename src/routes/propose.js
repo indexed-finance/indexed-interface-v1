@@ -272,8 +272,7 @@ export default function Propose(){
     sortAbis()
   }, [ state.indexes ])
 
-  let margin = !state.native ? '3em 3em' : '2em 1.5em'
-  let percent = !state.native ? '42.5%' : '150%'
+  ;let { margin, percent } = style.getFormatting(state)
 
   return (
     <Fragment>

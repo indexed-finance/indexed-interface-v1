@@ -111,11 +111,7 @@ export default function Proposal(){
     )
   }
 
-  let margin = !state.native ? '2em 1.5em' : '1.5em 1.5em'
-  let width = !state.native ? 'auto' : '65%'
-  let progress = !state.native ? 325 : 275
-  let radius = !state.native ? 67.5 : 60
-  let percent = !state.native ? '17.5%' : '45%'
+  let { margin, width, progress, radius, percent } = styled.getFormatting(state)
 
   return (
     <Fragment>

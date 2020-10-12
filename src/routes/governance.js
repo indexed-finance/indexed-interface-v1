@@ -132,10 +132,7 @@ export default function Governance(){
     setProposals(state.proposals)
   }, [])
 
-  let height = !state.native ? 110 : 200
-  let margin = !state.native ? '3em 3em' : '3em 1.5em'
-  let percent = !state.native ? '15%' : '57.5%'
-  let width = !state.native ? '100%' : 1000
+  let { height, margin, percent, width } = style.getFormatting(state)
 
   return (
     <Fragment>

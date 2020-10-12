@@ -88,4 +88,13 @@ const setStyle = (theme) => ({
   }
 })
 
-export default { setStyle }
+const getFormatting = (state) => {
+  return {
+    height: !state.native ? 110 : 200,
+    margin: !state.native ? '3em 3em' : '3em 1.5em',
+    percent: !state.native ? '15%' : '57.5%',
+    width: !state.native ? '100%' : 1000
+  }
+}
+
+export default { setStyle, getFormatting }

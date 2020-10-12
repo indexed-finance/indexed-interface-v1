@@ -9,7 +9,7 @@ import TableRow from '@material-ui/core/TableRow'
 import Table from '@material-ui/core/Table'
 import Grid from '@material-ui/core/Grid'
 import { toContract } from '../lib/util/contracts'
-import { getRateMulti, getRateSingle, getBalances, decToWeiHex } from '../lib/markets'
+import { getRateMulti, getRateSingle, decToWeiHex } from '../lib/markets'
 import getStyles from '../assets/css'
 import { store } from '../state'
 

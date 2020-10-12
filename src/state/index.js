@@ -2,6 +2,7 @@ import React, { createContext, useReducer } from 'react';
 
 import { initialState } from '../assets/constants/parameters'
 import { isNative } from '../assets/constants/functions'
+import { getBalances } from '../lib/markets'
 
 const store = createContext(initialState)
 const { Provider } = store
@@ -11,6 +12,16 @@ const StateProvider = ( { children } ) => {
     switch(action.type) {
       case 'RESIZE':
         return { ...state, native: isNative({ ...action.payload })  }
+      case 'BALANCE':
+          let { account, web3 } = state
+          let { assets } = action.payload
+          let balances =  getBalances(web3.rinkeby, account, assets, {})
+
+          return {
+              ...state, balances: {
+              ...state.balances, ...balances
+            }
+          }
       case 'LOAD':
         return { ...state, load: action.payload }
       case 'GENERIC':

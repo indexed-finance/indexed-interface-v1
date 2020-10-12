@@ -14,7 +14,7 @@ import IERC20 from '../assets/constants/abi/IERC20.json'
 import { toContract } from '../lib/util/contracts'
 import { getMarketMetadata } from '../api/gql'
 import style from '../assets/css/components/trade'
-import { getPair, getRouter, getBalances, decToWeiHex } from '../lib/markets'
+import { getPair, getRouter, decToWeiHex } from '../lib/markets'
 import getStyles from '../assets/css'
 import { store } from '../state'
 

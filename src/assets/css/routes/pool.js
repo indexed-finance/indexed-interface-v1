@@ -66,4 +66,15 @@ const setStyle = (theme) => ({
   }
 })
 
-export default { setStyle }
+const getFormatting = (state) => {
+  return {
+    marginX: !state.native ? '-13em 0em 0em 3em': '.5em 1.5em',
+    margin: !state.native ? '3em 3em': '3em 1.5em',
+    width: !state.native ? '100%': '100%',
+    padding: !state.native ? 100 : 112.5,
+    height: !state.native ? 75 : 200,
+    fontSize: !state.native ? 'inherit' : '.875em'
+  }
+}
+
+export default { setStyle, getFormatting }

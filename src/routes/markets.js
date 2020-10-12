@@ -103,13 +103,9 @@ export default function Markets(){
     }
   }, [ ])
 
-  let resolution = !state.native ? 200 : 75
-  let top = !state.native ? 'calc(105px - .375vw)' : '75px'
-  let margin = !state.native ? '.5em 3em' : '.5em 1.5em'
-  let height = !state.native ? '38%' : '77.5%'
-  let percent = !state.native ? '11%' : '55%'
-  let pre = !state.request ? 'auto' : '50%'
-  let pre2 = !state.request && state.native ? '25vh' : 'auto'
+  let {
+    resolution, top, margin, height, percent, pre, pre2
+  } = style.getFormatting(state)
 
   if(state.native && window.innerWidth > 400) top = '82.5px'
 

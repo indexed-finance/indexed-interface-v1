@@ -20,7 +20,7 @@ import { eventColumns, tokenMetadata } from '../assets/constants/parameters'
 import style from '../assets/css/routes/pool'
 import { getUnitializedPool } from '../api/gql'
 import { toContract } from '../lib/util/contracts'
-import { decToWeiHex, getBalances } from '../lib/markets'
+import { decToWeiHex } from '../lib/markets'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
@@ -176,23 +176,18 @@ export default function Pools(){
     { time: 1203232, event: 'MINT 1,000 USDI3', tx: hash(shortenHash(txs[4]), txs[4]) },
   ]
 
+  useEffect(() => {
+    const retrieveBalances = async() => {
+      let { assets } = data
 
-      useEffect(() => {
-        const retrieveBalances = async() => {
-          let { account, indexes, web3 } = state
-
-          if(web3.injected){
-            let balances = await getBalances(
-              web3.rinkeby, account, data.assets, {}
-            )
-
-            await dispatch({ type: 'GENERIC',
-              payload: { balances }
-            })
-          }
-       }
-       retrieveBalances()
-    }, [ state.web3.injected ])
+      if(state.web3.injected){
+        await dispatch({ type: 'BALANCE',
+          payload: { assets }
+        })
+      }
+     }
+    retrieveBalances()
+  }, [ state.web3.injected ])
 
   useEffect(() => {
     if(!state.load){
@@ -202,12 +197,9 @@ export default function Pools(){
     }
   }, [ ])
 
-  let marginX = !state.native ? '-13em 0em 0em 3em': '.5em 1.5em'
-  let margin = !state.native ? '3em 3em': '3em 1.5em'
-  let width = !state.native ? '100%': '100%'
-  let padding = !state.native ? 100 : 112.5
-  let height = !state.native ? 75 : 200
-  let fontSize = !state.native ? 'inherit' : '.875em'
+  let {
+    marginX, margin, width, padding, height, fontSize
+  } = style.getFormatting(state)
 
   return (
     <Fragment>
