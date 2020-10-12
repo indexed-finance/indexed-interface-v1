@@ -228,8 +228,10 @@ export default function Approvals({ balance, metadata, height, width, input, par
         }
       }
     }
-    if(param == 'REQUIRED') getInputs()
-    else if(param == 'DESIRED') setInputs()
+    if(input != null){
+      if(param == 'REQUIRED') getInputs()
+      else if(param == 'DESIRED') setInputs()
+    }
   }, [ input ])
 
   useEffect(() => {

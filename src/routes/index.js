@@ -87,9 +87,10 @@ export default function Index(){
     useEffect(() => {
       const retrieveBalances = async() => {
         let { account, indexes, web3 } = state
-        let { assets } = indexes[name].assets
 
         if(web3.injected){
+          let { assets } = indexes[name]
+
           await dispatch({ type: 'BALANCE',
             payload: { assets }
           })
