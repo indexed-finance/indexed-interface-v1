@@ -90,18 +90,15 @@ export default function Pools(){
             let contract = toContract(web3.rinkeby, IERC20.abi, address)
             let symbol = await contract.methods.symbol().call()
 
-            console.log(symbol)
-
             let { name } = tokenMetadata[symbol]
 
             target[1].assets.push({
-              address: id,
+              address,
               symbol,
               name
             })
           }
         }
-        console.log(target[1])
         setData(target[1])
       }
     }

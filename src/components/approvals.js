@@ -234,7 +234,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
 
   useEffect(() => {
     const verifyAllowance = async() => {
-      if(focus != null){
+      if(focus != null && state.web3.injected){
         let { address } = state.balances[focus]
         let allowance = await getAllowance(address)
         let amount = getInputValue(focus)
@@ -258,13 +258,17 @@ export default function Approvals({ balance, metadata, height, width, input, par
         let condition = false
         let label
 
+        console.log(selected)
+
         if(index == metadata.assets.length-1) label = 'last'
         else label = 'item'
 
         if(param == 'DESIRED') {
-          statement = token.desired != 0
+          statement = token.desired != undefined
+
           if(statement) f = () => {}
           else selected = true
+
           condition = statement
         } else {
           condition = !selected
