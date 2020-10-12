@@ -1,17 +1,20 @@
 import React from 'react'
 import Web3 from 'web3'
 
-import eth from '../images/ethereum.png'
-import mkr from '../images/maker.png'
+import eth from '../images/eth.png'
+import mkr from '../images/mkr.png'
 import dai from '../images/dai.png'
-import wbtc from '../images/wrappedbitcoin.png'
-import comp from '../images/compound.png'
+import wbtc from '../images/wbtc.png'
+import comp from '../images/comp.png'
 import busd from '../images/busd.png'
-import link from '../images/chainlink.png'
-import ampl from '../images/ampleforth.png'
-import snx from '../images/synthetix.png'
+import knc from '../images/knc.png'
+import link from '../images/link.png'
+import ampl from '../images/ampl.png'
+import bal from '../images/bal.png'
+import snx from '../images/snx.png'
 import yfi from '../images/yfi.png'
-import usdt from '../images/tether.png'
+import usdt from '../images/usdt.png'
+import crv from '../images/crv.png'
 import usdc from '../images/usdc.png'
 import uni from '../images/uni.png'
 
@@ -47,6 +50,9 @@ export const initialState = {
     'LINK': { amount: 0, address: null },
     'BUSD': { amount: 0, address: null },
     'UNI': { amount: 0, address: null },
+    'CRV': { amount: 0, address: null },
+    'BAL': { amount: 0, address: null },
+    'KNC': { amount: 0, address: null },
     'WBTC': { amount: 0, address: null }
   },
   proposals: {
@@ -90,6 +96,11 @@ export const tokenMetadata = {
     name: "Maker",
     image: mkr
   },
+  "BAL": {
+    address: "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
+    name: "Balancer",
+    image: bal
+  },
   "DAI": {
     address: "0x6b175474e89094c44da98b954eedeac495271d0f",
     name: "Dai Stablecoin",
@@ -121,6 +132,16 @@ export const tokenMetadata = {
     address: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
     name: 'Uniswap',
     image: uni
+  },
+  "CRV": {
+    address: '0xd533a949740bb3306d119cc777fa900ba034cd52',
+    name: 'Curve',
+    image: crv
+  },
+  "KNC": {
+    address: '0xdd974d5c2e2928dea5f71b9825b8b646686bd200',
+    name: 'Kyber Network',
+    image: knc
   }
 }
 

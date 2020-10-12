@@ -14,8 +14,11 @@ import List from '../components/list'
 import ButtonTransaction from '../components/buttons/transaction'
 import ButtonPrimary from '../components/buttons/primary'
 
+import IERC20 from '../assets/constants/abi/IERC20.json'
+import { eventColumns, tokenMetadata } from '../assets/constants/parameters'
 import style from '../assets/css/routes/pool'
-import { eventColumns } from '../assets/constants/parameters'
+import { getUnitializedPool } from '../api/gql'
+import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
@@ -71,12 +74,38 @@ export default function Pools(){
   let { address } = useParams()
 
   useEffect(() => {
-    if(Object.keys(state.indexes).length > 0){
-      let target = Object.entries(state.indexes)
-      .find(x => x[1].address == address)
+    const retrievePool = async() => {
+      let { indexes, web3 } = state
 
-      setData(target[1])
+      if(Object.keys(indexes).length > 0){
+        let target = Object.entries(indexes)
+        .find(x => x[1].address == address)
+
+        if(!target[1].active) {
+          let pool = await getUnitializedPool(address)
+
+          for(let token in pool[0].tokens){
+            let { id } = pool[0].tokens[token]
+            let address = id.split('-').pop()
+            let contract = toContract(web3.rinkeby, IERC20.abi, address)
+            let symbol = await contract.methods.symbol().call()
+
+            console.log(symbol)
+
+            let { name } = tokenMetadata[symbol]
+
+            target[1].assets.push({
+              address: id,
+              symbol,
+              name
+            })
+          }
+        }
+        console.log(target[1])
+        setData(target[1])
+      }
     }
+    retrievePool()
   }, [ state.indexes ])
 
   function hash(value, og) {
@@ -105,7 +134,7 @@ export default function Pools(){
 
   let marginX = !state.native ? '-13em 0em 0em 3em': '.5em 1.5em'
   let margin = !state.native ? '3em 3em': '3em 1.5em'
-  let width = !state.native ? '40em': '100%'
+  let width = !state.native ? '100%': '100%'
   let padding = !state.native ? 100 : 112.5
   let height = !state.native ? 75 : 200
   let fontSize = !state.native ? 'inherit' : '.875em'

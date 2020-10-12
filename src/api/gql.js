@@ -60,6 +60,21 @@ const poolQuery = (address) => `
 }
 `;
 
+const initializerQuery = (poolAddress) => `
+{
+  poolInitializers(where: { pool: "${poolAddress}" }) {
+    id
+    totalCreditedWETH
+    pool {
+      id
+    }
+    tokens {
+      id
+    }
+  }
+}
+`
+
 const snapshotQuery = (address, timestampFrom, timestampTo) => `
 {
   dailyPoolSnapshots(where: { pool: "${address}", timestamp_gt: "${timestampFrom}", timestamp_lt: "${timestampTo}" }) {
@@ -110,9 +125,7 @@ const pairQuery = (pairAddress) => `
 `
 
 export async function getTokenCategories() {
-  const r = await execRequest(categoriesQuery());
-  console.log(r)
-  let categories = r.data.categories
+  const { data: { categories }} = await execRequest(categoriesQuery());
     for (let category of categories) {
     const { name, symbol, description } = await getIPFSFile(category.metadataHash);
     Object.assign(category, { name, symbol, description });
@@ -123,6 +136,12 @@ export async function getTokenCategories() {
 export async function getIndexPool(address) {
   const { data: { indexPools } } = await execRequest(poolQuery(address));
   return indexPools;
+}
+
+
+export async function getUnitializedPool(address) {
+  const { data: { poolInitializers } } = await execRequest(initializerQuery(address));
+  return poolInitializers;
 }
 
 export async function getPoolSnapshots(address, timestampFrom, timestampTo) {

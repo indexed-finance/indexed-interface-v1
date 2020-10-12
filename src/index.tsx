@@ -187,7 +187,7 @@ function Application(){
             )
             change = price/history[history.length-2].close
           } catch (e) {
-            active = true
+            active = false
           }
 
           categories[tokenCategoryId].indexes.push(ticker)

@@ -1,4 +1,4 @@
-const { abi: erc20ABI, bytecode: erc20Bytecode } = require('../assets/constants/abi/MockERC20.json');
+const { abi: erc20ABI, bytecode: erc20Bytecode } = require('../assets/constants/abi/IERC20.json');
 const { deploy } = require('./util/contracts');
 
 export async function deployERC20(web3, from, name, symbol) {

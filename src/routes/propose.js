@@ -22,7 +22,7 @@ import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
-const sources = [ BPool ]
+const sources = [ BPool, GovernorAlpha ]
 
 const encoder = ethers.utils.defaultAbiCoder
 
@@ -148,8 +148,10 @@ export default function Propose(){
   }
 
   const submitProposal = async() => {
+    let { web3, account } = state
+    let { encodeParameters } = web3.rinkeby.eth.abi
     let [ signatures, calldata, values ] = [ [], [], [] ]
-    let { encodeParameters } = state.web3.rinkeby.eth.abi
+    let contract = toContract(web3.injected, GovernorAlpha.abi, "0x0")
     let addresses = Object.keys(executions)
 
     await new Promise(resolve => {
@@ -172,6 +174,16 @@ export default function Propose(){
         }
       }
       resolve()
+    })
+
+    await contract.methods.propose(
+      executions,
+      values,
+      signatures,
+      calldata,
+      description
+    ).send({
+      from: account
     })
   }
 
@@ -261,7 +273,7 @@ export default function Propose(){
   }, [ state.indexes ])
 
   let margin = !state.native ? '3em 3em' : '2em 1.5em'
-  let percent = !state.native ? '35%' : '70%'
+  let percent = !state.native ? '42.5%' : '150%'
 
   return (
     <Fragment>

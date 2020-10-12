@@ -1,6 +1,6 @@
 import UniswapV2Router from '@uniswap/v2-periphery/build/UniswapV2Router02.json'
-import UniV2PairABI from '../assets/constants/abi/IUniswapV2Pair.json'
-import UniV2FactoryABI from '../assets/constants/abi/IUniswapV2Factory.json'
+import UniV2PairABI from '@uniswap/v2-periphery/build/IUniswapV2Pair.json'
+import UniV2FactoryABI from '@uniswap/v2-periphery/build/IUniswapV2Factory.json'
 import IERC20 from '../assets/constants/abi/IERC20.json'
 import BPool from '../assets/constants/abi/BPool.json'
 

@@ -74,8 +74,14 @@ export default function Markets(){
   })
 
   const changeMarket = (m) => {
+    let { active, address} = state.indexes[m]
+
     if(market.symbol == m){
-      history.push(`index/${m.toLowerCase()}`)
+      if(!active){
+        history.push(`pool/${address.toLowerCase()}`)
+      } else {
+        history.push(`index/${m.toLowerCase()}`)
+      }
     } else {
       setMarket(state.indexes[m])
     }
@@ -84,7 +90,7 @@ export default function Markets(){
   useEffect(() => {
     if(Object.keys(state.indexes).length > 0){
       let keys = Object.keys(state.indexes)
-      
+
       setMarket(state.indexes[keys[0]])
     }
   }, [ state.indexes ])
