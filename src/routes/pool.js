@@ -14,11 +14,13 @@ import List from '../components/list'
 import ButtonTransaction from '../components/buttons/transaction'
 import ButtonPrimary from '../components/buttons/primary'
 
+import PoolInitializer from '../assets/constants/abi/PoolInitializer.json'
 import IERC20 from '../assets/constants/abi/IERC20.json'
 import { eventColumns, tokenMetadata } from '../assets/constants/parameters'
 import style from '../assets/css/routes/pool'
 import { getUnitializedPool } from '../api/gql'
 import { toContract } from '../lib/util/contracts'
+import { decToWeiHex, getBalances } from '../lib/markets'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
@@ -67,32 +69,84 @@ const Exit = styled(ExitIcon)({
 const useStyles = getStyles(style)
 
 export default function Pools(){
+  const [ selections, setSelections ] = useState([])
+  const [ instance, setInstance ] = useState(null)
+  const [ credit, setCredit ] = useState(null)
   const [ data, setData ] = useState(dummy)
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
   let { address } = useParams()
 
+  const getCreditQuote = async(assets) => {
+    let newSelections = []
+    let sum = 0
+
+    for(let token in assets){
+      let { address, amount } = assets[token]
+      let value = decToWeiHex(state.web3.rinkeby, parseFloat(amount))
+      let credit = await instance.methods.getCreditForTokens(address, value).call()
+
+      sum += parseFloat(credit/Math.pow(10, 18)).toFixed(2)
+    }
+
+    setCredit(sum)
+  }
+
+  const pledgeTokens = async() => {
+    let { web3, account } = state
+    let { address } = instance.options
+    let source = toContract(web3.injected, PoolInitializer.abi, address)
+    let [addresses, amounts ] = getInputs()
+
+    await source.methods.contributeTokens(
+      addresses,
+      amounts,
+      0
+    ).send({
+      from: state.account
+    })
+  }
+
+  const getInputs = () => {
+    let [ inputs, targets] = [ [], [] ]
+    let { web3 } = state
+
+    for(let x in data.assets){
+      let { name, address, symbol } = data.assets[x]
+      let element = document.getElementsByName(symbol)[0]
+
+      if(!isNaN(parseFloat(element.value))){
+        let amount = decToWeiHex(web3.rinkeby, parseFloat(element.value))
+        inputs.push(amount)
+        targets.push(address)
+      }
+    }
+    return [ targets, inputs ]
+  }
+
   useEffect(() => {
     const retrievePool = async() => {
       let { indexes, web3 } = state
+      let pool = await getUnitializedPool(address)
+      let source = toContract(state.web3.rinkeby, PoolInitializer.abi, pool[0].id)
 
       if(Object.keys(indexes).length > 0){
         let target = Object.entries(indexes)
         .find(x => x[1].address == address)
 
         if(!target[1].active) {
-          let pool = await getUnitializedPool(address)
-
           for(let token in pool[0].tokens){
             let { id } = pool[0].tokens[token]
             let address = id.split('-').pop()
             let contract = toContract(web3.rinkeby, IERC20.abi, address)
+            let desired = await source.methods.getDesiredAmount(address).call()
+            desired = (parseFloat(desired)/Math.pow(10,18)).toFixed(2)
             let symbol = await contract.methods.symbol().call()
-
             let { name } = tokenMetadata[symbol]
 
             target[1].assets.push({
+              desired,
               address,
               symbol,
               name
@@ -101,6 +155,7 @@ export default function Pools(){
         }
         setData(target[1])
       }
+      setInstance(source)
     }
     retrievePool()
   }, [ state.indexes ])
@@ -114,12 +169,30 @@ export default function Pools(){
   }
 
   const events = [
-    { time: Date.now(), event: 'MINT 400 USDI3', tx: hash(shortenHash(txs[0]), txs[0]) },
-    { time: Date.now(), event: 'BURN 300 USDI3', tx: hash(shortenHash(txs[1]), txs[1]) },
-    { time: Date.now(), event: 'BURN 0.5 USDI3', tx: hash(shortenHash(txs[2]), txs[2]) },
-    { time: Date.now(), event: 'MINT 0.125 USDI3', tx: hash(shortenHash(txs[3]), txs[3]) },
-    { time: Date.now(), event: 'MINT 1,000 USDI3', tx: hash(shortenHash(txs[4]), txs[4]) },
+    { time: 1203232, event: 'MINT 400 USDI3', tx: hash(shortenHash(txs[0]), txs[0]) },
+    { time: 1203232, event: 'BURN 300 USDI3', tx: hash(shortenHash(txs[1]), txs[1]) },
+    { time: 1203232, event: 'BURN 0.5 USDI3', tx: hash(shortenHash(txs[2]), txs[2]) },
+    { time: 1203232, event: 'MINT 0.125 USDI3', tx: hash(shortenHash(txs[3]), txs[3]) },
+    { time: 1203232, event: 'MINT 1,000 USDI3', tx: hash(shortenHash(txs[4]), txs[4]) },
   ]
+
+
+      useEffect(() => {
+        const retrieveBalances = async() => {
+          let { account, indexes, web3 } = state
+
+          if(web3.injected){
+            let balances = await getBalances(
+              web3.rinkeby, account, data.assets, {}
+            )
+
+            await dispatch({ type: 'GENERIC',
+              payload: { balances }
+            })
+          }
+       }
+       retrieveBalances()
+    }, [ state.web3.injected ])
 
   useEffect(() => {
     if(!state.load){
@@ -170,14 +243,14 @@ export default function Pools(){
           <Grid item xs={12} md={5} lg={5} xl={5}>
             <Container margin={margin} padding="1em 0em" percentage='27.5%' title='ASSETS'>
               <div className={classes.container} style={{ width }}>
-                <Approvals input={0} param='DESIRED' height={250} metadata={data} />
+                <Approvals param='DESIRED' height={250} metadata={data} />
               </div>
               <div className={classes.reciept}>
-                <p> ENTITLED TO: </p>
+                <p> ENTITLED TO: {credit}</p>
                 <p> PLEDGE: </p>
               </div>
               <div className={classes.submit}>
-                <ButtonPrimary variant='outlined'>
+                <ButtonPrimary variant='outlined' onClick={pledgeTokens}>
                   INITIALISE
                 </ButtonPrimary>
               </div>

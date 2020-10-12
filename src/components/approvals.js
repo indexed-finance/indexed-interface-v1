@@ -144,7 +144,9 @@ export default function Approvals({ balance, metadata, height, width, input, par
   }
 
   const handleInput = (event) => {
-    setFocus(event.target.name)
+    let { name, value } = event.target
+
+    setFocus(name)
   }
 
   const getInputValue = (symbol) => {
@@ -193,7 +195,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
 
   useEffect(() => {
     const getInputs = async() => {
-      if(input != null){
+      if(!isNaN(input)){
         let { web3 } = state
         let { address } = metadata
         let { toBN, toHex } = web3.rinkeby.utils
@@ -222,9 +224,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
           let { symbol, desired } = metadata.assets[token]
           let element = document.getElementById(symbol)
 
-          if(desired == 0) {
-            element.innerHTML = desired
-          }
+          element.innerHTML = desired
         }
       }
     }
@@ -234,7 +234,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
 
   useEffect(() => {
     const verifyAllowance = async() => {
-      if(focus != null && state.web3.injected){
+      if(state.web3.injected){
         let { address } = state.balances[focus]
         let allowance = await getAllowance(address)
         let amount = getInputValue(focus)
@@ -246,7 +246,9 @@ export default function Approvals({ balance, metadata, height, width, input, par
         }
       }
     }
-    verifyAllowance()
+    if(focus != null){
+      verifyAllowance()
+    }
   }, [ focus ])
 
   return (
@@ -258,16 +260,13 @@ export default function Approvals({ balance, metadata, height, width, input, par
         let condition = false
         let label
 
-        console.log(selected)
-
         if(index == metadata.assets.length-1) label = 'last'
         else label = 'item'
 
         if(param == 'DESIRED') {
-          statement = token.desired != undefined
+          statement = token.desired == 0
 
           if(statement) f = () => {}
-          else selected = true
 
           condition = statement
         } else {

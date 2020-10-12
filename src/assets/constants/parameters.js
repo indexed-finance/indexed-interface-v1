@@ -181,14 +181,14 @@ export const eventColumns = [
   {
     id: 'event',
     label: 'EVENT',
-    minWidth: 125,
+    minWidth: 250,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
     id: 'tx',
     label: 'TRANSACTION',
-    minWidth: 100,
+    minWidth: 125,
     align: 'center'
   },
 ]
