@@ -130,6 +130,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
     .approve(metadata.address, amount).send({
       from: state.account
     }).on('confirmation', (conf, receipt) => {
+
       setInputState(symbol, 1)
     })
   }
@@ -218,6 +219,8 @@ export default function Approvals({ balance, metadata, height, width, input, par
     let element = document.getElementsByName(name)[0]
     let { nextSibling } = element.nextSibling
 
+    console.log(nextSibling)
+
     if(type == 0) nextSibling.style.borderColor = '#009966'
     else if (type == 1) nextSibling.style.borderColor = 'red'
     else nextSibling.style.borderColor = 'orange'
@@ -254,8 +257,6 @@ export default function Approvals({ balance, metadata, height, width, input, par
           let { symbol, desired } = metadata.assets[token]
           let element = document.getElementById(symbol)
 
-          console.log(symbol, desired)
-
           element.innerHTML = desired
         }
       }
@@ -269,11 +270,9 @@ export default function Approvals({ balance, metadata, height, width, input, par
   useEffect(() => {
     const verifyAllowance = async() => {
       let { web3, balances } = state
-      let index = checked.indexOf(focus)
 
-      if(web3.injected && index != -1){
-        console.log(targets[index], targets)
-        let address = targets[checked - 1]
+      if(web3.injected && balances[focus]){
+        let { address } = balances[focus]
         let allowance = await getAllowance(address)
         let amount = getInputValue(focus)
 

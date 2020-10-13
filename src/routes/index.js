@@ -17,6 +17,7 @@ import Tabs from '../components/tabs'
 
 import style from '../assets/css/routes/index'
 import getStyles from '../assets/css'
+import { getBalances } from '../lib/markets'
 import { store } from '../state'
 
 const WETH = '0x554dfe146305944e3d83ef802270b640a43eed44'
@@ -90,9 +91,10 @@ export default function Index(){
 
         if(web3.injected){
           let { assets } = indexes[name]
+          let balances =  await getBalances(web3.rinkeby, account, assets, {})
 
           await dispatch({ type: 'BALANCE',
-            payload: { assets }
+            payload: { balances }
           })
         }
      }

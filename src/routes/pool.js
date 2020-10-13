@@ -16,11 +16,12 @@ import ButtonPrimary from '../components/buttons/primary'
 
 import PoolInitializer from '../assets/constants/abi/PoolInitializer.json'
 import IERC20 from '../assets/constants/abi/IERC20.json'
+import MockERC20ABI from '../assets/constants/abi/MockERC20.json'
 import { eventColumns, tokenMetadata } from '../assets/constants/parameters'
 import style from '../assets/css/routes/pool'
 import { getUnitializedPool } from '../api/gql'
 import { toContract } from '../lib/util/contracts'
-import { decToWeiHex } from '../lib/markets'
+import { decToWeiHex, getBalances } from '../lib/markets'
 import { prepareOracle } from '../lib'
 import getStyles from '../assets/css'
 import { store } from '../state'
@@ -88,7 +89,9 @@ export default function Pools(){
       credit = await getCreditQuoteMultiple(targets, value)
     }
 
-    element.innerHTML = credit.toLocaleString()
+    element.innerHTML = credit.toLocaleString(
+      undefined, { minimumFractionDigits: 2 }
+    )
   }
 
   const getCreditQuoteSingle = async(asset) => {
@@ -96,9 +99,7 @@ export default function Pools(){
     let value = decToWeiHex(state.web3.rinkeby, parseFloat(amount))
     let credit = await instance.methods.getCreditForTokens(address, value).call()
 
-    console.log(credit, amount)
-
-    return (parseFloat(credit)/Math.pow(10, 18)).toFixed(2)
+    return parseFloat(credit)/Math.pow(10, 18)
   }
 
   const getCreditQuoteMultiple = async(assets, total) => {
@@ -107,18 +108,16 @@ export default function Pools(){
       let value = decToWeiHex(state.web3.rinkeby, parseFloat(amount))
       let credit = await instance.methods.getCreditForTokens(address, value).call()
 
-      console.log(total, credit, amount)
-
       total = parseFloat(total) + (parseFloat(credit)/Math.pow(10, 18))
     }
-    return total.toFixed(2)
+    return total
   }
 
   const pledgeTokens = async() => {
     let { web3, account } = state
     let { address } = instance.options
     let source = toContract(web3.injected, PoolInitializer.abi, address)
-    let [ addresses, amounts, output ] = getInputs()
+    let [ addresses, amounts, output ] = await getInputs(web3.rinkeby)
 
     if(address.length == 1){
       addresses = addresses[0]
@@ -139,22 +138,45 @@ export default function Pools(){
     await prepareOracle(web3.injected, account)
   }
 
-  const getInputs = () => {
-    let element = document.getElementById('credit')
-    let value = decToWeiHex(web3.rinkeby, parseFloat(element.value))
+  const getUnderlyingAssets = async() => {
+    let { web3, account } = state
+
+    for(let x in data.assets) {
+      let { symbol, address } = data.assets[x]
+      let amount = decToWeiHex(web3.injected, Math.floor(Math.random() * 10000))
+      const token = new web3.injected.eth.Contract(MockERC20ABI, address)
+
+      await token.methods.getFreeTokens(account, amount)
+      .send({ from: account })
+    }
+  }
+
+  const getInputs = async(web3) => {
     let [ inputs, targets] = [ [], [] ]
-    let { web3 } = state
+    let length = data.assets.length
+    let value = 0
 
     for(let x in data.assets){
       let { name, address, symbol } = data.assets[x]
       let element = document.getElementsByName(symbol)[0]
 
       if(!isNaN(parseFloat(element.value))){
-        let amount = decToWeiHex(web3.rinkeby, parseFloat(element.value))
-        inputs.push(amount)
+        inputs.push(parseFloat(element.value))
         targets.push(address)
       }
     }
+
+    if(length > 1){
+      let array = inputs.map((v, i) => { return { amount: v, address: targets[i] } })
+      value = await getCreditQuoteMultiple(array, 0)
+    } else {
+      let { address, symbol } = data.assets[0]
+      value = await getCreditQuoteSingle({
+        symbol, address
+      })
+    }
+    value = decToWeiHex(state.web3.rinkeby, value)
+
     return [ targets, inputs, value ]
   }
 
@@ -167,6 +189,9 @@ export default function Pools(){
       if(Object.keys(indexes).length > 0){
         let target = Object.entries(indexes)
         .find(x => x[1].address == address)
+
+        target[1].address = pool[0].id
+        target[1].credit = 0
 
         if(!target[1].active) {
           for(let token in pool[0].tokens){
@@ -211,16 +236,30 @@ export default function Pools(){
 
   useEffect(() => {
     const retrieveBalances = async() => {
+      let { account, web3 } = state
       let { assets } = data
 
-      if(state.web3.injected){
+      if(web3.injected){
+        let balances =  await getBalances(web3.rinkeby, account, assets, {})
+
         await dispatch({ type: 'BALANCE',
-          payload: { assets }
+          payload: { balances }
         })
       }
      }
+     const getActiveCredit = async() => {
+       let { account, web3 } = state
+
+       if(web3.injected){
+         let credit = await instance.methods.getCreditOf(account).call()
+         credit = (parseFloat(credit)/Math.pow(10, 18)).toFixed(2)
+
+         setData({ ...data, credit })
+       }
+     }
     retrieveBalances()
-  }, [ state.web3.injected, ])
+    getActiveCredit()
+  }, [ state.web3.injected ])
 
   useEffect(() => {
     if(!state.load){
@@ -260,7 +299,8 @@ export default function Pools(){
               <div className={classes.stats} style={{ fontSize }}>
                 <ul>
                   <li> LIQUIDITY: {data.marketcap} </li>
-                  <li> MARKETCAP : {data.marketcap} </li>
+                  <li> MARKETCAP: {data.marketcap} </li>
+                  <li> YOUR CREDITS: {data.credit} </li>
                 </ul>
               </div>
             </Chart>
