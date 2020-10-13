@@ -143,10 +143,40 @@ export default function Approvals({ balance, metadata, height, width, input, par
     return allowance/Math.pow(10,18)
   }
 
-  const handleInput = (event) => {
-    let { name, value } = event.target
+  const handleInput = async(event) => {
+    let { name } = event.target
+    let index = metadata.assets.find(i => i.symbol == name)
 
+    if(param == 'DESIRED' && index != undefined){
+      let checkIndex = checked.indexOf(name)
+      let { address } = index
+
+      if(checkIndex != -1){
+        let selections = getTargetsAndInfo(checked, [])
+
+        await set(selections)
+      }
+    }
     setFocus(name)
+  }
+
+  const getTargetsAndInfo = (selections, arr) => {
+    for(let x in selections){
+      let symbol = selections[x]
+
+      if(x > 0){
+        let index = metadata.assets
+        .find(i => i.symbol == symbol)
+        let amount = getInputValue(symbol)
+
+        let { address } = index
+
+        arr.push({
+          symbol, amount, address
+        })
+      }
+    }
+    return arr
   }
 
   const getInputValue = (symbol) => {
@@ -224,6 +254,8 @@ export default function Approvals({ balance, metadata, height, width, input, par
           let { symbol, desired } = metadata.assets[token]
           let element = document.getElementById(symbol)
 
+          console.log(symbol, desired)
+
           element.innerHTML = desired
         }
       }
@@ -236,8 +268,12 @@ export default function Approvals({ balance, metadata, height, width, input, par
 
   useEffect(() => {
     const verifyAllowance = async() => {
-      if(state.web3.injected){
-        let { address } = state.balances[focus]
+      let { web3, balances } = state
+      let index = checked.indexOf(focus)
+
+      if(web3.injected && index != -1){
+        console.log(targets[index], targets)
+        let address = targets[checked - 1]
         let allowance = await getAllowance(address)
         let amount = getInputValue(focus)
 
@@ -248,9 +284,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
         }
       }
     }
-    if(focus != null){
-      verifyAllowance()
-    }
+    verifyAllowance()
   }, [ focus ])
 
   return (

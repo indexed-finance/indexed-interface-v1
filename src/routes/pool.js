@@ -21,6 +21,7 @@ import style from '../assets/css/routes/pool'
 import { getUnitializedPool } from '../api/gql'
 import { toContract } from '../lib/util/contracts'
 import { decToWeiHex } from '../lib/markets'
+import { prepareOracle } from '../lib'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
@@ -69,46 +70,78 @@ const Exit = styled(ExitIcon)({
 const useStyles = getStyles(style)
 
 export default function Pools(){
-  const [ selections, setSelections ] = useState([])
   const [ instance, setInstance ] = useState(null)
-  const [ credit, setCredit ] = useState(null)
   const [ data, setData ] = useState(dummy)
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
   let { address } = useParams()
 
-  const getCreditQuote = async(assets) => {
-    let newSelections = []
-    let sum = 0
+  const getCredit = async(targets) => {
+    let element = document.getElementById('credit')
+    let value = isNaN(parseFloat(element.innerHTML)) ? 0 : parseFloat(element.innerHTML)
+    let credit = 0
 
-    for(let token in assets){
-      let { address, amount } = assets[token]
+    if(targets.length <= 1){
+      credit = await getCreditQuoteSingle(targets[0])
+    } else {
+      credit = await getCreditQuoteMultiple(targets, value)
+    }
+
+    element.innerHTML = credit.toLocaleString()
+  }
+
+  const getCreditQuoteSingle = async(asset) => {
+    let { address, amount } = asset
+    let value = decToWeiHex(state.web3.rinkeby, parseFloat(amount))
+    let credit = await instance.methods.getCreditForTokens(address, value).call()
+
+    console.log(credit, amount)
+
+    return (parseFloat(credit)/Math.pow(10, 18)).toFixed(2)
+  }
+
+  const getCreditQuoteMultiple = async(assets, total) => {
+    for(let x in assets){
+      let { address, amount } = assets[x]
       let value = decToWeiHex(state.web3.rinkeby, parseFloat(amount))
       let credit = await instance.methods.getCreditForTokens(address, value).call()
 
-      sum += parseFloat(credit/Math.pow(10, 18)).toFixed(2)
-    }
+      console.log(total, credit, amount)
 
-    setCredit(sum)
+      total = parseFloat(total) + (parseFloat(credit)/Math.pow(10, 18))
+    }
+    return total.toFixed(2)
   }
 
   const pledgeTokens = async() => {
     let { web3, account } = state
     let { address } = instance.options
     let source = toContract(web3.injected, PoolInitializer.abi, address)
-    let [addresses, amounts ] = getInputs()
+    let [ addresses, amounts, output ] = getInputs()
+
+    if(address.length == 1){
+      addresses = addresses[0]
+      amounts = amounts[0]
+    }
 
     await source.methods.contributeTokens(
       addresses,
       amounts,
-      0
+      output
     ).send({
       from: state.account
     })
   }
 
+  const updateOracle = async() => {
+    let { web3, account } = state
+    await prepareOracle(web3.injected, account)
+  }
+
   const getInputs = () => {
+    let element = document.getElementById('credit')
+    let value = decToWeiHex(web3.rinkeby, parseFloat(element.value))
     let [ inputs, targets] = [ [], [] ]
     let { web3 } = state
 
@@ -122,7 +155,7 @@ export default function Pools(){
         targets.push(address)
       }
     }
-    return [ targets, inputs ]
+    return [ targets, inputs, value ]
   }
 
   useEffect(() => {
@@ -187,7 +220,7 @@ export default function Pools(){
       }
      }
     retrieveBalances()
-  }, [ state.web3.injected ])
+  }, [ state.web3.injected, ])
 
   useEffect(() => {
     if(!state.load){
@@ -235,10 +268,10 @@ export default function Pools(){
           <Grid item xs={12} md={5} lg={5} xl={5}>
             <Container margin={margin} padding="1em 0em" percentage='27.5%' title='ASSETS'>
               <div className={classes.container} style={{ width }}>
-                <Approvals param='DESIRED' height={250} metadata={data} />
+                <Approvals input={0} param='DESIRED' height={250} metadata={data} set={getCredit}/>
               </div>
               <div className={classes.reciept}>
-                <p> ENTITLED TO: {credit}</p>
+                <p> ENTITLED TO: <span id='credit'/> ETH </p>
                 <p> PLEDGE: </p>
               </div>
               <div className={classes.submit}>

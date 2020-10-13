@@ -45,8 +45,7 @@ const setStyle = (theme) => ({
       float: 'right',
       fontFamily: "San Francisco Bold",
       fontWeight: 500,
-      marginRight: 50,
-      color: '#333333'
+      marginRight: 50
     }
   },
   market: {
