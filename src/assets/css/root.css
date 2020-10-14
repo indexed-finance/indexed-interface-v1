@@ -151,7 +151,7 @@ input[type=number] {
 }
 
 #passed o {
-  color: #00e79a!important;
+  color: #00e79a !important;
 }
 
 #executed o {
@@ -172,6 +172,18 @@ input[type=number] {
 
 #rejected span span {
   width: 100px;
+}
+
+#inactive {
+  color: #66FFFF !important;
+}
+
+#registered {
+  color: #00e79a !important;
+}
+
+#delegated {
+  color: orange !important;
 }
 
 code {

@@ -17,16 +17,23 @@ import Lozenge from '@atlaskit/lozenge'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import { useHistory } from "react-router-dom";
 
+
+import Ndx from '../assets/constants/abi/Ndx.json'
 import ButtonPrimary from '../components/buttons/primary'
 import Container from '../components/container'
 import Input from '../components/inputs/input'
+import Radio from '../components/inputs/radio'
 import Select from '../components/inputs/select'
 import Canvas from '../components/canvas'
 import Stacked from '../components/charts/stacked'
 
 import style from '../assets/css/routes/governance'
+import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
+
+const NDX = '0xe366577a6712591c2e6f76fdcb96a99ac30a74c3'
+const NA = '0x0000000000000000000000000000000000000000'
 
 const selections = [[{ value: 0, label: null }]];
 
@@ -114,19 +121,84 @@ const useStyles = getStyles(style)
 
 export default function Governance(){
   const [ proposals, setProposals ] = useState([])
+  const [ phase, setPhase ] = useState(<span />)
+  const [ status, setStatus ] = useState(null)
   const [ chart, setChart ] = useState(<span/>)
   const history = useHistory()
   const classes = useStyles()
 
   let { dispatch, state } = useContext(store)
 
-  const renderActivate = () => {
+  function Activate(){
+    const [ selection, setSelection ] = useState(null)
+
+    const handleSelection = (event) => {
+      setSelection(event.target.value)
+    }
+
     return(
-      <p> You have not setup your wallet for voting yet,
-        either for individual voting, or delegation.
-      </p>
+      <Fragment>
+        <p> You have not setup your wallet for voting yet,
+          either for individual voting, or delegation.
+        </p>
+        <label>
+          <b style={{ float: 'left'}}>
+            INDIVIDUAL <Radio value={0} checked={selection == 0} onClick={handleSelection} color='#00e79a' />
+          </b>
+          <b style={{ float: 'right'}}>
+            DELEGATION <Radio value={1} checked={selection == 1} onClick={handleSelection} color='orange' />
+          </b>
+          <ButtonPrimary> INITIALISE </ButtonPrimary>
+        </label>
+      </Fragment>
     )
   }
+
+  const renderDelegate = () => {
+    return(
+      <Fragment>
+        <p> Allocate your votes to another address:</p>
+        <AddressInput variant="outlined" label='ADDRESS'/>
+        <ButtonPrimary> DELEGATE </ButtonPrimary>
+      </Fragment>
+    )
+  }
+
+  useEffect(() => {
+    const getAccountMetadata = async() => {
+      let { web3 } = state
+
+      if(web3.injected) {
+        let contract = toContract(web3.injected, Ndx.abi, NDX)
+        let isDelegated = await contract.methods.delegates(state.account).call()
+        let balance = await contract.methods.balanceOf(state.account).call()
+        let amount = (parseFloat(balance)/Math.pow(10, 18)).toLocaleString(
+          undefined, { minimumFractionDigits: 2 }
+        )
+
+        if(isDelegated != NA) {
+          if(isDelegated == state.account) {
+            setStatus(<span id='registered'>ACTIVE</span>)
+          } else {
+            setStatus(<span id='delegated'>DELEGATED</span>)
+          }
+          setPhase(renderDelegate())
+        } else {
+          setStatus(<span id='inactive'>INACTIVE</span>)
+          setPhase(<Activate />)
+        }
+
+        dispatch({ type: 'BALANCE',
+          payload: {
+            balances: {
+              'NDX': { address: NDX, amount }
+            }
+          }
+        })
+      }
+    }
+    getAccountMetadata()
+  }, [ state.web3.injected ])
 
   useEffect(() => {
     setProposals(state.proposals)
@@ -141,11 +213,9 @@ export default function Governance(){
           <Grid item xs={12} md={5} lg={5} xl={5}>
             <Canvas native={state.native}>
               <div className={classes.wallet}>
-                <h3> BALANCE: 1,541.09 NDX </h3>
-                <h4> STATUS: <span>ACTIVE</span></h4>
-                <p> Allocate your votes to another address:</p>
-                <AddressInput variant="outlined" label='ADDRESS'/>
-                <ButtonPrimary> DELEGATE </ButtonPrimary>
+                <h3> BALANCE: {state.balances['NDX'].amount} NDX </h3>
+                <h4> STATUS: {status}</h4>
+                {phase}
               </div>
             </Canvas>
           </Grid>

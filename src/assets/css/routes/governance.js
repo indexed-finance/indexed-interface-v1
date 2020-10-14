@@ -42,15 +42,13 @@ const setStyle = (theme) => ({
     }
   },
   wallet: {
-    height: 250,
+    height: 230,
     paddingLeft: 25,
     paddingRight: 25,
     '& h4': {
       color: '#666666',
-      '& span': {
-        color: '#00e79a'
-      }
     },
+    paddingBottom: 25
   },
   one: {
     width: 10,

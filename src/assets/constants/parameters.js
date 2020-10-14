@@ -53,6 +53,7 @@ export const initialState = {
     'CRV': { amount: 0, address: null },
     'BAL': { amount: 0, address: null },
     'KNC': { amount: 0, address: null },
+    'NDX': { amount: 0, address: null },
     'WBTC': { amount: 0, address: null }
   },
   proposals: {
