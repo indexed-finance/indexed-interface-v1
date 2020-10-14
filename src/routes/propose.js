@@ -22,6 +22,8 @@ import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
+const DAO = '0x5220b03Cc2F5f8f38dC647636d71582a38365E72'
+
 const sources = [ BPool, GovernorAlpha ]
 
 const encoder = ethers.utils.defaultAbiCoder
@@ -38,13 +40,13 @@ export default function Propose(){
   const [ entries, setEntries ] = useState(<span />)
   const [ metadata, setMetadata ] = useState({})
   const [ contracts, setContracts ] = useState([])
-  const [ description, setDescription ] = useState(null)
   const [ executions, setExecutions ] = useState([])
   const [ targets, setTargets ] = useState([])
   const [ focus, setFocus ] = useState(null)
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
+  let description
 
   const parseAbi = (abi) => {
     let { rinkeby } = state.web3
@@ -118,6 +120,12 @@ export default function Propose(){
     )
   }
 
+  const getDescription = () => {
+    let element = document.getElementsByName('propose-description')[0]
+
+    return element.value
+  }
+
   const onFunctionChange = (key, value) => {
     let newExecutions = executions
     let { functions, abi } = newExecutions[key]
@@ -151,8 +159,9 @@ export default function Propose(){
     let { web3, account } = state
     let { encodeParameters } = web3.rinkeby.eth.abi
     let [ signatures, calldata, values ] = [ [], [], [] ]
-    let contract = toContract(web3.injected, GovernorAlpha.abi, "0x0")
+    let contract = toContract(web3.injected, GovernorAlpha.abi, DAO)
     let addresses = Object.keys(executions)
+    let description = getDescription()
 
     await new Promise(resolve => {
       for(let address in addresses){
@@ -162,22 +171,30 @@ export default function Propose(){
         for(let f in functions){
           let { signature, inputs } = functions[f]
 
-          values.push(inputs.length)
           signatures.push(signature)
+          values.push(0)
 
-          for(let i in inputs){
-            let { type, value } = inputs[i]
-            let parameter = encoder.encode([type], [value])
+          let parameters = encoder.encode(
+            inputs.map(i => i.type),
+            inputs.map(i => i.value)
+          )
 
-            calldata.push(parameter)
-          }
+          calldata.push(parameters)
         }
       }
       resolve()
     })
 
+    console.log(
+      addresses,
+      values,
+      signatures,
+      calldata,
+      description
+    )
+
     await contract.methods.propose(
-      executions,
+      addresses,
       values,
       signatures,
       calldata,
@@ -272,7 +289,7 @@ export default function Propose(){
     sortAbis()
   }, [ state.indexes ])
 
-  ;let { margin, percent } = style.getFormatting(state)
+  let { margin, percent } = style.getFormatting(state)
 
   return (
     <Fragment>
@@ -284,7 +301,7 @@ export default function Propose(){
               <div className={classes.preview} id='preview' />
             </Grid>
             <Grid item>
-              <Entry onChange={handleDescription} multiline variant='outlined' label="Description" rows={4} />
+              <Entry name='propose-description' onChange={handleDescription} multiline variant='outlined' label="Description" rows={4} />
             </Grid>
             <Grid item>
               <div className={classes.select}>

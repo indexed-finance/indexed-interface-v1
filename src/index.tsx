@@ -210,7 +210,7 @@ function Application(){
       }
       await dispatch({ type: 'GENERIC',
         payload: {
-          request: true , categories, indexes, ethUSD
+          request: true , categories, indexes, ...ethUSD
         }
       })
     }

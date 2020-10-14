@@ -97,9 +97,7 @@ export default function Pools(){
       element.innerHTML = ethValue.toFixed(2) + " ETH"
     }
 
-    console.log(state.ethUSD)
-
-    alternative.innerHTML = '$' + parseFloat(ethValue * state.ethUSD).toFixed(2)
+    alternative.innerHTML = '$' + parseFloat(ethValue * state.price).toFixed(2)
   }
 
   const getCreditQuoteSingle = async(asset) => {
@@ -114,7 +112,6 @@ export default function Pools(){
     for(let x in assets){
       let { address, amount } = assets[x]
       let value = decToWeiHex(state.web3.rinkeby, parseFloat(amount))
-      console.log(amount, value)
       let credit = await instance.methods.getCreditForTokens(address, value).call()
         .then(v => state.web3.rinkeby.utils.toBN(v))
         .catch(err => console.log(err))
@@ -189,8 +186,6 @@ export default function Pools(){
     const retrievePool = async() => {
       let { indexes, web3 } = state
       let pool = await getUnitializedPool(address)
-
-      console.log(pool, indexes, address)
 
       if(Object.keys(indexes).length > 0 && pool[0] != undefined){
         let source = toContract(state.web3.rinkeby, PoolInitializer.abi, pool[0].id)
