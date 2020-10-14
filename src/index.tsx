@@ -10,7 +10,7 @@ import { StateProvider } from './state'
 import Navigation from './components/navigation'
 import Loader from './components/loader'
 
-import { getTokenCategories, getTokenPriceHistory, getIndexPool } from './api/gql'
+import { getTokenCategories, getTokenPriceHistory, getIndexPool, getETHPrice } from './api/gql'
 import * as serviceWorker from './utils/serviceWorker'
 import { tokenMetadata } from './assets/constants/parameters'
 import { getIPFSFile } from './api/ipfs'
@@ -153,6 +153,7 @@ function Application(){
   useEffect(() => {
     const retrieveCategories = async(indexes, categories) => {
       let tokenCategories = await getTokenCategories()
+      let ethUSD = await getETHPrice()
 
       for(let category in tokenCategories) {
         let { id, metadataHash, indexPools } = tokenCategories[category]
@@ -208,7 +209,9 @@ function Application(){
         }
       }
       await dispatch({ type: 'GENERIC',
-        payload: { request: true , categories, indexes }
+        payload: {
+          request: true , categories, indexes, ethUSD
+        }
       })
     }
     retrieveCategories({}, {})

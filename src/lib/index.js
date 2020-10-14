@@ -57,15 +57,20 @@ async function prepareOracle(web3, from) {
   const govi6rInit = new web3.eth.Contract(InitializerABI, govi6rInitAddress);
   const tokens = await govi6rInit.methods.getDesiredTokens().call();
   const balances = await govi6rInit.methods.getDesiredAmounts(tokens).call();
-  const creditFor = await govi6rInit.methods.getCreditForTokens(tokens[0], balances[0]).call();
-  if (creditFor == 0) {
+  const isZero = val => new BN(val).eqn(0);
+  const oneToken = new BN('de0b6b3a7640000', 'hex');
+  const credits = await Promise.all(tokens.map(t => govi6rInit.methods.getCreditForTokens(t, oneToken).call()));
+  const doUpdate = credits.some(isZero)
+
+  if (doUpdate) {
     console.log('Adding UniSwap liquidity and updating prices on oracle...');
     await addLiquidityAll(web3, from, true);
     console.log('Waiting 5 minutes to update price...');
-    await waitSeconds(300);
-    await addLiquidityAll(web3, from, false);
-    console.log('Adding UniSwap liquidity...');
   }
+  await waitSeconds(300);
+  await addLiquidityAll(web3, from, false);
+  console.log('Adding UniSwap liquidity...');
+  
   console.log('Oracle ready!')
 }
 

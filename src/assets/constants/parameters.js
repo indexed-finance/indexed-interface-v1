@@ -188,7 +188,7 @@ export const eventColumns = [
   {
     id: 'tx',
     label: 'TRANSACTION',
-    minWidth: 125,
+    minWidth: 175,
     align: 'center'
   },
 ]

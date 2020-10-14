@@ -80,18 +80,26 @@ export default function Pools(){
 
   const getCredit = async(targets) => {
     let element = document.getElementById('credit')
-    let value = isNaN(parseFloat(element.innerHTML)) ? 0 : parseFloat(element.innerHTML)
+    let alternative = document.getElementById('eth-eqiv')
+    let { toBN, toHex } = state.web3.rinkeby.utils
+    let ethValue = 0
     let credit = 0
 
     if(targets.length <= 1){
       credit = await getCreditQuoteSingle(targets[0])
+      ethValue = credit
+      element.innerHTML = credit.toLocaleString(
+          undefined, { minimumFractionDigits: 2 }
+      ) + " ETH"
     } else {
-      credit = await getCreditQuoteMultiple(targets, value)
+      credit = await getCreditQuoteMultiple(targets, toBN(0))
+      ethValue = parseFloat(credit.div(toBN(1e18)).toString())
+      element.innerHTML = ethValue.toFixed(2) + " ETH"
     }
 
-    element.innerHTML = credit.toLocaleString(
-      undefined, { minimumFractionDigits: 2 }
-    )
+    console.log(state.ethUSD)
+
+    alternative.innerHTML = '$' + parseFloat(ethValue * state.ethUSD).toFixed(2)
   }
 
   const getCreditQuoteSingle = async(asset) => {
@@ -106,9 +114,14 @@ export default function Pools(){
     for(let x in assets){
       let { address, amount } = assets[x]
       let value = decToWeiHex(state.web3.rinkeby, parseFloat(amount))
+      console.log(amount, value)
       let credit = await instance.methods.getCreditForTokens(address, value).call()
+        .then(v => state.web3.rinkeby.utils.toBN(v))
+        .catch(err => console.log(err))
 
-      total = parseFloat(total) + (parseFloat(credit)/Math.pow(10, 18))
+      if (credit.eqn(0)) console.log(`Got zero credit output for ${address} amount ${amount}`);
+
+      total = total.add(credit);
     }
     return total
   }
@@ -118,11 +131,6 @@ export default function Pools(){
     let { address } = instance.options
     let source = toContract(web3.injected, PoolInitializer.abi, address)
     let [ addresses, amounts, output ] = await getInputs(web3.rinkeby)
-
-    if(address.length == 1){
-      addresses = addresses[0]
-      amounts = amounts[0]
-    }
 
     await source.methods.contributeTokens(
       addresses,
@@ -152,31 +160,28 @@ export default function Pools(){
   }
 
   const getInputs = async(web3) => {
-    let [ inputs, targets] = [ [], [] ]
-    let length = data.assets.length
+    let { toBN } = web3.utils
+    let [ inputs, targets ] = [ [], [] ]
     let value = 0
 
     for(let x in data.assets){
       let { name, address, symbol } = data.assets[x]
       let element = document.getElementsByName(symbol)[0]
+      let value = parseFloat(element.value)
 
-      if(!isNaN(parseFloat(element.value))){
-        inputs.push(parseFloat(element.value))
+      if(!isNaN(value)){
+        inputs.push(decToWeiHex(web3, value))
         targets.push(address)
       }
     }
 
-    if(length > 1){
+    if(inputs.length > 1){
       let array = inputs.map((v, i) => { return { amount: v, address: targets[i] } })
-      value = await getCreditQuoteMultiple(array, 0)
+      value = await getCreditQuoteMultiple(array, toBN(0))
     } else {
-      let { address, symbol } = data.assets[0]
-      value = await getCreditQuoteSingle({
-        symbol, address
-      })
+      let query = { address: targets[0], amount: inputs[0] }
+      value = await getCreditQuoteSingle(query)
     }
-    value = decToWeiHex(state.web3.rinkeby, value)
-
     return [ targets, inputs, value ]
   }
 
@@ -184,9 +189,11 @@ export default function Pools(){
     const retrievePool = async() => {
       let { indexes, web3 } = state
       let pool = await getUnitializedPool(address)
-      let source = toContract(state.web3.rinkeby, PoolInitializer.abi, pool[0].id)
 
-      if(Object.keys(indexes).length > 0){
+      console.log(pool, indexes, address)
+
+      if(Object.keys(indexes).length > 0 && pool[0] != undefined){
+        let source = toContract(state.web3.rinkeby, PoolInitializer.abi, pool[0].id)
         let target = Object.entries(indexes)
         .find(x => x[1].address == address)
 
@@ -212,8 +219,8 @@ export default function Pools(){
           }
         }
         setData(target[1])
+        setInstance(source)
       }
-      setInstance(source)
     }
     retrievePool()
   }, [ state.indexes ])
@@ -311,11 +318,14 @@ export default function Pools(){
                 <Approvals input={0} param='DESIRED' height={250} metadata={data} set={getCredit}/>
               </div>
               <div className={classes.reciept}>
-                <p> ENTITLED TO: <span id='credit'/> ETH </p>
-                <p> PLEDGE: </p>
+                <p> ENTITLED TO: <span id='credit'/></p>
+                <p> PLEDGE: <span id='eth-eqiv'/></p>
               </div>
               <div className={classes.submit}>
-                <ButtonPrimary variant='outlined' onClick={pledgeTokens}>
+                <ButtonPrimary variant='outlined' onClick={updateOracle} style={{ marginLeft: 0, float: 'left' }}>
+                  UPDATE
+                </ButtonPrimary>
+                <ButtonPrimary variant='outlined' onClick={pledgeTokens} style={{ marginLeft: 0 }}>
                   INITIALISE
                 </ButtonPrimary>
               </div>

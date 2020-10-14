@@ -3,6 +3,7 @@ import { getIPFSFile } from './ipfs';
 const subgraph_url = 'https://api.thegraph.com/subgraphs/name/d1ll0n/indexed-rinkeby';
 const uniswap_url = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2';
 const market_url = 'https://api.thegraph.com/subgraphs/name/blockrockettech/uniswap-v2-subgraph-rinkeby'
+const price_url = 'https://api.thegraph.com/subgraphs/name/graphprotocol/uniswap'
 
 const execRequest = (query, url = subgraph_url) => fetch(
   url,
@@ -32,6 +33,14 @@ const categoriesQuery = () => `
   }
 }
 `;
+
+const priceQuery = () => `
+  {
+    exchanges(where: { id:"0x2a1530c4c41db0b0b2bb646cb5eb1a67b7158667"}) {
+      price
+    }
+  }
+`
 
 const tokenQuery = (category) => `
 {
@@ -174,4 +183,12 @@ export async function getMarketTrades(pairAddress) {
     market_url
   );
   return swaps;
+}
+
+export async function getETHPrice() {
+  const { data: { exchanges } } = await execRequest(
+    priceQuery(),
+    price_url
+  );
+return exchanges[0];
 }

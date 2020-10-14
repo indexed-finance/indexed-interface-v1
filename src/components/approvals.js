@@ -131,7 +131,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
       from: state.account
     }).on('confirmation', (conf, receipt) => {
 
-      setInputState(symbol, 1)
+      setInputState(symbol, 0)
     })
   }
 
@@ -172,9 +172,11 @@ export default function Approvals({ balance, metadata, height, width, input, par
 
         let { address } = index
 
-        arr.push({
-          symbol, amount, address
-        })
+        if(!isNaN(amount)){
+          arr.push({
+            symbol, amount, address
+          })
+        }
       }
     }
     return arr
@@ -278,7 +280,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
 
         if(allowance < parseFloat(amount)){
           setInputState(focus, 1)
-        } else {
+        } else if(!isNaN(parseFloat(amount))){
           setInputState(focus, 0)
         }
       }
