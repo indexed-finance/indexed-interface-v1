@@ -129,18 +129,47 @@ export default function Governance(){
 
   let { dispatch, state } = useContext(store)
 
-  function Activate(){
+  const delegateAddress = async(address) => {
+    let { web3, account } = state
+    let contract = toContract(web3.injected, Ndx.abi, NDX)
+
+    await contract.methods.delegate(address)
+    .send({ from: account }).on('confirmat', (c, r) =>
+      getStatus(address)
+    )
+  }
+
+  const renderDelegation = () => {
+    setPhase(<Delegate />)
+  }
+
+  const getStatus = (delegate) => {
+    if(delegate == state.account) {
+      setStatus(<span id='registered'>ACTIVE</span>)
+    } else if(delegate != NA){
+      setStatus(<span id='delegated'>DELEGATED</span>)
+    } else {
+      setStatus(<span id='inactive'>INACTIVE</span>)
+    }
+  }
+
+  function Activate({ trigger }){
     const [ selection, setSelection ] = useState(null)
 
     const handleSelection = (event) => {
       setSelection(event.target.value)
     }
 
+    const submit = async() => {
+      if(selection == 0) {
+        await delegateAddress(state.account)
+      }
+      await trigger()
+    }
+
     return(
       <Fragment>
-        <p> You have not setup your wallet for voting yet,
-          either for individual voting, or delegation.
-        </p>
+        <p> You have not setup your wallet for voting yet, either for individual voting, or delegation. </p>
         <label>
           <b style={{ float: 'left'}}>
             INDIVIDUAL <Radio value={0} checked={selection == 0} onClick={handleSelection} color='#00e79a' />
@@ -148,18 +177,28 @@ export default function Governance(){
           <b style={{ float: 'right'}}>
             DELEGATION <Radio value={1} checked={selection == 1} onClick={handleSelection} color='orange' />
           </b>
-          <ButtonPrimary> INITIALISE </ButtonPrimary>
+          <ButtonPrimary onClick={submit}> INITIALISE </ButtonPrimary>
         </label>
       </Fragment>
     )
   }
 
-  const renderDelegate = () => {
+  function Delegate(){
+    const [ input, setInput ] = useState(null)
+
+    const handleInput = (event) => {
+      setInput(event.target.value)
+    }
+
+    const submit = async() => {
+      await delegateAddress(input)
+    }
+
     return(
       <Fragment>
         <p> Allocate your votes to another address:</p>
-        <AddressInput variant="outlined" label='ADDRESS'/>
-        <ButtonPrimary> DELEGATE </ButtonPrimary>
+        <AddressInput value={input} variant="outlined" label='ADDRESS'/>
+        <ButtonPrimary onClick={submit}> DELEGATE </ButtonPrimary>
       </Fragment>
     )
   }
@@ -176,18 +215,11 @@ export default function Governance(){
           undefined, { minimumFractionDigits: 2 }
         )
 
-        if(isDelegated != NA) {
-          if(isDelegated == state.account) {
-            setStatus(<span id='registered'>ACTIVE</span>)
-          } else {
-            setStatus(<span id='delegated'>DELEGATED</span>)
-          }
-          setPhase(renderDelegate())
-        } else {
-          setStatus(<span id='inactive'>INACTIVE</span>)
-          setPhase(<Activate />)
-        }
+        if(isDelegated != NA) setPhase(<Delegate />)
+        else setPhase(<Activate trigger={renderDelegation}/>)
 
+
+        getStatus(isDelegated)
         dispatch({ type: 'BALANCE',
           payload: {
             balances: {
