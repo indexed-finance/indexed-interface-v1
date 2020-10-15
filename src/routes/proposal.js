@@ -15,15 +15,20 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Avatar from '@material-ui/core/Avatar';
 import { useParams } from 'react-router-dom'
 
+import GovernorAlpha from '../assets/constants/abi/GovernorAlpha.json'
+
 import ButtonPrimary from '../components/buttons/primary'
 import Container from '../components/container'
 import Radio from '../components/inputs/radio'
 import Progress from '../components/progress'
 import Canvas from '../components/canvas'
 
+import { toContract } from '../lib/util/contracts'
 import style from '../assets/css/routes/proposal'
 import getStyles from '../assets/css'
 import { store } from '../state'
+
+const DAO = '0x5220b03Cc2F5f8f38dC647636d71582a38365E72'
 
 const useStyles = getStyles(style)
 
@@ -85,7 +90,19 @@ export default function Proposal(){
   let { tx } = useParams()
 
   const [ metadata, setMetadata ] = useState(state.proposals[tx])
+  const [ input, setInput ] = useState(null)
   const classes = useStyles()
+
+  const handleInput = (event) => {
+    setInput(event.target.value)
+  }
+
+  const vote = async() => {
+    let { web3, account } = state
+    let contract = toContract(web3.injected, GovernorAlpha.abi, DAO)
+
+    await contract.methods.castVote(tx, input).send({ from: account })
+  }
 
   function Blockie({ address, id, width, border }) {
     let classes = useStyles()
@@ -111,7 +128,7 @@ export default function Proposal(){
     )
   }
 
-  let { margin, width, progress, radius, percent } = styled.getFormatting(state)
+  let { margin, width, progress, radius, percent } = style.getFormatting(state)
 
   return (
     <Fragment>
@@ -164,12 +181,16 @@ export default function Proposal(){
             <Canvas native={state.native}>
               <div className={classes.modal}>
                 <label>
-                  <b style={{ float: 'left'}}> FOR <Radio color='#00e79a' /></b>
-                  <b style={{ float: 'right'}}> AGAINST <Radio color='#ff005a' /></b>
+                  <b style={{ float: 'left'}}>
+                    FOR <Radio value={1} checked={input == 1} onClick={handleInput} color='#00e79a' />
+                  </b>
+                  <b style={{ float: 'right'}}>
+                    AGAINST <Radio value={0} checked={input == 0} onClick={handleInput} color='#ff005a' />
+                  </b>
                 </label>
-                <p> WEIGHT: 0 NDX </p>
+                <p> WEIGHT: {state.balances['NDX'].amount} NDX </p>
                 <p> IMPACT: <span> 0% </span> </p>
-                <ButtonPrimary variant='outlined' style={{ marginBottom: 25 }}>
+                <ButtonPrimary variant='outlined' style={{ marginBottom: 25 }} onClick={vote}>
                   VOTE
                 </ButtonPrimary>
               </div>

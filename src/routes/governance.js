@@ -25,6 +25,7 @@ import Input from '../components/inputs/input'
 import Radio from '../components/inputs/radio'
 import Select from '../components/inputs/select'
 import Canvas from '../components/canvas'
+import Progress from '../components/progress'
 import Stacked from '../components/charts/stacked'
 
 import style from '../assets/css/routes/governance'
@@ -54,38 +55,6 @@ const getPhase = phase => {
   else if(phase == 'active') return 'new'
   else if(phase == 'executed') return 'inprogress'
 }
-
-const ProgressFor = withStyles((theme) => ({
-  root: {
-    height: 12.5,
-    borderRadius: 10,
-    width: 200,
-    float: 'left'
-  },
-  colorPrimary: {
-    backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? 200 : 700],
-  },
-  bar: {
-    borderRadius: 5,
-    backgroundColor: '#00e79a',
-  },
-}))(LinearProgress)
-
-const ProgressAgainst = withStyles((theme) => ({
-  root: {
-    height: 12.5,
-    borderRadius: 10,
-    width: 200,
-    float: 'left'
-  },
-  colorPrimary: {
-    backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? 200 : 700],
-  },
-  bar: {
-    borderRadius: 5,
-    backgroundColor: '#ff005a',
-  },
-}))(LinearProgress)
 
 const AddressInput = styled(Input)({
   marginTop: 0,
@@ -119,6 +88,7 @@ const ListAvatar = styled(ListItemAvatar)({
 
 const useStyles = getStyles(style)
 
+
 export default function Governance(){
   const [ proposals, setProposals ] = useState([])
   const [ phase, setPhase ] = useState(<span />)
@@ -151,6 +121,14 @@ export default function Governance(){
     } else {
       setStatus(<span id='inactive'>INACTIVE</span>)
     }
+  }
+
+  function Init(){
+    return (
+      <center style={{ paddingTop: 25 }}>
+        <p> Connect your web3 provider to continue </p>
+      </center>
+    )
   }
 
   function Activate({ trigger }){
@@ -234,6 +212,7 @@ export default function Governance(){
 
   useEffect(() => {
     setProposals(state.proposals)
+    setPhase(<Init />)
   }, [])
 
   let { height, margin, percent, width } = style.getFormatting(state)
@@ -294,12 +273,12 @@ export default function Governance(){
                     <ListItemText
                       primary={
                         <div className={classes.progress}>
-                          <ProgressFor variant="determinate" value={value.yes} /> <span> {value.for}</span>
+                          <Progress width={200} color='#00e79a' value={value.yes} /> <span> {value.for}</span>
                         </div>
                       }
                       secondary={
                         <div className={classes.progress}>
-                          <ProgressAgainst variant="determinate" value={value.no} /> <span> {value.against}</span>
+                          <Progress width={200} color='#ff005a' value={value.no} /> <span> {value.against}</span>
                         </div>
                       }
                     />

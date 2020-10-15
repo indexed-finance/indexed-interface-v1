@@ -185,14 +185,6 @@ export default function Propose(){
       resolve()
     })
 
-    console.log(
-      addresses,
-      values,
-      signatures,
-      calldata,
-      description
-    )
-
     await contract.methods.propose(
       addresses,
       values,

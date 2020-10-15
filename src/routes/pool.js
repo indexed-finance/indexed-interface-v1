@@ -22,7 +22,7 @@ import style from '../assets/css/routes/pool'
 import { getUnitializedPool } from '../api/gql'
 import { toContract } from '../lib/util/contracts'
 import { decToWeiHex, getBalances } from '../lib/markets'
-import { prepareOracle } from '../lib'
+import { prepareOracle } from '../lib/index'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
