@@ -50,7 +50,7 @@ async function addLiquidityAll(web3, from, updatePrices = false)  {
   }
 }
 
-async function prepareOracle(web3, from) {
+export async function prepareOracle(web3, from) {
   const controller = new web3.eth.Contract(ControllerABI, '0xe9AE62e04CD55F7e57DE760e190Eb2D43ecE8b40');
   const govi6rAddress = await controller.methods.computePoolAddress(2, 6).call();
   const govi6rInitAddress = await controller.methods.computeInitializerAddress(govi6rAddress).call();
@@ -70,8 +70,6 @@ async function prepareOracle(web3, from) {
   await waitSeconds(300);
   await addLiquidityAll(web3, from, false);
   console.log('Adding UniSwap liquidity...');
-  
+
   console.log('Oracle ready!')
 }
-
-module.exports = { prepareOracle };

@@ -1,8 +1,8 @@
 import { getIPFSFile } from './ipfs';
 
-const subgraph_url = 'https://api.thegraph.com/subgraphs/name/d1ll0n/indexed-rinkeby';
+const subgraph_url = 'https://api.thegraph.com/subgraphs/id/QmT4KR51p8BGUZX41M3o1vEmDJVNFFnXHRWheqGHgG18i9';
 const uniswap_url = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2';
-const market_url = 'https://api.thegraph.com/subgraphs/name/blockrockettech/uniswap-v2-subgraph-rinkeby'
+const market_url = 'https://api.thegraph.com/subgraphs/name/samgos/uniswap-v2-rinkeby'
 const price_url = 'https://api.thegraph.com/subgraphs/name/graphprotocol/uniswap'
 
 const execRequest = (query, url = subgraph_url) => fetch(
@@ -16,6 +16,41 @@ const execRequest = (query, url = subgraph_url) => fetch(
     body: JSON.stringify({ query })
   }
 ).then(r => r.json());
+
+const proposalAndDistributionQuery = () => `
+  {
+    proposals(first: 25){
+      id
+      for
+      against
+      expiry
+      state
+    }
+    dailyDistributionSnapshots(first: 30) {
+      id
+		  active
+      inactive
+      delegated
+    }
+  }
+`
+
+const proposalQuery = id => `
+  {
+    proposals(where: { id: ${id} }){
+      id
+      for
+      against
+      expiry
+      state
+      votes
+      signatures
+      calldatas
+      values
+      targets
+    }
+  }
+`
 
 const categoriesQuery = () => `
 {
@@ -31,8 +66,7 @@ const categoriesQuery = () => `
       totalSupply
     }
   }
-}
-`;
+}`
 
 const priceQuery = () => `
   {
@@ -147,7 +181,6 @@ export async function getIndexPool(address) {
   return indexPools;
 }
 
-
 export async function getUnitializedPool(address) {
   const { data: { poolInitializers } } = await execRequest(initializerQuery(address));
   return poolInitializers;
@@ -183,6 +216,15 @@ export async function getMarketTrades(pairAddress) {
     market_url
   );
   return swaps;
+}
+
+export async function getProposals() {
+  const { data } = await execRequest(
+    proposalAndDistributionQuery(),
+    subgraph_url
+  );
+
+  return { ...data  }
 }
 
 export async function getETHPrice() {

@@ -32,6 +32,7 @@ import style from '../assets/css/routes/governance'
 import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
+import { getProposals } from '../api/gql'
 
 const NDX = '0xe366577a6712591c2e6f76fdcb96a99ac30a74c3'
 const NA = '0x0000000000000000000000000000000000000000'
@@ -211,7 +212,15 @@ export default function Governance(){
   }, [ state.web3.injected ])
 
   useEffect(() => {
-    setProposals(state.proposals)
+    const retrieveProposals = async() => {
+      let { proposals, dailyDistributionSnapshots } = await getProposals()
+
+      console.log(proposals)
+
+      setProposals(proposals)
+    }
+
+    retrieveProposals()
     setPhase(<Init />)
   }, [])
 
@@ -255,41 +264,45 @@ export default function Governance(){
           <Container margin={margin} padding="1em 2em" title='PROPOSALS' percentage={percent}>
            <div className={classes.proposals}>
             <ListWrapper dense style={{ width }}>
-              {Object.entries(proposals).map(([key, value], index) => {
-                let f = () => history.push(`/proposal/${key}`)
+              {proposals.map((p, index) => {
+                let f = () => history.push(`/proposal/${p.id.toLowerCase()}`)
+                let forVotes = (parseFloat(p.for)/Math.pow(10, 18)).toLocaleString()
+                let againstVotes = (parseFloat(p.against)/Math.pow(10, 18)).toLocaleString()
+                let stateLabel ='active'
+
+                if(parseInt(p.state) > 0) {
+                  stateLabel = 'rejected'
+                }
 
                 return (
-                  <Item key={key} button onClick={f}>
-                    <ListItemText primary={<label>{value.title}</label>}
+                  <Item key={p.id} button onClick={f}>
+                    <ListItemText primary={<label>{p.id}</label>}
                       secondary={
-                        <div id={value.phase}>
+                        <div id='active'>
                           <Lozenge isBold>
-                            {value.phase}
+                            {stateLabel}
                             </Lozenge>
-                          <o> {Object.keys(proposals).length - (parseInt(index) + 1)} • {value.time}</o>
+                          <o> {proposals.length - (parseInt(index) + 1)} • {p.expiry}</o>
                         </div>
                       }
                     />
                     <ListItemText
                       primary={
                         <div className={classes.progress}>
-                          <Progress width={200} color='#00e79a' value={value.yes} /> <span> {value.for}</span>
+                          <Progress width={200} color='#00e79a' value={455} /> <span> {forVotes} NDX </span>
                         </div>
                       }
                       secondary={
                         <div className={classes.progress}>
-                          <Progress width={200} color='#ff005a' value={value.no} /> <span> {value.against}</span>
+                          <Progress width={200} color='#ff005a' value={parseInt(p.against)} /> <span> {againstVotes} NDX</span>
                         </div>
                       }
                     />
                     <SecondaryAction>
-                      {value.action && (
+                      {!isNaN(p.state)  && (
                         <ButtonPrimary variant='outlined'>
-                          {value.label}
+                          VOTE
                         </ButtonPrimary>
-                      )}
-                      {!value.action && (
-                        <label> {value.label}</label>
                       )}
                     </SecondaryAction>
                   </Item>

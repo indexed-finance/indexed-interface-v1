@@ -163,13 +163,13 @@ export default function Proposal(){
                 <div className={classes.option}>
                   <div className={classes.vote}> AGAINST </div>
                   <span className={classes.progress}>
-                    <Progress color='#ff005a' width={progress} variant="determinate" value={metadata.no} /> <span> {metadata.against}</span>
+                    <Progress color='#ff005a' width={progress} value={metadata.no} /> <span> {metadata.against}</span>
                   </span>
                 </div>
                 <div className={classes.option}>
                   <div className={classes.vote}> FOR </div>
                   <span className={classes.progress}>
-                    <Progress color='#00e79a' width={progress} variant="determinate" value={metadata.yes} /> <span> {metadata.for}</span>
+                    <Progress color='#00e79a' width={progress} value={metadata.yes} /> <span> {metadata.for}</span>
                   </span>
                 </div>
               </div>

@@ -18,7 +18,17 @@ export default function Progress(props){
       borderRadius: 5,
       backgroundColor: props.color,
     },
-  }))(LinearProgress)
+  }))(({ classes, ...props }) => {
+    return (
+      <LinearProgress
+       variant="determinate"
+        classes={{
+          ...classes
+      }}
+      {...props}
+      />
+    )
+  })
 
-  return <Restyled {...props} />
+  return <Restyled  />
 }
