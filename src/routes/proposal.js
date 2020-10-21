@@ -16,6 +16,7 @@ import Avatar from '@material-ui/core/Avatar';
 import { useParams } from 'react-router-dom'
 
 import GovernorAlpha from '../assets/constants/abi/GovernorAlpha.json'
+import Ndx from '../assets/constants/abi/Ndx.json'
 
 import ButtonPrimary from '../components/buttons/primary'
 import Container from '../components/container'
@@ -30,6 +31,7 @@ import { store } from '../state'
 import { getProposal } from '../api/gql'
 
 const DAO = '0x5220b03Cc2F5f8f38dC647636d71582a38365E72'
+const NDX = '0xe366577a6712591c2e6f76fdcb96a99ac30a74c3'
 
 const useStyles = getStyles(style)
 
@@ -89,22 +91,34 @@ Cast your votes people, to agree or disagree is up to you.
 const dummy = { title: null, description: null, votes: [], for: 0, against: 0, state: 0, action: null, expiry: 0, proposer: '0x0000000000000000000000000000000000000000', targets: [], calldatas: [], signatures: [] }
 
 export default function Proposal(){
-  let { state } = useContext(store)
+  let { state, dispatch } = useContext(store)
   let { id } = useParams()
 
   const [ metadata, setMetadata ] = useState(dummy)
+  const [ weight, setWeight ] = useState(null)
   const [ input, setInput ] = useState(null)
   const classes = useStyles()
 
   const handleInput = (event) => {
+    let weight = event.target.value == 1 ? metadata.for : metadata.against
+    let { amount } = state.balances['NDX']
+
+    if(weight > 0) {
+      weight = ((parseFloat(amount) / (parseInt(weight)/Math.pow(10, 18))) * 100)
+    } else {
+      weight = 100
+    }
+
     setInput(event.target.value)
+    setWeight(weight)
   }
 
   const vote = async() => {
     let { web3, account } = state
     let contract = toContract(web3.injected, GovernorAlpha.abi, DAO)
+    let decision = input === 1
 
-    await contract.methods.castVote(id, input).send({ from: account })
+    await contract.methods.castVote(id, decision).send({ from: account })
   }
 
   function Blockie({ address, id, width, border }) {
@@ -130,6 +144,29 @@ export default function Proposal(){
       </div>
     )
   }
+
+  useEffect(() => {
+    const getAccountMetadata = async() => {
+      let { web3 } = state
+
+      if(web3.injected) {
+        let contract = toContract(web3.injected, Ndx.abi, NDX)
+        let balance = await contract.methods.balanceOf(state.account).call()
+        let amount = (parseFloat(balance)/Math.pow(10, 18)).toLocaleString(
+          undefined, { minimumFractionDigits: 2 }
+        )
+
+        dispatch({ type: 'BALANCE',
+          payload: {
+            balances: {
+              'NDX': { address: NDX, amount }
+            }
+          }
+        })
+      }
+    }
+    getAccountMetadata()
+  }, [ state.web3.injected ])
 
   useEffect(() => {
     const retrieveProposal = async() => {
@@ -178,13 +215,13 @@ export default function Proposal(){
                 <div className={classes.option}>
                   <div className={classes.vote}> AGAINST </div>
                   <span className={classes.progress}>
-                    <Progress color='#ff005a' width={progress} value={metadata.for} /> <span> {forVotes}</span>
+                    <Progress color='#ff005a' width={progress} value={parseInt(metadata.for)} /> <span> {forVotes}</span>
                   </span>
                 </div>
                 <div className={classes.option}>
                   <div className={classes.vote}> FOR </div>
                   <span className={classes.progress}>
-                    <Progress color='#00e79a' width={progress} value={metadata.against} /> <span> {againstVotes}</span>
+                    <Progress color='#00e79a' width={progress} value={parseInt(metadata.against)} /> <span> {againstVotes}</span>
                   </span>
                 </div>
               </div>
@@ -204,7 +241,7 @@ export default function Proposal(){
                   </b>
                 </label>
                 <p> WEIGHT: {state.balances['NDX'].amount} NDX </p>
-                <p> IMPACT: <span> 0% </span> </p>
+                <p> IMPACT: <span> {weight}% </span> </p>
                 <ButtonPrimary variant='outlined' style={{ marginBottom: 25 }} onClick={vote}>
                   VOTE
                 </ButtonPrimary>
@@ -245,15 +282,16 @@ export default function Proposal(){
                 {metadata.votes.map((value) => {
                    let { id, voter, option, weight } = value
                    const color = option ? '#00e79a' : '#ff005a'
+                   const label = option ? 'FOR' : 'AGAINST'
 
                    return (
-                     <ListItem key={value.address} button>
+                     <ListItem key={value.address} button href='https://google.com'>
                        <ListItemAvatar>
                          <Blockie border='3px' width={35} id={voter} address={voter} />
                        </ListItemAvatar>
                         <ListItemText
                           primary={`${voter.substring(0, 6)}...${voter.substring(38, 64)}`}
-                          secondary={<b style={{ color }}>{option}</b>}
+                          secondary={<b style={{ color }}>{label}</b>}
                         />
                         <ListItemSecondaryAction />
                      </ListItem>

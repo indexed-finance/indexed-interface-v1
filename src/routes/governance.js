@@ -107,9 +107,11 @@ export default function Governance(){
     let contract = toContract(web3.injected, Ndx.abi, NDX)
 
     await contract.methods.delegate(address)
-    .send({ from: account }).on('confirmat', (c, r) =>
-      getStatus(address)
-    )
+    .send({ from: account }).on('confirmaton', async(c, r) => {
+      let isDelegated = await contract.methods.delegates(state.account).call()
+
+      getStatus(isDelegated)
+    })
   }
 
   const renderDelegation = () => {
