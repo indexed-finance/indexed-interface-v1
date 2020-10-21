@@ -30,7 +30,7 @@ const setStyle = (theme) => ({
   },
   legend: {
     position: 'absolute',
-    paddingLeft: '31em',
+    paddingLeft: '35%',
     marginTop: -18.75,
     '& ul': {
       padding: 0,

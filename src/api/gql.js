@@ -38,19 +38,25 @@ const proposalAndDistributionQuery = () => `
 
 const proposalQuery = id => `
   {
-    proposals(where: { id: ${id} }){
+    proposals(where: { id: "${id}" }){
       id
       for
       against
+      proposer
       expiry
       state
-      votes
-      description
       title
+      description
       signatures
       calldatas
       values
       targets
+      votes {
+        id
+        voter
+        option
+        weight
+      }
     }
   }
 `
@@ -222,7 +228,7 @@ export async function getMarketTrades(pairAddress) {
 }
 
 export async function getProposal(id) {
-  const { proposals } = await execRequest(
+  const { data: { proposals } } = await execRequest(
     proposalQuery(id),
     subgraph_url
   );

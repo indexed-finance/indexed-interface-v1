@@ -27,6 +27,7 @@ import { toContract } from '../lib/util/contracts'
 import style from '../assets/css/routes/proposal'
 import getStyles from '../assets/css'
 import { store } from '../state'
+import { getProposal } from '../api/gql'
 
 const DAO = '0x5220b03Cc2F5f8f38dC647636d71582a38365E72'
 
@@ -85,11 +86,13 @@ Cast your votes people, to agree or disagree is up to you.
 
 `
 
+const dummy = { title: null, description: null, votes: [], for: 0, against: 0, state: 0, action: null, expiry: 0, proposer: '0x0000000000000000000000000000000000000000', targets: [], calldatas: [], signatures: [] }
+
 export default function Proposal(){
   let { state } = useContext(store)
-  let { tx } = useParams()
+  let { id } = useParams()
 
-  const [ metadata, setMetadata ] = useState(state.proposals[tx])
+  const [ metadata, setMetadata ] = useState(dummy)
   const [ input, setInput ] = useState(null)
   const classes = useStyles()
 
@@ -101,7 +104,7 @@ export default function Proposal(){
     let { web3, account } = state
     let contract = toContract(web3.injected, GovernorAlpha.abi, DAO)
 
-    await contract.methods.castVote(tx, input).send({ from: account })
+    await contract.methods.castVote(id, input).send({ from: account })
   }
 
   function Blockie({ address, id, width, border }) {
@@ -128,7 +131,19 @@ export default function Proposal(){
     )
   }
 
+  useEffect(() => {
+    const retrieveProposal = async() => {
+      let proposal = await getProposal(id)
+      setMetadata(proposal)
+    }
+    retrieveProposal()
+  }, [])
+
   let { margin, width, progress, radius, percent } = style.getFormatting(state)
+
+  let forVotes = (parseFloat(metadata.for)/Math.pow(10, 18)).toLocaleString()
+  let againstVotes = (parseFloat(metadata.against)/Math.pow(10, 18)).toLocaleString()
+  let stateLabel ='active'
 
   return (
     <Fragment>
@@ -138,38 +153,38 @@ export default function Proposal(){
             <Canvas native={state.native}>
               <div className={classes.proposal}>
                 <div className={classes.header}>
-                  <Blockie border='5px' width={radius} id='blockie' address={metadata.author} />
+                  <Blockie border='5px' width={radius} id='blockie' address={metadata.proposer} />
                   <div className={classes.title} style={{ width }}>
                     <div className={classes.lozenge}>
-                      <div id={metadata.phase}>
-                        <Lozenge isBold> {metadata.phase} </Lozenge>
+                      <div id={stateLabel}>
+                        <Lozenge isBold> {stateLabel} </Lozenge>
                       </div>
                     </div>
-                    <h3> {metadata.title}</h3>
+                    <h3> {metadata.description}</h3>
                     {!state.native && (
                       <div className={classes.reciept}>
-                        <span>{metadata.author.substring(0, 6)}...{metadata.author.substring(38, 64)} • </span>  {metadata.time}
+                        <span>{metadata.proposer.substring(0, 6)}...{metadata.proposer.substring(38, 64)} • </span>  {metadata.expiry}
                       </div>
                     )}
                   </div>
                   {state.native && (
-                    <p>{metadata.author.substring(0, 4)}...{metadata.author.substring(38, 64)} </p>
+                    <p>{metadata.proposer.substring(0, 4)}...{metadata.proposer.substring(38, 64)} </p>
                   )}
                   {state.native && (
-                    <p>{metadata.time} </p>
+                    <p>{metadata.expiry} </p>
                   )}
               </div>
               <div className={classes.results}>
                 <div className={classes.option}>
                   <div className={classes.vote}> AGAINST </div>
                   <span className={classes.progress}>
-                    <Progress color='#ff005a' width={progress} value={metadata.no} /> <span> {metadata.against}</span>
+                    <Progress color='#ff005a' width={progress} value={metadata.for} /> <span> {forVotes}</span>
                   </span>
                 </div>
                 <div className={classes.option}>
                   <div className={classes.vote}> FOR </div>
                   <span className={classes.progress}>
-                    <Progress color='#00e79a' width={progress} value={metadata.yes} /> <span> {metadata.for}</span>
+                    <Progress color='#00e79a' width={progress} value={metadata.against} /> <span> {againstVotes}</span>
                   </span>
                 </div>
               </div>
@@ -204,21 +219,21 @@ export default function Proposal(){
             <div className={classes.body}>
               <div className={classes.metadata}>
                 <ul>
-                  {proposal.map((action, index) => (
+                  {metadata.targets.map((contract, i) => (
                     <Fragment>
-                      <span> {index}. </span>
+                      <span> {i}. </span>
                         <li>
-                          Call <ReactMarkdown source={" `" + action.function + "` "}/> in
-                          <ReactMarkdown source={" [" + action.contract + "] "}/>
+                          Call <ReactMarkdown source={" `" + metadata.signatures[i] + "` "}/> in
+                          <ReactMarkdown source={" [" + contract + "] "}/>
                           with parameters;
-                          <ReactMarkdown source={" `" + action.parameters.join(', ') + "` "}/>
+                          <ReactMarkdown source={" `" + metadata.calldatas[i] + "` "}/>
                         </li>
                     </Fragment>
                   ))}
                 </ul>
               </div>
               <div className={classes.markdown}>
-                <ReactMarkdown source={source} />
+                <ReactMarkdown source={metadata.description} />
               </div>
             </div>
           </Container>
@@ -227,18 +242,18 @@ export default function Proposal(){
           <Canvas native={state.native}>
             <div className={classes.log}>
               <List dense classes={classes.table}>
-                {votes.map((value) => {
-                   let { address, choice, weight } = value
-                   const color = choice == 'FOR' ? '#00e79a' : '#ff005a'
+                {metadata.votes.map((value) => {
+                   let { id, voter, option, weight } = value
+                   const color = option ? '#00e79a' : '#ff005a'
 
                    return (
                      <ListItem key={value.address} button>
                        <ListItemAvatar>
-                         <Blockie border='3px' width={35} id={address} address={address} />
+                         <Blockie border='3px' width={35} id={voter} address={voter} />
                        </ListItemAvatar>
                         <ListItemText
-                          primary={`${address.substring(0, 6)}...${address.substring(38, 64)}`}
-                          secondary={<b style={{ color }}>{value.choice}</b>}
+                          primary={`${voter.substring(0, 6)}...${voter.substring(38, 64)}`}
+                          secondary={<b style={{ color }}>{option}</b>}
                         />
                         <ListItemSecondaryAction />
                      </ListItem>

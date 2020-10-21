@@ -233,7 +233,7 @@ function Application(){
           <Main>
             <Suspense fallback={<Loader />}>
               <Switch>
-                <Route path='/proposal/:tx'>
+                <Route path='/proposal/:id'>
                   <Proposal />
                 </Route>
                 <Route path='/index/:name'>
