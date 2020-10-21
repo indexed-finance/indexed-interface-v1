@@ -1,6 +1,6 @@
 import { getIPFSFile } from './ipfs';
 
-const subgraph_url = 'https://api.thegraph.com/subgraphs/id/QmT4KR51p8BGUZX41M3o1vEmDJVNFFnXHRWheqGHgG18i9';
+const subgraph_url = 'https://api.thegraph.com/subgraphs/name/indexed-finance/indexed-v1';
 const uniswap_url = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2';
 const market_url = 'https://api.thegraph.com/subgraphs/name/samgos/uniswap-v2-rinkeby'
 const price_url = 'https://api.thegraph.com/subgraphs/name/graphprotocol/uniswap'
@@ -23,6 +23,7 @@ const proposalAndDistributionQuery = () => `
       id
       for
       against
+      description
       expiry
       state
     }
@@ -44,6 +45,8 @@ const proposalQuery = id => `
       expiry
       state
       votes
+      description
+      title
       signatures
       calldatas
       values
@@ -216,6 +219,15 @@ export async function getMarketTrades(pairAddress) {
     market_url
   );
   return swaps;
+}
+
+export async function getProposal(id) {
+  const { proposals } = await execRequest(
+    proposalQuery(id),
+    subgraph_url
+  );
+
+  return proposals[0]
 }
 
 export async function getProposals() {

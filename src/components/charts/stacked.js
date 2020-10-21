@@ -93,63 +93,36 @@ export default function Spline({ metadata, height }){
   const [ component, setComponent ] = useState(<Fragment />)
 
   const getConfig = (canvas) => {
+    const active = metadata.map(a => parseInt(a.active)/Math.pow(10, 18))
+    const inactive = metadata.map(i => parseInt(i.inactive)/Math.pow(10, 18))
+    const delegated = metadata.map(d => parseInt(d.delegated)/Math.pow(10, 18))
+    const dates = metadata.map(x => {
+      let date = new Date(parseInt(x.id * 86400000))
+
+      return `${date.getMonth()}/${date.getDay()}`
+    })
     const ctx = canvas.getContext("2d")
 
     return {
-      labels: ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY'],
+      labels: dates,
       datasets: [
         {
       	label: 'INACTIVE',
       	borderColor: '#666666',
       	backgroundColor: '#66FFFF',
-      	data: [
-            100,
-            50,
-            60,
-            50,
-            60,
-            40,
-            37.5,
-            30,
-            40,
-            35,
-            45,
-      		],
+      	data: inactive
       	},
         {
       		label: 'ACTIVE',
       		borderColor: '#666666',
       		backgroundColor: '#00e79a',
-      		data: [
-            0,
-            20,
-            40,
-            30,
-            30,
-            60,
-            60,
-            55,
-            62.5,
-            52.5,
-      		   ],
+      		data: active
       		},
           {
       			label: 'DELEGATED',
       			borderColor: '#666666',
       			backgroundColor: 'orange',
-      			data: [
-      						0,
-      						0,
-      						0,
-      						10,
-                  10,
-                  20,
-      						0,
-                  2.5,
-                  5,
-                  10,
-                  10,
-      					],
+      			data: delegated
       		  }
          ]
       }

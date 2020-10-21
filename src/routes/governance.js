@@ -87,6 +87,8 @@ const ListAvatar = styled(ListItemAvatar)({
   marginRight: 25
 })
 
+const dummy = { snapshots: [], active: 0, inactive: 0, delegated: 0}
+
 const useStyles = getStyles(style)
 
 
@@ -94,7 +96,7 @@ export default function Governance(){
   const [ proposals, setProposals ] = useState([])
   const [ phase, setPhase ] = useState(<span />)
   const [ status, setStatus ] = useState(null)
-  const [ chart, setChart ] = useState(<span/>)
+  const [ metadata, setMetadata ] = useState(dummy)
   const history = useHistory()
   const classes = useStyles()
 
@@ -215,8 +217,15 @@ export default function Governance(){
     const retrieveProposals = async() => {
       let { proposals, dailyDistributionSnapshots } = await getProposals()
 
-      console.log(proposals)
+      let length = dailyDistributionSnapshots.length - 1
+      let { active, inactive, delegated } = dailyDistributionSnapshots[length]
 
+      setMetadata({
+        snapshots: dailyDistributionSnapshots,
+        active: (parseInt(active)/Math.pow(10, 18)).toLocaleString(),
+        inactive: (parseInt(inactive)/Math.pow(10, 18)).toLocaleString(),
+        delegated: (parseInt(delegated)/Math.pow(10, 18)).toLocaleString()
+       })
       setProposals(proposals)
     }
 
@@ -249,13 +258,13 @@ export default function Governance(){
                 {!state.native && (
                   <div className={classes.legend}>
                     <ul>
-                      <li> 50,124.35 NDX<div className={classes.one}/> </li>
-                      <li> 15,433.07 NDX<div className={classes.two}/></li>
-                      <li> 680.44 NDX<div className={classes.three}/> </li>
+                      <li> {metadata.active} NDX<div className={classes.one}/> </li>
+                      <li> {metadata.inactive} NDX<div className={classes.two}/></li>
+                      <li> {metadata.delegated} NDX<div className={classes.three}/> </li>
                     </ul>
                   </div>
                 )}
-                <Stacked height={height} />
+                <Stacked metadata={metadata.snapshots} height={height} />
               </div>
             </Canvas>
           </Grid>
@@ -276,7 +285,7 @@ export default function Governance(){
 
                 return (
                   <Item key={p.id} button onClick={f}>
-                    <ListItemText primary={<label>{p.id}</label>}
+                    <ListItemText primary={<label>{p.description}</label>}
                       secondary={
                         <div id='active'>
                           <Lozenge isBold>
@@ -289,7 +298,7 @@ export default function Governance(){
                     <ListItemText
                       primary={
                         <div className={classes.progress}>
-                          <Progress width={200} color='#00e79a' value={455} /> <span> {forVotes} NDX </span>
+                          <Progress width={200} color='#00e79a' value={parseInt(p.against)} /> <span> {forVotes} NDX </span>
                         </div>
                       }
                       secondary={
