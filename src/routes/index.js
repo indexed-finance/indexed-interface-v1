@@ -23,7 +23,7 @@ import { store } from '../state'
 const WETH = '0x554dfe146305944e3d83ef802270b640a43eed44'
 
 const Loader = ({ color, height, width }) => (
-    <div style={{ paddingTop: '9.25%'}}>
+    <div style={{ position: 'absolute', paddingTop: '5.675%' }}>
     <ContentLoader
       speed={1}
       height={height}
@@ -35,6 +35,23 @@ const Loader = ({ color, height, width }) => (
     <path fill="#0099ff" fill-opacity="1" d="M0,64L10.4,80C20.9,96,42,128,63,144C83.5,160,104,160,125,160C146.1,160,167,160,188,186.7C208.7,213,230,267,250,266.7C271.3,267,292,213,313,208C333.9,203,355,245,376,240C396.5,235,417,181,438,170.7C459.1,160,480,192,501,186.7C521.7,181,543,139,563,122.7C584.3,107,605,117,626,117.3C647,117,668,107,689,133.3C709.6,160,730,224,751,245.3C772.2,267,793,245,814,224C834.8,203,856,181,877,165.3C897.4,149,918,139,939,149.3C960,160,981,192,1002,197.3C1022.6,203,1043,181,1064,192C1085.2,203,1106,245,1127,234.7C1147.8,224,1169,160,1190,117.3C1210.4,75,1231,53,1252,48C1273,43,1294,53,1315,69.3C1335.7,85,1357,107,1377,112C1398.3,117,1419,107,1430,101.3L1440,96L1440,320L1429.6,320C1419.1,320,1398,320,1377,320C1356.5,320,1336,320,1315,320C1293.9,320,1273,320,1252,320C1231.3,320,1210,320,1190,320C1168.7,320,1148,320,1127,320C1106.1,320,1085,320,1064,320C1043.5,320,1023,320,1002,320C980.9,320,960,320,939,320C918.3,320,897,320,877,320C855.7,320,835,320,814,320C793,320,772,320,751,320C730.4,320,710,320,689,320C667.8,320,647,320,626,320C605.2,320,584,320,563,320C542.6,320,522,320,501,320C480,320,459,320,438,320C417.4,320,397,320,376,320C354.8,320,334,320,313,320C292.2,320,271,320,250,320C229.6,320,209,320,188,320C167,320,146,320,125,320C104.3,320,83,320,63,320C41.7,320,21,320,10,320L0,320Z"></path>
   </ContentLoader>
   </div>
+)
+
+const TitleLoader = ({ color }) => (
+  <ContentLoader
+    speed={1}
+    width='70vw'
+    height={84}
+    viewBox="0 0 700 84"
+    backgroundColor={color}
+    foregroundColor='rgba(153, 153, 153, 0.5)'
+  >
+    <rect x="250" y="2" rx="3" ry="3" width="100" height="11" />
+    <rect x="10" y="2" rx="3" ry="3" width="225" height="11" />
+    <rect x="350" y="2" rx="3" ry="3" width="75" height="11" />
+    <rect x="500" y="2" rx="3" ry="3" width="150" height="11" />
+    <rect x="375" y="2" rx="3" ry="3" width="50" height="11" />
+  </ContentLoader>
 )
 
 const dummy = {
@@ -147,15 +164,24 @@ export default function Index(){
     <div className={classes.root}>
       <div className={classes.header}>
         <Grid container direction='row' alignItems='center' justify='space-between'>
-          <Grid item>
-            <h3 className={classes.title}> {metadata.name} [{metadata.symbol}]</h3>
-          </Grid>
-          <Grid item>
-            <h4 className={classes.price}> {metadata.price} <span className={classes.delta}>({metadata.delta})</span></h4>
-          </Grid>
-          <Grid item>
-            <span className={classes.alternative}>VOLUME: {metadata.marketcap}</span>
-          </Grid>
+          {state.request && (
+            <Fragment>
+              <Grid item>
+                <h3 className={classes.title}> {metadata.name} [{metadata.symbol}]</h3>
+              </Grid>
+              <Grid item>
+                <h4 className={classes.price}> {metadata.price} <span className={classes.delta}>({metadata.delta})</span></h4>
+              </Grid>
+              <Grid item>
+                <span className={classes.alternative}>VOLUME: {metadata.marketcap}</span>
+              </Grid>
+            </Fragment>
+          )}
+          {!state.request && (
+            <Grid item>
+              <TitleLoader color={state.background} />
+            </Grid>
+          )}
         </Grid>
       </div>
       <div className={classes.sidebar}>
@@ -174,8 +200,8 @@ export default function Index(){
         <ParentSize>
           {({ width, height }) => (
             <Fragment>
-              {state.request && metadata.history && (<Area data={metadata.history} width={width} height={height} /> )}
               {!state.request && !metadata.history && (<Loader width={width} height={height} color={state.background}/> )}
+              {state.request && metadata.history && (<Area data={metadata.history} width={width} height={height} /> )}
             </Fragment>
           )}
         </ParentSize>

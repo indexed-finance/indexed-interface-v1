@@ -48,9 +48,18 @@ const options = {
 
 export default function PieChart({ metadata, height, ready }){
   const theme = useTheme()
+  let colors = [ '#009999', '#00CCCC','#33FFFF', '#99FFFF', `${theme.palette.primary.main}`]
+  let labels = metadata.assets.map(value => value.symbol)
+  let data =  metadata.assets.map(value => value.weight)
+
+  if(metadata.assets.length == 0){
+    data = [ 100 ]
+    labels = [ 'NA' ]
+    colors = [ 'orange' ]
+  }
 
   const chartConfig = metadata => ({
-    labels: metadata.assets.map(value => value.symbol),
+    labels: labels,
   	datasets: [{
       datalabels: {
         color: function(ctx) {
@@ -71,21 +80,9 @@ export default function PieChart({ metadata, height, ready }){
       },
       borderColor: '#666666',
       borderWidth: 3,
-  		data: metadata.assets.map(value => value.weight),
-  		backgroundColor: [
-  		'#009999',
-  		'#00CCCC',
-  		'#33FFFF',
-      '#99FFFF',
-      `${theme.palette.primary.main}`
-  		],
-  		hoverBackgroundColor: [
-      '#009999',
-    	'#00CCCC',
-    	'#33FFFF',
-      '#99FFFF',
-      `${theme.palette.primary.main}`
-  		]
+  		data: data,
+  		backgroundColor: colors,
+  		hoverBackgroundColor: colors
   	}]
   })
 

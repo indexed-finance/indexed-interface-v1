@@ -17,7 +17,6 @@ import Lozenge from '@atlaskit/lozenge'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import { useHistory } from "react-router-dom";
 
-
 import Ndx from '../assets/constants/abi/Ndx.json'
 import ButtonPrimary from '../components/buttons/primary'
 import Container from '../components/container'
@@ -198,11 +197,8 @@ export default function Governance(){
           undefined, { minimumFractionDigits: 2 }
         )
 
-        console.log(isDelegated)
-
         if(isDelegated != NA) setPhase(<Delegate />)
         else setPhase(<Activate trigger={renderDelegation}/>)
-
 
         getStatus(isDelegated)
         dispatch({ type: 'BALANCE',

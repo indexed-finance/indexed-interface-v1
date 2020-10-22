@@ -109,17 +109,22 @@ export default function StickyHeadTable({ state, market, triggerMarket }) {
           </TableHead>
           <TableBody>
             {state.request && Object.values(state.indexes).map((row, index) => {
-              let backgroundColor = row.active ? 'inherit' : 'rgba(255, 165, 0, 0.25)'
+              let backgroundColor = row.active ? 'inherit' : 'rgba(255, 165, 0, 0.6)'
 
               return (
                 <Row selected={market == row.symbol} style={{ backgroundColor }} onClick={() => triggerMarket(row.symbol)} hover tabIndex={-1} key={row.code}>
                   {columns.map((column) => {
                     const value = row[column.id];
-                    return (
+
+                    if(!row.active && (column.id != 'name' && column.id != 'symbol')) {
+                      return <TableCell key={column.id} align={column.align} />
+                    } else {
+                      return (
                       <TableCell key={column.id} align={column.align}>
                         {column.format && typeof value === 'number' ? column.format(value) : value}
                       </TableCell>
-                    );
+                      )
+                    }
                   })}
                 </Row>
               );
