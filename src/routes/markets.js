@@ -138,10 +138,10 @@ export default function Markets(){
                       {market.address.substring(0, 6)}...{market.address.substring(38, 64)}
                     </span>
                   </li>
-                  <li>SUPPLY: <span>{market.supply}</span> </li>
-                  <li>OUTFLOW: <span></span> </li>
-                  <li>INFLOW: <span></span></li>
+                  <li>SUPPLY: <span>{market.supply} {market.symbol}</span> </li>
                   <li>TVL: <span>{market.marketcap}</span></li>
+                  <li>&nbsp;<span></span> </li>
+                  <li>&nbsp;<span></span></li>
                   <Link to={`index/${market.symbol.toLowerCase()}`}>
                     <Trigger> EXPAND </Trigger>
                   </Link>

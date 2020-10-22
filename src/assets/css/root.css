@@ -88,7 +88,7 @@ input[type=number] {
 }
 
 .MuiTableRow-root.Mui-selected {
-  background-color: rgba(102, 255, 255, 0.1) !important;
+  background-color: rgba(102, 255, 255, 0.25) !important;
 }
 
 #passed span {

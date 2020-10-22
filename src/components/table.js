@@ -14,7 +14,8 @@ const Row = styled(TableRow)({
   border: '3px solid #666666',
   cursor: 'pointer',
   '& .Mui-selected': {
-    backgroundColor: '#66FFFF !important'
+    backgroundColor: 'rgba(102,	255, 255) !important',
+    backgroundOpacity: 1
   }
 })
 
@@ -108,9 +109,10 @@ export default function StickyHeadTable({ state, market, triggerMarket }) {
           </TableHead>
           <TableBody>
             {state.request && Object.values(state.indexes).map((row, index) => {
+              let backgroundColor = row.active ? 'inherit' : 'rgba(255, 165, 0, 0.25)'
 
               return (
-                <Row selected={market == row.symbol} onClick={() => triggerMarket(row.symbol)} hover tabIndex={-1} key={row.code}>
+                <Row selected={market == row.symbol} style={{ backgroundColor }} onClick={() => triggerMarket(row.symbol)} hover tabIndex={-1} key={row.code}>
                   {columns.map((column) => {
                     const value = row[column.id];
                     return (

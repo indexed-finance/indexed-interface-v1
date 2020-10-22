@@ -177,7 +177,8 @@ const pairQuery = (pairAddress) => `
 `
 
 export async function getTokenCategories() {
-  const { data: { categories }} = await execRequest(categoriesQuery());
+  let { data: { categories } } = await execRequest(categoriesQuery());
+
     for (let category of categories) {
     const { name, symbol, description } = await getIPFSFile(category.metadataHash);
     Object.assign(category, { name, symbol, description });
@@ -186,7 +187,7 @@ export async function getTokenCategories() {
 }
 
 export async function getIndexPool(address) {
-  const { data: { indexPools } } = await execRequest(poolQuery(address));
+  let { data: { indexPools } } = await execRequest(poolQuery(address));
   return indexPools;
 }
 

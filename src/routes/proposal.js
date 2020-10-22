@@ -35,59 +35,6 @@ const NDX = '0xe366577a6712591c2e6f76fdcb96a99ac30a74c3'
 
 const useStyles = getStyles(style)
 
-const proposal = [
-  { function: 'addCategory()', contract: 'PoolController', parameters: ['GOVERNANCE', 'GOV'] },
-  { function: 'deployIndex()', contract: 'PoolController', parameters: ['GOVERNANCE INDEX 3', 'GOVI3', '100'] },
-  { function: 'startLiquidityOffering()', contract: 'BPool', parameters: ['GOVI3', '0x455543'] }
-]
-
-const votes = [
-  { address: '0xd0e744efcb37f1604124a809cd539d311974d1fd', choice: 'FOR', weight: '100 NDX' },
-  { address: '0x989ce64cadfe60c433537790159ebeffc6490b5b', choice: 'FOR', weight: '503 NDX' },
-  { address: '0x5f15b597e1117d804a7c0e1a247ddf93599c088e', choice: 'FOR', weight: '12 NDX' },
-  { address: '0xf25d276e73201f3564a93a3f98c9684984452f44', choice: 'AGAINST', weight: '5 NDX' },
-  { address: '0xc521047cc8a7335ea4f2062f0d02f7e6efcc8bdb', choice: 'FOR', weight: '34 NDX' },
-  { address: '0x097310d37f2ee805204861ed7449fee50366bee5', choice: 'AGAINST', weight: '750 NDX' },
-]
-
-const source = `
-Given the recent traction of governance tokens in the space, it is a clear primer
-to decentralisation for any modern-day crypto protocol. The ability to give users
-the right to delegate their perspectives is a powerful tool to be reckoned with,
-there is clear evidence in this when we look to notorious decentralized applications
-like [Uniswap](https://uniswap.exchange) (UNI), [Compound](https://compound.finance)
-(COMP) and [Balancer](https://Balancer.exchange) (BAL), with regards to their recent
-pushes of democratization through allocating votes as tokenised goods.
-
-> Governance tokens combined marketcaps total to $5,300,000,000 as of typing
-
-I propose that we make this niche of the crypto asset class, into it's own incubated
-indexes so that, individuals can proactively invest (and potentially participate?) in
-the leading forms of distributed governance in the market today.
-
-~~~
-NAME: GOVERNANCE
-SYMBOL: GOV
-~~~
-
-With this I also propose that, that a liquidity offering is held to bootstrap the first
-fund within this category, I suggest the initial assets and weights should be aligned such
-as so:
-
-~~~
-NAME: GOVERNANCE INDEX 3
-SYMBOL: GOVI3
-SIZE: 3
-
-COMP: 30%
-UNI: 50%
-BAL: 20%
-~~~
-
-Cast your votes people, to agree or disagree is up to you.
-
-`
-
 const dummy = { title: null, description: null, votes: [], for: 0, against: 0, state: 0, action: null, expiry: 0, proposer: '0x0000000000000000000000000000000000000000', targets: [], calldatas: [], signatures: [] }
 
 export default function Proposal(){

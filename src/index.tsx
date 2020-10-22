@@ -94,6 +94,8 @@ function Application(){
   const getTokenMetadata = async (id, array) => {
     let pool = await getIndexPool(id)
 
+    console.log(pool, id)
+
     for(let token in pool[0].tokens) {
      let asset = pool[0].tokens[token]
      let contract = new state.web3.rinkeby.eth.Contract(IERC20.abi, asset.token.id)

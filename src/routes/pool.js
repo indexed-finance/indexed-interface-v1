@@ -252,7 +252,7 @@ export default function Pools(){
      const getActiveCredit = async() => {
        let { account, web3 } = state
 
-       if(web3.injected){
+       if(web3.injected && instance){
          let credit = await instance.methods.getCreditOf(account).call()
          credit = (parseFloat(credit)/Math.pow(10, 18)).toFixed(2)
 

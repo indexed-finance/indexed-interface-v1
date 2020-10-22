@@ -198,6 +198,8 @@ export default function Governance(){
           undefined, { minimumFractionDigits: 2 }
         )
 
+        console.log(isDelegated)
+
         if(isDelegated != NA) setPhase(<Delegate />)
         else setPhase(<Activate trigger={renderDelegation}/>)
 
@@ -254,8 +256,8 @@ export default function Governance(){
             <Canvas native={state.native}>
               <div className={classes.chart}>
                 <div className={classes.stats}>
-                  <h3> TOTAL VOTERS: 384</h3>
-                  <h4> SHARE VALUE: $250.34</h4>
+                  <h3> TOTAL VOTERS: 4</h3>
+                  <h4> SHARE VALUE: $0.00</h4>
                 </div>
                 {!state.native && (
                   <div className={classes.legend}>
