@@ -302,7 +302,7 @@ export default function InteractiveList({ market, metadata }) {
     }
   }, [ metadata ])
 
-  let width = !state.native ? '417.5px' : '100vw'
+  let width = !state.native ? '400px' : '100vw'
 
   return (
     <Grid container direction='column' alignItems='center' justify='space-around'>

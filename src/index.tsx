@@ -26,6 +26,7 @@ const Propose = lazy(() => import('./routes/propose'))
 const Markets = lazy(() => import('./routes/markets'))
 const Index = lazy(() => import('./routes/index'))
 const Pool = lazy(() => import('./routes/pool'))
+const Stake = lazy(() => import('./routes/stake'))
 const Root = lazy(() => import('./routes/root'))
 const Error404 = lazy(() => import('./routes/404'))
 
@@ -247,6 +248,9 @@ function Application(){
                 </Route>
                 <Route path='/categories'>
                   <Categories />
+                </Route>
+                <Route path='/stake'>
+                  <Stake />
                 </Route>
                 <Route path='/markets'>
                   <Markets />

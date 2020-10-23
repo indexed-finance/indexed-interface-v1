@@ -3,12 +3,16 @@ import React from 'react'
 import { styled } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 
-export default function Canvas({ native, children }){
+export default function Canvas({ native, children, color }){
 
   let margin = native ? '2em 1.5em .5em 1.5em' : '3em 3em .5em 3em'
 
+  if(native == undefined) margin = '1.5em 0em'
+
+  if(!color) color = '#666666'
+
   const Wrapper = styled(Paper)({
-    border: '3px solid #666666',
+    border: `3px solid ${color}`,
     borderRadius: 10,
     overflow: 'auto',
     margin
