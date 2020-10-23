@@ -114,7 +114,7 @@ export default function VerticalTabs({ data }) {
         let trades = await getMarketTrades(pair.options.address)
         let history = []
 
-        console.log(trades)
+        console.log(trades, data.address, pair.options.address)
 
         for(let order in trades){
           let {

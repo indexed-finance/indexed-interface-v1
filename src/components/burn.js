@@ -208,16 +208,18 @@ export default function InteractiveList({ market, metadata }) {
 
   function Single({ data }) {
     return(
-      <OutputInput label="RECIEVE" variant='outlined'
-        value={data.amount}
-        helperText={<o className={classes.helper} onClick={handleBalance}>
-          BALANCE: {balances.output}
-        </o>}
-        InputProps={{
-          endAdornment: <Adornment market={data.symbol}/>,
-          inputComponent: NumberFormat
-        }}
-      />
+      <div className={classes.single}>
+        <OutputInput label="RECIEVE" variant='outlined'
+          value={data.amount}
+          helperText={<o className={classes.helper} onClick={handleBalance}>
+            BALANCE: {balances.output}
+          </o>}
+          InputProps={{
+            endAdornment: <Adornment market={data.symbol}/>,
+            inputComponent: NumberFormat
+          }}
+        />
+      </div>
     )
   }
 

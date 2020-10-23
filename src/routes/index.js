@@ -40,17 +40,17 @@ const Loader = ({ color, height, width }) => (
 const TitleLoader = ({ color }) => (
   <ContentLoader
     speed={1}
-    width='70vw'
-    height={84}
-    viewBox="0 0 700 84"
+    width='925'
+    height={50}
+    viewBox="0 0 925 50"
     backgroundColor={color}
     foregroundColor='rgba(153, 153, 153, 0.5)'
   >
-    <rect x="250" y="2" rx="3" ry="3" width="100" height="11" />
-    <rect x="10" y="2" rx="3" ry="3" width="225" height="11" />
-    <rect x="350" y="2" rx="3" ry="3" width="75" height="11" />
-    <rect x="500" y="2" rx="3" ry="3" width="150" height="11" />
-    <rect x="375" y="2" rx="3" ry="3" width="50" height="11" />
+    <rect x="240" y="15" rx="3" ry="3" width="75" height="22" />
+    <rect x="0" y="15" rx="3" ry="3" width="225" height="22" />
+    <rect x="425" y="15" rx="3" ry="3" width="125" height="22" />
+    <rect x="725" y="15" rx="3" ry="3" width="150" height="22" />
+    <rect x="565" y="15" rx="3" ry="3" width="50" height="22" />
   </ContentLoader>
 )
 

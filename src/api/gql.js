@@ -220,7 +220,6 @@ export async function getMarketMetadata(pairAddress) {
 }
 
 export async function getMarketTrades(pairAddress) {
-  console.log(pairAddress.toLowerCase())
   const { data: { swaps } } = await execRequest(
     pairQuery(pairAddress.toLowerCase()),
     market_url

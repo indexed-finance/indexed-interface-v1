@@ -37,16 +37,33 @@ export default function Trade({ market, metadata }) {
 
   let { dispatch, state } = useContext(store)
 
-  const handleChange = (event) => {
+  const handleChange = async(event) => {
     let { name, value } = event.target
 
-    if(name == 'input') setRate(value)
+    if(name == 'input') await setRate(value)
   }
 
-  const setRate = (entry) => {
-    setInput({ ...input, amount: entry })
-    let amount = entry * prices.input
-    setOutput({ ...output, amount })
+  const setRate = async(entry) => {
+    let { web3 } = state
+
+    if(!isNaN(parseFloat(entry))) {
+      let amount = 0
+
+      if(web3.injected){
+        let i = decToWeiHex(web3.injected, parseFloat(entry))
+        let o = await getAmountOut(i)
+        amount = parseFloat(o[1])/Math.pow(10, 18)
+      } else {
+        amount = entry * prices.input
+      }
+
+      setInput({ ...input, amount: entry })
+      setOutput({ ...output, amount })
+    }
+  }
+
+  const getAmountOut = async(i) => {
+    return await contracts.router.methods.getAmountsOut(i, [ input.address, output.address]).call()
   }
 
   const getBalance = async(address) => {
@@ -69,6 +86,10 @@ export default function Trade({ market, metadata }) {
 
     setPrices({ input: prices.output, output: prices.input })
     setContracts({ ...contracts, token })
+    setBalances({
+      output: balances.input,
+      input: balances.output
+    })
     setInput({ ...output })
     setOutput({ ...input })
   }
@@ -77,18 +98,45 @@ export default function Trade({ market, metadata }) {
     let { web3, indexes } = state
     let { eth } = web3.injected
 
-    let recentBlock = await eth.getBlock('latest')
+    let block = await eth.getBlock('latest')
     let amount0 = decToWeiHex(web3.injected, input.amount)
     let amount1 = decToWeiHex(web3.injected, output.amount)
 
-    await contracts.router.methods.swapTokensForExactTokens(
-      amount1,
-      amount0,
-      [ output.address, input.address ],
+    if(input.address == WETH) await swapEthForTokens(amount0, amount1, block)
+    else await swapTokensForEth(amount0, amount1, block)
+  }
+
+  const swapTokensForEth = async(exactTokens, minETH, recentBlock) => {
+    await contracts.router.methods.swapExactTokensForETH(
+      exactTokens,
+      minETH,
+      [ input.address, output.address ],
       state.account,
       recentBlock.timestamp + 3600
     ).send({
       from: state.account
+    }).on('confirmation', async(conf, reciept) => {
+       if(conf > 2) {
+         let inputBalance = await getBalance(input.address)
+         let outputBalance = await getBalance(output.address)
+
+         setBalances({
+           output: outputBalance,
+           input: inputBalance
+         })
+       }
+    })
+  }
+
+  const swapEthForTokens = async(minETH, exactTokens, recentBlock) => {
+    await contracts.router.methods.swapETHForExactTokens(
+      exactTokens,
+      [ input.address, output.address ],
+      state.account,
+      recentBlock.timestamp + 3600
+    ).send({
+      from: state.account,
+      value: minETH
     }).on('confirmation', async(conf, reciept) => {
        if(conf > 2) {
          let inputBalance = await getBalance(input.address)
@@ -140,10 +188,10 @@ export default function Trade({ market, metadata }) {
     return parseFloat(amount/Math.pow(10, 18)).toFixed(2)
   }
 
-  const handleBalance  = () => {
+  const handleBalance  = async() => {
     let { amount } = state.balances[input.market]
 
-    setRate(amount)
+    await setRate(amount)
   }
 
   useEffect(() => {
@@ -157,8 +205,6 @@ export default function Trade({ market, metadata }) {
         let pair = await getPair(web3.rinkeby, address)
         let token = toContract(web3.rinkeby, IERC20.abi, address)
         let pricing = await getMarketMetadata(pair.options.address)
-        let outputBalance = await getBalance(address)
-        let inputBalance = await getBalance(WETH)
 
         setOutput({ ...output, address: indexes[market].address })
         setPrices({
@@ -166,10 +212,6 @@ export default function Trade({ market, metadata }) {
           output: parseFloat(pricing.token1Price)
         })
         setContracts({ pair, token, router })
-        setBalances({
-          output: outputBalance,
-          input: inputBalance
-        })
       }
     }
     getPairMetadata()
@@ -201,9 +243,9 @@ export default function Trade({ market, metadata }) {
       if(contracts.router.options != undefined
         && state.web3.injected != false){
         let allowance = await getAllowance()
-        let { amount } = input
+        let { amount, address } = input
 
-        if(allowance < parseFloat(amount)){
+        if(allowance < parseFloat(amount) && address != WETH){
           setExecution({
             f: approveTokens, label: 'APPROVE'
           })

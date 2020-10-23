@@ -16,6 +16,10 @@ const setStyle = (theme) => ({
     paddingTop: 17.5,
     fontSize: 12
   },
+  single: {
+    paddingTop: 20,
+    paddingLeft: 75
+  },
   divider: {
     borderTop: '#666666 solid 1px',
     borderBottom: '#666666 solid 1px',
