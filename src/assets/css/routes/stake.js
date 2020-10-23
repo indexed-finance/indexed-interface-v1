@@ -2,7 +2,10 @@ const setStyle = (theme) => ({
   header: {
     '& p': {
       '& a': {
-        color: 'orange !important'
+        color: 'orange !important',
+        '&:hover': {
+          color: '#00e79a !important'
+        }
       }
     }
   },
@@ -15,9 +18,11 @@ const setStyle = (theme) => ({
     marginRight: 25
   },
   information: {
-    '& h2': {
+    width: '35em',
+    '& h3': {
       marginTop: 0,
-      marginBottom: 0
+      marginBottom: 0,
+      paddingRight: 0
     },
     '& h5': {
       marginTop: 10
