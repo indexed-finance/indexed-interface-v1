@@ -283,6 +283,8 @@ export default function Governance(){
                   stateLabel = 'rejected'
                 }
 
+                let values = { for: parseInt(p.for), against: parseInt(p.against) }
+
                 return (
                   <Item key={p.id} button onClick={f}>
                     <ListItemText primary={<label>{p.description}</label>}
@@ -298,12 +300,12 @@ export default function Governance(){
                     <ListItemText
                       primary={
                         <div className={classes.progress}>
-                          <Progress width={200} color='#00e79a' value={parseInt(p.against)} /> <span> {forVotes} NDX </span>
+                          <Progress width={200} color='#00e79a' values={values} option='for'/> <span> {forVotes} NDX </span>
                         </div>
                       }
                       secondary={
                         <div className={classes.progress}>
-                          <Progress width={200} color='#ff005a' value={parseInt(p.against)} /> <span> {againstVotes} NDX</span>
+                          <Progress width={200} color='#ff005a' values={values} option='against' /> <span> {againstVotes} NDX</span>
                         </div>
                       }
                     />

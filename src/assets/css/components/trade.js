@@ -22,7 +22,7 @@ const setStyle = (theme) => ({
   },
   market: {
     width: '100%',
-    color: '#666666',
+    color: theme.palette.secondary.main,
     borderTop: '#666666 solid 2px',
     borderBottom: '#666666 solid 2px',
     '& p': {
@@ -34,7 +34,7 @@ const setStyle = (theme) => ({
       fontFamily: "San Francisco Bold",
       fontWeight: 500,
       marginRight: 50,
-      color: '#333333'
+      color: '#999999'
     }
   },
   helper: {

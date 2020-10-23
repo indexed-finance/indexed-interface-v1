@@ -4,6 +4,9 @@ import { withStyles } from '@material-ui/core/styles'
 import LinearProgress from '@material-ui/core/LinearProgress'
 
 export default function Progress(props){
+  let opposing = props.option == 'for' ? 'against' : 'for'
+  let value = props.values[props.option]/(props.values[props.option] + props.values[opposing])
+
   const Restyled = withStyles((theme) => ({
     root: {
       height: 15,
@@ -18,17 +21,18 @@ export default function Progress(props){
       borderRadius: 5,
       backgroundColor: props.color,
     },
-  }))(({ classes, ...props }) => {
+  }))(({ classes, props }) => {
     return (
       <LinearProgress
        variant="determinate"
         classes={{
           ...classes
-      }}
+        }}
       {...props}
+      value={value * 100}
       />
     )
   })
 
-  return <Restyled  />
+  return <Restyled />
 }

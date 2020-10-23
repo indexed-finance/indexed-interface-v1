@@ -55,7 +55,6 @@ const setStyle = (theme) => ({
       fontFamily: "San Francisco Bold",
       fontWeight: 500,
       marginRight: 50,
-      color: '#333333'
     }
   },
   nav: {

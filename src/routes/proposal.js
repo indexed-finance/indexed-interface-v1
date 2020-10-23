@@ -129,6 +129,9 @@ export default function Proposal(){
   let againstVotes = (parseFloat(metadata.against)/Math.pow(10, 18)).toLocaleString()
   let stateLabel ='active'
 
+
+  let values = { for: parseInt(metadata.for), against: parseInt(metadata.against) }
+
   return (
     <Fragment>
       <Grid container direction='column' alignItems='flex-start' justify='space-evenly'>
@@ -162,13 +165,13 @@ export default function Proposal(){
                 <div className={classes.option}>
                   <div className={classes.vote}> AGAINST </div>
                   <span className={classes.progress}>
-                    <Progress color='#ff005a' width={progress} value={parseInt(metadata.for)} /> <span> {forVotes}</span>
+                    <Progress color='#00e79a' width={progress} values={values} option='for' /> <span> {forVotes}</span>
                   </span>
                 </div>
                 <div className={classes.option}>
                   <div className={classes.vote}> FOR </div>
                   <span className={classes.progress}>
-                    <Progress color='#00e79a' width={progress} value={parseInt(metadata.against)} /> <span> {againstVotes}</span>
+                    <Progress color='#ff005a' width={progress} values={values} option='against' /> <span> {againstVotes}</span>
                   </span>
                 </div>
               </div>
