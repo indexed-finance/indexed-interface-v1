@@ -19,7 +19,7 @@ export default function Container({ padding, children, margin, title, percentage
       marginLeft: sideMargin,
       background: theme.palette.primary.main,
       padding: '0em 1em 0em 1em',
-      width: percentage,
+      width: 'fit-content',
       fontFamily: 'San Francisco Bold',
       letterSpacing: 3,
     }

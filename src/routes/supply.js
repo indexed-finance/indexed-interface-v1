@@ -18,33 +18,82 @@ import { store } from '../state'
 
 const useStyles = getStyles(style)
 
+const i = {
+  'DFI5R': [ 'UNI', 'WBTC', 'COMP', 'LINK'],
+  'UNIV2-ETH-DFI5R': [ 'UNI', 'WBTC', 'COMP', 'LINK' ],
+  'GOVI6': [ 'BAL', 'YFI', 'CRV', 'UNI'],
+  'UNIV2-ETH-GOVI6': [ 'UNI', 'YFI', 'CRV', 'BAL']
+}
+
 export default function Supply() {
   let { state, dispatch } = useContext(store)
   let { asset } = useParams()
   let classes = useStyles()
 
+  let ticker = asset.toUpperCase()
+  let width = ticker.includes('UNIV2') ? 50 : 30
+  let marginRight = ticker.includes('UNIV2') ? 7.5 : 0
+  let marginBottom = ticker.includes('UNIV2') ? 0 : 10
+
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
+    <Grid item md={6}>
+      <div className={classes.top}>
+        <Canvas>
+          <div className={classes.rewards}>
+            <p> ACTIVE CLAIM </p>
+            <div>
+              <h2> 1,235.05334 NDX </h2>
+              <ButtonPrimary variant='outlined' margin={{ marginTop: -50 }}>
+                CLAIM
+              </ButtonPrimary>
+            </div>
+            <ul style={{ listStyle: 'none ', padding: 0, margin: 0 }}>
+              <li> DEPOSIT: 5,352 DFI5r</li>
+              <li> RATE: 54.3 NDX/DAY</li>
+            </ul>
+          </div>
+        </Canvas>
+      </div>
+    </Grid>
       <Grid item md={6}>
-        <Container margin='5em 0em 0em 0em' padding="1em 2em" percentage='50%' title={asset.toUpperCase()}>
+        <Container margin='1em 0em 1em 0em' padding="1em 2em" title={ticker}>
           <div className={classes.modal}>
-            <Grid container direction='column' alignItems='center' justify='center'>
+            <Grid container direction='row' alignItems='center' justify='space-evenly'>
               <Grid item>
-              <Input label="AMOUNT" variant='outlined'
-                helperText={<o> BALANCE: 0 </o>}
-                name="input"
-                InputProps={{
-                  inputComponent: NumberFormat
-                }}
-              />
+                <img src={tokenMetadata[i[ticker][0]].image} style={{ marginRight, width, marginBottom }} />
+                <img src={tokenMetadata[i[ticker][1]].image} style={{marginBottom: 25, width: 30 }} />
+                <img src={tokenMetadata[i[ticker][2]].image} style={{ marginLeft: -25, width: 30 }} />
+                <img src={tokenMetadata[i[ticker][3]].image} style={{ marginBottom: 10, width: 30 }} />
+              </Grid>
+              <Grid item>
+                <Input label="AMOUNT" variant='outlined'
+                  helperText={<o> BALANCE: 0 </o>}
+                  name="input"
+                  InputProps={{
+                    inputComponent: NumberFormat
+                  }}
+                />
+              </Grid>
             </Grid>
-            </Grid>
+            <ul style={{ listStyle: 'none ', display: 'inline-block '}}>
+              <li> EST REWARD: 0 NDX/DAY </li>
+              <li> POOL WEIGHT: 0% </li>
+            </ul>
+            <ButtonPrimary variant='outlined' margin={{ marginTop: 15, marginRight: 25 }}>
+              STAKE
+            </ButtonPrimary>
           </div>
         </Container>
       </Grid>
       <Grid item md={6}>
         <Canvas>
-          TEST
+          <div className={classes.rewards}>
+          	<ul style={{ listStyle: 'none ', padding: 0, margin: 0 }}>
+              <li style={{ marginBottom: 15 }}> POOL DEPOSITS: <span style={{ float: 'right' }}> $12,320,411.34 </span> </li>
+              <li> POOL RATE: <span style={{ float: 'right' }}> 3,540 NDX/DAY </span> </li>
+            </ul>
+          </div>
         </Canvas>
       </Grid>
     </Grid>

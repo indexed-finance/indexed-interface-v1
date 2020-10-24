@@ -7,6 +7,9 @@ const setStyle = (theme) => ({
           color: '#00e79a !important'
         }
       }
+    },
+    '& h3': {
+      marginLeft: 25
     }
   },
   pool: {
