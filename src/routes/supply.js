@@ -4,6 +4,7 @@ import Grid from '@material-ui/core/Grid'
 import { usePalette } from 'react-palette'
 import { useParams } from  'react-router-dom'
 
+import StakingRewardsFactory from '../assets/constants/abi/StakingRewardsFactory.json'
 import IStakingRewards from '../assets/constants/abi/IStakingRewards.json'
 import IERC20 from '../assets/constants/abi/IERC20.json'
 
@@ -15,23 +16,37 @@ import Input from '../components/inputs/input'
 import NumberFormat from '../utils/format'
 
 import { tokenMetadata } from '../assets/constants/parameters'
+import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
 const useStyles = getStyles(style)
 
+const FACTORY = '0x48ea38bcd50601594191b9e4edda7490d7a9eb16'
+
 const i = {
   'DFI5R': [ 'UNI', 'WBTC', 'COMP', 'LINK'],
-  'UNIV2-ETH-DFI5R': [ 'UNI', 'WBTC', 'COMP', 'LINK' ],
+  'UNIV2:ETH-DFI5R': [ 'UNI', 'WBTC', 'COMP', 'LINK' ],
   'GOVI6': [ 'BAL', 'YFI', 'CRV', 'UNI'],
-  'UNIV2-ETH-GOVI6': [ 'UNI', 'YFI', 'CRV', 'BAL']
+  'UNIV2:ETH-GOVI6': [ 'UNI', 'YFI', 'CRV', 'BAL']
 }
 
 export default function Supply() {
+  const [ time, setTime ] = useState(0)
   const [ input, setInput ] = useState(null)
   let { state, dispatch } = useContext(store)
   let { asset } = useParams()
   let classes = useStyles()
+
+  const initialisePool = async(poolAddress) => {
+    let { web3, account } = state
+    let contract = toContract(web3.injected, StakingRewardsFactory.abi, FACTORY)
+
+    await contract.methods.notifyRewardAmount(poolAddress)
+    .send({
+      from: account
+    })
+  }
 
   const handleInput = (event) => {
     setInput(event.target.value)
@@ -41,6 +56,12 @@ export default function Supply() {
   let width = ticker.includes('UNIV2') ? 50 : 30
   let marginRight = ticker.includes('UNIV2') ? 7.5 : 0
   let marginBottom = ticker.includes('UNIV2') ? 0 : 10
+
+  useEffect(() => {
+    let time = parseInt(Date.now()/1000)
+
+    setTime(time)
+  }, [])
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>

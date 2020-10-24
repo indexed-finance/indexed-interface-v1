@@ -5,7 +5,6 @@ import { usePalette } from 'react-palette'
 import { Link } from  'react-router-dom'
 
 import IERC20 from '../assets/constants/abi/IERC20.json'
-import StakingRewardsFactory from '../assets/constants/abi/StakingRewardsFactory.json'
 
 import style from '../assets/css/routes/stake'
 import Canvas from '../components/canvas'
@@ -13,46 +12,52 @@ import Container from '../components/container'
 import ButtonPrimary from '../components/buttons/primary'
 
 import { tokenMetadata } from '../assets/constants/parameters'
+import { toContract } from '../lib/util/contracts'
 import { getStakingPools } from '../api/gql'
 import getStyles from '../assets/css'
-import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
 
 const useStyles = getStyles(style)
 
-const FACTORY = '0x48ea38bcd50601594191b9e4edda7490d7a9eb16'
-
 const i = {
   'DFI5R': [ 'UNI', 'WBTC', 'COMP', 'LINK'],
-  'UNIV2-ETH-DFI5R': [ 'UNI', 'WBTC', 'COMP', 'LINK' ],
+  'UNIV2:ETH-DFI5R': [ 'UNI', 'WBTC', 'COMP', 'LINK' ],
   'GOVI6': [ 'BAL', 'YFI', 'CRV', 'UNI'],
-  'UNIV2-ETH-GOVI6': [ 'UNI', 'YFI', 'CRV', 'BAL']
+  'UNIV2:ETH-GOVI6': [ 'UNI', 'YFI', 'CRV', 'BAL']
 }
 
 export default function Stake() {
   const [ pools, setPools ] = useState([])
-  const [ time, setTime ] = useState(0)
   let { state, dispatch } = useContext(store)
   let classes = useStyles()
 
   useEffect(() => {
     const getPools = async() => {
       let { web3 } = state
-      let time = parseInt(Date.now()/1000)
       let data = await getStakingPools()
 
       for(let value in data){
-        let { stakingToken } = data[value]
-        let contract = toContract(web3.rinkeby, IERC20.abi, stakingToken)
-        let symbol = await contract.methods.symbol().call()
-        let name = await contract.methods.name().call()
+        let { stakingToken, indexPool } = data[value]
+        let staking = toContract(web3.rinkeby, IERC20.abi, stakingToken)
+        let index = toContract(web3.rinkeby, IERC20.abi, indexPool)
+        let stakingSymbol = await staking.methods.symbol().call()
+        let stakingName = await staking.methods.name().call()
+        let indexSymbol = await index.methods.symbol().call()
+        let indexName = await index.methods.name().call()
+        let symbol = ''
+        let name = ''
+
+        if(indexSymbol == stakingSymbol){
+          symbol = indexSymbol
+          name = indexName
+        } else {
+          symbol = `UNIV2:ETH-${indexSymbol}`
+          name = stakingName
+        }
 
         data[value] = { ...data[value], symbol, name }
       }
 
-      console.log(data)
-
-      setTime(time)
       setPools(data)
     }
     getPools()
@@ -72,114 +77,46 @@ export default function Stake() {
           </div>
         </Container>
       </Grid>
-      <Grid item xs={10} md={6} style={{ width: '100%' }}>
-        <Link className={classes.href} to='/stake/dfi5r'>
-          <Canvas button>
-            <div className={classes.pool}>
-              <div className={classes.image}>
-                <img src={tokenMetadata[i['DFI5R'][0]].image} style={{ width: 30, marginBottom: 10 }} />
-                <img src={tokenMetadata[i['DFI5R'][1]].image} style={{marginBottom: 25, width: 30 }} />
-                <img src={tokenMetadata[i['DFI5R'][2]].image} style={{ marginLeft: -25, width: 30 }} />
-                <img src={tokenMetadata[i['DFI5R'][3]].image} style={{ marginBottom: 10, width: 30 }} />
-              </div>
-              <div className={classes.information}>
-                <h3> DeFi Index 5 Rebalancer [DFI5r] </h3>
-                <h5> DEPOSITS: $ 45,666,102.45</h5>
-              </div>
-              <ul className={classes.list}>
-                <li> RATE: 2,530 NDX/DAY </li>
-                <li> LP's: 350 </li>
-              </ul>
-            </div>
-            <div className={classes.button}>
-              <ButtonPrimary variant='outlined' margin={{ marginBottom: 25, marginRight: 25 }}>
-                STAKE
-              </ButtonPrimary>
-            </div>
-          </Canvas>
-        </Link>
-      </Grid>
-      <Grid item xs={10} md={6} style={{ width: '100%' }}>
-        <Link className={classes.href} to='/stake/univ2-eth-dfi5r'>
-          <Canvas button color={(usePalette(tokenMetadata['UNI'].image)).data.vibrant}>
-            <div className={classes.pool}>
-              <div className={classes.image}>
-                <img src={tokenMetadata[i['UNIV2-ETH-DFI5R'][0]].image} style={{ width: 50, marginRight: 5 }} />
-                <img src={tokenMetadata[i['UNIV2-ETH-DFI5R'][1]].image} style={{marginBottom: 25, width: 25 }} />
-                <img src={tokenMetadata[i['UNIV2-ETH-DFI5R'][2]].image} style={{ marginLeft: -25, width: 25 }} />
-                <img src={tokenMetadata[i['UNIV2-ETH-DFI5R'][3]].image} style={{ marginBottom: 10, width: 25 }} />
-              </div>
-              <div className={classes.information}>
-                <h3> Uniswap V2 [UNIV2-ETH-DFI5r] </h3>
-                <h5> DEPOSITS: $ 342,453.55</h5>
-              </div>
-              <ul className={classes.list}>
-                <li> RATE: 46,221 NDX/DAY </li>
-                <li> LP's: 150 </li>
-              </ul>
-            </div>
-            <div className={classes.button}>
-              <ButtonPrimary variant='outlined' margin={{ marginBottom: 25, marginRight: 25 }}>
-                  STAKE
-              </ButtonPrimary>
-            </div>
-          </Canvas>
-        </Link>
-      </Grid>
-      <Grid item xs={10} md={6} style={{ width: '100%' }}>
-        <Link className={classes.href} to='/stake/govi6'>
-          <Canvas button>
-            <div className={classes.pool}>
-              <div className={classes.image}>
-                <img src={tokenMetadata[i['GOVI6'][0]].image} style={{ width: 30, marginBottom: 10 }} />
-                <img src={tokenMetadata[i['GOVI6'][1]].image} style={{marginBottom: 25, width: 30 }} />
-                <img src={tokenMetadata[i['GOVI6'][2]].image} style={{ marginLeft: -25, width: 30 }} />
-                <img src={tokenMetadata[i['GOVI6'][3]].image} style={{ marginBottom: 10, width: 30 }} />
-              </div>
-              <div className={classes.information}>
-                <h3> Governance Index 6 [GOVI6] </h3>
-                <h5> DEPOSITS: $ 2,555,298.20</h5>
-              </div>
-              <ul className={classes.list}>
-                <li> RATE: 10,530 NDX/DAY </li>
-                <li> LP's: 769 </li>
-              </ul>
-           </div>
-           <div className={classes.button}>
-             <ButtonPrimary variant='outlined' margin={{ marginBottom: 25, marginRight: 25 }}>
-                STAKE
-             </ButtonPrimary>
-           </div>
-         </Canvas>
-       </Link>
-     </Grid>
-      <Grid item xs={10} md={6} style={{ width: '100%' }}>
-        <Link className={classes.href} to='/stake/univ2-eth-govi6'>
-          <Canvas button color={(usePalette(tokenMetadata['UNI'].image)).data.vibrant}>
-            <div className={classes.pool}>
-              <div className={classes.image}>
-                <img src={tokenMetadata[i['UNIV2-ETH-GOVI6'][0]].image} style={{ width: 50, marginRight: 5 }} />
-                <img src={tokenMetadata[i['UNIV2-ETH-GOVI6'][1]].image} style={{marginBottom: 25, width: 25 }} />
-                <img src={tokenMetadata[i['UNIV2-ETH-GOVI6'][2]].image} style={{ marginLeft: -25, width: 25 }} />
-                <img src={tokenMetadata[i['UNIV2-ETH-GOVI6'][3]].image} style={{ marginBottom: 10, width: 25 }} />
-              </div>
-              <div className={classes.information}>
-                <h3> Uniswap V2 [UNIV2-ETH-GOVI6] </h3>
-                <h5> DEPOSITS: $ 150,331.44</h5>
-              </div>
-              <ul className={classes.list}>
-                <li> RATE: 53,331 NDX/DAY </li>
-                <li> LP's: 86 </li>
-              </ul>
-            </div>
-            <div className={classes.button}>
-              <ButtonPrimary variant='outlined' margin={{ marginBottom: 25, marginRight: 25 }}>
-                STAKE
-              </ButtonPrimary>
-            </div>
-          </Canvas>
-        </Link>
-      </Grid>
+      {pools.map(p => {
+        let { symbol, name, rewardRate, isReady } = p
+        let color  = symbol.includes('UNIV2') ? '#fc1c84' : ''
+        let width = symbol.includes('UNIV2') ? 25 : 30
+        let mainWidth = symbol.includes('UNIV2') ? 50 : 30
+        let marginRight = symbol.includes('UNIV2') ? 5 : 0
+        let rate = (parseFloat(rewardRate)/Math.pow(10, 18))
+        let ticker = symbol.toUpperCase()
+        let label = isReady ? 'STAKE' : 'INITIALIZE'
+
+        return(
+          <Grid item xs={10} md={6} style={{ width: '100%' }}>
+            <Link className={classes.href} to={`/stake/${symbol.toLowerCase()}`}>
+              <Canvas button color={color}>
+                <div className={classes.pool}>
+                  <div className={classes.image}>
+                    <img src={tokenMetadata[i[ticker][0]].image} style={{ width: mainWidth, marginRight }} />
+                    <img src={tokenMetadata[i[ticker][1]].image} style={{marginBottom: 25, width }} />
+                    <img src={tokenMetadata[i[ticker][2]].image} style={{ marginLeft: -25, width }} />
+                    <img src={tokenMetadata[i[ticker][3]].image} style={{ marginBottom: 10, width }} />
+                  </div>
+                  <div className={classes.information}>
+                    <h3> {name} [{symbol}] </h3>
+                    <h5> DEPOSITS: $ 0</h5>
+                  </div>
+                  <ul className={classes.list}>
+                    <li> RATE: {rate.toFixed(2)} NDX/DAY </li>
+                    <li> LP's: 0 </li>
+                  </ul>
+                </div>
+                <div className={classes.button}>
+                  <ButtonPrimary variant='outlined' margin={{ marginBottom: 25, marginRight: 25 }}>
+                    {label}
+                  </ButtonPrimary>
+                </div>
+              </Canvas>
+            </Link>
+          </Grid>
+        )
+      })}
     </Grid>
   )
 }
