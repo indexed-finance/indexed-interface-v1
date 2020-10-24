@@ -36,6 +36,42 @@ const proposalAndDistributionQuery = () => `
   }
 `
 
+const stakingQuery = () => `
+{
+  ndxStakingPools(first: 5) {
+    id
+    startsAt
+		isReady
+    indexPool
+    stakingToken
+    totalSupply
+    periodFinish
+    lastUpdateTime
+    totalRewards
+    claimedRewards
+    rewardRate
+  }
+}
+`
+
+const stakeQuery = poolAddress => `
+{
+  ndxStakingPools(where: { indexPool: "${poolAddress}"}) {
+    id
+    startsAt
+		isReady
+    indexPool
+    stakingToken
+    totalSupply
+    periodFinish
+    lastUpdateTime
+    totalRewards
+    claimedRewards
+    rewardRate
+  }
+}
+`
+
 const proposalQuery = id => `
   {
     proposals(where: { id: "${id}" }){
@@ -203,6 +239,17 @@ export async function getPoolSnapshots(address, timestampFrom, timestampTo) {
   return dailyPoolSnapshots;
 }
 
+export async function getStakingPools() {
+  const { data: { ndxStakingPools } } = await execRequest(stakingQuery());
+  return ndxStakingPools;
+}
+
+export async function getStakingPool(poolAddress) {
+  const { data: { ndxStakingPools } } = await execRequest(stakeQuery(poolAddress));
+  return ndxStakingPools;
+}
+
+
 export async function getTokenPriceHistory(tokenAddress, days) {
   const { data: { tokenDayDatas } } = await execRequest(
     tokenDayDataQuery(tokenAddress, days),
@@ -228,19 +275,13 @@ export async function getMarketTrades(pairAddress) {
 }
 
 export async function getProposal(id) {
-  const { data: { proposals } } = await execRequest(
-    proposalQuery(id),
-    subgraph_url
-  );
+  const { data: { proposals } } = await execRequest(proposalQuery(id));
 
   return proposals[0]
 }
 
 export async function getProposals() {
-  const { data } = await execRequest(
-    proposalAndDistributionQuery(),
-    subgraph_url
-  );
+  const { data } = await execRequest(proposalAndDistributionQuery());
 
   return { ...data  }
 }

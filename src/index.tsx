@@ -250,10 +250,10 @@ function Application(){
                 <Route path='/categories'>
                   <Categories />
                 </Route>
-                <Route path='/stake'>
+                <Route exact path='/stake'>
                   <Stake />
                 </Route>
-                <Route path='/supply/:asset'>
+                <Route path='/stake/:asset'>
                   <Supply />
                 </Route>
                 <Route path='/markets'>

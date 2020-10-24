@@ -1,15 +1,17 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import { usePalette } from 'react-palette'
 import { useParams } from  'react-router-dom'
+
+import IStakingRewards from '../assets/constants/abi/IStakingRewards.json'
+import IERC20 from '../assets/constants/abi/IERC20.json'
 
 import style from '../assets/css/routes/supply'
 import Canvas from '../components/canvas'
 import Container from '../components/container'
 import ButtonPrimary from '../components/buttons/primary'
 import Input from '../components/inputs/input'
-import Adornment from '../components/inputs/adornment'
 import NumberFormat from '../utils/format'
 
 import { tokenMetadata } from '../assets/constants/parameters'
@@ -26,9 +28,14 @@ const i = {
 }
 
 export default function Supply() {
+  const [ input, setInput ] = useState(null)
   let { state, dispatch } = useContext(store)
   let { asset } = useParams()
   let classes = useStyles()
+
+  const handleInput = (event) => {
+    setInput(event.target.value)
+  }
 
   let ticker = asset.toUpperCase()
   let width = ticker.includes('UNIV2') ? 50 : 30
@@ -69,7 +76,7 @@ export default function Supply() {
               <Grid item>
                 <Input label="AMOUNT" variant='outlined'
                   helperText={<o> BALANCE: 0 </o>}
-                  name="input"
+                  onChange={handleInput}
                   InputProps={{
                     inputComponent: NumberFormat
                   }}

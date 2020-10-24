@@ -60,9 +60,11 @@ export default function Root(){
           <Link onClick={stopRender} to='/markets'>
             <li style={{ float: 'left',  marginRight: 25 }}> MARKETS </li>
           </Link>
-          <Link onClick={stopRender} to='/stake'>
-            <li style={{ float: 'left',  marginRight: 25  }}> STAKE </li>
-          </Link>
+          {! state.native && (
+            <Link onClick={stopRender} to='/stake'>
+              <li style={{ float: 'left',  marginRight: 25  }}> STAKE </li>
+            </Link>
+          )}
           <Link onClick={stopRender} to='/swap'>
             <li style={{ float: 'left' }}> SWAP </li>
           </Link>

@@ -1,8 +1,11 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import { usePalette } from 'react-palette'
 import { Link } from  'react-router-dom'
+
+import IERC20 from '../assets/constants/abi/IERC20.json'
+import StakingRewardsFactory from '../assets/constants/abi/StakingRewardsFactory.json'
 
 import style from '../assets/css/routes/stake'
 import Canvas from '../components/canvas'
@@ -10,10 +13,14 @@ import Container from '../components/container'
 import ButtonPrimary from '../components/buttons/primary'
 
 import { tokenMetadata } from '../assets/constants/parameters'
+import { getStakingPools } from '../api/gql'
 import getStyles from '../assets/css'
+import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
 
 const useStyles = getStyles(style)
+
+const FACTORY = '0x48ea38bcd50601594191b9e4edda7490d7a9eb16'
 
 const i = {
   'DFI5R': [ 'UNI', 'WBTC', 'COMP', 'LINK'],
@@ -23,9 +30,33 @@ const i = {
 }
 
 export default function Stake() {
-
+  const [ pools, setPools ] = useState([])
+  const [ time, setTime ] = useState(0)
   let { state, dispatch } = useContext(store)
   let classes = useStyles()
+
+  useEffect(() => {
+    const getPools = async() => {
+      let { web3 } = state
+      let time = parseInt(Date.now()/1000)
+      let data = await getStakingPools()
+
+      for(let value in data){
+        let { stakingToken } = data[value]
+        let contract = toContract(web3.rinkeby, IERC20.abi, stakingToken)
+        let symbol = await contract.methods.symbol().call()
+        let name = await contract.methods.name().call()
+
+        data[value] = { ...data[value], symbol, name }
+      }
+
+      console.log(data)
+
+      setTime(time)
+      setPools(data)
+    }
+    getPools()
+  }, [])
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
@@ -42,7 +73,7 @@ export default function Stake() {
         </Container>
       </Grid>
       <Grid item xs={10} md={6} style={{ width: '100%' }}>
-        <Link className={classes.href} to='/supply/dfi5r'>
+        <Link className={classes.href} to='/stake/dfi5r'>
           <Canvas button>
             <div className={classes.pool}>
               <div className={classes.image}>
@@ -69,7 +100,7 @@ export default function Stake() {
         </Link>
       </Grid>
       <Grid item xs={10} md={6} style={{ width: '100%' }}>
-        <Link className={classes.href} to='/supply/univ2-eth-dfi5r'>
+        <Link className={classes.href} to='/stake/univ2-eth-dfi5r'>
           <Canvas button color={(usePalette(tokenMetadata['UNI'].image)).data.vibrant}>
             <div className={classes.pool}>
               <div className={classes.image}>
@@ -96,7 +127,7 @@ export default function Stake() {
         </Link>
       </Grid>
       <Grid item xs={10} md={6} style={{ width: '100%' }}>
-        <Link className={classes.href} to='/supply/govi6'>
+        <Link className={classes.href} to='/stake/govi6'>
           <Canvas button>
             <div className={classes.pool}>
               <div className={classes.image}>
@@ -123,7 +154,7 @@ export default function Stake() {
        </Link>
      </Grid>
       <Grid item xs={10} md={6} style={{ width: '100%' }}>
-        <Link className={classes.href} to='/supply/univ2-eth-govi6'>
+        <Link className={classes.href} to='/stake/univ2-eth-govi6'>
           <Canvas button color={(usePalette(tokenMetadata['UNI'].image)).data.vibrant}>
             <div className={classes.pool}>
               <div className={classes.image}>
