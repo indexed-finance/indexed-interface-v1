@@ -281,12 +281,12 @@ export default function Propose(){
     sortAbis()
   }, [ state.indexes ])
 
-  let { margin, percent } = style.getFormatting(state)
+  let { margin } = style.getFormatting(state)
 
   return (
     <Fragment>
       <Grid container direction='column' alignItems='center' justify='center' >
-        <Container margin={margin} padding="1em 2em" title="CREATE PROPOSAL" percentage={percent}>
+        <Container margin={margin} padding="1em 2em" title="CREATE PROPOSAL">
           <div className={classes.form}>
             <Grid item>
               <p> PREVIEW: </p>

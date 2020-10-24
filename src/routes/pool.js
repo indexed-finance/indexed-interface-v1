@@ -308,7 +308,7 @@ export default function Pools(){
             </Chart>
           </Grid>
           <Grid item xs={12} md={5} lg={5} xl={5}>
-            <Container margin={margin} padding="1em 0em" percentage='27.5%' title='ASSETS'>
+            <Container margin={margin} padding="1em 0em" title='ASSETS'>
               <div className={classes.container} style={{ width }}>
                 <Approvals input={0} param='DESIRED' height={250} metadata={data} set={getCredit}/>
               </div>

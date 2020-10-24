@@ -233,7 +233,7 @@ export default function Governance(){
     setPhase(<Init />)
   }, [])
 
-  let { height, margin, percent, width } = style.getFormatting(state)
+  let { height, margin, width } = style.getFormatting(state)
 
   return (
     <Fragment>
@@ -270,7 +270,7 @@ export default function Governance(){
           </Grid>
         </Grid>
         <Grid item xs={12} md={12} lg={12} xl={12} className={classes.root}>
-          <Container margin={margin} padding="1em 2em" title='PROPOSALS' percentage={percent}>
+          <Container margin={margin} padding="1em 2em" title='PROPOSALS'>
            <div className={classes.proposals}>
             <ListWrapper dense style={{ width }}>
               {proposals.map((p, index) => {

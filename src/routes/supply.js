@@ -37,7 +37,7 @@ export default function Supply() {
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
-    <Grid item md={6}>
+    <Grid item xs={10} md={6}>
       <div className={classes.top}>
         <Canvas>
           <div className={classes.rewards}>
@@ -48,7 +48,7 @@ export default function Supply() {
                 CLAIM
               </ButtonPrimary>
             </div>
-            <ul style={{ listStyle: 'none ', padding: 0, margin: 0 }}>
+            <ul className={classes.list}>
               <li> DEPOSIT: 5,352 DFI5r</li>
               <li> RATE: 54.3 NDX/DAY</li>
             </ul>
@@ -56,7 +56,7 @@ export default function Supply() {
         </Canvas>
       </div>
     </Grid>
-      <Grid item md={6}>
+      <Grid item xs={10} md={6}>
         <Container margin='1em 0em 1em 0em' padding="1em 2em" title={ticker}>
           <div className={classes.modal}>
             <Grid container direction='row' alignItems='center' justify='space-evenly'>
@@ -76,7 +76,7 @@ export default function Supply() {
                 />
               </Grid>
             </Grid>
-            <ul style={{ listStyle: 'none ', display: 'inline-block '}}>
+            <ul className={classes.estimation}>
               <li> EST REWARD: 0 NDX/DAY </li>
               <li> POOL WEIGHT: 0% </li>
             </ul>
@@ -86,12 +86,12 @@ export default function Supply() {
           </div>
         </Container>
       </Grid>
-      <Grid item md={6}>
+      <Grid item xs={10} md={6}>
         <Canvas>
           <div className={classes.rewards}>
-          	<ul style={{ listStyle: 'none ', padding: 0, margin: 0 }}>
-              <li style={{ marginBottom: 15 }}> POOL DEPOSITS: <span style={{ float: 'right' }}> $12,320,411.34 </span> </li>
-              <li> POOL RATE: <span style={{ float: 'right' }}> 3,540 NDX/DAY </span> </li>
+          	<ul className={classes.stats}>
+              <li> POOL DEPOSITS: <span> $12,320,411.34 </span> </li>
+              <li> POOL RATE: <span> 3,540 NDX/DAY </span> </li>
             </ul>
           </div>
         </Canvas>

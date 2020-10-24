@@ -116,6 +116,9 @@ export default function Navigation({ mode }) {
         <Link className={classes.href} to='/markets' onClick={handleClose}>
           <MenuItem>MARKETS</MenuItem>
         </Link>
+        <Link className={classes.href} to='/stake' onClick={handleClose}>
+          <MenuItem>STAKE</MenuItem>
+        </Link>
       </Fragment>
     )
   }
@@ -141,6 +144,9 @@ export default function Navigation({ mode }) {
         </Link>
         <Link className={classes.href} to='/markets' onClick={handleClose}>
           <MenuItem>MARKETS</MenuItem>
+        </Link>
+        <Link className={classes.href} to='/stake' onClick={handleClose}>
+          <MenuItem>STAKE</MenuItem>
         </Link>
       </Fragment>
     )

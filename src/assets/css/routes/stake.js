@@ -30,13 +30,21 @@ const setStyle = (theme) => ({
     '& h5': {
       marginTop: 10
     }
-  }
+  },
+  list: {
+    float: 'left',
+    listStyle: 'none',
+    padding: 0,
+  },
+  href: {
+    color: `${theme.palette.secondary.main} !important`,
+    textDecoration: 'none !important',
+  },
 })
 
 const getFormatting = (state) => {
   return {
     margin: !state.native ? '3em 3em' : '2em 1.5em',
-    percent: !state.native ? '42.5%' : '150%'
   }
 }
 

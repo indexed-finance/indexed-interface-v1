@@ -19,12 +19,31 @@ const setStyle = (theme) => ({
       padding: 0
     }
   },
+  list: {
+    listStyle: 'none',
+    padding: 0,
+    margin: 0
+  },
+  estimation: {
+    listStyle: 'none ',
+    display: 'inline-block '
+  },
+  stats: {
+    listStyle: 'none',
+    padding: 0,
+    margin: 0,
+    '& li:first-of-type': {
+      marginBottom: 15
+    },
+    '& li span': {
+      float: 'right'
+    }
+  },
 })
 
 const getFormatting = (state) => {
   return {
     margin: !state.native ? '3em 3em' : '2em 1.5em',
-    percent: !state.native ? '42.5%' : '150%'
   }
 }
 

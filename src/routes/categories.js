@@ -116,13 +116,13 @@ export default function Categories(){
     }
   }, [ ])
 
-  let { margin, percent } = style.getFormatting(state)
-  
+  let { margin } = style.getFormatting(state)
+
   return (
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item xs={12} md={12} lg={12} xl={12}>
-          <Container margin={margin} padding="1em 2em" percentage={percent} title='CATEGORIES'>
+          <Container margin={margin} padding="1em 2em" title='CATEGORIES'>
             <Fragment>
               {Object.values(rows).map((value) => (
                 <div className={classes.category}>

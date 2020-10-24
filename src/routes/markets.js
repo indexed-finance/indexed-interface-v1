@@ -127,7 +127,8 @@ export default function Markets(){
               {state.native && (
                  <Fragment>
                   <h3> [{market.symbol}] </h3>
-                  <h4> {market.price} </h4>
+                  {state.request && !market.active && (<h4 style={{ color: 'orange' }}> UNINITIALISED </h4>)}
+                  {market.active && (<h4> {market.price} </h4>)}
                 </Fragment>
               )}
             </div>
@@ -156,7 +157,7 @@ export default function Markets(){
          </div>
         </Grid>
         <Grid item xs={12} md={12} lg={12} xl={12}>
-          <Container margin={margin} padding="1em 2em" percentage={percent} title='INDEXES'>
+          <Container margin={margin} padding="1em 2em" title='INDEXES'>
             <Table state={state} market={market.symbol} triggerMarket={changeMarket} />
           </Container>
         </Grid>

@@ -123,7 +123,7 @@ export default function Proposal(){
     retrieveProposal()
   }, [])
 
-  let { margin, width, progress, radius, percent } = style.getFormatting(state)
+  let { margin, width, progress, radius } = style.getFormatting(state)
 
   let forVotes = (parseFloat(metadata.for)/Math.pow(10, 18)).toLocaleString()
   let againstVotes = (parseFloat(metadata.against)/Math.pow(10, 18)).toLocaleString()
@@ -202,7 +202,7 @@ export default function Proposal(){
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} container direction='row' alignItems='flex-start' justify='space-between'>
         <Grid item xs={12} md={8} lg={8} xl={8}>
-           <Container title='DETAILS' margin={margin} padding="1em 0em" percentage={percent}>
+           <Container title='DETAILS' margin={margin} padding="1em 0em">
             <div className={classes.body}>
               <div className={classes.metadata}>
                 <ul>

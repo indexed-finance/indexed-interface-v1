@@ -140,8 +140,7 @@ const getFormatting = (state) => {
     margin: !state.native ? '2em 3em' : '1.5em 1.5em',
     width: !state.native ? 'auto' : '65%',
     progress: !state.native ? 325 : 275,
-    radius: !state.native ? 67.5 : 60,
-    percent: !state.native ? '17.5%' : '45%'
+    radius: !state.native ? 67.5 : 60
   }
 }
 
