@@ -163,26 +163,22 @@ export default function Index(){
   return (
     <div className={classes.root}>
       <div className={classes.header}>
-        <Grid container direction='row' alignItems='center' justify='space-between'>
           {state.request && (
-            <Fragment>
-              <Grid item>
+            <ul style={{ listStyle: 'none', display: 'inline-block', padding: 0 }}>
+              <li style={{ float: 'left', marginRight: 50 }}>
                 <h3 className={classes.title}> {metadata.name} [{metadata.symbol}]</h3>
-              </Grid>
-              <Grid item>
+              </li>
+              <li style={{ float: 'left', marginRight: 50 }}>
                 <h4 className={classes.price}> {metadata.price} <span className={classes.delta}>({metadata.delta})</span></h4>
-              </Grid>
-              <Grid item>
+              </li>
+              <li style={{ float: 'right'}}>
                 <span className={classes.alternative}>VOLUME: {metadata.marketcap}</span>
-              </Grid>
-            </Fragment>
+              </li>
+            </ul>
           )}
           {!state.request && (
-            <Grid item>
               <TitleLoader color={state.background} />
-            </Grid>
           )}
-        </Grid>
       </div>
       <div className={classes.sidebar}>
         <header className={classes.selections}>

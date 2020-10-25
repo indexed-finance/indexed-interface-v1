@@ -60,8 +60,20 @@ function a11yProps(index) {
   }
 }
 
+
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired,
+}
+
+const useStyles = getStyles(style)
+
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
+  const classes = useStyles()
 
   return (
     <div
@@ -72,21 +84,13 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box p={index == 0 ? 3 : 0}>
-          <Typography>{children}</Typography>
+        <Box className={classes.box} sp={index == 0 ? 3 : 0}>
+          {children}
         </Box>
       )}
     </div>
   )
 }
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-}
-
-const useStyles = getStyles(style)
 
 export default function VerticalTabs({ data }) {
   const [ trades, setTrades ] = useState([])
@@ -113,8 +117,6 @@ export default function VerticalTabs({ data }) {
         let pair = await getPair(state.web3.rinkeby, data.address)
         let trades = await getMarketTrades(pair.options.address)
         let history = []
-
-        console.log(trades, data.address, pair.options.address)
 
         for(let order in trades){
           let {

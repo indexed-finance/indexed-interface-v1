@@ -1,13 +1,15 @@
 const setStyle = (theme) => ({
   root: {
-    width: '100vw',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    maxWidth: '1920px',
+    marginLeft: 'auto',
+    marginRight:  'auto',
+    border: 'solid 3px #666666',
   },
   header: {
-    width: '65vw',
-    minHeight: '10vh',
+    maxWidth: window.innerWidth > 1919 ? '61%' : '64.5%',
     borderBottom: 'solid 3px #666666',
-    padding: '0vw 2.5vw',
+    padding: '.25vw 2.5vw',
     display: 'flex'
   },
   title: {
@@ -25,18 +27,18 @@ const setStyle = (theme) => ({
     color: 'red'
   },
   chart: {
-    width: '70vw',
+    width: '70%',
     borderBottom: 'solid 3px #666666',
-    height: '55vh'
+    height: 'calc(55vh - 52.5px)'
   },
   sidebar: {
     float: 'right',
-    height: '87.5vh',
-    width: '30vw',
+    height: window.innerWidth > 1919 ? 'calc(75vh - 100px)' : 'fit-content',
+    width: '30%',
     borderLeft: 'solid 3px #666666',
     top: 0,
     clear: 'both',
-    marginTop: '-10.5vh',
+    marginTop: window.innerWidth > 1919 ? '-5.25vh' :'-8.5vh',
     alignItems: 'center'
   },
   selections: {
@@ -55,6 +57,9 @@ const setStyle = (theme) => ({
       fontFamily: "San Francisco Bold",
       fontWeight: 500,
       marginRight: 50,
+    },
+    '& .MuiGrid-container': {
+      width: '100% !important'
     }
   },
   nav: {

@@ -315,12 +315,18 @@ a:hover {
 }
 
 
-@media only screen and (min-width: 1800px) and (max-width: 2749px) {
+@media only screen and (min-width: 2000px) and (max-width: 2749px) {
 
   .MuiGrid-container {
     margin-left: auto !important;
     margin-right: auto !important;
-    width: 75% !important;
+    width: 60% !important;
+  }
+
+  .MuiGrid-container .MuiGrid-container {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 
 }
@@ -331,6 +337,12 @@ a:hover {
     margin-left: auto !important;
     margin-right: auto !important;
     width: 50% !important;
+  }
+
+  .MuiGrid-container .MuiGrid-container {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 
 }

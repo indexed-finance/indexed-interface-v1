@@ -133,12 +133,17 @@ export default function Spline({ metadata, height, color, padding, state, absolu
 
   let h = !state.native ? 'auto' : 125
   let p = !state.native ? 15 : 22.5
+  let width = 'calc(100% - 30vw)'
+
+  if(window.innerWidth > 2000) {
+     width = 'calc(100% - 55vw)'
+  }
 
   if(absolute){
     if(!state.request) padding = p
 
     return(
-      <div style={{'z-index': 1, float: 'left', width: 'calc(100% - 30vw)', paddingTop: padding , position: 'absolute', overflow: 'hidden'}}>
+      <div style={{'z-index': 1, float: 'left', width, paddingTop: padding , position: 'absolute', overflow: 'hidden'}}>
         {state.request && (<Line height={height} options={options(0)} data={getConfig} redraw />)}
         {!state.request && (<Loader height={h} theme={theme} />)}
       </div>

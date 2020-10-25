@@ -1,4 +1,7 @@
 const setStyle = (theme) => ({
+  '& .MuidGrid-container': {
+    width: '100% !important'
+  },
   inputs: {
     width: 250,
     '& .MuiOutlinedInput-adornedEnd': {
@@ -21,7 +24,7 @@ const setStyle = (theme) => ({
     width: '27.5em',
   },
   market: {
-    width: '100%',
+    width: window.innerWidth >  2250 ? '22.5vw' : '30vw',
     color: theme.palette.secondary.main,
     borderTop: '#666666 solid 2px',
     borderBottom: '#666666 solid 2px',

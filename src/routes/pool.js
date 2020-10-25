@@ -328,7 +328,7 @@ export default function Pools(){
           </Grid>
         </Grid>
         <Grid item xs={12} md={7} lg={7} xl={7}>
-          <Container margin={marginX} padding="1em 2em" percentage='20%' title='EVENTS'>
+          <Container margin={marginX} padding="1em 2em" title='EVENTS'>
             <div className={classes.events}>
               <List height={200} columns={eventColumns} data={events} />
             </div>
