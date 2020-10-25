@@ -1,12 +1,13 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { Fragment, useState, useContext, useEffect } from 'react'
 
 import Grid from '@material-ui/core/Grid'
-import { usePalette } from 'react-palette'
 import { useParams } from  'react-router-dom'
+import { FormControl } from '@material-ui/core';
 
 import StakingRewardsFactory from '../assets/constants/abi/StakingRewardsFactory.json'
 import IStakingRewards from '../assets/constants/abi/IStakingRewards.json'
 import IERC20 from '../assets/constants/abi/IERC20.json'
+import Countdown from "react-countdown";
 
 import style from '../assets/css/routes/supply'
 import Canvas from '../components/canvas'
@@ -16,6 +17,8 @@ import Input from '../components/inputs/input'
 import NumberFormat from '../utils/format'
 
 import { tokenMetadata } from '../assets/constants/parameters'
+import { getStakingPool } from '../api/gql'
+import { decToWeiHex, getBalances } from '../lib/markets'
 import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
@@ -23,6 +26,13 @@ import { store } from '../state'
 const useStyles = getStyles(style)
 
 const FACTORY = '0x48ea38bcd50601594191b9e4edda7490d7a9eb16'
+
+const z = {
+  'DFI5R': '0xe376e56cdebdf4f47049933a8b158b6f25d42dbd',
+  'UNIV2:ETH-DFI5R': '0xfaadac001786d4dfaaf3eece747c46f285967f2d',
+  'GOVI6': '',
+  'UNIV2:ETH-GOVI6': ''
+}
 
 const i = {
   'DFI5R': [ 'UNI', 'WBTC', 'COMP', 'LINK'],
@@ -32,36 +42,157 @@ const i = {
 }
 
 export default function Supply() {
-  const [ time, setTime ] = useState(0)
-  const [ input, setInput ] = useState(null)
+  const [ execution, setExecution ] = useState({ f: () => {}, label: 'STAKE' })
+  const [ stats, setStats ] = useState({ claim: 0, deposit: 0, balance: 0 })
+  const [ metadata, setMetadata ] = useState({})
+  const [ input, setInput ] = useState(0)
+
   let { state, dispatch } = useContext(store)
   let { asset } = useParams()
   let classes = useStyles()
+  let ticker = asset.toUpperCase()
 
-  const initialisePool = async(poolAddress) => {
+  const initialisePool = async() => {
     let { web3, account } = state
-    let contract = toContract(web3.injected, StakingRewardsFactory.abi, FACTORY)
+    let { stakingToken } = metadata
+    let contract = toContract(web3.injected, StakingRewardsFactory, FACTORY)
 
-    await contract.methods.notifyRewardAmount(poolAddress)
+    await contract.methods.notifyRewardAmount(stakingToken)
     .send({
       from: account
+    }).on('confirmation', () => {
+      setMetadata({ ...metadata, isReady: true })
+    })
+  }
+
+  const getAllowance = async() => {
+    let stakingPool = z[ticker]
+    let { web3, account } = state
+    let { stakingToken } = metadata
+    let contract = toContract(web3.injected, IERC20.abi, stakingToken)
+    let allowance = await contract.methods.allowance(account, stakingPool).call()
+
+    return parseFloat(allowance)/Math.pow(10, 18)
+  }
+
+  const approve = async() => {
+    let stakingPool = z[ticker]
+    let { web3, account } = state
+    let { stakingToken } = metadata
+    let contract = toContract(web3.injected, IERC20.abi, stakingToken)
+    let amount = decToWeiHex(web3.injected, parseFloat(input))
+
+    await contract.methods.approve(stakingPool, amount).send({
+      from: account
+    }).on('confirmation', () => {
+      setExecution({
+        f: stake, label: 'STAKE'
+      })
+    })
+  }
+
+  const stake = async() => {
+    let stakingPool = z[ticker]
+    let { web3, account } = state
+    let contract = toContract(web3.injected, IStakingRewards, stakingPool)
+    let amount = decToWeiHex(web3.injected, parseFloat(input))
+
+    await contract.methods.stake(amount).send({
+      from: account
+    }).on('confirmation', () => {
+      setExecution({
+        f: stake, label: 'STAKE'
+      })
     })
   }
 
   const handleInput = (event) => {
+    let element = document.getElementById('est')
+    let estimatedReward = parseFloat(event.target.value) * metadata.per
+
+    element.innerHTML = estimatedReward.toFixed(2)
     setInput(event.target.value)
   }
 
-  let ticker = asset.toUpperCase()
   let width = ticker.includes('UNIV2') ? 50 : 30
   let marginRight = ticker.includes('UNIV2') ? 7.5 : 0
   let marginBottom = ticker.includes('UNIV2') ? 0 : 10
 
   useEffect(() => {
-    let time = parseInt(Date.now()/1000)
+    const getMetadata = async() => {
+      let { web3 } = state
+      let stakingAddress = z[ticker]
+      let data = await getStakingPool(stakingAddress)
+      let { totalSupply, rewardRate, stakingToken, isReady } = data
+      let rate = (parseFloat(rewardRate)/parseFloat(totalSupply))
+      let contract = toContract(web3.rinkeby, IStakingRewards, stakingAddress)
+      let rewardPerToken = await contract.methods.rewardPerToken().call()
 
-    setTime(time)
+      console.log(rewardPerToken)
+
+      if(parseFloat(totalSupply) == 0){
+        rate = (parseFloat(rewardRate)/Math.pow(10, 18))
+      } if(!isReady) {
+        setExecution({
+          f: initialisePool, label: 'INITIALIZE'
+        })
+      } else {
+        setExecution({
+          f: stake, label: 'STAKE'
+        })
+      }
+
+      data.rate = parseFloat(rate * 60 * 24).toLocaleString()
+      data.per = parseFloat(rewardPerToken)/Math.pow(10, 18)
+
+      setMetadata(data)
+    }
+    getMetadata()
   }, [])
+
+  useEffect(() => {
+    const checkAllowance = async() => {
+      let { web3 } = state
+
+      if(web3.injected) {
+        let allowance = await getAllowance()
+        let amount = parseFloat(input)
+
+        if(amount > allowance){
+          setExecution({
+            f: approve, label: 'APPROVE'
+          })
+        } else {
+          setExecution({
+            f: stake, label: 'STAKE'
+          })
+        }
+      }
+    }
+    checkAllowance()
+  }, [ input ])
+
+  useEffect(() => {
+    const getAccountMetadata = async() => {
+      let stakingPool = z[ticker]
+      let { stakingToken } = metadata
+      let { web3, account } = state
+
+      if(web3.injected){
+        let contract = toContract(web3.rinkeby, IStakingRewards, stakingPool)
+        let token = toContract(web3.rinkeby, IERC20.abi, stakingToken)
+        let claim = await contract.methods.earned(account).call()
+        let deposit = await contract.methods.balanceOf(account).call()
+        let balance = await token.methods.balanceOf(account).call()
+
+        balance = (parseFloat(balance)/Math.pow(10,18)).toFixed(2)
+        deposit = (parseFloat(deposit)/Math.pow(10,18)).toFixed(2)
+        claim = (parseFloat(claim)/Math.pow(10,18)).toFixed(5)
+        setStats({ claim, deposit, balance })
+      }
+    }
+    getAccountMetadata()
+  }, [ state.web3.injected ])
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
@@ -71,14 +202,14 @@ export default function Supply() {
           <div className={classes.rewards}>
             <p> ACTIVE CLAIM </p>
             <div>
-              <h2> 1,235.05334 NDX </h2>
+              <h2> {stats.claim} NDX </h2>
               <ButtonPrimary variant='outlined' margin={{ marginTop: -50 }}>
                 CLAIM
               </ButtonPrimary>
             </div>
             <ul className={classes.list}>
-              <li> DEPOSIT: 5,352 DFI5r</li>
-              <li> RATE: 54.3 NDX/DAY</li>
+              <li> DEPOSIT: {stats.deposit} {asset.toUpperCase()}</li>
+              <li> RATE: 0 NDX/DAY</li>
             </ul>
           </div>
         </Canvas>
@@ -88,28 +219,39 @@ export default function Supply() {
         <Container margin='1em 0em 1em 0em' padding="1em 2em" title={ticker}>
           <div className={classes.modal}>
             <Grid container direction='row' alignItems='center' justify='space-evenly'>
-              <Grid item>
-                <img src={tokenMetadata[i[ticker][0]].image} style={{ marginRight, width, marginBottom }} />
-                <img src={tokenMetadata[i[ticker][1]].image} style={{marginBottom: 25, width: 30 }} />
-                <img src={tokenMetadata[i[ticker][2]].image} style={{ marginLeft: -25, width: 30 }} />
-                <img src={tokenMetadata[i[ticker][3]].image} style={{ marginBottom: 10, width: 30 }} />
-              </Grid>
-              <Grid item>
-                <Input label="AMOUNT" variant='outlined'
-                  helperText={<o> BALANCE: 0 </o>}
-                  onChange={handleInput}
-                  InputProps={{
-                    inputComponent: NumberFormat
-                  }}
-                />
-              </Grid>
+              {metadata.isReady && (
+                <Fragment>
+                  <Grid item>
+                    <img src={tokenMetadata[i[ticker][0]].image} style={{ marginRight, width, marginBottom }} />
+                    <img src={tokenMetadata[i[ticker][1]].image} style={{marginBottom: 25, width: 30 }} />
+                    <img src={tokenMetadata[i[ticker][2]].image} style={{ marginLeft: -25, width: 30 }} />
+                    <img src={tokenMetadata[i[ticker][3]].image} style={{ marginBottom: 10, width: 30 }} />
+                  </Grid>
+                  <Grid item>
+                    <Input label="AMOUNT" variant='outlined'
+                      helperText={<o> BALANCE: {stats.balance} </o>}
+                      onChange={handleInput}
+                      value={input}
+                      name='input'
+                    />
+                  </Grid>
+                </Fragment>
+             )}
+             {!metadata.isReady && (
+                <Grid item>
+                  This program is not yet initialised yet, it is possible to do so in
+                  <p> <Countdown date={parseInt(metadata.startsAt) * 1000}/> </p>
+                </Grid>
+             )}
             </Grid>
-            <ul className={classes.estimation}>
-              <li> EST REWARD: 0 NDX/DAY </li>
-              <li> POOL WEIGHT: 0% </li>
-            </ul>
-            <ButtonPrimary variant='outlined' margin={{ marginTop: 15, marginRight: 25 }}>
-              STAKE
+            {metadata.isReady && (
+              <ul className={classes.estimation}>
+                <li> EST REWARD: <span id='est'>0</span> NDX/DAY </li>
+                <li> POOL WEIGHT: 0% </li>
+              </ul>
+            )}
+            <ButtonPrimary onClick={execution.f} variant='outlined' margin={{ marginTop: 15, marginRight: 25 }}>
+              {execution.label}
             </ButtonPrimary>
           </div>
         </Container>
@@ -118,8 +260,8 @@ export default function Supply() {
         <Canvas>
           <div className={classes.rewards}>
           	<ul className={classes.stats}>
-              <li> POOL DEPOSITS: <span> $12,320,411.34 </span> </li>
-              <li> POOL RATE: <span> 3,540 NDX/DAY </span> </li>
+              <li> POOL DEPOSITS: <span> $0.00 </span> </li>
+              <li> POOL RATE: <span> {metadata.rate} NDX/DAY </span> </li>
             </ul>
           </div>
         </Canvas>

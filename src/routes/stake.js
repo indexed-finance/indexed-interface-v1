@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react'
 
 import Grid from '@material-ui/core/Grid'
-import { usePalette } from 'react-palette'
 import { Link } from  'react-router-dom'
+import Countdown from 'react-countdown'
 
 import IERC20 from '../assets/constants/abi/IERC20.json'
 
@@ -18,6 +18,8 @@ import getStyles from '../assets/css'
 import { store } from '../state'
 
 const useStyles = getStyles(style)
+
+const DATE_END = 1605586873688
 
 const i = {
   'DFI5R': [ 'UNI', 'WBTC', 'COMP', 'LINK'],
@@ -37,7 +39,7 @@ export default function Stake() {
       let data = await getStakingPools()
 
       for(let value in data){
-        let { stakingToken, indexPool } = data[value]
+        let { id, stakingToken, indexPool } = data[value]
         let staking = toContract(web3.rinkeby, IERC20.abi, stakingToken)
         let index = toContract(web3.rinkeby, IERC20.abi, indexPool)
         let stakingSymbol = await staking.methods.symbol().call()
@@ -70,22 +72,28 @@ export default function Stake() {
           <div className={classes.header}>
             <p>
               Stake the index tokens <a> GOVI7a </a> & <a> DFI5r </a> or their associated Uniswap liquidity tokens
-              <a> UNIV2-ETH-GOVI7a </a> and <a> UNI-V2-ETH-DFI5r </a> to avail of NDX, the offical governance token of Indexed.
+              <a> UNIV2:ETH-GOVI7a </a> and <a> UNIV2:ETH-DFI5r </a> to avail of NDX, the offical governance token of Indexed.
               </p>
               <p> TIME REMAINING: </p>
-              <h3> 1D 14H 33M 35S </h3>
+              <h3> <Countdown date={DATE_END} /> </h3>
           </div>
         </Container>
       </Grid>
       {pools.map(p => {
-        let { symbol, name, rewardRate, isReady } = p
+        let { symbol, name, rewardRate, isReady, totalSupply } = p
         let color  = symbol.includes('UNIV2') ? '#fc1c84' : ''
         let width = symbol.includes('UNIV2') ? 25 : 30
         let mainWidth = symbol.includes('UNIV2') ? 50 : 30
         let marginRight = symbol.includes('UNIV2') ? 5 : 0
-        let rate = (parseFloat(rewardRate)/Math.pow(10, 18))
+        let rate = (parseFloat(rewardRate)/parseFloat(totalSupply))
         let ticker = symbol.toUpperCase()
         let label = isReady ? 'STAKE' : 'INITIALIZE'
+
+        if(parseFloat(totalSupply) == 0){
+          rate = (parseFloat(rewardRate)/Math.pow(10, 18))
+        }
+
+        rate = parseFloat(rate * 60 * 24).toLocaleString()
 
         return(
           <Grid item xs={10} md={6} style={{ width: '100%' }}>
@@ -100,10 +108,10 @@ export default function Stake() {
                   </div>
                   <div className={classes.information}>
                     <h3> {name} [{symbol}] </h3>
-                    <h5> DEPOSITS: $ 0</h5>
+                    <h5> DEPOSITS: $ 0.00</h5>
                   </div>
                   <ul className={classes.list}>
-                    <li> RATE: {rate.toFixed(2)} NDX/DAY </li>
+                    <li> RATE: {rate} NDX/DAY </li>
                     <li> LP's: 0 </li>
                   </ul>
                 </div>

@@ -54,10 +54,9 @@ const stakingQuery = () => `
 }
 `
 
-const stakeQuery = poolAddress => `
+const stakeQuery = stakingAddress => `
 {
-  ndxStakingPools(where: { indexPool: "${poolAddress}"}) {
-    id
+  ndxStakingPools(where: { id: "${stakingAddress}"}) {
     startsAt
 		isReady
     indexPool
@@ -246,7 +245,7 @@ export async function getStakingPools() {
 
 export async function getStakingPool(poolAddress) {
   const { data: { ndxStakingPools } } = await execRequest(stakeQuery(poolAddress));
-  return ndxStakingPools;
+  return ndxStakingPools[0];
 }
 
 
