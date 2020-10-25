@@ -23,7 +23,6 @@ const setStyle = (theme) => ({
     paddingTop: 5,
     float: 'right',
     '& li': {
-      fontSize: '1vw',
       marginBottom: 7.5,
       '& span': {
         color: theme.palette.secondary.main,
@@ -36,7 +35,7 @@ const setStyle = (theme) => ({
 const getFormatting = (state) => {
   return {
     resolution: !state.native ? 200 : 75,
-    top: !state.native ? 'calc(105px - .375vw)' : '75px',
+    top: !state.native ? 'calc(100px - .375vw)' : '75px',
     margin: !state.native ? '.5em 3em' : '.5em 1.5em',
     height: !state.native ? '38%' : '77.5%',
     pre: !state.request ? 'auto' : '50%',

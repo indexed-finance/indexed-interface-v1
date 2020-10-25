@@ -138,7 +138,7 @@ export default function Spline({ metadata, height, color, padding, state, absolu
     if(!state.request) padding = p
 
     return(
-      <div style={{'z-index': 1, float: 'left', width: '65%', paddingTop: padding , position: 'absolute', overflow: 'hidden'}}>
+      <div style={{'z-index': 1, float: 'left', width: 'calc(100% - 30vw)', paddingTop: padding , position: 'absolute', overflow: 'hidden'}}>
         {state.request && (<Line height={height} options={options(0)} data={getConfig} redraw />)}
         {!state.request && (<Loader height={h} theme={theme} />)}
       </div>

@@ -31,10 +31,8 @@ const dummy = {
 }
 
 const Trigger = styled(ButtonPrimary)({
-  padding: '.1vw .25vw',
   marginTop: 25,
   marginLeft: 'auto',
-  fontSize: '.875vw',
   float: 'right',
 })
 

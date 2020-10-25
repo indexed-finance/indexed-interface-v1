@@ -22,7 +22,7 @@ const Loader = ({ height, theme }) => (
     </div>
 )
 
-const options = {
+const options  = padding => ({
   legend: {
     display: false
   },
@@ -38,19 +38,20 @@ const options = {
   },
   layout: {
     padding: {
-      right: 15,
-      left: 15,
-      top: 15,
-      bottom: 15
+      right: padding,
+      left: padding,
+      top: padding,
+      bottom: padding
     }
   }
-}
+})
 
 export default function PieChart({ metadata, height, ready }){
   const theme = useTheme()
   let colors = [ '#009999', '#00CCCC','#33FFFF', '#99FFFF', `${theme.palette.primary.main}`]
   let labels = metadata.assets.map(value => value.symbol)
   let data =  metadata.assets.map(value => value.weight)
+  let padding = 15
 
   if(metadata.assets.length == 0){
     data = [ 100 ]
@@ -87,6 +88,8 @@ export default function PieChart({ metadata, height, ready }){
   })
 
   if(!ready) return <Loader theme={theme} height={height} />
+  if(window.innerWidth > 1800) padding = 20
+  if(window.innerWidth > 2250) padding = 30
 
-  return  <Pie height={height} width={height} options={options} data={chartConfig(metadata)} />
+  return  <Pie height={height} width={height} options={options(padding)} data={chartConfig(metadata)} />
 }
