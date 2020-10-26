@@ -6,11 +6,12 @@ import { useTheme } from '@material-ui/core/styles'
 
 import { store } from '../../state'
 import ContentLoader from "react-content-loader"
+import style from '../../assets/css/components/pie'
 
-defaults.global.defaultFontFamily = 'San Francisco';
+defaults.global.defaultFontFamily = 'San Francisco Bold';
 
-const Loader = ({ height, theme }) => (
-    <div style={{ padding: 15 }}>
+const Loader = ({ height, theme, padding }) => (
+    <div style={{ padding: padding.left }}>
       <ContentLoader
         viewBox={`0 0 ${height} ${height}`}
         backgroundColor={theme.palette.primary.main}
@@ -38,20 +39,17 @@ const options  = padding => ({
   },
   layout: {
     padding: {
-      right: padding,
-      left: padding,
-      top: padding,
-      bottom: padding
+      ...padding
     }
   }
 })
 
-export default function PieChart({ metadata, height, ready }){
+export default function PieChart({ metadata, height, ready, native }){
   const theme = useTheme()
+
   let colors = [ '#009999', '#00CCCC','#33FFFF', '#99FFFF', `${theme.palette.primary.main}`]
   let labels = metadata.assets.map(value => value.symbol)
   let data =  metadata.assets.map(value => value.weight)
-  let padding = 15
 
   if(metadata.assets.length == 0){
     data = [ 100 ]
@@ -59,7 +57,7 @@ export default function PieChart({ metadata, height, ready }){
     colors = [ 'orange' ]
   }
 
-  const chartConfig = metadata => ({
+  const chartConfig = (metadata, border) => ({
     labels: labels,
   	datasets: [{
       datalabels: {
@@ -80,16 +78,20 @@ export default function PieChart({ metadata, height, ready }){
            },
       },
       borderColor: '#666666',
-      borderWidth: 3,
+      borderWidth: border,
   		data: data,
   		backgroundColor: colors,
   		hoverBackgroundColor: colors
   	}]
   })
 
-  if(!ready) return <Loader theme={theme} height={height} />
-  if(window.innerWidth > 1800) padding = 20
-  if(window.innerWidth > 2250) padding = 30
+  let { padding, border } = style.getFormatting(native)
 
-  return  <Pie height={height} width={height} options={options(padding)} data={chartConfig(metadata)} />
+  if(ready) {
+    return (
+      <Pie height={height} width={height} options={options(padding)} data={chartConfig(metadata, border)} />
+    )
+  } else return  (
+    <Loader padding={padding} theme={theme} height={height} />
+  )
 }

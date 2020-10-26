@@ -10,6 +10,11 @@ import TableRow from '@material-ui/core/TableRow'
 import { styled } from '@material-ui/core/styles'
 import ContentLoader from "react-content-loader"
 
+import style from '../assets/css/components/table'
+import getStyles from '../assets/css'
+
+const useStyles = getStyles(style)
+
 const Row = styled(TableRow)({
   border: '3px solid #666666',
   cursor: 'pointer',
@@ -75,24 +80,16 @@ const columns = [
   },
 ];
 
-export default function StickyHeadTable({ state, market, triggerMarket }) {
-
-  const useStyles = makeStyles({
-    root: {
-      width: '100%',
-    },
-    container: {
-      overflowX: !state.native ? 'hidden' : 'scroll',
-      height: !state.native ? 'calc(100vh - 500px)' : 'calc(100vh - 400px)',
-    },
-  })
-
+export default function StickyHeadTable(props) {
+  let { market, triggerMarket, state } = props
+  let { request, native, indexes } = state
+  let { overflowX, height } = style.getFormatting(native)
   const classes = useStyles()
   const theme = useTheme()
 
   return (
     <Fragment className={classes.root}>
-      <TableContainer className={classes.container}>
+      <TableContainer style={{ overflowX, height }}>
         <Table stickyHeader className={classes.table}>
           <TableHead>
             <TableRow>
@@ -108,7 +105,7 @@ export default function StickyHeadTable({ state, market, triggerMarket }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {state.request && Object.values(state.indexes).map((row, index) => {
+            {request && Object.values(indexes).map((row, index) => {
               let backgroundColor = row.active ? 'inherit' : 'rgba(255, 165, 0, 0.6)'
 
               return (
@@ -129,7 +126,7 @@ export default function StickyHeadTable({ state, market, triggerMarket }) {
                 </Row>
               );
             })}
-            {!state.request && (
+            {!request && (
               <Loader theme={theme} />
             )}
           </TableBody>

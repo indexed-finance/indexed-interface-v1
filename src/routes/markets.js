@@ -54,6 +54,7 @@ export default function Markets(){
   const history = useHistory()
 
   let { state, dispatch } = useContext(store)
+  let { request, native } = state
 
   const Wrapper = styled(Paper)({
     background: theme.palette.primary.main,
@@ -102,36 +103,34 @@ export default function Markets(){
   }, [ ])
 
   let {
-    resolution, top, margin, height, percent, pre, pre2
-  } = style.getFormatting(state)
-
-  if(state.native && window.innerWidth > 400) top = '82.5px'
+    resolution, top, margin, height, pre, pre2
+  } = style.getFormatting({ request, native })
 
   return (
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item xs={12} md={12} lg={12} xl={12}>
           <div style={{ height: pre2 }}>
-          <Canvas native={state.native}>
+          <Canvas native={native}>
             <Spline absolute state={state} height={height} color='#66FFFF' metadata={market} padding={top} />
             <div className={classes.market}>
-              {!state.native && (
+              {!native && (
                  <Fragment>
                   <h2> {market.name} [{market.symbol}] </h2>
                   {state.request && !market.active && (<h3 style={{ color: 'orange' }}> UNINITIALISED </h3>)}
                   {market.active && (<h3> {market.price} </h3>)}
                 </Fragment>
               )}
-              {state.native && (
+              {native && (
                  <Fragment>
                   <h3> [{market.symbol}] </h3>
-                  {state.request && !market.active && (<h4 style={{ color: 'orange' }}> UNINITIALISED </h4>)}
+                  {request && !market.active && (<h4 style={{ color: 'orange' }}> UNINITIALISED </h4>)}
                   {market.active && (<h4> {market.price} </h4>)}
                 </Fragment>
               )}
             </div>
             <Wrapper>
-              {!state.native && (
+              {!native && (
                 <ul className={classes.options} style={{ width: pre }}>
                   <li>ADDRESS:
                     <span>
@@ -147,8 +146,8 @@ export default function Markets(){
                   </Link>
                 </ul>
               )}
-              <div style={{ position: 'relative', float: 'left', width: !state.native ? '40%' : '100%' }}>
-                <Pie ready={state.request} height={resolution} metadata={market} />
+              <div style={{ position: 'relative', float: 'left', width: !native ? '40%' : '100%' }}>
+                <Pie ready={request} height={resolution} metadata={market} native={native} />
               </div>
             </Wrapper>
           </Canvas>
