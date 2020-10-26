@@ -6,8 +6,8 @@ import style from '../../assets/css/components/spline'
 
 import ContentLoader from "react-content-loader"
 
-const Loader = ({ theme, padding, height }) => (
-    <div style={{ paddingTop: padding, marginTop: padding }}>
+const Loader = ({ theme, padding, height, native }) => (
+    <div style={{ paddingTop: padding, marginTop: native ? 0 : padding }}>
       <ContentLoader
         speed={1}
         height={height}
@@ -143,7 +143,7 @@ export default function Spline(props){
     return(
       <div style={{'z-index': 1, float: 'left', width, paddingTop: padding , position: 'absolute', overflow: 'hidden'}}>
         {ready && (<Line height={height} options={options(0)} data={getConfig} redraw />)}
-        {!ready && (<Loader padding={p} height={h} theme={theme} />)}
+        {!ready && (<Loader native={native} padding={p} height={h} theme={theme} />)}
       </div>
     )
   } else {

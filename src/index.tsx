@@ -9,6 +9,7 @@ import IERC20 from './assets/constants/abi/IERC20.json'
 import { StateProvider } from './state'
 import Navigation from './components/navigation'
 import Loader from './components/loader'
+import Modal from './components/modal'
 
 import { getTokenCategories, getTokenPriceHistory, getIndexPool, getETHPrice } from './api/gql'
 import * as serviceWorker from './utils/serviceWorker'
@@ -270,6 +271,7 @@ function Application(){
                 </Route>
               </Switch>
             </Suspense>
+            <Modal />
           </Main>
        </Router>
     </ThemeProvider>

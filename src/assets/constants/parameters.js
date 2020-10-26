@@ -36,6 +36,13 @@ export const initialState = {
   load: false,
   dark: isNight,
   categories: {},
+  modal: {
+    show: false,
+    title: null,
+    message: null,
+    messageCode: 0,
+    actions: []
+  },
   account: null,
   network: null,
   balances: {

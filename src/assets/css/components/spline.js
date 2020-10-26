@@ -23,9 +23,9 @@ const mapping = {
     p: -75
   },
   'NATIVE': {
-    width: 'calc(100% - 30vw',
+    width: 'calc(100% - 30vw)',
     h: 125,
-    p: 22.5
+    p: 12.5
   }
 }
 

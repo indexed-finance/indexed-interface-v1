@@ -55,16 +55,28 @@ export default function Navigation({ mode }) {
     let network = await web3.eth.net.getId()
     let account = toChecksumAddress(accounts[0])
 
-    setComponent(<Blockie address={account} />)
-    setAnchorEl(null)
-    setLogin(true)
+    if(network != 4){
+      dispatch({
+        type: 'MESSAGE',
+        payload: {
+          show: true,
+          title: 'INCORRECT NETWORK',
+          message: 'The current network is not supported please change to Rinkeby testnet.',
+          actions: [ { label: 'REFRESH', f: () => console.log('poo')} ]
+        }
+      })
+    } else {
+      setComponent(<Blockie address={account} />)
+      setAnchorEl(null)
+      setLogin(true)
 
-    dispatch({
-      type: 'WEB3',
-      payload: {
-        web3, account, network
-      }
-    })
+      dispatch({
+        type: 'WEB3',
+        payload: {
+          web3, account, network
+        }
+      })
+    }
   }
 
   function Blockie({ address }) {

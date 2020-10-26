@@ -30,7 +30,7 @@ const mapping = {
   }
 }
 
-const getFormatting = ({ request, native }) => {
+const getFormatting = (native) => {
   let { innerWidth, innerHeight } = window
   let dimension = native ? 'NATIVE' : screenClass(innerWidth)
 

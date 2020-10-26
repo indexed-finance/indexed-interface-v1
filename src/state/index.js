@@ -19,6 +19,10 @@ const StateProvider = ( { children } ) => {
           }
       case 'LOAD':
         return { ...state, load: action.payload }
+      case 'MESSAGE':
+        return { ...state, modal: action.payload }
+      case 'DISMISS':
+        return { ...state, modal: initialState.modal }
       case 'GENERIC':
         return { ...state, ...action.payload }
       case 'WEB3':
