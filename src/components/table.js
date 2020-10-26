@@ -27,9 +27,9 @@ const Row = styled(TableRow)({
 const Loader = ({ theme }) => (
     <ContentLoader
       speed={1}
-      width={1250}
+      width={2000}
       height={300}
-      viewBox="0 0 1250 300"
+      viewBox="0 0 2000 300"
       backgroundColor={theme.palette.primary.main}
       foregroundColor='rgba(153, 153, 153, 0.5)'
     >
