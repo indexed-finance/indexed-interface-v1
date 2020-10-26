@@ -1,3 +1,6 @@
+import { DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
+import { screenClass } from '../../constants/functions'
+
 const setStyle = (theme) => ({
   '& .MuidGrid-container': {
     width: '100% !important'
@@ -24,7 +27,7 @@ const setStyle = (theme) => ({
     width: '27.5em',
   },
   market: {
-    width: window.innerWidth >  2250 ? '22.5vw' : '30vw',
+    width: '100%',
     color: theme.palette.secondary.main,
     borderTop: '#666666 solid 2px',
     borderBottom: '#666666 solid 2px',
@@ -45,4 +48,28 @@ const setStyle = (theme) => ({
   }
 })
 
-export default { setStyle }
+const mapping = {
+  [DESKTOP_NORMAL]: {
+    width: '100vw'
+  },
+  [DESKTOP_LARGE]: {
+    width: '30vw'
+  },
+  [DESKTOP_WIDE]: {
+    width: '22.5vw'
+  },
+  [DESKTOP_HUGE]: {
+    width: '22.5vw'
+  }
+}
+
+const getFormatting = (native) => {
+  let { innerWidth, innerHeight } = window
+  let dimension = screenClass(innerWidth)
+
+  return {
+    width: native ? '100vw' : mapping[dimension].width
+  }
+}
+
+export default { setStyle, getFormatting }

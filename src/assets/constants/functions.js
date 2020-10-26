@@ -1,4 +1,5 @@
 import { keccak_256, sha3_256 } from 'js-sha3'
+import { DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from './parameters'
 
 export const toChecksumAddress = (address) => {
   address = address.toLowerCase().replace('0x', '')
@@ -53,3 +54,12 @@ export const isChecksumAddress = (address) => {
     }
     return true;
 };
+
+export const screenClass = (width) => {
+  if(width <= DESKTOP_NORMAL) return DESKTOP_NORMAL
+  else if(width > DESKTOP_NORMAL){
+    if(DESKTOP_LARGE >= width)return DESKTOP_LARGE
+    if(width <= DESKTOP_WIDE) return DESKTOP_WIDE
+    else return DESKTOP_HUGE
+  }
+}

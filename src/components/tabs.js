@@ -151,8 +151,10 @@ export default function VerticalTabs({ data }) {
     getTrades()
   }, [ data ])
 
+  let { height } = style.getFormatting()
+
   return (
-    <div className={classes.root}>
+    <div className={classes.root} style={{ height }}>
       <div className={classes.tabs}>
         <Tabs
           orientation="vertical"

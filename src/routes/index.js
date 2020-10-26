@@ -72,7 +72,6 @@ export default function Index(){
 
   const [ styles, setStyles ] = useState({ trade: selected, mint: {}, burn: {}})
   const [ component, setComponent ] = useState(<Trade market={name}/>)
-  const [ chart, setChart ] = useState(<Fragment />)
   const [ metadata, setMetadata ] = useState({})
   const [ execution, setExecution ] = useState('trade')
   const classes = useStyles()
@@ -160,9 +159,12 @@ export default function Index(){
       </Grid>
   )
 
+
+  let { border, maxWidth, width, height, marginTop, chart } = style.getFormatting()
+
   return (
-    <div className={classes.root}>
-      <div className={classes.header}>
+    <div className={classes.root} style={{ maxWidth, border }}>
+      <div className={classes.header} style={{ width }}>
           {state.request && (
             <ul style={{ listStyle: 'none', display: 'inline-block', padding: 0 }}>
               <li style={{ float: 'left', marginRight: 50 }}>
@@ -180,7 +182,7 @@ export default function Index(){
               <TitleLoader color={state.background} />
           )}
       </div>
-      <div className={classes.sidebar}>
+      <div className={classes.sidebar} style={{ height, marginTop }}>
         <header className={classes.selections}>
           <ButtonGroup disableElevation variant='outlined'>
             <ButtonMarket style={styles.trade} className='trade' onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
@@ -192,7 +194,7 @@ export default function Index(){
           {component}
         </div>
       </div>
-      <div className={classes.chart}>
+      <div className={classes.chart} style={{ ...chart }}>
         <ParentSize>
           {({ width, height }) => (
             <Fragment>

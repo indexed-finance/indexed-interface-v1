@@ -281,9 +281,9 @@ export default function Trade({ market, metadata }) {
     })
   }, [])
 
+  let { width } = style.getFormatting(state.native)
 
-
-    return(
+  return(
     <Grid container direction='column' alignItems='center' justify='space-around'>
       <Grid item xs={12} md={12} lg={12} xl={12}>
         <Input className={classes.inputs} label="AMOUNT" variant='outlined'
@@ -321,7 +321,7 @@ export default function Trade({ market, metadata }) {
         />
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
-          <div className={classes.market}>
+          <div className={classes.market} style={{ width }}>
             <p> ROUTE: <span> ETH {'->'} {market}</span> </p>
             <p> FEE: <span> </span> </p>
           </div>

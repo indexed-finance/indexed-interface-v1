@@ -1,10 +1,13 @@
+import { DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
+import { screenClass } from '../../constants/functions'
+
 const setStyle = (theme) => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
     display: 'flex',
     width: '69.5%',
-    height: 150,
+    height: 'calc(20em - 100px)',
     padding: 0
   },
   tabs: {
@@ -18,11 +21,12 @@ const setStyle = (theme) => ({
   assets: {
     paddingTop: 7.5,
     overflowY: 'scroll',
-    width: '100%'
+    width: '100%',
+    height: '100%'
   },
   box: {
     '& .MuiGrid-container': {
-      width: window.innerWidth > 1920 ? '75% !important': 'inherit !important',
+      width: '100% !important',
       paddingTop: '2.5%',
       marginLeft: 'auto',
       marginRight: 'auto'
@@ -30,4 +34,26 @@ const setStyle = (theme) => ({
   }
 })
 
-export default { setStyle }
+const mapping = {
+  [DESKTOP_NORMAL]: {
+    height: 'calc(20em - 100px)',
+  },
+  [DESKTOP_LARGE]: {
+    height: '20em'
+  },
+  [DESKTOP_WIDE]: {
+    height: 'calc(20em - 100px)'
+  },
+  [DESKTOP_HUGE]: {
+    height: 'calc(20em - 100px)'
+  }
+}
+
+const getFormatting = () => {
+  let { innerWidth, innerHeight } = window
+  let dimension = screenClass(innerWidth)
+
+  return { ...mapping[dimension] }
+}
+
+export default { setStyle, getFormatting }

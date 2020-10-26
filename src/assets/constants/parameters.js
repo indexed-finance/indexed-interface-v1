@@ -193,3 +193,8 @@ export const eventColumns = [
     align: 'center'
   },
 ]
+
+export const DESKTOP_HUGE = 2750
+export const DESKTOP_WIDE = 2749
+export const DESKTOP_LARGE = 1921
+export const DESKTOP_NORMAL = 1600

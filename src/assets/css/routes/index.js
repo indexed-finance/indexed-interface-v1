@@ -1,13 +1,14 @@
+import { DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
+import { screenClass } from '../../constants/functions'
+
 const setStyle = (theme) => ({
   root: {
     overflow: 'hidden',
     maxWidth: '1920px',
     marginLeft: 'auto',
     marginRight:  'auto',
-    border: 'solid 3px #666666',
   },
   header: {
-    maxWidth: window.innerWidth > 1919 ? '61%' : '64.5%',
     borderBottom: 'solid 3px #666666',
     padding: '.25vw 2.5vw',
     display: 'flex'
@@ -29,16 +30,13 @@ const setStyle = (theme) => ({
   chart: {
     width: '70%',
     borderBottom: 'solid 3px #666666',
-    height: 'calc(55vh - 52.5px)'
   },
   sidebar: {
     float: 'right',
-    height: window.innerWidth > 1919 ? 'calc(75vh - 100px)' : 'fit-content',
     width: '30%',
     borderLeft: 'solid 3px #666666',
     top: 0,
     clear: 'both',
-    marginTop: window.innerWidth > 1919 ? '-5.25vh' :'-8.5vh',
     alignItems: 'center'
   },
   selections: {
@@ -68,4 +66,54 @@ const setStyle = (theme) => ({
   }
 })
 
-export default { setStyle }
+const mapping = {
+  [DESKTOP_NORMAL]: {
+    width: '64.5%',
+    height: 'calc(90vh - 20px)',
+    marginTop: '-8.5vh',
+    maxWidth: '1920px',
+    chart: {
+      height: 'calc(55vh - 40px)'
+    },
+    border: 'none'
+  },
+  [DESKTOP_LARGE]: {
+    width: '63.5%',
+    height: '91vh',
+    maxWidth: '100%',
+    marginTop: '-6.5vh',
+    chart: {
+      height: 'calc(60vh - 52.5px)'
+    },
+    border: 'none'
+  },
+  [DESKTOP_WIDE]: {
+    width: '61%',
+    height: '70vh',
+    maxWidth: '60%',
+    marginTop: '-4.5vh',
+    chart: {
+      height: 'calc(55vh - 52.5px)'
+    },
+    border: 'solid 3px #666666'
+  },
+  [DESKTOP_HUGE]: {
+    width: '61%',
+    height: 'calc(75vh - 100px)',
+    marginTop: '-5.25vh',
+    maxWidth: '48%',
+    chart: {
+      height: 'calc(55vh - 52.5px)'
+    },
+    border: 'solid 3px #666666',
+  }
+}
+
+const getFormatting = () => {
+  let { innerWidth, innerHeight } = window
+  let dimension = screenClass(innerWidth)
+
+  return { ...mapping[dimension] }
+}
+
+export default { setStyle, getFormatting }
