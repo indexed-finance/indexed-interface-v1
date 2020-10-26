@@ -101,9 +101,26 @@ export default function Trade({ market, metadata }) {
     let block = await eth.getBlock('latest')
     let amount0 = decToWeiHex(web3.injected, input.amount)
     let amount1 = decToWeiHex(web3.injected, output.amount)
+    let f = () => {}
 
-    if(input.address == WETH) await swapEthForTokens(amount0, amount1, block)
-    else await swapTokensForEth(amount0, amount1, block)
+    if(input.address == WETH){
+      f = () => swapEthForTokens(amount0, amount1, block)
+    } else {
+      f = swapTokensForEth(amount0, amount1, block)
+     }
+
+    dispatch({
+      type: 'MESSAGE',
+      payload: {
+        show: true,
+        title: 'CONFIRM ORDER',
+        message: `You are about to swap ${input.amount} ${input.market} for ${output.amount} ${output.market}.`,
+        actions: [
+          { label: 'CONFIRM', f: f },
+          { label: 'REJECT', f: null },
+        ]
+      }
+    })
   }
 
   const swapTokensForEth = async(exactTokens, minETH, recentBlock) => {
@@ -115,7 +132,8 @@ export default function Trade({ market, metadata }) {
       recentBlock.timestamp + 3600
     ).send({
       from: state.account
-    }).on('confirmation', async(conf, reciept) => {
+    }, () => dispatch({ type: 'DISMISS'}))
+  .on('confirmation', async(conf, reciept) => {
        if(conf > 2) {
          let inputBalance = await getBalance(input.address)
          let outputBalance = await getBalance(output.address)
@@ -137,7 +155,8 @@ export default function Trade({ market, metadata }) {
     ).send({
       from: state.account,
       value: minETH
-    }).on('confirmation', async(conf, reciept) => {
+    }, () => dispatch({ type: 'DISMISS'}))
+    .on('confirmation', async(conf, reciept) => {
        if(conf > 2) {
          let inputBalance = await getBalance(input.address)
          let outputBalance = await getBalance(output.address)

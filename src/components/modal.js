@@ -73,11 +73,15 @@ export default function Modal() {
           <DialogContentText>{message}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          {actions.map(act => (
-            <ButtonPrimary variant='outlined' onClick={act.f} color="primary">
-              {act.label}
-            </ButtonPrimary>
-          ))}
+          {actions.map(act => {
+            if(act.f == null) act.f = handleClose
+
+            return(
+              <ButtonPrimary variant='outlined' onClick={act.f} color="primary">
+                {act.label}
+              </ButtonPrimary>
+            )
+          })}
         </DialogActions>
       </Dialog>
   );

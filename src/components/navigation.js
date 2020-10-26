@@ -62,7 +62,7 @@ export default function Navigation({ mode }) {
           show: true,
           title: 'INCORRECT NETWORK',
           message: 'The current network is not supported please change to Rinkeby testnet.',
-          actions: [ { label: 'REFRESH', f: () => console.log('poo')} ]
+          actions: [ ]
         }
       })
     } else {
