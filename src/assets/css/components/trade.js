@@ -27,7 +27,7 @@ const setStyle = (theme) => ({
     width: '27.5em',
   },
   market: {
-    width: '100%',
+    width: 'fit-content',
     color: theme.palette.secondary.main,
     borderTop: '#666666 solid 2px',
     borderBottom: '#666666 solid 2px',
@@ -39,7 +39,7 @@ const setStyle = (theme) => ({
       float: 'right',
       fontFamily: "San Francisco Bold",
       fontWeight: 500,
-      marginRight: 50,
+      marginLeft: 100,
       color: '#999999'
     }
   },
@@ -50,16 +50,16 @@ const setStyle = (theme) => ({
 
 const mapping = {
   [DESKTOP_NORMAL]: {
-    width: '100vw'
+    width: '30vw'
   },
   [DESKTOP_LARGE]: {
-    width: '30vw'
+    width: '25vw'
   },
   [DESKTOP_WIDE]: {
     width: '22.5vw'
   },
   [DESKTOP_HUGE]: {
-    width: '22.5vw'
+    width: '20vw'
   }
 }
 

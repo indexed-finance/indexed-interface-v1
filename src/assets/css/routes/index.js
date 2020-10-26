@@ -37,10 +37,13 @@ const setStyle = (theme) => ({
     borderLeft: 'solid 3px #666666',
     top: 0,
     clear: 'both',
-    alignItems: 'center'
+    alignItems: 'center',
+    '& .MuiGrid-container': {
+      width: '100% !important'
+    },
   },
   selections: {
-    padding: '1em 6.4em'
+    paddingTop: '1em'
   },
   market: {
     padding: '.125em 0em',
@@ -78,10 +81,10 @@ const mapping = {
     border: 'none'
   },
   [DESKTOP_LARGE]: {
-    width: '63.5%',
+    width: '64.5%',
     height: '91vh',
     maxWidth: '100%',
-    marginTop: '-6.5vh',
+    marginTop: '-5vh',
     chart: {
       height: 'calc(60vh - 52.5px)'
     },
@@ -98,9 +101,9 @@ const mapping = {
     border: 'solid 3px #666666'
   },
   [DESKTOP_HUGE]: {
-    width: '61%',
+    width: '59.5%',
     height: 'calc(75vh - 100px)',
-    marginTop: '-5.25vh',
+    marginTop: '-4.5vh',
     maxWidth: '48%',
     chart: {
       height: 'calc(55vh - 52.5px)'

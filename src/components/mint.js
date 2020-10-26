@@ -146,6 +146,7 @@ export default function InteractiveList({ market, metadata }) {
   let width = !state.native ? '417.5px' : '100vw'
 
   return (
+    <div className={classes.root}>
     <Grid container direction='column' alignItems='center' justify='space-around'>
       <Grid item xs={12} md={12} lg={12} xl={12}>
         <RecieveInput label="RECIEVE" variant='outlined' type='number'
@@ -176,5 +177,6 @@ export default function InteractiveList({ market, metadata }) {
         <Trigger onClick={mintTokens}> MINT </Trigger>
       </Grid>
     </Grid>
+    </div>
   );
 }

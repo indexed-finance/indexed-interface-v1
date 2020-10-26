@@ -321,7 +321,7 @@ export default function Trade({ market, metadata }) {
         />
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
-          <div className={classes.market} style={{ width }}>
+          <div className={classes.market} >
             <p> ROUTE: <span> ETH {'->'} {market}</span> </p>
             <p> FEE: <span> </span> </p>
           </div>

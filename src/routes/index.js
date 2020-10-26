@@ -183,16 +183,22 @@ export default function Index(){
           )}
       </div>
       <div className={classes.sidebar} style={{ height, marginTop }}>
-        <header className={classes.selections}>
-          <ButtonGroup disableElevation variant='outlined'>
-            <ButtonMarket style={styles.trade} className='trade' onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
-            <ButtonMarket style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
-            <ButtonMarket style={styles.burn} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
-          </ButtonGroup>
-        </header>
-        <div className={classes.market}>
-          {component}
-        </div>
+        <Grid container direction='column' alignItems='center' justify='space-around'>
+          <Grid item>
+            <header className={classes.selections}>
+              <ButtonGroup disableElevation variant='outlined'>
+                <ButtonMarket style={styles.trade} className='trade' onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
+                <ButtonMarket style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
+                <ButtonMarket style={styles.burn} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
+              </ButtonGroup>
+            </header>
+          </Grid>
+          <Grid item>
+            <div className={classes.market}>
+              {component}
+            </div>
+          </Grid>
+        </Grid>
       </div>
       <div className={classes.chart} style={{ ...chart }}>
         <ParentSize>

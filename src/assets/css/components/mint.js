@@ -1,7 +1,9 @@
 const setStyle = (theme) => ({
   root: {
     flexGrow: 1,
-    maxWidth: 752,
+    '& .MuiGrid-container': {
+      width: '100% !important',
+   }
   },
   demo: {
     backgroundColor: theme.palette.background.paper,
