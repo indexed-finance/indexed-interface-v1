@@ -69,7 +69,7 @@ export default function Proposal(){
 
     await contract.methods.castVote(id, decision).send({ from: account })
     .on('confirmation', async(conf, receipt) => {
-      if(conf == 2 && receipt.status == 1) {
+      if(receipt.status == 1) {
         return dispatch({ type: 'FLAG', payload: TX_CONFIRM })
       } else {
         return dispatch({ type: 'FLAG', payload: TX_REVERT })

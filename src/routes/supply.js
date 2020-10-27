@@ -62,7 +62,7 @@ export default function Supply() {
     .send({
       from: account
     }).on('confirmation', (conf, receipt) => {
-      if(conf == 2 && receipt.status == 1) {
+      if(receipt.status == 1) {
         dispatch({ type: 'FLAG', payload: TX_CONFIRM })
 
         return setMetadata({ ...metadata, isReady: true })
@@ -94,7 +94,7 @@ export default function Supply() {
     await contract.methods.approve(stakingPool, amount).send({
       from: account
     }).on('confirmation', (conf, receipt) => {
-      if(conf == 2 && receipt.status == 1) {
+      if(receipt.status == 1) {
         dispatch({ type: 'FLAG', payload: TX_CONFIRM })
 
         return setExecution({ f: stake, label: 'STAKE' })
@@ -115,7 +115,7 @@ export default function Supply() {
     await contract.methods.stake(amount).send({
       from: account
     }).on('confirmation', (conf, receipt) => {
-      if(conf == 2 && receipt.status == 1) {
+      if(receipt.status == 1) {
         return dispatch({ type: 'FLAG', payload: TX_CONFIRM })
       } else {
         return dispatch({ type: 'FLAG', payload: TX_REVERT })

@@ -119,7 +119,7 @@ export default function Trade({ market, metadata }) {
       from: state.account
     }, () => dispatch({ type: 'DISMISS'}))
     .on('confirmation', async(conf, receipt) => {
-       if(conf == 2 && receipt.status == 1) {
+       if(receipt.status == 1) {
          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
          let inputBalance = await getBalance(input.address)
          let outputBalance = await getBalance(output.address)
@@ -144,7 +144,7 @@ export default function Trade({ market, metadata }) {
       value: minETH
     }, () => dispatch({ type: 'DISMISS'}))
     .on('confirmation', async(conf, receipt) => {
-       if(conf == 2 && receipt.status == 1) {
+       if(receipt.status == 1) {
          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
          let inputBalance = await getBalance(input.address)
          let outputBalance = await getBalance(output.address)
@@ -165,7 +165,7 @@ export default function Trade({ market, metadata }) {
     await contracts.token.methods.approve(address, amount0).send({
       from: state.account
      }).on('confirmation', (conf, receipt) => {
-       if(conf == 2 && receipt.status == 1){
+       if(receipt.status == 1){
          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
          return setExecution({ f: swapTokens, label: 'SWAP' })
        } else {

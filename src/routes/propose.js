@@ -194,7 +194,7 @@ export default function Propose(){
       description
     ).send({ from: account })
     .on('confirmation', (conf, receipt) => {
-      if(conf == 2 && receipt.status == 1) {
+      if(receipt.status == 1) {
         return dispatch({ type: 'FLAG', payload: TX_CONFIRM })
       } else {
         return dispatch({ type: 'FLAG', payload: TX_REVERT })

@@ -92,7 +92,7 @@ export default function InteractiveList({ market, metadata }) {
     ).send({
       from: state.account
     }).on('confirmation', async(conf, receipt) => {
-      if(conf == 2 && receipt.status == 1) {
+      if(receipt.status == 1) {
         dispatch({ type: 'FLAG', payload: TX_CONFIRM })
 
         let inputBalance = await getBalance(metadata.address)
@@ -113,7 +113,7 @@ export default function InteractiveList({ market, metadata }) {
     .send({
       from: state.account
     }).on('confirmation', async(conf, receipt) => {
-      if(conf == 2 && receipt.status == 1) {
+      if(receipt.status == 1) {
         dispatch({ type: 'FLAG', payload: TX_CONFIRM })
 
         let inputBalance = await getBalance(metadata.address)
@@ -136,7 +136,7 @@ export default function InteractiveList({ market, metadata }) {
     .approve(metadata.address, approval).send({
       from: state.account
     }).on('confirmation', (conf, receipt) => {
-      if(conf == 2 && receipt.status == 1) {
+      if(receipt.status == 1) {
         dispatch({ type: 'FLAG', payload: TX_CONFIRM })
 
         return setExecution({ f: burnTokens, label: 'BURN' })

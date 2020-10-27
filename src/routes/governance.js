@@ -109,7 +109,7 @@ export default function Governance(){
 
     await contract.methods.delegate(address).send({ from: account })
     .on('confirmaton', async(conf, receipt) => {
-      if(conf == 2 && receipt.status == 1) {
+      if(receipt.status == 1) {
         let isDelegated = await contract.methods.delegates(state.account).call()
 
         dispatch({ type: 'FLAG', payload: TX_CONFIRM })

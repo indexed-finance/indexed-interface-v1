@@ -96,7 +96,7 @@ export default function InteractiveList({ market, metadata }) {
     .send({
       from: account
     }).on('confirmation', async(conf, receipt) => {
-      if(conf == 2 && receipt.status == 1) {
+      if(receipt.status == 1) {
         let tokenBalance = await getBalance()
 
         dispatch({ type: 'BALANCE', payload: { assets } })
@@ -119,7 +119,7 @@ export default function InteractiveList({ market, metadata }) {
     .send({
       from: account
     }).on('confirmation', async(conf, receipt) => {
-      if(conf == 2 && receipt.status == 1) {
+      if(receipt.status == 1) {
         let tokenBalance = await getBalance()
 
         dispatch({ type: 'FLAG', payload: TX_CONFIRM })
