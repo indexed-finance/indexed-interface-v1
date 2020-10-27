@@ -37,33 +37,29 @@ export default function Trade({ market, metadata }) {
 
   let { dispatch, state } = useContext(store)
 
-  const handleChange = async(event) => {
+  const handleChange = (event) => {
     let { name, value } = event.target
 
-    if(name == 'input') await setRate(value)
+    setInput({ ...input, amount: value })
   }
 
-  const setRate = async(entry) => {
-    let { web3 } = state
+  const setRate = async(entry, inputAddress, outputAddress) => {
+    let { injected, rinkeby } = state.web3
 
     if(!isNaN(parseFloat(entry))) {
-      let amount = 0
+      let provider = injected != false ? injected : rinkeby
+      let i = decToWeiHex(provider, parseFloat(entry))
+      let o = await getAmountOut(i, inputAddress, outputAddress)
+      let amount = parseFloat(o[1])/Math.pow(10, 18)
 
-      if(web3.injected){
-        let i = decToWeiHex(web3.injected, parseFloat(entry))
-        let o = await getAmountOut(i)
-        amount = parseFloat(o[1])/Math.pow(10, 18)
-      } else {
-        amount = entry * prices.input
-      }
-
-      setInput({ ...input, amount: entry })
       setOutput({ ...output, amount })
+
+      return amount
     }
   }
 
-  const getAmountOut = async(i) => {
-    return await contracts.router.methods.getAmountsOut(i, [ input.address, output.address]).call()
+  const getAmountOut = async(i, inputAddress, outputAddress) => {
+    return await contracts.router.methods.getAmountsOut(i, [ inputAddress, outputAddress]).call()
   }
 
   const getBalance = async(address) => {
@@ -75,6 +71,26 @@ export default function Trade({ market, metadata }) {
     return parseFloat(balance/Math.pow(10,18)).toFixed(2)
   }
 
+  const changeMarket = async(target) => {
+    let { injected, rinkeby, indexes } = state.web3
+    let provider = injected != false ? injected : rinkeby
+    let { address } = output
+
+    let token = getERC20(provider, target)
+    let pair = await getPair(provider, target, address)
+    let pricing = await getMarketMetadata(pair.options.address)
+    let symbol = await token.methods.symbol().call()
+    let rate = await setRate(input.amount, target, address)
+
+    setInput({ ...input, address: target, market: symbol })
+    setOutput({ ...output, amount: rate })
+    setPrices({
+      input: parseFloat(pricing.token0Price),
+      output: parseFloat(pricing.token1Price)
+    })
+    setContracts({ ...contracts, pair, token })
+  }
+
   const changeOrder = () => {
     let { injected, rinkeby } = state.web3
     let provider = injected != false ? injected : rinkeby
@@ -82,30 +98,28 @@ export default function Trade({ market, metadata }) {
 
     setPrices({ input: prices.output, output: prices.input })
     setContracts({ ...contracts, token })
-    setBalances({
-      output: balances.input,
-      input: balances.output
-    })
     setInput({ ...output })
     setOutput({ ...input })
   }
 
-  const swapTokens = async() => {
+  const swapTokens = async(i, o) => {
     let { web3, indexes } = state
     let { eth } = web3.injected
 
     let block = await eth.getBlock('latest')
-    let amount0 = decToWeiHex(web3.injected, input.amount)
-    let amount1 = decToWeiHex(web3.injected, output.amount)
+    let amount0 = decToWeiHex(web3.injected, i)
+    let amount1 = decToWeiHex(web3.injected, o)
+    let io = { ...input, amount: i }
+    let oi = { ...output, amount: o }
     let f = () => {}
 
     if(input.address == WETH){
       f = () => swapEthForTokens(amount0, amount1, block)
     } else {
-      f = swapTokensForEth(amount0, amount1, block)
+      f = () => swapTokensForEth(amount0, amount1, block)
      }
 
-    dispatch({ type: 'MODAL', payload: MARKET_ORDER(input, output, f) })
+    dispatch({ type: 'MODAL', payload: MARKET_ORDER(io, oi, f) })
   }
 
   const swapTokensForEth = async(exactTokens, minETH, recentBlock) => {
@@ -119,15 +133,17 @@ export default function Trade({ market, metadata }) {
       from: state.account
     }, () => dispatch({ type: 'DISMISS'}))
     .on('confirmation', async(conf, receipt) => {
-       if(receipt.status == 1) {
-         dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-         let inputBalance = await getBalance(input.address)
-         let outputBalance = await getBalance(output.address)
+      if(conf == 0){
+        if(receipt.status == 1) {
+          let inputBalance = await getBalance(input.address)
+          let outputBalance = await getBalance(output.address)
 
-         return setBalances({ output: outputBalance, input: inputBalance })
-       } else {
-         return dispatch({ type: 'FLAG', payload: TX_REVERT })
-       }
+          setBalances({ output: outputBalance, input: inputBalance })
+          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+        } else {
+          dispatch({ type: 'FLAG', payload: TX_REVERT })
+        }
+      }
     }).catch((data) => {
       dispatch({ type: 'FLAG', payload: TX_REJECT })
     })
@@ -144,37 +160,41 @@ export default function Trade({ market, metadata }) {
       value: minETH
     }, () => dispatch({ type: 'DISMISS'}))
     .on('confirmation', async(conf, receipt) => {
-       if(receipt.status == 1) {
-         dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-         let inputBalance = await getBalance(input.address)
-         let outputBalance = await getBalance(output.address)
+      if(conf == 0){
+        if(receipt.status == 1) {
+          let inputBalance = await getBalance(input.address)
+          let outputBalance = await getBalance(output.address)
 
-         return setBalances({ output: outputBalance, input: inputBalance })
-       } else {
-         return dispatch({ type: 'FLAG', payload: TX_REVERT })
-       }
+          setBalances({ output: outputBalance, input: inputBalance })
+          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+        } else {
+          dispatch({ type: 'FLAG', payload: TX_REVERT })
+        }
+      }
     }).catch((data) => {
       dispatch({ type: 'FLAG', payload: TX_REJECT })
     })
   }
 
-  const approveTokens = async() => {
-    let amount0 = convertNumber(input.amount)
+  const approveTokens = async(i) => {
+    let amount0 = convertNumber(i)
     let { address } = contracts.router.options
 
     await contracts.token.methods.approve(address, amount0).send({
       from: state.account
      }).on('confirmation', (conf, receipt) => {
-       if(receipt.status == 1){
-         dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-         return setExecution({ f: swapTokens, label: 'SWAP' })
-       } else {
-         return dispatch({ type: 'FLAG', payload: TX_REVERT })
-       }
-      }).catch((data) => {
-        dispatch({ type: 'FLAG', payload: TX_REJECT })
-      })
-   }
+       if(conf == 0){
+         if(receipt.status == 1){
+          setExecution({ f: swapTokens, label: 'SWAP' })
+          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+        } else {
+          dispatch({ type: 'FLAG', payload: TX_REVERT })
+        }
+      }
+    }).catch((data) => {
+      dispatch({ type: 'FLAG', payload: TX_REJECT })
+    })
+  }
 
   const getAllowance = async() => {
     let { address } = contracts.router.options
@@ -201,8 +221,6 @@ export default function Trade({ market, metadata }) {
 
   const handleBalance  = async() => {
     let { amount } = state.balances[input.market]
-
-    await setRate(amount)
   }
 
   useEffect(() => {
@@ -212,7 +230,7 @@ export default function Trade({ market, metadata }) {
         let { address } = indexes[market]
 
         let router = await getRouter(web3.rinkeby)
-        let pair = await getPair(web3.rinkeby, address)
+        let pair = await getPair(web3.rinkeby, WETH, address)
         let token = await getERC20(web3.rinkeby, address)
         let pricing = await getMarketMetadata(pair.options.address)
 
@@ -234,7 +252,7 @@ export default function Trade({ market, metadata }) {
         let routerAddress = contracts.router.options.address
         let tokenAddress = contracts.token.options.address
 
-        let pair = await getPair(state.web3.injected, tokenAddress)
+        let pair = await getPair(state.web3.injected, WETH, tokenAddress)
         let router = await getRouter(state.web3.injected)
         let token = getERC20(state.web3.injected, tokenAddress)
 
@@ -250,18 +268,19 @@ export default function Trade({ market, metadata }) {
 
   useEffect(() => {
     const checkAllowance = async() => {
-      if(contracts.router.options != undefined
-        && state.web3.injected != false){
+      let { amount, address } = input
+      let rate = await setRate(amount, address, output.address)
+
+      if(contracts.router.options != undefined && state.web3.injected != false){
         let allowance = await getAllowance()
-        let { amount, address } = input
 
         if(allowance < parseFloat(amount) && address != WETH){
           setExecution({
-            f: approveTokens, label: 'APPROVE'
+            f: () => approveTokens(amount), label: 'APPROVE'
           })
-        } else {
+        } else  {
           setExecution({
-            f: swapTokens, label: 'SWAP'
+            f: () => swapTokens(amount, rate), label: 'SWAP'
           })
         }
       }
@@ -271,8 +290,7 @@ export default function Trade({ market, metadata }) {
 
   useEffect(() => {
     const retrieveBalances = async() => {
-      if(state.web3.injected != false
-          && output.address != null){
+      if(state.web3.injected != false && output.address != null){
         let inputBalance = await getBalance(input.address)
         let outputBalance = await getBalance(output.address)
 
@@ -284,12 +302,6 @@ export default function Trade({ market, metadata }) {
     }
     retrieveBalances()
   }, [ contracts ])
-
-  useEffect(() => {
-    setExecution({
-      f: swapTokens, label: 'SWAP'
-    })
-  }, [])
 
   let { width } = style.getFormatting(state.native)
 
@@ -305,7 +317,7 @@ export default function Trade({ market, metadata }) {
           name="input"
           value={input.amount}
           InputProps={{
-            endAdornment: <Adornment market={input.market}/>,
+            endAdornment: <Adornment market={input.market} onSelect={changeMarket}/>,
             inputComponent: NumberFormat
           }}
         />

@@ -22,6 +22,8 @@ import getStyles from '../assets/css'
 
 import { marketColumns } from '../assets/constants/parameters'
 
+const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
+
 const Exit = styled(ExitIcon)({
   fontSize: '1rem'
 })
@@ -114,7 +116,7 @@ export default function VerticalTabs({ data }) {
   useEffect(() => {
     const getTrades = async() => {
       if(Object.values(data).length > 0){
-        let pair = await getPair(state.web3.rinkeby, data.address)
+        let pair = await getPair(state.web3.rinkeby, WETH, data.address)
         let trades = await getMarketTrades(pair.options.address)
         let history = []
 

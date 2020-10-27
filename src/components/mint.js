@@ -96,15 +96,16 @@ export default function InteractiveList({ market, metadata }) {
     .send({
       from: account
     }).on('confirmation', async(conf, receipt) => {
-      if(receipt.status == 1) {
-        let tokenBalance = await getBalance()
+      if(conf == 0) {
+        if(receipt.status == 1) {
+          let tokenBalance = await getBalance()
 
-        dispatch({ type: 'BALANCE', payload: { assets } })
-        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-
-        return setBalance(tokenBalance)
-      } else {
-        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+          dispatch({ type: 'BALANCE', payload: { assets } })
+          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+          setBalance(tokenBalance)
+        } else {
+          return dispatch({ type: 'FLAG', payload: TX_REVERT })
+        }
       }
     }).catch((data) => {
       dispatch({ type: 'FLAG', payload: TX_REJECT })
@@ -119,15 +120,16 @@ export default function InteractiveList({ market, metadata }) {
     .send({
       from: account
     }).on('confirmation', async(conf, receipt) => {
-      if(receipt.status == 1) {
-        let tokenBalance = await getBalance()
+      if(conf == 0){
+        if(receipt.status == 1) {
+          let tokenBalance = await getBalance()
 
-        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-        dispatch({ type: 'BALANCE', payload: { assets } })
-
-        return setBalance(tokenBalance)
-      } else {
-        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+          dispatch({ type: 'BALANCE', payload: { assets } })
+          setBalance(tokenBalance)
+        } else {
+          dispatch({ type: 'FLAG', payload: TX_REVERT })
+        }
       }
     }).catch((data) => {
       dispatch({ type: 'FLAG', payload: TX_REJECT })
@@ -168,7 +170,7 @@ export default function InteractiveList({ market, metadata }) {
     <div className={classes.root}>
     <Grid container direction='column' alignItems='center' justify='space-around'>
       <Grid item xs={12} md={12} lg={12} xl={12}>
-        <RecieveInput label="RECIEVE" variant='outlined' type='number'
+        <RecieveInput label="RECIEVE" variant='outlined'
           helperText={<o className={classes.helper} onClick={handleBalance}>
             BALANCE: {balance}
           </o>}

@@ -17,14 +17,14 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function Option({ label, selections, onChange }){
+export default function Option({ label, onChange, selections }){
   const [ value, setValue ] = useState(null)
   const classes = useStyles()
   const theme = useTheme()
 
-  const handleChange = (event) => {
+  const handleChange = async(event) => {
     setValue(event.target.value)
-    onChange(event.target.value, label)
+    await onChange(event.target.value, label)
   }
 
   const InputSelect = styled(Select)({

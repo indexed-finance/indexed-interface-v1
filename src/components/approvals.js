@@ -130,12 +130,13 @@ export default function Approvals({ balance, metadata, height, width, input, par
     await contract.methods.approve(metadata.address, amount).send({
       from: account
     }).on('confirmation', (conf, receipt) => {
-      if(receipt.status == 1) {
-        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-
-        return setInputState(symbol, 0)
-      } else {
-        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+      if(conf == 0){
+        if(receipt.status == 1) {
+          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+          setInputState(symbol, 0)
+        } else {
+          dispatch({ type: 'FLAG', payload: TX_REVERT })
+        }
       }
     }).catch((data) => {
       dispatch({ type: 'FLAG', payload: TX_REJECT })

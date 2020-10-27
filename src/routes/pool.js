@@ -14,6 +14,8 @@ import List from '../components/list'
 import ButtonTransaction from '../components/buttons/transaction'
 import ButtonPrimary from '../components/buttons/primary'
 
+import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
+
 import PoolInitializer from '../assets/constants/abi/PoolInitializer.json'
 import IERC20 from '../assets/constants/abi/IERC20.json'
 import MockERC20ABI from '../assets/constants/abi/MockERC20.json'
@@ -133,8 +135,17 @@ export default function Pools(){
       addresses,
       amounts,
       output
-    ).send({
-      from: state.account
+    ).send({ from: account })
+    .on('confirmaton', (conf, receipt) => {
+      if(conf == 0){
+        if(receipt.status == 1) {
+          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+        } else {
+          dispatch({ type: 'FLAG', payload: TX_REVERT })
+        }
+      }
+    }).catch((data) => {
+      dispatch({ type: 'FLAG', payload: TX_REJECT })
     })
   }
 

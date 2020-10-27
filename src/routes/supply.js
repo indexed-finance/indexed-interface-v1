@@ -58,16 +58,15 @@ export default function Supply() {
     let { stakingToken } = metadata
     let contract = toContract(web3.injected, StakingRewardsFactory, FACTORY)
 
-    await contract.methods.notifyRewardAmount(stakingToken)
-    .send({
-      from: account
-    }).on('confirmation', (conf, receipt) => {
-      if(receipt.status == 1) {
-        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-
-        return setMetadata({ ...metadata, isReady: true })
-      } else {
-        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+    await contract.methods.notifyRewardAmount(stakingToken).send({ from: account })
+    .on('confirmation', (conf, receipt) => {
+      if(conf == 0){
+        if(receipt.status == 1) {
+          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+          setMetadata({ ...metadata, isReady: true })
+        } else {
+          dispatch({ type: 'FLAG', payload: TX_REVERT })
+        }
       }
     }).catch((data) => {
       dispatch({ type: 'FLAG', payload: TX_REJECT })
@@ -91,15 +90,15 @@ export default function Supply() {
     let contract = getERC20(web3.injected, stakingToken)
     let amount = decToWeiHex(web3.injected, parseFloat(input))
 
-    await contract.methods.approve(stakingPool, amount).send({
-      from: account
-    }).on('confirmation', (conf, receipt) => {
-      if(receipt.status == 1) {
-        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-
-        return setExecution({ f: stake, label: 'STAKE' })
-      } else {
-        dispatch({ type: 'FLAG', payload: TX_REVERT })
+    await contract.methods.approve(stakingPool, amount).send({ from: account })
+    .on('confirmation', (conf, receipt) => {
+      if(conf == 0){
+        if(receipt.status == 1) {
+          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+          setExecution({ f: stake, label: 'STAKE' })
+        } else {
+          dispatch({ type: 'FLAG', payload: TX_REVERT })
+        }
       }
     }).catch((data) => {
       dispatch({ type: 'FLAG', payload: TX_REJECT })
@@ -112,13 +111,14 @@ export default function Supply() {
     let contract = toContract(web3.injected, IStakingRewards, stakingPool)
     let amount = decToWeiHex(web3.injected, parseFloat(input))
 
-    await contract.methods.stake(amount).send({
-      from: account
-    }).on('confirmation', (conf, receipt) => {
-      if(receipt.status == 1) {
-        return dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-      } else {
-        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+    await contract.methods.stake(amount).send({ from: account })
+    .on('confirmation', (conf, receipt) => {
+      if(conf == 0){
+        if(receipt.status == 1) {
+          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+        } else {
+          dispatch({ type: 'FLAG', payload: TX_REVERT })
+        }
       }
     }).catch((data) => {
       dispatch({ type: 'FLAG', payload: TX_REJECT })

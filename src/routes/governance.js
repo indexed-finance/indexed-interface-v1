@@ -109,14 +109,15 @@ export default function Governance(){
 
     await contract.methods.delegate(address).send({ from: account })
     .on('confirmaton', async(conf, receipt) => {
-      if(receipt.status == 1) {
-        let isDelegated = await contract.methods.delegates(state.account).call()
+      if(conf == 0){
+        if(receipt.status == 1) {
+          let isDelegated = await contract.methods.delegates(state.account).call()
 
-        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-
-        return getStatus(isDelegated)
-      } else {
-        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+          getStatus(isDelegated)
+        } else {
+          dispatch({ type: 'FLAG', payload: TX_REVERT })
+        }
       }
     }).catch((data) => {
       dispatch({ type: 'FLAG', payload: TX_REJECT })

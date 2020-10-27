@@ -31,11 +31,11 @@ export const decToWeiHex = (web3, dec) => {
   return `0x` + new BN(web3.utils.toWei(str)).toString('hex');
 }
 
-export async function getPair(web3, tokenAddress){
+export async function getPair(web3, addressOne, addressTwo){
   const factory = toContract(web3, UniV2FactoryABI.abi, FACTORY)
   const pairAddress = await factory.methods.getPair(
-    WETH,
-    tokenAddress
+    addressOne,
+    addressTwo
   ).call()
 
   return toContract(web3, UniV2PairABI.abi, pairAddress)

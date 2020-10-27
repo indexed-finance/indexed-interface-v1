@@ -68,11 +68,13 @@ export default function Proposal(){
     let decision = input === 1
 
     await contract.methods.castVote(id, decision).send({ from: account })
-    .on('confirmation', async(conf, receipt) => {
-      if(receipt.status == 1) {
-        return dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-      } else {
-        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+    .on('confirmaton', async(conf, receipt) => {
+      if(conf == 0){
+        if(receipt.status == 1) {
+          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+        } else {
+          dispatch({ type: 'FLAG', payload: TX_REVERT })
+        }
       }
     }).catch((data) => {
       dispatch({ type: 'FLAG', payload: TX_REJECT })

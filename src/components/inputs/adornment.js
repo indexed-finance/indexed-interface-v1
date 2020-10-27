@@ -13,23 +13,28 @@ const Selection = styled(Select)({
   }
 })
 
+const selections = [
+  { address:'0xc778417e063141139fce010982780140aa0cd5ab', symbol: 'ETH' },
+  { address: '0x2d952ad99184ed4638b9aa288f43de14de3147bf', symbol: 'WBTC' }
+]
+
 export default function CurrencySelect({ market, onSelect }) {
-  const [currency, setCurrency] = useState(null)
+  const [currency, setCurrency] = useState('ETH')
 
   const handleChange = (event) => {
-    setCurrency(event.target.value)
-    onSelect(event.target.value)
-  }
+    let { value } = event.target
+    let { address } = selections.find(i => i.symbol == value)
 
-  useEffect(() => {
-    setCurrency(market)
-  }, [ market ])
+    setCurrency(value)
+    onSelect(address)
+  }
 
   return(
     <InputAdornment style={{ paddingRight: 5 }} position="end">
       <Selection value={currency} onChange={handleChange} >
-        <MenuItem value='ETH'>ETH</MenuItem>
-        <MenuItem value={market}>{market}</MenuItem>
+        {selections.map(i => (
+          <MenuItem value={i.symbol}>{i.symbol}</MenuItem>
+        ))}
       </Selection>
     </InputAdornment>
   )

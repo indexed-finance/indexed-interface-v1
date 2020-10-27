@@ -92,15 +92,16 @@ export default function InteractiveList({ market, metadata }) {
     ).send({
       from: state.account
     }).on('confirmation', async(conf, receipt) => {
-      if(receipt.status == 1) {
-        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+      if(conf == 0){
+        if(receipt.status == 1) {
+          let inputBalance = await getBalance(metadata.address)
+          let outputBalance = await getBalance(output.address)
 
-        let inputBalance = await getBalance(metadata.address)
-        let outputBalance = await getBalance(output.address)
-
-        return setBalances({ input: inputBalance, output: outputBalance})
-      } else {
-        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+          setBalances({ input: inputBalance, output: outputBalance})
+          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+        } else {
+          dispatch({ type: 'FLAG', payload: TX_REVERT })
+        }
       }
     }).catch((data) => {
       dispatch({ type: 'FLAG', payload: TX_REJECT })
@@ -113,15 +114,16 @@ export default function InteractiveList({ market, metadata }) {
     .send({
       from: state.account
     }).on('confirmation', async(conf, receipt) => {
-      if(receipt.status == 1) {
-        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+      if(conf == 0){
+        if(receipt.status == 1) {
+          let inputBalance = await getBalance(metadata.address)
+          let outputBalance = await getBalance(output.address)
 
-        let inputBalance = await getBalance(metadata.address)
-        let outputBalance = await getBalance(output.address)
-
-        return setBalances({ input: inputBalance, output: outputBalance})
-      } else {
-        return dispatch({ type: 'FLAG', payload: TX_REJECT })
+          setBalances({ input: inputBalance, output: outputBalance})
+          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+        } else {
+          dispatch({ type: 'FLAG', payload: TX_REJECT })
+        }
       }
     }).catch((data) => {
       dispatch({ type: 'FLAG', payload: TX_REJECT })
@@ -136,12 +138,13 @@ export default function InteractiveList({ market, metadata }) {
     .approve(metadata.address, approval).send({
       from: state.account
     }).on('confirmation', (conf, receipt) => {
-      if(receipt.status == 1) {
-        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-
-        return setExecution({ f: burnTokens, label: 'BURN' })
-      } else {
-        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+      if(conf == 0){
+        if(receipt.status == 1) {
+          setExecution({ f: burnTokens, label: 'BURN' })
+          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+        } else {
+          dispatch({ type: 'FLAG', payload: TX_REVERT })
+        }
       }
     }).catch((data) => {
       dispatch({ type: 'FLAG', payload: TX_REJECT })
