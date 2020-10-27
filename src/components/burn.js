@@ -8,15 +8,17 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Table from '@material-ui/core/Table'
 import Grid from '@material-ui/core/Grid'
+
 import { toContract } from '../lib/util/contracts'
 import { getRateMulti, getRateSingle, decToWeiHex } from '../lib/markets'
+import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
+import { balanceOf, getERC20, allowance } from '../lib/erc20'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
 import style from '../assets/css/components/burn'
 import { tokenImages } from '../assets/constants/parameters'
 import BPool from '../assets/constants/abi/BPool.json'
-import IERC20 from '../assets/constants/abi/IERC20.json'
 import ButtonPrimary from './buttons/primary'
 import Adornment from './inputs/adornment'
 import NumberFormat from '../utils/format'
@@ -90,15 +92,18 @@ export default function InteractiveList({ market, metadata }) {
     ).send({
       from: state.account
     }).on('confirmation', async(conf, receipt) => {
-      if(conf > 2) {
+      if(conf == 2 && receipt.status == 1) {
+        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+
         let inputBalance = await getBalance(metadata.address)
         let outputBalance = await getBalance(output.address)
 
-        setBalances({
-          input: inputBalance,
-          output: outputBalance
-        })
+        return setBalances({ input: inputBalance, output: outputBalance})
+      } else {
+        return dispatch({ type: 'FLAG', payload: TX_REVERT })
       }
+    }).catch((data) => {
+      dispatch({ type: 'FLAG', payload: TX_REJECT })
     })
   }
 
@@ -108,47 +113,54 @@ export default function InteractiveList({ market, metadata }) {
     .send({
       from: state.account
     }).on('confirmation', async(conf, receipt) => {
-      if(conf > 2) {
+      if(conf == 2 && receipt.status == 1) {
+        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+
         let inputBalance = await getBalance(metadata.address)
         let outputBalance = await getBalance(output.address)
 
-        setBalances({
-          input: inputBalance,
-          output: outputBalance
-        })
+        return setBalances({ input: inputBalance, output: outputBalance})
+      } else {
+        return dispatch({ type: 'FLAG', payload: TX_REJECT })
       }
+    }).catch((data) => {
+      dispatch({ type: 'FLAG', payload: TX_REJECT })
     })
   }
 
   const approveTokens = async(input) => {
-    let contract = toContract(state.web3.injected, IERC20.abi, metadata.address)
+    let contract = getERC20(state.web3.injected, metadata.address)
     let approval = convertNumber(input)
 
     await contract.methods
     .approve(metadata.address, approval).send({
       from: state.account
     }).on('confirmation', (conf, receipt) => {
-      setExecution({
-        f: burnTokens,
-        label: 'BURN'
-      })
+      if(conf == 2 && receipt.status == 1) {
+        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+
+        return setExecution({ f: burnTokens, label: 'BURN' })
+      } else {
+        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+      }
+    }).catch((data) => {
+      dispatch({ type: 'FLAG', payload: TX_REJECT })
     })
   }
 
   const getAllowance = async() => {
-    let contract = toContract(state.web3.injected, IERC20.abi, metadata.address)
+    let { web3, account } = state
+    let { address } = metadata
 
-    let allowance = await contract.methods
-    .allowance(state.account, metadata.address).call()
+    let budget = await allowance(web3.rinkeby, address, account, address)
 
-    return allowance/Math.pow(10,18)
+    return budget/Math.pow(10,18)
   }
 
   const getBalance = async(address) => {
-    let contract = toContract(state.web3.injected, IERC20.abi, address)
+    let { web3, account } = state
 
-    let balance = await contract.methods
-    .balanceOf(state.account).call()
+    let balance = await balanceOf(web3.rinkeby, address, account)
 
     return parseFloat(balance/Math.pow(10,18)).toFixed(2)
   }
@@ -233,36 +245,28 @@ export default function InteractiveList({ market, metadata }) {
         let rates;
 
         if(selection){
-            rates = await getRateMulti(web3.rinkeby, address, input, false)
+          rates = await getRateMulti(web3.rinkeby, address, input, false)
 
-            for(let token in rates){
-              let { symbol, amount } = rates[token]
-              let element = document.getElementById(symbol)
-              let o = toBN(amount).toString()
+          for(let token in rates){
+            let { symbol, amount } = rates[token]
+            let element = document.getElementById(symbol)
+            let o = toBN(amount).toString()
 
-              element.innerHTML = parseNumber(o)
-            }
+            element.innerHTML = parseNumber(o)
+          }
         } else {
-            rates = await getRateSingle(web3.rinkeby, address, output.address, input)
-            let amount = parseNumber(rates[0].amount)
+          rates = await getRateSingle(web3.rinkeby, address, output.address, input)
+          let amount = parseNumber(rates[0].amount)
 
-            setComponent(<Single data={{ ...rates[0], amount }} />)
-            setOutput({ ...rates[0], amount })
-        }
-
-        if(web3.injected){
+          setComponent(<Single data={{ ...rates[0], amount }} />)
+          setOutput({ ...rates[0], amount })
+        } if(web3.injected){
           let allowance = await getAllowance()
 
           if(allowance < parseFloat(amount)){
-            setExecution({
-              f: approveTokens,
-              label: 'APPROVE'
-            })
+            setExecution({ f: approveTokens, label: 'APPROVE' })
           } else {
-            setExecution({
-              f: () => burnTokens(rates),
-              label: 'BURN'
-            })
+            setExecution({ f: () => burnTokens(rates), label: 'BURN' })
           }
         }
       }
@@ -271,10 +275,7 @@ export default function InteractiveList({ market, metadata }) {
   }, [ amount ])
 
   useEffect(() => {
-    setExecution({
-      f: burnTokens,
-      label: 'BURN'
-    })
+    setExecution({ f: burnTokens, label: 'BURN' })
   }, [])
 
   useEffect(() => {
@@ -285,10 +286,7 @@ export default function InteractiveList({ market, metadata }) {
         let inputBalance = await getBalance(metadata.address)
         let outputBalance = await getBalance(address)
 
-        setBalances({
-          input: inputBalance,
-          output: outputBalance
-        })
+        setBalances({ input: inputBalance, output: outputBalance })
       }
     }
     pullBalance()

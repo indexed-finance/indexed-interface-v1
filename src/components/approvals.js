@@ -11,15 +11,15 @@ import Grid from '@material-ui/core/Grid'
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Checkbox from '@material-ui/core/Checkbox';
 
+import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
+import { balanceOf, getERC20, allowance } from '../lib/erc20'
 import { getRateSingle, getRateMulti, decToWeiHex } from '../lib/markets'
 import { tokenMetadata, initialState } from '../assets/constants/parameters'
 import style from '../assets/css/components/approvals'
-import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
 import BPool from '../assets/constants/abi/BPool.json'
-import IERC20 from '../assets/constants/abi/IERC20.json'
 import NumberFormat from '../utils/format'
 import ButtonPrimary from './buttons/primary'
 import ButtonTransaction from './buttons/transaction'
@@ -122,26 +122,33 @@ export default function Approvals({ balance, metadata, height, width, input, par
   };
 
   const approveTokens = async(symbol) => {
+    let { web3, account } = state
     let { address } = state.balances[symbol]
-    let contract = toContract(state.web3.injected, IERC20.abi, address)
+    let contract = getERC20(web3.injected, address)
     let amount = convertNumber(getInputValue(symbol))
 
-    await contract.methods
-    .approve(metadata.address, amount).send({
-      from: state.account
+    await contract.methods.approve(metadata.address, amount).send({
+      from: account
     }).on('confirmation', (conf, receipt) => {
+      if(conf == 2 && receipt.status == 1) {
+        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
 
-      setInputState(symbol, 0)
+        return setInputState(symbol, 0)
+      } else {
+        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+      }
+    }).catch((data) => {
+      dispatch({ type: 'FLAG', payload: TX_REJECT })
     })
   }
 
-  const getAllowance = async(address) => {
-    let contract = toContract(state.web3.rinkeby, IERC20.abi, address)
+  const getAllowance = async(target) => {
+    let { web3, account } = state
+    let { address } = metadata
 
-    let allowance = await contract.methods
-    .allowance(state.account, metadata.address).call()
+    let budget = await allowance(web3.rinkeby, target, account, address)
 
-    return allowance/Math.pow(10,18)
+    return budget/Math.pow(10,18)
   }
 
   const handleInput = async(event) => {
@@ -220,8 +227,6 @@ export default function Approvals({ balance, metadata, height, width, input, par
   const setInputState = (name, type) => {
     let element = document.getElementsByName(name)[0]
     let { nextSibling } = element.nextSibling
-
-    console.log(nextSibling)
 
     if(type == 0) nextSibling.style.borderColor = '#009966'
     else if (type == 1) nextSibling.style.borderColor = 'red'

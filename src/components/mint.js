@@ -9,14 +9,16 @@ import Avatar from '@material-ui/core/Avatar'
 import List from '@material-ui/core/List'
 import Grid from '@material-ui/core/Grid'
 
+import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
 import { getRateMulti, getRateSingle, decToWeiHex } from '../lib/markets'
 import { tokenMetadata } from '../assets/constants/parameters'
-import style from '../assets/css/components/mint'
+import { balanceOf, getERC20, allowance } from '../lib/erc20'
 import { toContract } from '../lib/util/contracts'
+
+import style from '../assets/css/components/mint'
 import getStyles from '../assets/css'
 
 import BPool from '../assets/constants/abi/BPool.json'
-import IERC20 from '../assets/constants/abi/IERC20.json'
 import NumberFormat from '../utils/format'
 import ButtonPrimary from './buttons/primary'
 import ButtonTransaction from './buttons/transaction'
@@ -94,10 +96,18 @@ export default function InteractiveList({ market, metadata }) {
     .send({
       from: account
     }).on('confirmation', async(conf, receipt) => {
-      let tokenBalance = await getBalance()
+      if(conf == 2 && receipt.status == 1) {
+        let tokenBalance = await getBalance()
 
-      await dispatch({ type: 'BALANCE', payload: { assets } })
-      setBalance(tokenBalance)
+        dispatch({ type: 'BALANCE', payload: { assets } })
+        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+
+        return setBalance(tokenBalance)
+      } else {
+        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+      }
+    }).catch((data) => {
+      dispatch({ type: 'FLAG', payload: TX_REJECT })
     })
   }
 
@@ -109,21 +119,30 @@ export default function InteractiveList({ market, metadata }) {
     .send({
       from: account
     }).on('confirmation', async(conf, receipt) => {
-      let tokenBalance = await getBalance()
+      if(conf == 2 && receipt.status == 1) {
+        let tokenBalance = await getBalance()
 
-      await dispatch({ type: 'BALANCE', payload: { assets } })
-      setBalance(tokenBalance)
+        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+        dispatch({ type: 'BALANCE', payload: { assets } })
+
+        return setBalance(tokenBalance)
+      } else {
+        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+      }
+    }).catch((data) => {
+      dispatch({ type: 'FLAG', payload: TX_REJECT })
     })
   }
 
   const getBalance = async() => {
-    let contract = toContract(state.web3.injected, IERC20.abi, metadata.address)
+    let { web3, account } = state
+    let { address } = metadata
 
-    let balance = await contract.methods
-    .balanceOf(state.account).call()
+    let balance = await balanceOf(web3.rinkeby, address, account)
 
     return parseFloat(balance/Math.pow(10,18)).toFixed(2)
   }
+
 
   const handleBalance = () => {
     setAmount(balance)

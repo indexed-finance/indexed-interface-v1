@@ -6,9 +6,9 @@ import { FormControl } from '@material-ui/core';
 
 import StakingRewardsFactory from '../assets/constants/abi/StakingRewardsFactory.json'
 import IStakingRewards from '../assets/constants/abi/IStakingRewards.json'
-import IERC20 from '../assets/constants/abi/IERC20.json'
 import Countdown from "react-countdown";
 
+import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
 import style from '../assets/css/routes/supply'
 import Canvas from '../components/canvas'
 import Container from '../components/container'
@@ -18,6 +18,7 @@ import NumberFormat from '../utils/format'
 
 import { tokenMetadata } from '../assets/constants/parameters'
 import { getStakingPool } from '../api/gql'
+import { balanceOf, allowance, getERC20 } from '../lib/erc20'
 import { decToWeiHex, getBalances } from '../lib/markets'
 import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
@@ -60,8 +61,16 @@ export default function Supply() {
     await contract.methods.notifyRewardAmount(stakingToken)
     .send({
       from: account
-    }).on('confirmation', () => {
-      setMetadata({ ...metadata, isReady: true })
+    }).on('confirmation', (conf, receipt) => {
+      if(conf == 2 && receipt.status == 1) {
+        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+
+        return setMetadata({ ...metadata, isReady: true })
+      } else {
+        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+      }
+    }).catch((data) => {
+      dispatch({ type: 'FLAG', payload: TX_REJECT })
     })
   }
 
@@ -69,25 +78,31 @@ export default function Supply() {
     let stakingPool = z[ticker]
     let { web3, account } = state
     let { stakingToken } = metadata
-    let contract = toContract(web3.injected, IERC20.abi, stakingToken)
-    let allowance = await contract.methods.allowance(account, stakingPool).call()
 
-    return parseFloat(allowance)/Math.pow(10, 18)
+    let budget = await allowance(web3.injected, stakingToken, account, stakingPool).call()
+
+    return parseFloat(budget)/Math.pow(10, 18)
   }
 
   const approve = async() => {
     let stakingPool = z[ticker]
     let { web3, account } = state
     let { stakingToken } = metadata
-    let contract = toContract(web3.injected, IERC20.abi, stakingToken)
+    let contract = getERC20(web3.injected, stakingToken)
     let amount = decToWeiHex(web3.injected, parseFloat(input))
 
     await contract.methods.approve(stakingPool, amount).send({
       from: account
-    }).on('confirmation', () => {
-      setExecution({
-        f: stake, label: 'STAKE'
-      })
+    }).on('confirmation', (conf, receipt) => {
+      if(conf == 2 && receipt.status == 1) {
+        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+
+        return setExecution({ f: stake, label: 'STAKE' })
+      } else {
+        dispatch({ type: 'FLAG', payload: TX_REVERT })
+      }
+    }).catch((data) => {
+      dispatch({ type: 'FLAG', payload: TX_REJECT })
     })
   }
 
@@ -99,10 +114,14 @@ export default function Supply() {
 
     await contract.methods.stake(amount).send({
       from: account
-    }).on('confirmation', () => {
-      setExecution({
-        f: stake, label: 'STAKE'
-      })
+    }).on('confirmation', (conf, receipt) => {
+      if(conf == 2 && receipt.status == 1) {
+        return dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+      } else {
+        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+      }
+    }).catch((data) => {
+      dispatch({ type: 'FLAG', payload: TX_REJECT })
     })
   }
 
@@ -127,8 +146,6 @@ export default function Supply() {
       let rate = (parseFloat(rewardRate)/parseFloat(totalSupply))
       let contract = toContract(web3.rinkeby, IStakingRewards, stakingAddress)
       let rewardPerToken = await contract.methods.rewardPerToken().call()
-
-      console.log(rewardPerToken)
 
       if(parseFloat(totalSupply) == 0){
         rate = (parseFloat(rewardRate)/Math.pow(10, 18))
@@ -159,12 +176,9 @@ export default function Supply() {
         let amount = parseFloat(input)
 
         if(amount > allowance){
-          setExecution({
-            f: approve, label: 'APPROVE'
-          })
+          setExecution({ f: approve, label: 'APPROVE'})
         } else {
-          setExecution({
-            f: stake, label: 'STAKE'
+          setExecution({ f: stake, label: 'STAKE'
           })
         }
       }
@@ -180,7 +194,7 @@ export default function Supply() {
 
       if(web3.injected){
         let contract = toContract(web3.rinkeby, IStakingRewards, stakingPool)
-        let token = toContract(web3.rinkeby, IERC20.abi, stakingToken)
+        let token = getERC20(web3.rinkeby, stakingToken)
         let claim = await contract.methods.earned(account).call()
         let deposit = await contract.methods.balanceOf(account).call()
         let balance = await token.methods.balanceOf(account).call()

@@ -1,13 +1,18 @@
-const { abi: erc20ABI, bytecode: erc20Bytecode } = require('../assets/constants/abi/IERC20.json');
-const { deploy } = require('./util/contracts');
+import IERC20 from '../assets/constants/abi/IERC20.json';
+import { toContract } from './util/contracts'
 
-export async function deployERC20(web3, from, name, symbol) {
-  return deploy(web3, from, erc20ABI, erc20Bytecode, [name, symbol]);
+export function getERC20(web3, tokenAddress){
+   return toContract(web3, IERC20.abi, tokenAddress)
 }
 
-export function getERC20(web3, contract) {
-  if (typeof contract == 'string') {
-    return new web3.eth.Contract(erc20ABI, contract);
-  }
-  return contract;
+export async function allowance(web3, tokenAddress, sender, spender){
+  let contract = getERC20(web3, tokenAddress)
+
+  return await contract.methods.allowance(sender, spender).call()
+}
+
+export async function balanceOf(web3, tokenAddress, owner){
+  let contract = getERC20(web3, tokenAddress)
+
+  return await contract.methods.balanceOf(owner).call()
 }

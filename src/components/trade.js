@@ -10,11 +10,11 @@ import NumberFormat from '../utils/format'
 import Adornment from './inputs/adornment'
 import Input from './inputs/input'
 
-import IERC20 from '../assets/constants/abi/IERC20.json'
-import { toContract } from '../lib/util/contracts'
-import { getMarketMetadata } from '../api/gql'
-import style from '../assets/css/components/trade'
+import { TX_CONFIRM, TX_REJECT, TX_REVERT, MARKET_ORDER } from '../assets/constants/parameters'
 import { getPair, getRouter, decToWeiHex } from '../lib/markets'
+import { balanceOf, getERC20, allowance } from '../lib/erc20'
+import style from '../assets/css/components/trade'
+import { getMarketMetadata } from '../api/gql'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
@@ -70,11 +70,7 @@ export default function Trade({ market, metadata }) {
     let { injected, rinkeby } = state.web3
     let provider = injected != false ? injected : rinkeby
     let target = injected != false ? state.account : '0x0000000000000000000000000000000000000001'
-
-    let contract = toContract(provider, IERC20.abi, address)
-
-    let balance = address == WETH ? await rinkeby.eth.getBalance(target)
-    : await contract.methods.balanceOf(target).call()
+    let balance = address == WETH ? await provider.eth.getBalance(target): await balanceOf(provider, address, target)
 
     return parseFloat(balance/Math.pow(10,18)).toFixed(2)
   }
@@ -82,7 +78,7 @@ export default function Trade({ market, metadata }) {
   const changeOrder = () => {
     let { injected, rinkeby } = state.web3
     let provider = injected != false ? injected : rinkeby
-    let token = toContract(provider, IERC20.abi, output.address)
+    let token = getERC20(provider, output.address)
 
     setPrices({ input: prices.output, output: prices.input })
     setContracts({ ...contracts, token })
@@ -109,18 +105,7 @@ export default function Trade({ market, metadata }) {
       f = swapTokensForEth(amount0, amount1, block)
      }
 
-    dispatch({
-      type: 'MESSAGE',
-      payload: {
-        show: true,
-        title: 'CONFIRM ORDER',
-        message: `You are about to swap ${input.amount} ${input.market} for ${output.amount} ${output.market}.`,
-        actions: [
-          { label: 'CONFIRM', f: f },
-          { label: 'REJECT', f: null },
-        ]
-      }
-    })
+    dispatch({ type: 'MODAL', payload: MARKET_ORDER(input, output, f) })
   }
 
   const swapTokensForEth = async(exactTokens, minETH, recentBlock) => {
@@ -133,16 +118,18 @@ export default function Trade({ market, metadata }) {
     ).send({
       from: state.account
     }, () => dispatch({ type: 'DISMISS'}))
-  .on('confirmation', async(conf, reciept) => {
-       if(conf > 2) {
+    .on('confirmation', async(conf, receipt) => {
+       if(conf == 2 && receipt.status == 1) {
+         dispatch({ type: 'FLAG', payload: TX_CONFIRM })
          let inputBalance = await getBalance(input.address)
          let outputBalance = await getBalance(output.address)
 
-         setBalances({
-           output: outputBalance,
-           input: inputBalance
-         })
+         return setBalances({ output: outputBalance, input: inputBalance })
+       } else {
+         return dispatch({ type: 'FLAG', payload: TX_REVERT })
        }
+    }).catch((data) => {
+      dispatch({ type: 'FLAG', payload: TX_REJECT })
     })
   }
 
@@ -156,41 +143,46 @@ export default function Trade({ market, metadata }) {
       from: state.account,
       value: minETH
     }, () => dispatch({ type: 'DISMISS'}))
-    .on('confirmation', async(conf, reciept) => {
-       if(conf > 2) {
+    .on('confirmation', async(conf, receipt) => {
+       if(conf == 2 && receipt.status == 1) {
+         dispatch({ type: 'FLAG', payload: TX_CONFIRM })
          let inputBalance = await getBalance(input.address)
          let outputBalance = await getBalance(output.address)
 
-         setBalances({
-           output: outputBalance,
-           input: inputBalance
-         })
+         return setBalances({ output: outputBalance, input: inputBalance })
+       } else {
+         return dispatch({ type: 'FLAG', payload: TX_REVERT })
        }
+    }).catch((data) => {
+      dispatch({ type: 'FLAG', payload: TX_REJECT })
     })
   }
 
   const approveTokens = async() => {
-    let amount0 = convertNumber(input)
+    let amount0 = convertNumber(input.amount)
     let { address } = contracts.router.options
 
-    await contracts.token.methods
-    .approve(address, amount0).send({
+    await contracts.token.methods.approve(address, amount0).send({
       from: state.account
-    }).on('confirmation', async(conf, receipt) => {
-      setExecution({
-        f: swapTokens,
-        label: 'SWAP'
+     }).on('confirmation', (conf, receipt) => {
+       if(conf == 2 && receipt.status == 1){
+         dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+         return setExecution({ f: swapTokens, label: 'SWAP' })
+       } else {
+         return dispatch({ type: 'FLAG', payload: TX_REVERT })
+       }
+      }).catch((data) => {
+        dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
-    })
-  }
+   }
 
   const getAllowance = async() => {
     let { address } = contracts.router.options
+    let { web3, account } = state
 
-    let allowance = await contracts.token.methods
-    .allowance(state.account, address).call()
+    let budget = await allowance(web3.injected, input.address, account, address)
 
-    return allowance/Math.pow(10,18)
+    return parseFloat(budget)/Math.pow(10,18)
   }
 
   const convertNumber = (amount) => {
@@ -220,9 +212,8 @@ export default function Trade({ market, metadata }) {
         let { address } = indexes[market]
 
         let router = await getRouter(web3.rinkeby)
-
         let pair = await getPair(web3.rinkeby, address)
-        let token = toContract(web3.rinkeby, IERC20.abi, address)
+        let token = await getERC20(web3.rinkeby, address)
         let pricing = await getMarketMetadata(pair.options.address)
 
         setOutput({ ...output, address: indexes[market].address })
@@ -230,7 +221,7 @@ export default function Trade({ market, metadata }) {
           input: parseFloat(pricing.token0Price),
           output: parseFloat(pricing.token1Price)
         })
-        setContracts({ pair, token, router })
+        setContracts({ pair, router, token })
       }
     }
     getPairMetadata()
@@ -240,18 +231,18 @@ export default function Trade({ market, metadata }) {
     const changeProvider = async() => {
       if(contracts.pair.options != undefined){
         let pairAddress = contracts.pair.options.address
-        let tokenAddress = contracts.token.options.address
         let routerAddress = contracts.router.options.address
+        let tokenAddress = contracts.token.options.address
 
-        let token = toContract(state.web3.injected, IERC20.abi, tokenAddress)
         let pair = await getPair(state.web3.injected, tokenAddress)
         let router = await getRouter(state.web3.injected)
+        let token = getERC20(state.web3.injected, tokenAddress)
 
-        token.options.address = tokenAddress
         router.options.address = routerAddress
+        token.options.address = tokenAddress
         pair.options.address = pairAddress
 
-        setContracts({ token, pair, router })
+        setContracts({ pair, router, token })
        }
      }
      changeProvider()

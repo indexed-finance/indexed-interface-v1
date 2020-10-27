@@ -100,14 +100,6 @@ export default function Markets(){
         type: 'LOAD', payload: true
       })
     }
-    dispatch({
-      type: 'FLAG',
-      payload: {
-        show: true,
-        message: 'l33t 1337 yi3ldz bruv',
-        opcode: 'warning'
-      }
-    })
   }, [ ])
 
   let {

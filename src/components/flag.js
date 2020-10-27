@@ -20,7 +20,7 @@ export default function TransitionAlerts() {
   let { state, dispatch } = useContext(store)
 
   const handleClose = () => {
-    setOpen(false)
+    dispatch({ type: 'CLOSE' })
   }
 
   let { message, show, opcode } = state.flag
@@ -28,8 +28,14 @@ export default function TransitionAlerts() {
   let { left, bottom } = style.getFormatting(state.native)
 
   useEffect(() => {
-    setOpen(show)
+   const dismiss = setTimeout(() => { handleClose() }, 10000)
+   
+   setOpen(show)
+
+   return () => clearTimeout(dismiss)
   }, [ show ])
+
+  console.log(opcode)
 
   return (
     <div className={classes.root} style={{ left, bottom }}>

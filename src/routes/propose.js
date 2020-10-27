@@ -17,6 +17,7 @@ import Select from '../components/inputs/select'
 import Input from '../components/inputs/input'
 import Container from '../components/container'
 
+import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
 import style from '../assets/css/routes/propose'
 import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
@@ -191,8 +192,15 @@ export default function Propose(){
       signatures,
       calldata,
       description
-    ).send({
-      from: account
+    ).send({ from: account })
+    .on('confirmation', (conf, receipt) => {
+      if(conf == 2 && receipt.status == 1) {
+        return dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+      } else {
+        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+      }
+    }).catch((data) => {
+      dispatch({ type: 'FLAG', payload: TX_REJECT })
     })
   }
 

@@ -24,7 +24,9 @@ import Radio from '../components/inputs/radio'
 import Progress from '../components/progress'
 import Canvas from '../components/canvas'
 
+import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
 import { toContract } from '../lib/util/contracts'
+import { balanceOf } from '../lib/erc20'
 import style from '../assets/css/routes/proposal'
 import getStyles from '../assets/css'
 import { store } from '../state'
@@ -66,6 +68,15 @@ export default function Proposal(){
     let decision = input === 1
 
     await contract.methods.castVote(id, decision).send({ from: account })
+    .on('confirmation', async(conf, receipt) => {
+      if(conf == 2 && receipt.status == 1) {
+        return dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+      } else {
+        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+      }
+    }).catch((data) => {
+      dispatch({ type: 'FLAG', payload: TX_REJECT })
+    })
   }
 
   function Blockie({ address, id, width, border }) {

@@ -19,10 +19,12 @@ const StateProvider = ( { children } ) => {
           }
       case 'LOAD':
         return { ...state, load: action.payload }
-      case 'MESSAGE':
+      case 'MODAL':
         return { ...state, modal: action.payload }
       case 'DISMISS':
         return { ...state, modal: initialState.modal }
+      case 'CLOSE':
+        return { ...state, flag: initialState.flag }
       case 'FLAG':
         return { ...state, flag: action.payload }
       case 'GENERIC':

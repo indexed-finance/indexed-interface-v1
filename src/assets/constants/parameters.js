@@ -210,3 +210,9 @@ export const DESKTOP_HUGE = 2750
 export const DESKTOP_WIDE = 2749
 export const DESKTOP_LARGE = 1921
 export const DESKTOP_NORMAL = 1600
+
+export const TX_CONFIRM = { show: true, message: 'TRANSACTION CONFIRMED', opcode: 'success' }
+export const TX_REVERT = { show: true, message: 'TRANSACTION REVERTED', opcode: 'error' }
+export const TX_REJECT = { show: true, message:'TRANSACTION REJECTED', opcode: 'warning' }
+
+export const MARKET_ORDER = (input, output, f) => ({ show: true, title: 'CONFIRM ORDER', message: `You are about to swap ${input.amount} ${input.market} for ${output.amount} ${output.market}.`, actions: [{ label: 'CONFIRM', f: f }, { label: 'REJECT', f: null }] })

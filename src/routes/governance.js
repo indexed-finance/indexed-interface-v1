@@ -27,11 +27,14 @@ import Canvas from '../components/canvas'
 import Progress from '../components/progress'
 import Stacked from '../components/charts/stacked'
 
-import style from '../assets/css/routes/governance'
+import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
+import { balanceOf } from '../lib/erc20'
 import { toContract } from '../lib/util/contracts'
-import getStyles from '../assets/css'
 import { store } from '../state'
 import { getProposals } from '../api/gql'
+
+import style from '../assets/css/routes/governance'
+import getStyles from '../assets/css'
 
 const NDX = '0xe366577a6712591c2e6f76fdcb96a99ac30a74c3'
 const NA = '0x0000000000000000000000000000000000000000'
@@ -90,7 +93,6 @@ const dummy = { snapshots: [], active: 0, inactive: 0, delegated: 0}
 
 const useStyles = getStyles(style)
 
-
 export default function Governance(){
   const [ proposals, setProposals ] = useState([])
   const [ phase, setPhase ] = useState(<span />)
@@ -105,11 +107,19 @@ export default function Governance(){
     let { web3, account } = state
     let contract = toContract(web3.injected, Ndx.abi, NDX)
 
-    await contract.methods.delegate(address)
-    .send({ from: account }).on('confirmaton', async(c, r) => {
-      let isDelegated = await contract.methods.delegates(state.account).call()
+    await contract.methods.delegate(address).send({ from: account })
+    .on('confirmaton', async(conf, receipt) => {
+      if(conf == 2 && receipt.status == 1) {
+        let isDelegated = await contract.methods.delegates(state.account).call()
 
-      getStatus(isDelegated)
+        dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+
+        return getStatus(isDelegated)
+      } else {
+        return dispatch({ type: 'FLAG', payload: TX_REVERT })
+      }
+    }).catch((data) => {
+      dispatch({ type: 'FLAG', payload: TX_REJECT })
     })
   }
 
@@ -187,12 +197,12 @@ export default function Governance(){
 
   useEffect(() => {
     const getAccountMetadata = async() => {
-      let { web3 } = state
+      let { web3, account } = state
 
       if(web3.injected) {
         let contract = toContract(web3.injected, Ndx.abi, NDX)
-        let isDelegated = await contract.methods.delegates(state.account).call()
-        let balance = await contract.methods.balanceOf(state.account).call()
+        let isDelegated = await contract.methods.delegates(account).call()
+        let balance = await contract.methods.balanceOf(account).call()
         let amount = (parseFloat(balance)/Math.pow(10, 18)).toLocaleString(
           undefined, { minimumFractionDigits: 2 }
         )
