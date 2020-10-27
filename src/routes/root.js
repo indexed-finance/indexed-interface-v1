@@ -34,7 +34,7 @@ const Button = styled(ButtonPrimary)({
 })
 
 export default function Root(){
-  let { state } = useContext(store)
+  let { state, dispatch } = useContext(store)
 
   useEffect(() => {
     renderCanvas()

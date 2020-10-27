@@ -43,6 +43,11 @@ export const initialState = {
     messageCode: 0,
     actions: []
   },
+  flag: {
+    show: false,
+    message: null,
+    opcode: ''
+  },
   account: null,
   network: null,
   balances: {

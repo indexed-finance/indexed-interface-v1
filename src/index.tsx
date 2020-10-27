@@ -10,6 +10,7 @@ import { StateProvider } from './state'
 import Navigation from './components/navigation'
 import Loader from './components/loader'
 import Modal from './components/modal'
+import Flag from './components/flag'
 
 import { getTokenCategories, getTokenPriceHistory, getIndexPool, getETHPrice } from './api/gql'
 import * as serviceWorker from './utils/serviceWorker'
@@ -272,6 +273,7 @@ function Application(){
               </Switch>
             </Suspense>
             <Modal />
+            <Flag />
           </Main>
        </Router>
     </ThemeProvider>

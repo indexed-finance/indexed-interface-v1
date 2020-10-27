@@ -13,35 +13,26 @@ import Typography from '@material-ui/core/Typography';
 
 import ButtonPrimary from './buttons/primary'
 import { store } from '../state'
+import style from '../assets/css/components/modal'
+import getStyles from '../assets/css'
+
+const useStyles = getStyles(style)
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const styles = (theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(2),
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.grey[500],
-  },
-});
-
 export default function Modal() {
   const [open, setOpen] = useState(false);
-
+  const classes = useStyles()
   let { state, dispatch } = useContext(store)
 
   const handleClose = () => {
     dispatch({ type: 'DISMISS' })
   }
 
-  const DialogTitle = withStyles(styles)((props) => {
-    let { children, classes, onClose, ...other } = props;
+  function DialogTitle(props) {
+    let { children, onClose, ...other } = props;
 
     return (
       <MuiDialogTitle disableTypography className={classes.root} {...other}>
@@ -53,7 +44,7 @@ export default function Modal() {
         ) : null}
       </MuiDialogTitle>
     );
-  })
+  }
 
   useEffect(() => {
     setOpen(state.modal.show)
