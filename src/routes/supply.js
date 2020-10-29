@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useContext, useEffect } from 'react'
+import React, { Fragment, useState, useContext, useEffect, useRef } from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import { useParams } from  'react-router-dom'
@@ -46,7 +46,7 @@ export default function Supply() {
   const [ execution, setExecution ] = useState({ f: () => {}, label: 'STAKE' })
   const [ stats, setStats ] = useState({ claim: 0, deposit: 0, balance: 0 })
   const [ metadata, setMetadata ] = useState({})
-  const [ input, setInput ] = useState(0)
+  const [ input, setInput ] = useState(null)
 
   let { state, dispatch } = useContext(store)
   let { asset } = useParams()
@@ -78,7 +78,7 @@ export default function Supply() {
     let { web3, account } = state
     let { stakingToken } = metadata
 
-    let budget = await allowance(web3.injected, stakingToken, account, stakingPool).call()
+    let budget = await allowance(web3.injected, stakingToken, account, stakingPool)
 
     return parseFloat(budget)/Math.pow(10, 18)
   }
@@ -126,16 +126,31 @@ export default function Supply() {
   }
 
   const handleInput = (event) => {
-    let element = document.getElementById('est')
-    let estimatedReward = parseFloat(event.target.value) * metadata.per
+    let { value } = event.target
+    let weight = getPoolWeight(value)
 
-    element.innerHTML = estimatedReward.toFixed(2)
+    let estimatedReward = getEstimatedReward(value, weight)
+    let estimation = document.getElementById('est')
+    let presence = document.getElementById('weight')
+
+    estimation.innerHTML = estimatedReward
+    presence.innerHTML = weight
+
     setInput(event.target.value)
   }
 
-  let width = ticker.includes('UNIV2') ? 50 : 30
-  let marginRight = ticker.includes('UNIV2') ? 7.5 : 0
-  let marginBottom = ticker.includes('UNIV2') ? 0 : 10
+  const getEstimatedReward = (value, weight) => {
+    let { rate } = metadata
+
+    return parseFloat(rate) * weight
+  }
+
+  const getPoolWeight = (value) => {
+    let { totalSupply } = metadata
+    let poolWeight = (parseFloat(totalSupply)/Math.pow(10, 18))
+
+    return parseFloat(value)/poolWeight
+  }
 
   useEffect(() => {
     const getMetadata = async() => {
@@ -145,7 +160,6 @@ export default function Supply() {
       let { totalSupply, rewardRate, stakingToken, isReady } = data
       let rate = (parseFloat(rewardRate)/parseFloat(totalSupply))
       let contract = toContract(web3.rinkeby, IStakingRewards, stakingAddress)
-      let rewardPerToken = await contract.methods.rewardPerToken().call()
 
       if(parseFloat(totalSupply) == 0){
         rate = (parseFloat(rewardRate)/Math.pow(10, 18))
@@ -160,7 +174,7 @@ export default function Supply() {
       }
 
       data.rate = parseFloat(rate * 60 * 24).toLocaleString()
-      data.per = parseFloat(rewardPerToken)/Math.pow(10, 18)
+      data.per = rate * 60 * 24
 
       setMetadata(data)
     }
@@ -170,10 +184,11 @@ export default function Supply() {
   useEffect(() => {
     const checkAllowance = async() => {
       let { web3 } = state
+      let obj = Object.entries(metadata)
 
-      if(web3.injected) {
-        let allowance = await getAllowance()
+      if(web3.injected && obj.length > 0) {
         let amount = parseFloat(input)
+        let allowance = await getAllowance()
 
         if(amount > allowance){
           setExecution({ f: approve, label: 'APPROVE'})
@@ -191,8 +206,9 @@ export default function Supply() {
       let stakingPool = z[ticker]
       let { stakingToken } = metadata
       let { web3, account } = state
+      let obj = Object.entries(metadata)
 
-      if(web3.injected){
+      if(web3.injected && obj.length > 0){
         let contract = toContract(web3.rinkeby, IStakingRewards, stakingPool)
         let token = getERC20(web3.rinkeby, stakingToken)
         let claim = await contract.methods.earned(account).call()
@@ -207,6 +223,10 @@ export default function Supply() {
     }
     getAccountMetadata()
   }, [ state.web3.injected ])
+
+  let width = ticker.includes('UNIV2') ? 50 : 30
+  let marginRight = ticker.includes('UNIV2') ? 7.5 : 0
+  let marginBottom = ticker.includes('UNIV2') ? 0 : 10
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
@@ -243,10 +263,14 @@ export default function Supply() {
                   </Grid>
                   <Grid item>
                     <Input label="AMOUNT" variant='outlined'
-                      helperText={<o> BALANCE: {stats.balance} </o>}
                       onChange={handleInput}
                       value={input}
-                      name='input'
+                      InputProps={{
+                        inputComponent: NumberFormat
+                      }}
+                      helperText={
+                        <o className={classes.helper}> BALANCE: {stats.balance} </o>
+                      }
                     />
                   </Grid>
                 </Fragment>
@@ -261,13 +285,13 @@ export default function Supply() {
             {metadata.isReady && (
               <ul className={classes.estimation}>
                 <li> EST REWARD: <span id='est'>0</span> NDX/DAY </li>
-                <li> POOL WEIGHT: 0% </li>
+                <li> POOL WEIGHT: <span id='weight'>0</span>% </li>
               </ul>
             )}
-            <ButtonPrimary onClick={execution.f} variant='outlined' margin={{ marginTop: 15, marginRight: 25 }}>
-              {execution.label}
-            </ButtonPrimary>
           </div>
+          <ButtonPrimary onClick={execution.f} variant='outlined' margin={{ marginTop: -50, marginRight: 25 }}>
+            {execution.label}
+          </ButtonPrimary>
         </Container>
       </Grid>
       <Grid item xs={10} md={6}>

@@ -175,7 +175,7 @@ export default function VerticalTabs({ data }) {
         </Grid>
       </TabPanel>
       <TabPanel className={classes.panels} value={value} index={1}>
-        <List height={150} columns={marketColumns} data={trades} />
+        <List height={height} columns={marketColumns} data={trades} />
       </TabPanel>
     </div>
   );

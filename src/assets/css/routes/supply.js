@@ -4,7 +4,7 @@ const setStyle = (theme) => ({
   },
   modal: {
     width: '30em',
-    padding: '1em 2em',
+    padding: '0em 2em 1em',
     height: '10em',
   },
   rewards: {
@@ -24,9 +24,14 @@ const setStyle = (theme) => ({
     padding: 0,
     margin: 0
   },
+  helper: {
+    cursor: 'pointer',
+    marginBottom: 0
+  },
   estimation: {
     listStyle: 'none ',
-    display: 'inline-block '
+    display: 'inline-block',
+    marginTop: -5
   },
   stats: {
     listStyle: 'none',

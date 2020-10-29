@@ -2,35 +2,35 @@ import React, { Fragment, useState, useEffect, useContext } from "react";
 
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
-import { styled, useTheme } from '@material-ui/core/styles'
+import { styled, useTheme, makeStyles } from '@material-ui/core/styles'
 
-export default function Container({ padding, children, margin, title, percentage,  }){
-  const theme = useTheme()
-  let sideMargin = padding == '1em 0em' ? 25 : 0
-
-  const Wrapper = styled(Paper)({
-    padding: padding,
+const useStyles = makeStyles(theme => ({
+  root: {
     border: '3px solid #666666',
     borderRadius: 10,
-    margin: margin,
     color: theme.palette.secondary.main,
     '& header': {
       marginTop: '-2em',
-      marginLeft: sideMargin,
       background: theme.palette.primary.main,
       padding: '0em 1em 0em 1em',
       width: 'fit-content',
       fontFamily: 'San Francisco Bold',
       letterSpacing: 3,
     }
-  })
+  },
+}));
+
+export default function Container({ padding, children, margin, title }){
+  const theme = useTheme()
+  let marginLeft = padding == '1em 0em' ? 25 : 0
+  const classes = useStyles()
 
   return(
-    <Wrapper>
+    <Paper className={classes.root} style={{ marginLeft, padding, margin }}>
       <header>
         <Typography variant='h5'> {title} </Typography>
       </header>
       {children}
-    </Wrapper>
+    </Paper>
   )
 }

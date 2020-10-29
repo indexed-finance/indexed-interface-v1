@@ -29,13 +29,11 @@ export default function TransitionAlerts() {
 
   useEffect(() => {
    const dismiss = setTimeout(() => { handleClose() }, 10000)
-   
+
    setOpen(show)
 
    return () => clearTimeout(dismiss)
   }, [ show ])
-
-  console.log(opcode)
 
   return (
     <div className={classes.root} style={{ left, bottom }}>

@@ -85,8 +85,8 @@ export default function Trade({ market, metadata }) {
     setInput({ ...input, address: target, market: symbol })
     setOutput({ ...output, amount: rate })
     setPrices({
-      input: parseFloat(pricing.token0Price),
-      output: parseFloat(pricing.token1Price)
+      input: parseFloat(pricing.token1Price),
+      output: parseFloat(pricing.token0Price)
     })
     setContracts({ ...contracts, pair, token })
   }
