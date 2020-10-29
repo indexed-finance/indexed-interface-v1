@@ -7,6 +7,7 @@ import { FormControl } from '@material-ui/core';
 import StakingRewardsFactory from '../assets/constants/abi/StakingRewardsFactory.json'
 import IStakingRewards from '../assets/constants/abi/IStakingRewards.json'
 import Countdown from "react-countdown";
+import CountUp from 'react-countup';
 
 import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
 import style from '../assets/css/routes/supply'
@@ -152,6 +153,32 @@ export default function Supply() {
     return parseFloat(value)/poolWeight
   }
 
+  const getAccountMetadata = async() => {
+    let stakingPool = z[ticker]
+    let { stakingToken } = metadata
+    let { web3, account } = state
+    let obj = Object.entries(metadata)
+
+    if(web3.injected && obj.length > 0){
+      let contract = toContract(web3.rinkeby, IStakingRewards, stakingPool)
+      let token = getERC20(web3.rinkeby, stakingToken)
+      let claim = await contract.methods.earned(account).call()
+      let deposit = await contract.methods.balanceOf(account).call()
+      let balance = await token.methods.balanceOf(account).call()
+      let returns = metadata.per * (parseFloat(claim)/Math.pow(10,18))
+      let tomorrow = new Date(Date.now())
+      let today = tomorrow
+
+      balance = (parseFloat(balance)/Math.pow(10,18)).toFixed(2)
+      deposit = (parseFloat(deposit)/Math.pow(10,18)).toFixed(2)
+      claim = (parseFloat(claim)/Math.pow(10,18))
+      tomorrow = new Date(tomorrow.getTime() + 86400)
+      tomorrow = (tomorrow.getTime() - today.getTime())
+
+      setStats({ claim, deposit, balance, tomorrow, returns })
+    }
+  }
+
   useEffect(() => {
     const getMetadata = async() => {
       let { web3 } = state
@@ -172,11 +199,14 @@ export default function Supply() {
           f: stake, label: 'STAKE'
         })
       }
-
       data.rate = parseFloat(rate * 60 * 24).toLocaleString()
       data.per = rate * 60 * 24
 
       setMetadata(data)
+
+      if(web3.injected){
+        await getAccountMetadata()
+      }
     }
     getMetadata()
   }, [])
@@ -202,25 +232,6 @@ export default function Supply() {
   }, [ input ])
 
   useEffect(() => {
-    const getAccountMetadata = async() => {
-      let stakingPool = z[ticker]
-      let { stakingToken } = metadata
-      let { web3, account } = state
-      let obj = Object.entries(metadata)
-
-      if(web3.injected && obj.length > 0){
-        let contract = toContract(web3.rinkeby, IStakingRewards, stakingPool)
-        let token = getERC20(web3.rinkeby, stakingToken)
-        let claim = await contract.methods.earned(account).call()
-        let deposit = await contract.methods.balanceOf(account).call()
-        let balance = await token.methods.balanceOf(account).call()
-
-        balance = (parseFloat(balance)/Math.pow(10,18)).toFixed(2)
-        deposit = (parseFloat(deposit)/Math.pow(10,18)).toFixed(2)
-        claim = (parseFloat(claim)/Math.pow(10,18)).toFixed(5)
-        setStats({ claim, deposit, balance })
-      }
-    }
     getAccountMetadata()
   }, [ state.web3.injected ])
 
@@ -236,7 +247,7 @@ export default function Supply() {
           <div className={classes.rewards}>
             <p> ACTIVE CLAIM </p>
             <div>
-              <h2> {stats.claim} NDX </h2>
+              <h2> <CountUp decimals={6} perserveValue separator="," start={stats.claim} end={stats.returns} duration={86400000} /> NDX </h2>
               <ButtonPrimary variant='outlined' margin={{ marginTop: -50 }}>
                 CLAIM
               </ButtonPrimary>
