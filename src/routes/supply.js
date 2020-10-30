@@ -150,14 +150,17 @@ export default function Supply() {
     let { totalSupply } = metadata
     let poolWeight = (parseFloat(totalSupply)/Math.pow(10, 18))
 
-    return parseFloat(value)/poolWeight
+    return parseFloat(value)/poolWeight * 100
   }
 
-  const getAccountMetadata = async() => {
+  const getAccountMetadata = async(obj) => {
     let stakingPool = z[ticker]
-    let { stakingToken } = metadata
+    let { stakingToken, totalSupply } = metadata
     let { web3, account } = state
-    let obj = Object.entries(metadata)
+
+    if(obj == undefined){
+       obj = Object.entries(metadata)
+    }
 
     if(web3.injected && obj.length > 0){
       let contract = toContract(web3.rinkeby, IStakingRewards, stakingPool)
@@ -165,17 +168,22 @@ export default function Supply() {
       let claim = await contract.methods.earned(account).call()
       let deposit = await contract.methods.balanceOf(account).call()
       let balance = await token.methods.balanceOf(account).call()
-      let returns = metadata.per * (parseFloat(claim)/Math.pow(10,18))
       let tomorrow = new Date(Date.now())
+      let supply = (parseFloat(totalSupply)/Math.pow(10,18))
       let today = tomorrow
 
-      balance = (parseFloat(balance)/Math.pow(10,18)).toFixed(2)
-      deposit = (parseFloat(deposit)/Math.pow(10,18)).toFixed(2)
+      balance = (parseFloat(balance)/Math.pow(10,18))
+      deposit = (parseFloat(deposit)/Math.pow(10,18))
       claim = (parseFloat(claim)/Math.pow(10,18))
+
+      let returns = metadata.per * (claim)/(supply+claim)
+      let future =  claim + returns
+      let display = returns.toLocaleString({ minimumFractionDigits: 2 })
+
       tomorrow = new Date(tomorrow.getTime() + 86400)
       tomorrow = (tomorrow.getTime() - today.getTime())
 
-      setStats({ claim, deposit, balance, tomorrow, returns })
+      setStats({ claim, deposit, balance, returns, future, display })
     }
   }
 
@@ -204,8 +212,8 @@ export default function Supply() {
 
       setMetadata(data)
 
-      if(web3.injected){
-        await getAccountMetadata()
+      if(web3.injected != false){
+        await getAccountMetadata(data)
       }
     }
     getMetadata()
@@ -239,6 +247,8 @@ export default function Supply() {
   let marginRight = ticker.includes('UNIV2') ? 7.5 : 0
   let marginBottom = ticker.includes('UNIV2') ? 0 : 10
 
+  if(state.web3.injected) getAccountMetadata()
+
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
     <Grid item xs={10} md={6}>
@@ -247,14 +257,14 @@ export default function Supply() {
           <div className={classes.rewards}>
             <p> ACTIVE CLAIM </p>
             <div>
-              <h2> <CountUp decimals={6} perserveValue separator="," start={stats.claim} end={stats.returns} duration={86400000} /> NDX </h2>
+              <h2> <CountUp decimals={6} perserveValue separator="," start={stats.claim} end={stats.future} duration={86400} /> NDX </h2>
               <ButtonPrimary variant='outlined' margin={{ marginTop: -50 }}>
                 CLAIM
               </ButtonPrimary>
             </div>
             <ul className={classes.list}>
               <li> DEPOSIT: {stats.deposit} {asset.toUpperCase()}</li>
-              <li> RATE: 0 NDX/DAY</li>
+              <li> RATE: {stats.display} NDX/DAY</li>
             </ul>
           </div>
         </Canvas>

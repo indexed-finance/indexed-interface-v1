@@ -1,9 +1,9 @@
-import React, { Fragment, useState, useContext, useEffect } from 'react'
+import React, { Fragment, useState, useContext, useEffect, useReducer } from 'react'
 
 import { makeStyles, useTheme, styled } from '@material-ui/core/styles'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation } from 'react-router-dom'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import ContentLoader from "react-content-loader"
@@ -72,8 +72,11 @@ export default function Index(){
 
   const [ styles, setStyles ] = useState({ trade: selected, mint: {}, burn: {}})
   const [ component, setComponent ] = useState(<Trade market={name}/>)
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const [ metadata, setMetadata ] = useState({})
   const [ execution, setExecution ] = useState('trade')
+  const [ path, setPath ] = useState(null)
+  const location = useLocation()
   const classes = useStyles()
   const theme = useTheme()
 
@@ -136,11 +139,25 @@ export default function Index(){
 
   useEffect(() => {
     if(!state.load){
+      setPath(name)
       dispatch({
         type: 'LOAD', payload: true
       })
     }
   }, [ ])
+
+  useEffect(() => {
+    if(name != path && path != null){
+      setMetadata(state.indexes[name])
+      forceUpdate()
+    }
+  }, [ name ])
+
+  useEffect(() => {
+    if(path == null){
+      setPath(name)
+    }
+  }, [ location.pathname ])
 
   if(state.native) return(
       <Grid container direction='column' alignItems='center' justify='space-between'>
