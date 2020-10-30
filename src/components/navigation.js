@@ -208,7 +208,6 @@ export default function Navigation({ mode }) {
                     vertical: "top",
                     horizontal: "right",
                   }}
-                  getContentAnchorEl={null}
                 >
                   {login && (<LoggedIn />)}
                   {!login && (<LoggedOut />)}

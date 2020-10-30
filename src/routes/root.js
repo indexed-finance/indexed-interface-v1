@@ -1,6 +1,6 @@
-import React, { Fragment, useEffect, useContext } from 'react'
+import React, { Fragment, useEffect, useContext, useState } from 'react'
 
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { renderCanvas, stopRender } from '../utils/canvas'
 import { styled } from '@material-ui/core/styles'
 import { store } from '../state'
@@ -34,9 +34,12 @@ const Button = styled(ButtonPrimary)({
 })
 
 export default function Root(){
+  const [ path, setPath ] = useState(null)
   let { state, dispatch } = useContext(store)
+  let history = useHistory()
 
   useEffect(() => {
+    console.log('jhello')
     renderCanvas()
   }, [ ])
 

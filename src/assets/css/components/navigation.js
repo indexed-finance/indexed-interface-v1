@@ -17,6 +17,7 @@ const setStyle = (theme) => ({
     padding: theme.spacing(2,0),
     background: theme.palette.primary.main,
     color: theme.palette.secondary.main,
+    paddingRight: '0px !important'
   },
   menuButton: {
     marginRight: theme.spacing(1)

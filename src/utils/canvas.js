@@ -181,6 +181,7 @@ function render() {
 }
 
 export function renderCanvas(){
+  shouldRender = true;
 	init();
   animate();
 }

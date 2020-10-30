@@ -14,6 +14,7 @@ body {
   font-family: 'San Francisco';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding: 0 !important;
 }
 
 html, body {
