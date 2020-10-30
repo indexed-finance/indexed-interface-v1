@@ -3,6 +3,8 @@ import React, { useState, useEffect, useContext } from 'react'
 import Grid from '@material-ui/core/Grid'
 import { Link } from  'react-router-dom'
 import Countdown from 'react-countdown'
+import ContentLoader from "react-content-loader"
+import { useTheme } from '@material-ui/core/styles'
 
 import IERC20 from '../assets/constants/abi/IERC20.json'
 
@@ -28,9 +30,26 @@ const i = {
   'UNIV2:ETH-GOVI6': [ 'UNI', 'YFI', 'CRV', 'BAL']
 }
 
+const MyLoader = ({theme}) => (
+  <ContentLoader
+    speed={2}
+    width={1125}
+    height={875}
+    viewBox="0 0 1250 875"
+    backgroundColor={theme.palette.primary.main}
+    foregroundColor='rgba(153, 153, 153, 0.5)'
+  >
+    <rect x="0" y="0" rx="5" ry="5" width="750" height="200" />
+    <rect x="0" y="225" rx="5" ry="5" width="750" height="200" />
+    <rect x="0" y="450" rx="5" ry="5" width="750" height="200" />
+    <rect x="0" y="675" rx="5" ry="5" width="750" height="200" />
+  </ContentLoader>
+)
+
 export default function Stake() {
   const [ pools, setPools ] = useState([])
   let { state, dispatch } = useContext(store)
+  let theme =  useTheme()
   let classes = useStyles()
 
   useEffect(() => {
@@ -79,7 +98,7 @@ export default function Stake() {
           </div>
         </Container>
       </Grid>
-      {pools.map(p => {
+      {pools.length > 0 && pools.map(p => {
         let { symbol, name, rewardRate, isReady, totalSupply } = p
         let color  = symbol.includes('UNIV2') ? '#fc1c84' : ''
         let width = symbol.includes('UNIV2') ? 25 : 30
@@ -88,6 +107,8 @@ export default function Stake() {
         let rate = (parseFloat(rewardRate)/parseFloat(totalSupply))
         let ticker = symbol.toUpperCase()
         let label = isReady ? 'STAKE' : 'INITIALIZE'
+        let supply = parseFloat(totalSupply)/Math.pow(10,18)
+        supply = supply.toLocaleString({ minimumFractionDigits: 2 })
 
         if(parseFloat(totalSupply) == 0){
           rate = (parseFloat(rewardRate)/Math.pow(10, 18))
@@ -108,7 +129,7 @@ export default function Stake() {
                   </div>
                   <div className={classes.information}>
                     <h3> {name} [{symbol}] </h3>
-                    <h5> DEPOSITS: $ 0.00</h5>
+                    <h5> DEPOSITS: {supply} {symbol}</h5>
                   </div>
                   <ul className={classes.list}>
                     <li> RATE: {rate} NDX/DAY </li>
@@ -125,6 +146,11 @@ export default function Stake() {
           </Grid>
         )
       })}
+      {pools.length == 0 && (
+        <Grid item xs={10} md={6} style={{ width: '100%' }}>
+          <MyLoader theme={theme} />
+        </Grid>
+      )}
     </Grid>
   )
 }

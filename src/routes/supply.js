@@ -134,8 +134,8 @@ export default function Supply() {
     let estimation = document.getElementById('est')
     let presence = document.getElementById('weight')
 
-    estimation.innerHTML = estimatedReward
-    presence.innerHTML = weight
+    estimation.innerHTML = estimatedReward.toLocaleString({ minimumFractionDigits: 2 })
+    presence.innerHTML = weight.toLocaleString({ minimumFractionDigits: 2 })
 
     setInput(event.target.value)
   }
@@ -182,6 +182,7 @@ export default function Supply() {
 
       tomorrow = new Date(tomorrow.getTime() + 86400)
       tomorrow = (tomorrow.getTime() - today.getTime())
+      deposit = deposit.toLocaleString({ minimumFractionDigits: 2 })
 
       setStats({ claim, deposit, balance, returns, future, display })
     }
@@ -195,6 +196,7 @@ export default function Supply() {
       let { totalSupply, rewardRate, stakingToken, isReady } = data
       let rate = (parseFloat(rewardRate)/parseFloat(totalSupply))
       let contract = toContract(web3.rinkeby, IStakingRewards, stakingAddress)
+      let supply = parseFloat(totalSupply)/Math.pow(10, 18)
 
       if(parseFloat(totalSupply) == 0){
         rate = (parseFloat(rewardRate)/Math.pow(10, 18))
@@ -209,6 +211,7 @@ export default function Supply() {
       }
       data.rate = parseFloat(rate * 60 * 24).toLocaleString()
       data.per = rate * 60 * 24
+      data.supply = supply.toLocaleString({ minimumFractionDigits: 2 })
 
       setMetadata(data)
 
@@ -319,7 +322,7 @@ export default function Supply() {
         <Canvas>
           <div className={classes.rewards}>
           	<ul className={classes.stats}>
-              <li> POOL DEPOSITS: <span> $0.00 </span> </li>
+              <li> POOL DEPOSITS: <span> {metadata.supply} NDX</span> </li>
               <li> POOL RATE: <span> {metadata.rate} NDX/DAY </span> </li>
             </ul>
           </div>

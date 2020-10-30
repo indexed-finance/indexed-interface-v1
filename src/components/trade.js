@@ -45,17 +45,20 @@ export default function Trade({ market, metadata }) {
 
   const setRate = async(entry, inputAddress, outputAddress) => {
     let { injected, rinkeby } = state.web3
+    entry = parseFloat(entry)
 
-    if(!isNaN(parseFloat(entry))) {
+    if(!isNaN(entry) && entry > 0) {
       let provider = injected != false ? injected : rinkeby
-      let i = decToWeiHex(provider, parseFloat(entry))
+      let i = convertNumber(entry)
+
       let o = await getAmountOut(i, inputAddress, outputAddress)
       let amount = parseFloat(o[1])/Math.pow(10, 18)
 
       setOutput({ ...output, amount })
 
       return amount
-    }
+      }
+    return 0
   }
 
   const getAmountOut = async(i, inputAddress, outputAddress) => {
@@ -208,7 +211,7 @@ export default function Trade({ market, metadata }) {
   const convertNumber = (amount) => {
     let { toHex, toBN } = state.web3.rinkeby.utils
 
-    if(parseInt(amount) == amount) {
+    if(amount % 1 == 0) {
       return toHex(toBN(amount).mul(toBN(1e18)))
     } else {
       return toHex(toBN(amount * Math.pow(10, 18)))

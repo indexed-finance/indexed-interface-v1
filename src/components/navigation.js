@@ -57,7 +57,7 @@ export default function Navigation({ mode }) {
 
     if(network != 4){
       dispatch({
-        type: 'MESSAGE',
+        type: 'MODAL',
         payload: {
           show: true,
           title: 'INCORRECT NETWORK',

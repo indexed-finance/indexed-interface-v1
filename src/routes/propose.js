@@ -93,7 +93,7 @@ export default function Propose(){
 
     delete activeExecutions[key]
 
-    setEntries(renderEntries(activeExecutions))
+    setEntries(<Wrapper data={activeExecutions} />)
     setExecutions(activeExecutions)
     setTargets(newTargets)
   }
@@ -109,7 +109,7 @@ export default function Propose(){
     }
     newTargets.push(value)
 
-    setEntries(renderEntries(newExecutions))
+    setEntries(<Wrapper data={newExecutions} />)
     setExecutions(newExecutions)
     setTargets(newTargets)
   }
@@ -133,7 +133,7 @@ export default function Propose(){
 
     functions.push(abi.functions[value])
 
-    setEntries(renderEntries(newExecutions))
+    setEntries(<Wrapper data={newExecutions} />)
     setExecutions(newExecutions)
   }
 
@@ -144,7 +144,7 @@ export default function Propose(){
     functions[index] = functions[functions.length-1]
     functions.length--
 
-    setEntries(renderEntries(newExecutions))
+    setEntries(<Wrapper data={newExecutions} />)
     setExecutions(newExecutions)
   }
 
@@ -247,10 +247,10 @@ export default function Propose(){
     )
   }
 
-  const renderEntries = (meta) => {
+  function Wrapper({ data }) {
     return(
       <div className={classes.item}>
-        {Object.entries(meta).map(([key, value]) => (
+        {Object.entries(data).map(([key, value]) => (
           <Fragment>
             <IconButton onClick={() => removeContract(key)}>
               <Clear color='secondary'/>
