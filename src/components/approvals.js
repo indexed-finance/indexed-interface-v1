@@ -242,6 +242,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
         let { toBN, toHex } = web3.rinkeby.utils
         let amount = parseFloat(input)
         let rates;
+        let arr;
 
         if(targets.length == 1){
           rates = await getRateSingle(web3.rinkeby, address, targets[0], amount)
@@ -254,7 +255,20 @@ export default function Approvals({ balance, metadata, height, width, input, par
           let element = document.getElementById(symbol)
           let output = toBN(amount).toString()
 
-          element.innerHTML = parseNumber(output)
+          if(rates.length > 1){
+            element.innerHTML = parseNumber(output)
+          } else {
+            let symbols = metadata.tokens.replace(/\s/g, "").split(',')
+
+            console.log(symbols)
+
+            for(let asset in symbols){
+              let target = document.getElementById(symbols[asset])
+
+              target.innerHTML = null
+            }
+            element.innerHTML = parseNumber(output)
+          }
         }
         set(rates)
       }
@@ -302,6 +316,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
         let f = handleToggle(token)
         let condition = false
         let label
+        let secondary =  state.native ? <span id={token.symbol} /> : null
 
         if(index == metadata.assets.length-1) label = 'last'
         else label = 'item'
@@ -332,13 +347,17 @@ export default function Approvals({ balance, metadata, height, width, input, par
               src={tokenMetadata[token.symbol].image}
              />
           </ListItemAvatar>
-          <ListItemText primary={token.symbol} />
-          <SecondaryItemText primary={param}
-            secondary={<span onClick={() => handleRequired(token.symbol)}
+          <ListItemText primary={token.symbol}
+            secondary={secondary}
+           />
+          {!state.native && (
+            <SecondaryItemText primary={param}
+              secondary={<span onClick={() => handleRequired(token.symbol)}
                 id={token.symbol}
               />
-            }
-          />
+              }
+            />
+          )}
           <SecondaryActionAlt>
             <AmountInput variant='outlined' label='AMOUNT' type='number'
               helperText={

@@ -246,9 +246,9 @@ export default function Supply() {
     getAccountMetadata()
   }, [ state.web3.injected ])
 
-  let width = ticker.includes('UNIV2') ? 50 : 30
-  let marginRight = ticker.includes('UNIV2') ? 7.5 : 0
-  let marginBottom = ticker.includes('UNIV2') ? 0 : 10
+  let {
+    padding, marginBottom, marginRight, width, positioning, inputWidth, listPadding, button, height, reward, buttonPos
+  } = style.getFormatting(ticker, state.native)
 
   if(state.web3.injected) getAccountMetadata()
 
@@ -257,11 +257,11 @@ export default function Supply() {
     <Grid item xs={10} md={6}>
       <div className={classes.top}>
         <Canvas>
-          <div className={classes.rewards}>
+          <div className={classes.rewards} style={{ width: reward }}>
             <p> ACTIVE CLAIM </p>
             <div>
               <h2> <CountUp decimals={6} perserveValue separator="," start={stats.claim} end={stats.future} duration={86400} /> NDX </h2>
-              <ButtonPrimary variant='outlined' margin={{ marginTop: -50 }}>
+              <ButtonPrimary variant='outlined' margin={{ marginTop: buttonPos }}>
                 CLAIM
               </ButtonPrimary>
             </div>
@@ -275,8 +275,8 @@ export default function Supply() {
     </Grid>
       <Grid item xs={10} md={6}>
         <Container margin='1em 0em 1em 0em' padding="1em 2em" title={ticker}>
-          <div className={classes.modal}>
-            <Grid container direction='row' alignItems='center' justify='space-evenly'>
+          <div className={classes.modal} style={{ padding, height }}>
+            <Grid container direction='row' alignItems='center' justify={positioning} spacing={4}>
               {metadata.isReady && (
                 <Fragment>
                   <Grid item>
@@ -289,6 +289,9 @@ export default function Supply() {
                     <Input label="AMOUNT" variant='outlined'
                       onChange={handleInput}
                       value={input}
+                      style={{
+                        width: inputWidth
+                      }}
                       InputProps={{
                         inputComponent: NumberFormat
                       }}
@@ -307,13 +310,13 @@ export default function Supply() {
              )}
             </Grid>
             {metadata.isReady && (
-              <ul className={classes.estimation}>
+              <ul className={classes.estimation} style={{ padding: listPadding }}>
                 <li> EST REWARD: <span id='est'>0</span> NDX/DAY </li>
                 <li> POOL WEIGHT: <span id='weight'>0</span>% </li>
               </ul>
             )}
           </div>
-          <ButtonPrimary onClick={execution.f} variant='outlined' margin={{ marginTop: -50, marginRight: 25 }}>
+          <ButtonPrimary onClick={execution.f} variant='outlined' margin={{ ...button }}>
             {execution.label}
           </ButtonPrimary>
         </Container>

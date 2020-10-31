@@ -5,6 +5,7 @@ import { Link } from  'react-router-dom'
 import Countdown from 'react-countdown'
 import ContentLoader from "react-content-loader"
 import { useTheme } from '@material-ui/core/styles'
+import ParentSize from '@vx/responsive/lib/components/ParentSize'
 
 import IERC20 from '../assets/constants/abi/IERC20.json'
 
@@ -30,19 +31,19 @@ const i = {
   'UNIV2:ETH-GOVI6': [ 'UNI', 'YFI', 'CRV', 'BAL']
 }
 
-const MyLoader = ({theme}) => (
+const MyLoader = ({theme, width}) => (
   <ContentLoader
     speed={2}
-    width={1125}
+    width={width}
     height={875}
-    viewBox="0 0 1250 875"
+    viewBox={`0 0 ${width} 875`}
     backgroundColor={theme.palette.primary.main}
     foregroundColor='rgba(153, 153, 153, 0.5)'
   >
-    <rect x="0" y="0" rx="5" ry="5" width="750" height="200" />
-    <rect x="0" y="225" rx="5" ry="5" width="750" height="200" />
-    <rect x="0" y="450" rx="5" ry="5" width="750" height="200" />
-    <rect x="0" y="675" rx="5" ry="5" width="750" height="200" />
+    <rect x="0" y="0" rx="5" ry="5" width={width} height="200" />
+    <rect x="0" y="225" rx="5" ry="5" width={width} height="200" />
+    <rect x="0" y="450" rx="5" ry="5" width={width} height="200" />
+    <rect x="0" y="675" rx="5" ry="5" width={width} height="200" />
   </ContentLoader>
 )
 
@@ -148,7 +149,11 @@ export default function Stake() {
       })}
       {pools.length == 0 && (
         <Grid item xs={10} md={6} style={{ width: '100%' }}>
-          <MyLoader theme={theme} />
+          <ParentSize>
+            {({ width, height }) => (
+              <MyLoader width={width} theme={theme} />
+            )}
+          </ParentSize>
         </Grid>
       )}
     </Grid>

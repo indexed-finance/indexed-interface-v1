@@ -1,3 +1,6 @@
+import { DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
+import { screenClass } from '../../constants/functions'
+
 const setStyle = (theme) => ({
   chart: {
   },
@@ -65,14 +68,59 @@ const setStyle = (theme) => ({
   }
 })
 
-const getFormatting = (state) => {
+const mapping = {
+  [DESKTOP_NORMAL]: {
+    marginX: '-12.5em 0em 0em 3em',
+    tableWidth: 'calc(65em - 412.5px)',
+    margin: '3em 3em',
+    width: '100%',
+    padding: 100,
+    height: 75,
+    fontSize: 'inherit'
+  },
+  [DESKTOP_LARGE]: {
+    marginX: '-8.75em 0em 0em 3em',
+    tableWidth: 'calc(65em - 87.5px)',
+    margin: '3em 3em',
+    width: '100%',
+    padding: 100,
+    height: 75,
+    fontSize: 'inherit'
+  },
+  [DESKTOP_WIDE]: {
+    marginX: '-11em 0em 0em 3em',
+    tableWidth: 'calc(50em - 75px)',
+    margin: '3em 3em',
+    width: '100%',
+    padding: 100,
+    height: 75,
+    fontSize: 'inherit'
+  },
+  [DESKTOP_HUGE]: {
+    marginX: '-11em 0em 0em 3em',
+    tableWidth: 'calc(50em - 75px)',
+    margin: '3em 3em',
+    width: '100%',
+    padding: 100,
+    height: 75,
+    fontSize: 'inherit'
+  },
+  'NATIVE': {
+    marginX: '.5em 1.5em',
+    margin: '3em 1.5em',
+    width: '100%',
+    padding: 112.5,
+    height: 200,
+    fontSize: '.875em'
+  }
+}
+
+const getFormatting = ({ native }) => {
+  let { innerWidth, innerHeight } = window
+  let dimension = native ? 'NATIVE' : screenClass(innerWidth)
+
   return {
-    marginX: !state.native ? '-13em 0em 0em 3em': '.5em 1.5em',
-    margin: !state.native ? '3em 3em': '3em 1.5em',
-    width: !state.native ? '100%': '100%',
-    padding: !state.native ? 100 : 112.5,
-    height: !state.native ? 75 : 200,
-    fontSize: !state.native ? 'inherit' : '.875em'
+    ...mapping[dimension]
   }
 }
 

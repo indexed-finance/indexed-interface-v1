@@ -86,6 +86,16 @@ export default function Markets(){
     }
   }
 
+  const exploreMarket = () => {
+    let { active, address, symbol } = market
+
+    if(!active){
+      history.push(`pool/${address.toLowerCase()}`)
+    } else {
+      history.push(`index/${symbol.toLowerCase()}`)
+    }
+  }
+
   useEffect(() => {
     if(Object.keys(state.indexes).length > 0){
       let keys = Object.keys(state.indexes)
@@ -141,9 +151,7 @@ export default function Markets(){
                   <li>TVL: <span>{market.marketcap}</span></li>
                   <li>&nbsp;<span></span> </li>
                   <li>&nbsp;<span></span></li>
-                  <Link to={`index/${market.symbol.toLowerCase()}`}>
-                    <Trigger> EXPAND </Trigger>
-                  </Link>
+                  <Trigger onClick={exploreMarket}> EXPAND </Trigger>
                 </ul>
               )}
               <div style={{ position: 'relative', float: 'left', width: !native ? '40%' : '100%' }}>

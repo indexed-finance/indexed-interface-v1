@@ -283,7 +283,7 @@ export default function Pools(){
   }, [ ])
 
   let {
-    marginX, margin, width, padding, height, fontSize
+    marginX, margin, width, padding, height, fontSize, tableWidth
   } = style.getFormatting(state)
 
   return (
@@ -321,7 +321,7 @@ export default function Pools(){
           <Grid item xs={12} md={5} lg={5} xl={5}>
             <Container margin={margin} padding="1em 0em" title='ASSETS'>
               <div className={classes.container} style={{ width }}>
-                <Approvals input={0} param='DESIRED' height={250} metadata={data} set={getCredit}/>
+                <Approvals input={data != dummy} param='DESIRED' height={250} metadata={data} set={getCredit}/>
               </div>
               <div className={classes.reciept}>
                 <p> ENTITLED TO: <span id='credit'/></p>
@@ -338,10 +338,10 @@ export default function Pools(){
             </Container>
           </Grid>
         </Grid>
-        <Grid item xs={12} md={7} lg={7} xl={7}>
+        <Grid item xs={12} md={7} lg={12} xl={12}>
           <Container margin={marginX} padding="1em 2em" title='EVENTS'>
             <div className={classes.events}>
-              <List height={200} columns={eventColumns} data={events} />
+              <List height={200} width={tableWidth} columns={eventColumns} data={events} />
             </div>
           </Container>
         </Grid>

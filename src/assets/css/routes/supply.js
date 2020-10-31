@@ -4,11 +4,8 @@ const setStyle = (theme) => ({
   },
   modal: {
     width: '30em',
-    padding: '0em 2em 1em',
-    height: '10em',
   },
   rewards: {
-    width: '34em',
     padding: '1em 2em',
     '& h2': {
       marginLeft: 50,
@@ -46,9 +43,23 @@ const setStyle = (theme) => ({
   },
 })
 
-const getFormatting = (state) => {
+const getFormatting = (ticker, native) => {
   return {
-    margin: !state.native ? '3em 3em' : '2em 1.5em',
+    margin: !native ? '3em 3em' : '2em 1.5em',
+    padding: !native ?  '0em 2em 1em' : '0em 0em 1em',
+    width: ticker.includes('UNIV2') ? 50 : 30,
+    marginRight: ticker.includes('UNIV2') ? 7.5 : 0,
+    marginBottom: ticker.includes('UNIV2') ? 0 : 10,
+    positioning: !native ? 'center' : 'flex-start',
+    inputWidth: !native ? 200 : 125,
+    listPadding: !native ? 'inherit' : 0,
+    height: !native ? '10em': '11.5em',
+    reward: !native ? '34em': 'calc(20em - 64px)',
+    buttonPos: !native ? -50 : 100,
+    button: {
+       marginTop: !native ? -50 : -37.5,
+       marginRight: !native? 25 : -12.5
+    }
   }
 }
 
