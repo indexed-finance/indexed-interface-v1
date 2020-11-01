@@ -146,13 +146,16 @@ function Application(){
     document.body.style.color = color
   }
 
-  const onResize = () => dispatch({
+const onResize = () => {
+  console.log('RESIZE FIRED')
+  dispatch({
     type: 'RESIZE',
     payload: {
       height: window.innerHeight,
       width: window.innerWidth
     }
   })
+}
 
   useEffect(() => {
     const retrieveCategories = async(indexes, categories) => {
@@ -228,7 +231,7 @@ function Application(){
       payload: { changeTheme }
     })
     onResize()
-  }, [])
+  }, [ ])
 
     return(
     <ThemeProvider theme={theme}>

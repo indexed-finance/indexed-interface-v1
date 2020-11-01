@@ -36,6 +36,8 @@ export const initialState = {
   load: false,
   dark: isNight,
   categories: {},
+  width: 0,
+  height: 0,
   modal: {
     show: false,
     title: null,

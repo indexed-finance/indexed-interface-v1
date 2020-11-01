@@ -45,13 +45,14 @@ const options  = padding => ({
 })
 
 export default function PieChart({ metadata, height, ready, native }){
+  const [ component, setComponent ] = useState({ element: <span/>, data: {} })
   const theme = useTheme()
 
   let colors = [ '#009999', '#00CCCC','#33FFFF', '#99FFFF', `${theme.palette.primary.main}`]
   let labels = metadata.assets.map(value => value.symbol)
   let data =  metadata.assets.map(value => value.weight)
 
-  if(metadata.assets.length == 0){
+  if(isNaN(data[0])){
     data = [ 100 ]
     labels = [ 'NA' ]
     colors = [ 'orange' ]
@@ -85,13 +86,23 @@ export default function PieChart({ metadata, height, ready, native }){
   	}]
   })
 
+  useEffect(() => {
+    if(ready){
+      if(component.data != metadata){
+        setComponent({
+          element: <Pie height={height} width={height} options={options(padding)} data={chartConfig(metadata, border)} />,
+          data: metadata
+        })
+      }
+    } else {
+      setComponent({
+        element: <Loader padding={padding} theme={theme} height={height} />,
+        data: metadata
+      })
+    }
+  }, [ ])
+
   let { padding, border } = style.getFormatting(native)
 
-  if(ready) {
-    return (
-      <Pie height={height} width={height} options={options(padding)} data={chartConfig(metadata, border)} />
-    )
-  } else return  (
-    <Loader padding={padding} theme={theme} height={height} />
-  )
+  return component.element
 }

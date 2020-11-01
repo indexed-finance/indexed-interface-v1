@@ -230,19 +230,21 @@ export default function Trade({ market, metadata }) {
     const getPairMetadata = async() => {
       if(state.indexes[market]) {
         let { web3, indexes } = state
-        let { address } = indexes[market]
+        let { address, active } = indexes[market]
 
-        let router = await getRouter(web3.rinkeby)
-        let pair = await getPair(web3.rinkeby, WETH, address)
-        let token = await getERC20(web3.rinkeby, address)
-        let pricing = await getMarketMetadata(pair.options.address)
+        if(active) {
+          let router = await getRouter(web3.rinkeby)
+          let pair = await getPair(web3.rinkeby, WETH, address)
+          let token = await getERC20(web3.rinkeby, address)
+          let pricing = await getMarketMetadata(pair.options.address)
 
-        setOutput({ ...output, address: indexes[market].address })
-        setPrices({
-          input: parseFloat(pricing.token0Price),
-          output: parseFloat(pricing.token1Price)
-        })
-        setContracts({ pair, router, token })
+          setOutput({ ...output, address: indexes[market].address })
+          setPrices({
+            input: parseFloat(pricing.token0Price),
+            output: parseFloat(pricing.token1Price)
+          })
+          setContracts({ pair, router, token })
+        }
       }
     }
     getPairMetadata()

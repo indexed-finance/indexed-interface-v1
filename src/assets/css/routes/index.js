@@ -13,6 +13,18 @@ const setStyle = (theme) => ({
     padding: '.25vw 2.5vw',
     display: 'flex'
   },
+  alert: {
+    textAlign: 'center',
+    paddingTop: '10%',
+    '& p': {
+      width: '45%',
+      marginLeft: 'auto',
+      marginRight: 'auto'
+    },
+  },
+  href: {
+    color: 'orange !important',
+ },
   title: {
     textTransform: 'capitalize',
     margin: 0

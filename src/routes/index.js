@@ -3,11 +3,12 @@ import React, { Fragment, useState, useContext, useEffect, useReducer } from 're
 import { makeStyles, useTheme, styled } from '@material-ui/core/styles'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams, useLocation, Link } from 'react-router-dom'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import ContentLoader from "react-content-loader"
 
+import ButtonPrimary from '../components/buttons/primary'
 import ButtonMarket from '../components/buttons/market'
 import Area from '../components/charts/area'
 import Trade from '../components/trade'
@@ -79,6 +80,17 @@ export default function Index(){
   const location = useLocation()
   const classes = useStyles()
   const theme = useTheme()
+
+  function Alert(){
+    return(
+      <div className={classes.alert}>
+        <h3> POOL UNINTIALISED </h3>
+        <p> This index fund is not ready yet, you can help bootstrap it and
+        recieve early access <Link to={`/pool/${metadata.address}`} className={classes.href}>here</Link>.
+        </p>
+      </div>
+    )
+  }
 
   const changeExecution = (option) => {
     let newStyle = clearSelections()
@@ -159,7 +171,10 @@ export default function Index(){
     }
   }, [ location.pathname ])
 
-  if(state.native) return(
+  let { border, maxWidth, width, height, marginTop, chart } = style.getFormatting()
+
+  if(state.native){
+    return(
       <Grid container direction='column' alignItems='center' justify='space-between'>
         <Grid item>
           <div className={classes.nav}>
@@ -174,10 +189,8 @@ export default function Index(){
           {component}
         </Grid>
       </Grid>
-  )
-
-
-  let { border, maxWidth, width, height, marginTop, chart } = style.getFormatting()
+    )
+  }
 
   return (
     <div className={classes.root} style={{ maxWidth, border }}>
@@ -222,7 +235,8 @@ export default function Index(){
           {({ width, height }) => (
             <Fragment>
               {!state.request && !metadata.history && (<Loader width={width} height={height} color={state.background}/> )}
-              {state.request && metadata.history && (<Area data={metadata.history} width={width} height={height} /> )}
+              {state.request && metadata.active && metadata.history && (<Area data={metadata.history} width={width} height={height} /> )}
+              {state.request && !metadata.active && (<Alert /> )}
             </Fragment>
           )}
         </ParentSize>

@@ -10,7 +10,7 @@ const StateProvider = ( { children } ) => {
   const [state, dispatch] = useReducer((state, action) => {
     switch(action.type) {
       case 'RESIZE':
-        return { ...state, native: isNative({ ...action.payload })  }
+        return { ...state, ...action.payload, native: isNative({ ...action.payload })  }
       case 'BALANCE':
           return {
               ...state, balances: {
