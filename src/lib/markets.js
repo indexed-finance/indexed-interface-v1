@@ -66,6 +66,9 @@ export async function getRouter(web3){
 }
 
 export async function getRateSingle(web3, poolAddress, tokenAddress, poolTokensToMint) {
+  if (!poolTokensToMint || poolTokensToMint == 0) {
+    return [];
+  }
   let contract = toContract(web3, BPool.abi, poolAddress)
   let asset = toContract(web3, IERC20.abi, tokenAddress)
   let pool = await Pool.getPool(web3, contract)
@@ -78,6 +81,9 @@ export async function getRateSingle(web3, poolAddress, tokenAddress, poolTokensT
 }
 
 export async function getRateMulti(web3, poolAddress, poolTokensToMint, opt){
+  if (!poolTokensToMint || poolTokensToMint == 0) {
+    return [];
+  }
   let contract = toContract(web3, BPool.abi, poolAddress)
   let pool = await Pool.getPool(web3, contract)
   let input = oneToken.muln(+poolTokensToMint)
