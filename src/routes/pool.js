@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import ExitIcon from '@material-ui/icons/ExitToApp'
 import { useParams } from 'react-router-dom'
+import ParentSize from '@vx/responsive/lib/components/ParentSize'
 
 import Container from '../components/container'
 import Spline from '../components/charts/spline'
@@ -290,8 +291,10 @@ export default function Pools(){
     <Fragment>
       <Grid container direction='column' alignItems='flex-start' justify='stretch'>
         <Grid item xs={12} md={12} lg={12} xl={12} container direction='row' alignItems='flex-start' justify='space-between'>
-          <Grid item xs={12} md={7} lg={7} xl={7}>
-            <Chart native={state.native}>
+          <Grid item xs={12} md={6} lg={7} xl={7} style={{ width: '100%'}}>
+          <ParentSize>
+            {({ width, height }) => (
+            <Canvas native={state.native} style={{ width }}>
               <div className={classes.market}>
                 {!state.native && (
                   <Fragment>
@@ -316,7 +319,9 @@ export default function Pools(){
                   <li> YOUR CREDITS: {data.credit} </li>
                 </ul>
               </div>
-            </Chart>
+            </Canvas>
+          )}
+          </ParentSize>
           </Grid>
           <Grid item xs={12} md={5} lg={5} xl={5}>
             <Container margin={margin} padding="1em 0em" title='ASSETS'>
@@ -338,12 +343,16 @@ export default function Pools(){
             </Container>
           </Grid>
         </Grid>
-        <Grid item xs={12} md={7} lg={12} xl={12}>
-          <Container margin={marginX} padding="1em 2em" title='EVENTS'>
-            <div className={classes.events}>
-              <List height={200} width={tableWidth} columns={eventColumns} data={events} />
-            </div>
-          </Container>
+        <Grid item xs={12} md={7} lg={7} xl={7} style={{ width: '100%' }}>
+          <ParentSize>
+            {({ width, height }) => (
+              <Container margin={marginX} padding="1em 2em" title='EVENTS'>
+                <div className={classes.events}>
+                  <List height={200} columns={eventColumns} data={events} />
+                </div>
+              </Container>
+            )}
+          </ParentSize>
         </Grid>
       </Grid>
     </Fragment>

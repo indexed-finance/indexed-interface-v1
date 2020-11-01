@@ -159,14 +159,14 @@ export default function Index(){
   }, [ ])
 
   useEffect(() => {
-    if(name != path && path != null){
+    if(name != null && path != null){
       setMetadata(state.indexes[name])
       forceUpdate()
     }
   }, [ name ])
 
   useEffect(() => {
-    if(path == null){
+    if(path == name){
       setPath(name)
     }
   }, [ location.pathname ])

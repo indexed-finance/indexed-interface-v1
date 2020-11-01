@@ -192,20 +192,18 @@ export const marketColumns = [
 ]
 
 export const eventColumns = [
-  { id: 'time', label: 'TIME', minWidth: 100, maxWidth: 250 },
+  { id: 'time', label: 'TIME', align: 'left', minWidth: 75 },
   {
     id: 'event',
     label: 'EVENT',
-    minWidth: 250,
-    maxWidth: 500,
+    minWidth: 175,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
     id: 'tx',
     label: 'TRANSACTION',
-    minWidth: 175,
-    maxWidth: 250,
+    minWidth: 75,
     align: 'center'
   },
 ]

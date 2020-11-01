@@ -170,7 +170,7 @@ export default function VerticalTabs({ data }) {
       </div>
       <TabPanel className={classes.assets} value={value} index={0}>
         <Grid item container direction='row' alignItems='flex-start' justify='space-around' spacing={4}>
-          {state.request && meta.map(asset => (<Grid item> <Weights asset={asset} /> </Grid> ))}
+          {state.request && data.active && meta.map(asset => (<Grid item> <Weights asset={asset} /> </Grid> ))}
           {!state.request && (<Loader color={state.background} />)}
         </Grid>
       </TabPanel>

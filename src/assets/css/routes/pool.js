@@ -2,8 +2,6 @@ import { DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../..
 import { screenClass } from '../../constants/functions'
 
 const setStyle = (theme) => ({
-  chart: {
-  },
   stats: {
     borderTop: '3px solid #666666',
     paddingRight: 30,
@@ -27,10 +25,9 @@ const setStyle = (theme) => ({
   },
   container: {
     borderBottom: '2px solid #666666',
-
   },
   events: {
-    overflow: 'hidden'
+    width: '100%'
   },
   submit: {
     padding: '12.5px 25px',

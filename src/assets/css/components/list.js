@@ -1,6 +1,5 @@
 const setStyle = (theme) => ({
   root: {
-    width: '100%',
     padding: 0
   },
   container: {
@@ -10,8 +9,7 @@ const setStyle = (theme) => ({
   table: {
     margin: 0,
     padding: 0,
-    margin: 0
-  }
+  },
 })
 
 export default { setStyle }
