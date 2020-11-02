@@ -35,7 +35,8 @@ const StateProvider = ( { children } ) => {
             ...state.web3, injected: action.payload.web3
           },
           account: action.payload.account,
-          network: action.payload.network
+          network: action.payload.network,
+          helper: action.payload.helper
         }
       default:
         return state
