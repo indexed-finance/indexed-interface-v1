@@ -9,9 +9,7 @@ import Box from '@material-ui/core/Box'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import ContentLoader from "react-content-loader"
-import { Link } from 'react-router-dom'
 
-import ButtonPrimary from './buttons/primary'
 import TransactionButton from './buttons/transaction'
 import Weights from './weights'
 import List from './list'
@@ -168,7 +166,6 @@ export default function VerticalTabs({ data }) {
         >
           <Tab label="ASSETS" {...a11yProps(0)} />
           <Tab label="TRADES" {...a11yProps(1)} />
-          <Tab label="INFO" {...a11yProps(2)} />
         </Tabs>
       </div>
       <TabPanel className={classes.assets} value={value} index={0}>
@@ -179,31 +176,6 @@ export default function VerticalTabs({ data }) {
       </TabPanel>
       <TabPanel className={classes.panels} value={value} index={1}>
         <List height={height} columns={marketColumns} data={trades} />
-      </TabPanel>
-      <TabPanel className={classes.panels} value={value} index={2}>
-        <Grid item container direction='row' alignItems='flex-start' justify='space-around' spacing={6}>
-          <Grid item>
-            <Link to={`/pool/${data.address}`}>
-              <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
-                VIEW POOL
-              </ButtonPrimary>
-            </Link>
-          </Grid>
-          <Grid item>
-            <a target='_blank' href={`https://info.uniswap.org/pool/${data.address}`}>
-              <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
-                🦄 UNISWAP
-              </ButtonPrimary>
-            </a>
-          </Grid>
-          <Grid item>
-            <a target='_blank' href={`https://rinkeby.etherscan.io/token/${data.address}`}>
-              <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
-                ETHERSCAN
-              </ButtonPrimary>
-            </a>
-          </Grid>
-        </Grid>
       </TabPanel>
     </div>
   );

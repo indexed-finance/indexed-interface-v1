@@ -4,7 +4,6 @@ import Web3 from 'web3'
 
 import { createMuiTheme, makeStyles, ThemeProvider, styled } from '@material-ui/core/styles';
 import {  Switch, Route, BrowserRouter as Router } from 'react-router-dom'
-import { getAllHelpers } from '@indexed-finance/indexed.js';
 
 import IERC20 from './assets/constants/abi/IERC20.json'
 import { StateProvider } from './state'
@@ -226,16 +225,12 @@ const onResize = () => {
   }, [ state.load ])
 
   useEffect(() => {
-    const initialise = async() => {
-      let { background, color, web3 } = state
-      let helper = await getAllHelpers(web3.rinkeby)
-
-      dispatch({ type: 'GENERIC', payload: { changeTheme, helper } })
-      window.addEventListener("resize", onResize)
-      setBackground(background, color)
-      onResize()
-    }
-    initialise()
+    setBackground(state.background, state.color)
+    window.addEventListener("resize", onResize)
+    dispatch({ type: 'GENERIC',
+      payload: { changeTheme }
+    })
+    onResize()
   }, [ ])
 
     return(

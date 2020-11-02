@@ -16,7 +16,6 @@ import NightsStayIcon from '@material-ui/icons/NightsStay';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
 import { useLocation } from 'react-router-dom'
 import jazzicon from '@metamask/jazzicon'
-import { getAllHelpers } from '@indexed-finance/indexed.js';
 
 import { toChecksumAddress } from '../assets/constants/functions'
 import ndxLight from '../assets/images/indexed-light.png'
@@ -55,7 +54,6 @@ export default function Navigation({ mode }) {
     let accounts = await web3.eth.getAccounts()
     let network = await web3.eth.net.getId()
     let account = toChecksumAddress(accounts[0])
-    let helper = await getAllHelpers(web3)
 
     if(network != 4){
       dispatch({
@@ -75,7 +73,7 @@ export default function Navigation({ mode }) {
       dispatch({
         type: 'WEB3',
         payload: {
-          web3, account, network, helper
+          web3, account, network
         }
       })
     }

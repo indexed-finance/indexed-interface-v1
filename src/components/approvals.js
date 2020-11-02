@@ -10,7 +10,6 @@ import List from '@material-ui/core/List'
 import Grid from '@material-ui/core/Grid'
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Checkbox from '@material-ui/core/Checkbox';
-import { toWei } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 
 import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
 import { balanceOf, getERC20, allowance } from '../lib/erc20'
@@ -95,7 +94,7 @@ const useStyles = getStyles(style)
 export default function Approvals({ balance, metadata, height, width, input, param, set }){
   const [ component, setComponent ] = useState(<span />)
   const [ isSelected, setSelection ] = useState(true)
-  const [ checked, setChecked ] = useState([])
+  const [ checked, setChecked ] = useState([0])
   const [ focus, setFocus ] = useState(null)
   const [ dense, setDense ] = useState(false)
   const [ amount, setAmount ] = useState(null)
@@ -107,12 +106,15 @@ export default function Approvals({ balance, metadata, height, width, input, par
   const handleToggle = (value) => () => {
     let { symbol, address } = value
     const currentIndex = checked.indexOf(symbol)
-    const newChecked = []
-    const newTargets = []
+    const newChecked = [...checked]
+    const newTargets = targets
 
     if (currentIndex === -1) {
       newTargets.push(address)
       newChecked.push(symbol)
+    } else {
+      newChecked.splice(currentIndex, 1)
+      newTargets.splice(currentIndex, 1)
     }
 
     setTargets(newTargets)
@@ -123,7 +125,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
     let { web3, account } = state
     let { address } = state.balances[symbol]
     let contract = getERC20(web3.injected, address)
-    let amount = toWei(getInputValue(symbol))
+    let amount = convertNumber(getInputValue(symbol))
 
     await contract.methods.approve(metadata.address, amount).send({
       from: account
@@ -209,6 +211,20 @@ export default function Approvals({ balance, metadata, height, width, input, par
     element.value = target.innerHTML
   }
 
+  const convertNumber = (amount) => {
+    let { toHex, toBN } = state.web3.rinkeby.utils
+
+    if(parseInt(amount) == amount) {
+      return toHex(toBN(amount).mul(toBN(1e18)))
+    } else {
+      return toHex(toBN(amount * Math.pow(10, 18)))
+    }
+  }
+
+  const parseNumber = (amount) => {
+    return parseFloat(amount/Math.pow(10, 18)).toFixed(2)
+  }
+
   const setInputState = (name, type) => {
     let element = document.getElementsByName(name)[0]
     let { nextSibling } = element.nextSibling
@@ -218,49 +234,41 @@ export default function Approvals({ balance, metadata, height, width, input, par
     else nextSibling.style.borderColor = 'orange'
   }
 
-
-  const clearInputs = () => {
-    let symbols = metadata.tokens.replace(/\s/g, "").split(',')
-
-    for(let asset in symbols){
-      let target = document.getElementById(symbols[asset])
-
-      target.innerHTML = null
-    }
-  }
-
   useEffect(() => {
     const getInputs = async() => {
       if(!isNaN(input)){
-        let { web3, helper } = state
+        let { web3 } = state
         let { address } = metadata
         let { toBN, toHex } = web3.rinkeby.utils
-        let amount = toWei(parseFloat(`${input}`))
-        let rates = []
+        let amount = parseFloat(input)
+        let rates;
         let arr;
 
-        let pool = helper.initialized.find(i => i.pool.address == address)
-
         if(targets.length == 1){
-          console.log('SINGLE?')
-          console.log(targets[0], amount, input)
-          let rate  = await pool.getJoinRateSingle(targets[0], amount)
-          console.log('NO')
-
-          rates.push(rate)
-          clearInputs()
+          rates = await getRateSingle(web3.rinkeby, address, targets[0], amount)
         } else {
-          console.log('MULTI?')
-          console.log(amount)
-          rates = await pool.getJoinRateMulti(amount)
-          console.log('NO')
+          rates = await getRateMulti(web3.rinkeby, address, amount, true)
         }
 
         for(let token in rates){
-          let { symbol, displayAmount } = rates[token]
+          let { symbol, amount } = rates[token]
           let element = document.getElementById(symbol)
+          let output = toBN(amount).toString()
 
-          element.innerHTML = displayAmount
+          if(rates.length > 1){
+            element.innerHTML = parseNumber(output)
+          } else {
+            let symbols = metadata.tokens.replace(/\s/g, "").split(',')
+
+            console.log(symbols)
+
+            for(let asset in symbols){
+              let target = document.getElementById(symbols[asset])
+
+              target.innerHTML = null
+            }
+            element.innerHTML = parseNumber(output)
+          }
         }
         set(rates)
       }
@@ -279,7 +287,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
       if(param == 'REQUIRED') getInputs()
       else if(param == 'DESIRED') setInputs()
     }
-  }, [ input, checked ])
+  }, [ input ])
 
   useEffect(() => {
     const verifyAllowance = async() => {

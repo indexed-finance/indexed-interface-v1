@@ -103,30 +103,6 @@ export default function Governance(){
 
   let { dispatch, state } = useContext(store)
 
-  const getAccountMetadata = async() => {
-    let { web3, account } = state
-
-    if(web3.injected) {
-      let contract = toContract(web3.injected, Ndx.abi, NDX)
-      let isDelegated = await contract.methods.delegates(account).call()
-      let balance = await contract.methods.balanceOf(account).call()
-      let amount = (parseFloat(balance)/Math.pow(10, 18))
-      .toLocaleString({ minimumFractionDigits: 2 })
-
-      if(isDelegated != NA) setPhase(<Delegate />)
-      else setPhase(<Activate trigger={renderDelegation}/>)
-
-      getStatus(isDelegated)
-      dispatch({ type: 'BALANCE',
-        payload: {
-          balances: {
-            'NDX': { address: NDX, amount }
-          }
-        }
-      })
-    }
-  }
-
   const delegateAddress = async(address) => {
     let { web3, account } = state
     let contract = toContract(web3.injected, Ndx.abi, NDX)
@@ -208,11 +184,7 @@ export default function Governance(){
     }
 
     const submit = async() => {
-      if(input != null) {
-        if(input.length == 42){
-          await delegateAddress(input)
-        }
-      }
+      await delegateAddress(input)
     }
 
     return(
@@ -225,6 +197,30 @@ export default function Governance(){
   }
 
   useEffect(() => {
+    const getAccountMetadata = async() => {
+      let { web3, account } = state
+
+      if(web3.injected) {
+        let contract = toContract(web3.injected, Ndx.abi, NDX)
+        let isDelegated = await contract.methods.delegates(account).call()
+        let balance = await contract.methods.balanceOf(account).call()
+        let amount = (parseFloat(balance)/Math.pow(10, 18)).toLocaleString(
+          undefined, { minimumFractionDigits: 2 }
+        )
+
+        if(isDelegated != NA) setPhase(<Delegate />)
+        else setPhase(<Activate trigger={renderDelegation}/>)
+
+        getStatus(isDelegated)
+        dispatch({ type: 'BALANCE',
+          payload: {
+            balances: {
+              'NDX': { address: NDX, amount }
+            }
+          }
+        })
+      }
+    }
     getAccountMetadata()
   }, [ state.web3.injected ])
 
@@ -244,9 +240,6 @@ export default function Governance(){
       setProposals(proposals)
     }
 
-    if(state.web3.injected) {
-      getAccountMetadata()
-    }
     retrieveProposals()
     setPhase(<Init />)
   }, [])
@@ -282,7 +275,7 @@ export default function Governance(){
                     </ul>
                   </div>
                 )}
-                <Stacked ready={metadata.snapshots.length > 0} metadata={metadata.snapshots} height={height} />
+                <Stacked metadata={metadata.snapshots} height={height} />
               </div>
             </Canvas>
           </Grid>
