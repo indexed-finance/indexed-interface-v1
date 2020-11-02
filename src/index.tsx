@@ -228,12 +228,14 @@ const onResize = () => {
   useEffect(() => {
     const initialise = async() => {
       let { background, color, web3 } = state
-      let helper = await getAllHelpers(web3.rinkeby)
 
-      dispatch({ type: 'GENERIC', payload: { changeTheme, helper } })
-      window.addEventListener("resize", onResize)
+      let helper = await getAllHelpers(web3.rinkeby)
       setBackground(background, color)
       onResize()
+      
+      dispatch({ type: 'GENERIC', payload: { changeTheme, helper } })
+      window.addEventListener("resize", onResize)
+
     }
     initialise()
   }, [ ])

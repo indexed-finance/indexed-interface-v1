@@ -8,9 +8,10 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Table from '@material-ui/core/Table'
 import Grid from '@material-ui/core/Grid'
+import { toWei } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 
 import { toContract } from '../lib/util/contracts'
-import { getRateMulti, getRateSingle, decToWeiHex } from '../lib/markets'
+import { getRateMulti, getRateSingle } from '../lib/markets'
 import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
 import { balanceOf, getERC20, allowance } from '../lib/erc20'
 import getStyles from '../assets/css'
@@ -79,7 +80,7 @@ export default function InteractiveList({ market, metadata }) {
     let { web3, account } = state
     let { address, assets } = metadata
     let { toBN } = web3.rinkeby.utils
-    let input = decToWeiHex(web3.rinkeby, parseFloat(amount))
+    let input = toWei(parseFloat(amount))
     let contract = toContract(web3.injected, BPool.abi, address)
 
     if(selection) await burnToMultiple(contract, input, rates)
@@ -132,7 +133,7 @@ export default function InteractiveList({ market, metadata }) {
 
   const approveTokens = async(input) => {
     let contract = getERC20(state.web3.injected, metadata.address)
-    let approval = convertNumber(input)
+    let approval = toWei(input)
 
     await contract.methods
     .approve(metadata.address, approval).send({
@@ -178,16 +179,6 @@ export default function InteractiveList({ market, metadata }) {
 
   const parseNumber = (amount) => {
     return parseFloat(amount/Math.pow(10, 18)).toFixed(2)
-  }
-
-  const convertNumber = (amount) => {
-    let { toHex, toBN } = state.web3.rinkeby.utils
-
-    if(parseInt(amount) == amount) {
-      return toHex(toBN(amount).mul(toBN(1e18)))
-    } else {
-      return toHex(toBN(amount * Math.pow(10, 18)))
-    }
   }
 
   const handleChange = (event) => {
@@ -241,28 +232,29 @@ export default function InteractiveList({ market, metadata }) {
   useEffect(() => {
     const getOutputs = async() => {
       if(!isNaN(parseFloat(amount))){
-        let { web3 } = state
+        let { web3, helper } = state
         let { address } = metadata
         let { toBN } = web3.rinkeby.utils
-        let input = parseFloat(amount)
+        let input = toWei(parseFloat(amount))
         let rates;
 
+        let pool = helper.initialized.find(i => i.pool.address == address)
+
         if(selection){
-          rates = await getRateMulti(web3.rinkeby, address, input, false)
+          rates = await pool.getLeaveRateMulti(input)
 
           for(let token in rates){
-            let { symbol, amount } = rates[token]
+            let { symbol, displayAmount } = rates[token]
             let element = document.getElementById(symbol)
-            let o = toBN(amount).toString()
 
-            element.innerHTML = parseNumber(o)
+            element.innerHTML = displayAmount
           }
         } else {
-          rates = await getRateSingle(web3.rinkeby, address, output.address, input)
-          let amount = parseNumber(rates[0].amount)
+          rates = await pool.getLeaveRateSingle(output.address, input)
+          let amount = rates.displayAmount
 
-          setComponent(<Single data={{ ...rates[0], amount }} />)
-          setOutput({ ...rates[0], amount })
+          setComponent(<Single data={{ ...rates, amount }} />)
+          setOutput({ ...output, amount })
         } if(web3.injected){
           let allowance = await getAllowance()
 

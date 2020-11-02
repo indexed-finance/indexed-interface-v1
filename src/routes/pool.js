@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button'
 import ExitIcon from '@material-ui/icons/ExitToApp'
 import { useParams } from 'react-router-dom'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
+import { toWei } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 
 import Container from '../components/container'
 import Spline from '../components/charts/spline'
