@@ -89,10 +89,9 @@ const options = {
   }
 }
 
-export default function Spline({ metadata, height }){
-  const [ component, setComponent ] = useState(<Fragment />)
+export default function Spline({ ready,  metadata, height }){
 
-  const getConfig = (canvas) => {
+  const getConfig = () => {
     const active = metadata.map(a => parseInt(a.active)/Math.pow(10, 18))
     const inactive = metadata.map(i => parseInt(i.inactive)/Math.pow(10, 18))
     const delegated = metadata.map(d => parseInt(d.delegated)/Math.pow(10, 18))
@@ -101,7 +100,6 @@ export default function Spline({ metadata, height }){
 
       return `${date.getMonth()}/${date.getDay()}`
     })
-    const ctx = canvas.getContext("2d")
 
     return {
       labels: dates,
@@ -128,15 +126,9 @@ export default function Spline({ metadata, height }){
       }
     }
 
-  useEffect(() => {
-    setComponent(
-      <Line height={height} options={options} data={getConfig} redraw />
-    )
-  }, [ metadata ])
-
   return (
     <div style={{ 'z-index': 1, float: 'left', width: '100%'}}>
-      {component}
+      <Line height={height} options={options} data={getConfig()} redraw id='stacked'/>
     </div>
   )
 }
