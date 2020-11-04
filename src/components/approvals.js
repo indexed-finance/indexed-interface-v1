@@ -271,7 +271,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
           let { symbol, desired } = metadata.assets[token]
           let element = document.getElementById(symbol)
 
-          element.innerHTML = desired
+          element.innerHTML = parseFloat(desired).toFixed(3)
         }
       }
     }

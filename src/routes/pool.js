@@ -3,10 +3,10 @@ import React, { Fragment, useState, useEffect, useContext } from 'react'
 import { makeStyles, styled } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
-import ExitIcon from '@material-ui/icons/ExitToApp'
 import { useParams } from 'react-router-dom'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
 import { toWei } from '@indexed-finance/indexed.js/dist/utils/bignumber';
+import ErrorOutline from '@material-ui/icons/ErrorOutline';
 
 import Container from '../components/container'
 import Spline from '../components/charts/spline'
@@ -27,6 +27,7 @@ import { getUnitializedPool } from '../api/gql'
 import { toContract } from '../lib/util/contracts'
 import { decToWeiHex, getBalances } from '../lib/markets'
 import { prepareOracle } from '../lib/index'
+import { getEvents } from '../lib/erc20'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
@@ -41,46 +42,17 @@ const dummy = {
     history: []
 }
 
-function hash(value, og) {
-  return (
-    <a style={{ 'text-decoration': 'none' }} href={`https://rinkeby.etherscan.io/tx/${og}`} target='_blank'>
-      <ButtonTransaction> <o>{value}</o>&nbsp;<Exit/> </ButtonTransaction>
-    </a>
-  )
-}
-
-const shortenHash = receipt => {
-  let length = receipt.length
-  let z4 = receipt.substring(0, 4)
-  let l4 = receipt.substring(length-4, length)
-  return `${z4}...${l4}`
-}
-
-let txs = [
-  '0x28ee0d9d6546d7490b3b6cf5227bd4018e7c6fc00af3f702bf145c8233a5e929',
-  '0x1e4fc4b6062f33788c4658f7b223c736ce9752e754115e2a49208d019513e28c',
-  '0xe6858db4c58879821936c5a88df647251814c0520a5da5d2afd8c26a946bed04',
-  '0xcd5edd521b1b3b7511b3e968e3d322c875d1cd17b13cd89c9a74fd9086d005f8',
-  '0xa9a01f59b454058d700253430ee234794bde8e04dbe5bb03c10133192543bc09'
-]
-
-const Chart = styled(Canvas)({
-  marginRight: 0
-})
-
-const Exit = styled(ExitIcon)({
-  fontSize: '1rem'
-})
-
 const useStyles = getStyles(style)
 
 export default function Pools(){
   const [ instance, setInstance ] = useState(null)
   const [ data, setData ] = useState(dummy)
+  const [ events, setEvents ] = useState([])
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
   let { address } = useParams()
+  let { native } = state
 
   const getCredit = async(targets) => {
     let element = document.getElementById('credit')
@@ -202,6 +174,7 @@ export default function Pools(){
 
       if(Object.keys(indexes).length > 0 && pool[0] != undefined){
         let source = toContract(state.web3.rinkeby, PoolInitializer.abi, pool[0].id)
+        let tokenEvents = await getEvents(web3.rinkeby, address)
         let target = Object.entries(indexes)
         .find(x => x[1].address == address)
 
@@ -228,26 +201,11 @@ export default function Pools(){
         }
         setData(target[1])
         setInstance(source)
+        setEvents(tokenEvents)
       }
     }
     retrievePool()
   }, [ state.indexes ])
-
-  function hash(value, og) {
-    return (
-      <a style={{ 'text-decoration': 'none' }} href={`https://rinkeby.etherscan.io/tx/${og}`} target='_blank'>
-        <ButtonTransaction> <o>{value}</o>&nbsp;<Exit/> </ButtonTransaction>
-      </a>
-    )
-  }
-
-  const events = [
-    { time: 1203232, event: 'MINT 400 USDI3', tx: hash(shortenHash(txs[0]), txs[0]) },
-    { time: 1203232, event: 'BURN 300 USDI3', tx: hash(shortenHash(txs[1]), txs[1]) },
-    { time: 1203232, event: 'BURN 0.5 USDI3', tx: hash(shortenHash(txs[2]), txs[2]) },
-    { time: 1203232, event: 'MINT 0.125 USDI3', tx: hash(shortenHash(txs[3]), txs[3]) },
-    { time: 1203232, event: 'MINT 1,000 USDI3', tx: hash(shortenHash(txs[4]), txs[4]) },
-  ]
 
   useEffect(() => {
     const retrieveBalances = async() => {
@@ -285,8 +243,8 @@ export default function Pools(){
   }, [ ])
 
   let {
-    marginX, margin, width, padding, height, fontSize, tableWidth
-  } = style.getFormatting(state)
+    marginX, margin, width, padding, chartHeight, fontSize, tableWidth
+  } = style.getFormatting({ native })
 
   return (
     <Fragment>
@@ -295,7 +253,7 @@ export default function Pools(){
           <Grid item xs={12} md={6} lg={7} xl={7} style={{ width: '100%'}}>
           <ParentSize>
             {({ width, height }) => (
-            <Canvas native={state.native} style={{ width }}>
+            <Canvas native={state.native} style={{ width }} custom='6.75%'>
               <div className={classes.market}>
                 {!state.native && (
                   <Fragment>
@@ -311,13 +269,12 @@ export default function Pools(){
                 )}
               </div>
               <div className={classes.chart}>
-                <Spline padding={padding} state={state} color='#ffa500' metadata={data} height={height} />
+                <Spline ready={data != dummy} padding={padding} native={native} color='#ffa500' metadata={data} height={chartHeight} />
               </div>
               <div className={classes.stats} style={{ fontSize }}>
                 <ul>
                   <li> LIQUIDITY: {data.marketcap} </li>
                   <li> MARKETCAP: {data.marketcap} </li>
-                  <li> YOUR CREDITS: {data.credit} </li>
                 </ul>
               </div>
             </Canvas>
@@ -325,7 +282,38 @@ export default function Pools(){
           </ParentSize>
           </Grid>
           <Grid item xs={12} md={5} lg={5} xl={5}>
+            <Canvas native={native}>
+              <div className={classes.actions}>
+                <p> {data.symbol}: </p>
+                <p> UNIV2-ETH-{data.symbol}: </p>
+                <div style={{ float: 'left' }}>
+                  <ButtonPrimary margin={{ marginBottom: 25, padding: '.5em 1.25em' }}  variant='outlined'> ADD LIQUIDITY </ButtonPrimary>
+                </div>
+                <div style={{ float: 'right' }}>
+                  <ButtonPrimary margin={{ marginBottom: 25, padding: '.5em 1.25em' }}  variant='outlined'> REMOVE LIQUIDITY </ButtonPrimary>
+                </div>
+              </div>
+            </Canvas>
             <Container margin={margin} padding="1em 0em" title='ASSETS'>
+              <div className={classes.alert}>
+                {!data.active && (
+                  <Fragment>
+                    <ErrorOutline style={{ float: 'left', fontSize: '2em', marginBottom: -7.5, marginRight: 10, color: 'orange'}} />
+                    <label> This pool is unitialised and needs liquidity to be bootstrapped </label>
+                  </Fragment>
+                )}
+                {data.active && (
+                  <Fragment>
+                    <p> ACTIVE CREDITS </p>
+                    <div>
+                      <h2> 0.000 {data.symbol}</h2>
+                      <ButtonPrimary variant='outlined' margin={{ marginTop: -50, marginBottom: 12.5, marginRight: 12.5 }}>
+                        CLAIM
+                      </ButtonPrimary>
+                    </div>
+                  </Fragment>
+                )}
+              </div>
               <div className={classes.container} style={{ width }}>
                 <Approvals input={data != dummy} param='DESIRED' height={250} metadata={data} set={getCredit}/>
               </div>
@@ -334,9 +322,6 @@ export default function Pools(){
                 <p> PLEDGE: <span id='eth-eqiv'/></p>
               </div>
               <div className={classes.submit}>
-                <ButtonPrimary variant='outlined' onClick={updateOracle} style={{ marginLeft: 0, float: 'left' }}>
-                  UPDATE
-                </ButtonPrimary>
                 <ButtonPrimary variant='outlined' onClick={pledgeTokens} style={{ marginLeft: 0 }}>
                   INITIALISE
                 </ButtonPrimary>

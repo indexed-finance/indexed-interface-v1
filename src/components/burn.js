@@ -11,7 +11,6 @@ import Grid from '@material-ui/core/Grid'
 import { toWei } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 
 import { toContract } from '../lib/util/contracts'
-import { getRateMulti, getRateSingle } from '../lib/markets'
 import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
 import { balanceOf, getERC20, allowance } from '../lib/erc20'
 import getStyles from '../assets/css'

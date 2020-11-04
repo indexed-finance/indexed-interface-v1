@@ -33,6 +33,19 @@ const setStyle = (theme) => ({
     padding: '12.5px 25px',
     height: 50
   },
+  alert: {
+    padding: '1em 2em',
+    borderBottom: '2px solid #666666',
+    '& label': {
+      fontSize: '.9em',
+    },
+    '& p': {
+      margin: 0
+    }
+  },
+  actions: {
+    padding: '1em 2em',
+  },
   reciept: {
     padding: '10px 12.5px',
     borderBottom: '2px solid #666666',
@@ -67,12 +80,12 @@ const setStyle = (theme) => ({
 
 const mapping = {
   [DESKTOP_NORMAL]: {
-    marginX: '-12.5em 0em 0em 3em',
+    marginX: '-33.75em 0em 0em 3em',
     tableWidth: 'calc(65em - 412.5px)',
     margin: '3em 3em',
     width: '100%',
     padding: 100,
-    height: 75,
+    chartHeight: 87.5,
     fontSize: 'inherit'
   },
   [DESKTOP_LARGE]: {
@@ -81,7 +94,7 @@ const mapping = {
     margin: '3em 3em',
     width: '100%',
     padding: 100,
-    height: 75,
+    chartHeight: 75,
     fontSize: 'inherit'
   },
   [DESKTOP_WIDE]: {
@@ -90,7 +103,7 @@ const mapping = {
     margin: '3em 3em',
     width: '100%',
     padding: 100,
-    height: 75,
+    chartHeight: 75,
     fontSize: 'inherit'
   },
   [DESKTOP_HUGE]: {
@@ -99,7 +112,7 @@ const mapping = {
     margin: '3em 3em',
     width: '100%',
     padding: 100,
-    height: 75,
+    chartHeight: 75,
     fontSize: 'inherit'
   },
   'NATIVE': {
@@ -107,7 +120,7 @@ const mapping = {
     margin: '3em 1.5em',
     width: '100%',
     padding: 112.5,
-    height: 200,
+    chartHeight: 200,
     fontSize: '.875em'
   }
 }

@@ -48,6 +48,7 @@ const desktop = {
 
 export default function Markets(){
   const [ market, setMarket ] = useState(dummy)
+  const [ position, setPosition ] = useState(null)
   const [ pie, setPie ] = useState(<Fragment />)
   const classes = useStyles()
   const theme = useTheme()
@@ -82,6 +83,17 @@ export default function Markets(){
         history.push(`index/${m.toLowerCase()}`)
       }
     } else {
+      let { margin }  = style.getFormatting({ native, request })
+
+      if(!active) {
+        let match = position.split(' ')
+
+        match[0] = '0em'
+
+        setPosition(match.join(' '))
+      } else {
+        setPosition(margin)
+      }
       setMarket(state.indexes[m])
     }
   }
@@ -115,6 +127,8 @@ export default function Markets(){
   let {
     resolution, top, margin, height, pre, pre2
   } = style.getFormatting({ request, native })
+
+  if(position == null) setPosition(margin)
 
   return (
     <Fragment>
@@ -162,7 +176,7 @@ export default function Markets(){
          </div>
         </Grid>
         <Grid item xs={12} md={12} lg={12} xl={12}>
-          <Container margin={margin} padding="1em 2em" title='INDEXES'>
+          <Container margin={position} padding="1em 2em" title='INDEXES'>
             <Table state={state} market={market.symbol} triggerMarket={changeMarket} />
           </Container>
         </Grid>

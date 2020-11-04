@@ -1,6 +1,7 @@
 const setStyle = (theme) => ({
   top: {
-    marginTop: '3em'
+    marginTop: '3em',
+    overflowX: 'hidden'
   },
   modal: {
     width: '30em',
@@ -26,19 +27,20 @@ const setStyle = (theme) => ({
     marginBottom: 0
   },
   estimation: {
-    listStyle: 'none ',
+    listStyle: 'none',
     display: 'inline-block',
     marginTop: -5
   },
   stats: {
     listStyle: 'none',
+    width: '100%',
     padding: 0,
     margin: 0,
     '& li:first-of-type': {
       marginBottom: 15
     },
     '& li span': {
-      float: 'right'
+      float: 'right',
     }
   },
 })
@@ -51,14 +53,15 @@ const getFormatting = (ticker, native) => {
     marginRight: ticker.includes('UNIV2') ? 7.5 : 0,
     marginBottom: ticker.includes('UNIV2') ? 0 : 10,
     positioning: !native ? 'center' : 'flex-start',
+    marginLeft: !native ? '15.5em' : '2.5em',
     inputWidth: !native ? 200 : 125,
     listPadding: !native ? 'inherit' : 0,
     height: !native ? '10em': '11.5em',
-    reward: !native ? '34em': 'calc(20em - 64px)',
-    buttonPos: !native ? -50 : 100,
+    reward: !native ? '34em': 'calc(22.5em - 64px)',
+    buttonPos: !native ? -55 : 67.5,
     button: {
        marginTop: !native ? -50 : -37.5,
-       marginRight: !native? 25 : -12.5
+       marginRight: !native? 25 : -12.5,
     }
   }
 }

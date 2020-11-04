@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 
+import { toWei } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 import { makeStyles, styled } from '@material-ui/core/styles'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
@@ -10,7 +11,6 @@ import List from '@material-ui/core/List'
 import Grid from '@material-ui/core/Grid'
 
 import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
-import { getRateMulti, getRateSingle, decToWeiHex } from '../lib/markets'
 import { tokenMetadata } from '../assets/constants/parameters'
 import { balanceOf, getERC20, allowance } from '../lib/erc20'
 import { toContract } from '../lib/util/contracts'
@@ -79,7 +79,7 @@ export default function InteractiveList({ market, metadata }) {
     let { address, assets } = metadata
     let { toWei, toBN } = web3.rinkeby.utils
     let contract = toContract(web3.injected, BPool.abi, address)
-    let input = decToWeiHex(web3.rinkeby, amount)
+    let input = toWei(parseFloat(amount))
 
     if(rates.length == 1) {
       await mintSingle(contract, rates[0].address, rates, input)

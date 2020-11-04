@@ -39,7 +39,6 @@ export default function Root(){
   let history = useHistory()
 
   useEffect(() => {
-    console.log('jhello')
     renderCanvas()
   }, [ ])
 

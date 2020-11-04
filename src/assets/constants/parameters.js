@@ -26,7 +26,7 @@ let isNight = (currentTime > 20 || currentTime < 6)
 export const initialState = {
   web3: {
     mainnet: new Web3('https://mainnet.infura.io/v3/1c6549e97ff24d9a99ba4e007b538de6'),
-    rinkeby: new Web3('https://rinkeby.infura.io/v3/1c6549e97ff24d9a99ba4e007b538de6'),
+    rinkeby: new Web3('wss://rinkeby.infura.io/ws/v3/1c6549e97ff24d9a99ba4e007b538de6'),
     injected: false
   },
   background: isNight ? '#111111' : '#ffffff',

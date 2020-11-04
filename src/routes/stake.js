@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, Fragment } from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import { Link } from  'react-router-dom'
@@ -129,8 +129,18 @@ export default function Stake() {
                     <img src={tokenMetadata[i[ticker][3]].image} style={{ marginBottom: 10, width }} />
                   </div>
                   <div className={classes.information}>
-                    <h3> {name} [{symbol}] </h3>
-                    <h5> DEPOSITS: {supply} {symbol}</h5>
+                    {!state.native && (
+                      <Fragment>
+                        <h3> {name} [{symbol}] </h3>
+                        <h5> DEPOSITS: {supply} {symbol}</h5>
+                      </Fragment>
+                    )}
+                    {state.native && (
+                      <Fragment>
+                        <h4> {symbol} </h4>
+                        <h5> DEPOSITS: {supply}</h5>
+                      </Fragment>
+                    )}
                   </div>
                   <ul className={classes.list}>
                     <li> RATE: {rate} NDX/DAY </li>

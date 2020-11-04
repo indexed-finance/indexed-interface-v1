@@ -247,7 +247,7 @@ export default function Supply() {
   }, [ state.web3.injected ])
 
   let {
-    padding, marginBottom, marginRight, width, positioning, inputWidth, listPadding, button, height, reward, buttonPos
+    padding, marginBottom, marginRight, width, positioning, inputWidth, listPadding, button, height, reward, buttonPos, marginLeft
   } = style.getFormatting(ticker, state.native)
 
   if(state.web3.injected) getAccountMetadata()
@@ -256,12 +256,12 @@ export default function Supply() {
     <Grid container direction='column' alignItems='center' justify='center'>
     <Grid item xs={10} md={6}>
       <div className={classes.top}>
-        <Canvas>
+        <Canvas style={{ overflowX: 'hidden' }}>
           <div className={classes.rewards} style={{ width: reward }}>
             <p> ACTIVE CLAIM </p>
             <div>
               <h2> <CountUp decimals={6} perserveValue separator="," start={stats.claim} end={stats.future} duration={86400} /> NDX </h2>
-              <ButtonPrimary variant='outlined' margin={{ marginTop: buttonPos }}>
+              <ButtonPrimary variant='outlined' margin={{ marginTop: buttonPos, marginBottom: 12.5, marginRight: 37.5 }}>
                 CLAIM
               </ButtonPrimary>
             </div>
@@ -303,9 +303,9 @@ export default function Supply() {
                 </Fragment>
              )}
              {!metadata.isReady && (
-                <Grid item>
-                  This program is not yet initialised yet, it is possible to do so in
-                  <p> <Countdown date={parseInt(metadata.startsAt) * 1000}/> </p>
+                <Grid item xs={6} md={12}>
+                  <p>This program is not yet initialised yet, it is possible to do so in </p>
+                  <p> <Countdown date={parseInt(metadata.startsAt)}/> </p>
                 </Grid>
              )}
             </Grid>
@@ -325,8 +325,8 @@ export default function Supply() {
         <Canvas>
           <div className={classes.rewards}>
           	<ul className={classes.stats}>
-              <li> POOL DEPOSITS: <span> {metadata.supply} NDX</span> </li>
-              <li> POOL RATE: <span> {metadata.rate} NDX/DAY </span> </li>
+              <li> POOL DEPOSITS: <span style={{ marginLeft }}> {metadata.supply} NDX</span> </li>
+              <li> POOL RATE: <span style={{ marginLeft }}> {metadata.rate} NDX/DAY </span> </li>
             </ul>
           </div>
         </Canvas>
