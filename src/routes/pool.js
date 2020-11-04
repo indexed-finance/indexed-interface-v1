@@ -23,11 +23,12 @@ import IERC20 from '../assets/constants/abi/IERC20.json'
 import MockERC20ABI from '../assets/constants/abi/MockERC20.json'
 import { eventColumns, tokenMetadata } from '../assets/constants/parameters'
 import style from '../assets/css/routes/pool'
-import { getUnitializedPool } from '../api/gql'
+import { getUnitializedPool, getPoolSnapshots, getTokenPriceHistory } from '../api/gql'
 import { toContract } from '../lib/util/contracts'
 import { decToWeiHex, getBalances } from '../lib/markets'
 import { prepareOracle } from '../lib/index'
-import { getEvents } from '../lib/erc20'
+import { getEvents, balanceOf } from '../lib/erc20'
+import { getPair } from '../lib/markets'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
@@ -42,9 +43,12 @@ const dummy = {
     history: []
 }
 
+const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
+
 const useStyles = getStyles(style)
 
 export default function Pools(){
+  const [ balances, setBalances ] = useState({ native: 0, lp: 0 })
   const [ instance, setInstance ] = useState(null)
   const [ data, setData ] = useState(dummy)
   const [ events, setEvents ] = useState([])
@@ -167,6 +171,27 @@ export default function Pools(){
     return [ targets, inputs, value ]
   }
 
+  const getNativeBalances = async() => {
+    let { web3, account } = state
+    let pair = await getPair(web3.rinkeby, WETH, address)
+    let target = web3.injected != false ? account : '0x0000000000000000000000000000000000000001'
+
+    let lp = await balanceOf(web3.rinkeby, pair.options.address, target)
+    let native = await balanceOf(web3.rinkeby, address, target)
+
+    setBalances({ native, lp })
+  }
+
+  const getActiveCredit = async() => {
+    let { account, web3 } = state
+
+    if(web3.injected && instance){
+      let credit = await instance.methods.getCreditOf(account).call()
+      credit = (parseFloat(credit)/Math.pow(10, 18)).toLocaleString({ minimumFractionDigits: 4 })
+
+      setData({ ...data, credit })
+    }
+  }
   useEffect(() => {
     const retrievePool = async() => {
       let { indexes, web3 } = state
@@ -175,6 +200,7 @@ export default function Pools(){
       if(Object.keys(indexes).length > 0 && pool[0] != undefined){
         let source = toContract(state.web3.rinkeby, PoolInitializer.abi, pool[0].id)
         let tokenEvents = await getEvents(web3.rinkeby, address)
+
         let target = Object.entries(indexes)
         .find(x => x[1].address == address)
 
@@ -199,9 +225,10 @@ export default function Pools(){
             })
           }
         }
-        setData(target[1])
-        setInstance(source)
+        await getNativeBalances()
         setEvents(tokenEvents)
+        setInstance(source)
+        setData(target[1])
       }
     }
     retrievePool()
@@ -220,21 +247,13 @@ export default function Pools(){
         })
       }
      }
-     const getActiveCredit = async() => {
-       let { account, web3 } = state
 
-       if(web3.injected && instance){
-         let credit = await instance.methods.getCreditOf(account).call()
-         credit = (parseFloat(credit)/Math.pow(10, 18)).toFixed(2)
-
-         setData({ ...data, credit })
-       }
-     }
     retrieveBalances()
     getActiveCredit()
   }, [ state.web3.injected ])
 
   useEffect(() => {
+    if(state.web3.injected) getActiveCredit()
     if(!state.load){
       dispatch({
         type: 'LOAD', payload: true
@@ -245,6 +264,7 @@ export default function Pools(){
   let {
     marginX, margin, width, padding, chartHeight, fontSize, tableWidth
   } = style.getFormatting({ native })
+
 
   return (
     <Fragment>
@@ -284,14 +304,14 @@ export default function Pools(){
           <Grid item xs={12} md={5} lg={5} xl={5}>
             <Canvas native={native}>
               <div className={classes.actions}>
-                <p> {data.symbol}: </p>
-                <p> UNIV2-ETH-{data.symbol}: </p>
-                <div style={{ float: 'left' }}>
+                <p> {data.symbol}: <span>{balances.native}</span></p>
+                <p> UNIV2-ETH-{data.symbol}: <span>{balances.lp}</span></p>
+                <a href={`https://app.uniswap.org/#/add/ETH/${address}`} style={{ float: 'left' }} target='_blank'>
                   <ButtonPrimary margin={{ marginBottom: 25, padding: '.5em 1.25em' }}  variant='outlined'> ADD LIQUIDITY </ButtonPrimary>
-                </div>
-                <div style={{ float: 'right' }}>
+                </a>
+                <a href={`https://app.uniswap.org/#/remove/${address}/ETH`} style={{ float: 'right' }} target='_blank'>
                   <ButtonPrimary margin={{ marginBottom: 25, padding: '.5em 1.25em' }}  variant='outlined'> REMOVE LIQUIDITY </ButtonPrimary>
-                </div>
+                </a>
               </div>
             </Canvas>
             <Container margin={margin} padding="1em 0em" title='ASSETS'>
@@ -306,7 +326,7 @@ export default function Pools(){
                   <Fragment>
                     <p> ACTIVE CREDITS </p>
                     <div>
-                      <h2> 0.000 {data.symbol}</h2>
+                      <h2> {data.credit} {data.symbol}</h2>
                       <ButtonPrimary variant='outlined' margin={{ marginTop: -50, marginBottom: 12.5, marginRight: 12.5 }}>
                         CLAIM
                       </ButtonPrimary>
@@ -334,7 +354,7 @@ export default function Pools(){
             {({ width, height }) => (
               <Container margin={marginX} padding="1em 2em" title='EVENTS'>
                 <div className={classes.events}>
-                  <List height={200} columns={eventColumns} data={events} />
+                  <List height={250} columns={eventColumns} data={events} />
                 </div>
               </Container>
             )}

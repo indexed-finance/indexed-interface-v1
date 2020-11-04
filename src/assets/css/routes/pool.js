@@ -45,6 +45,12 @@ const setStyle = (theme) => ({
   },
   actions: {
     padding: '1em 2em',
+    '& p span': {
+      float: 'right',
+      fontFamily: "San Francisco Bold",
+      fontWeight: 500,
+      marginRight: 50
+    }
   },
   reciept: {
     padding: '10px 12.5px',
