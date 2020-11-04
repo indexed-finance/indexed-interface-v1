@@ -63,15 +63,15 @@ const setStyle = (theme) => ({
     }
   },
   log: {
-    width: 275,
     height: 300,
-    float: 'right',
     paddingLeft: 25,
     paddingTop: 12.5,
     paddingRight: 25,
   },
   table: {
     overflowY: 'scroll',
+    alignItems: 'center',
+    width: '100%'
   },
   title: {
     display: 'inline-block',
@@ -99,12 +99,14 @@ const setStyle = (theme) => ({
     color: '#999999'
   },
   column: {
+    zIndex: 10
   },
   lozenge: {
     float: 'left'
   },
   metadata: {
     lineHeight: 1.5,
+    overflow: 'hidden',
     '& p': {
       display: 'contents',
     },
@@ -140,7 +142,8 @@ const getFormatting = (state) => {
     margin: !state.native ? '2em 3em' : '1.5em 1.5em',
     width: !state.native ? 'auto' : '65%',
     progress: !state.native ? 325 : 275,
-    radius: !state.native ? 67.5 : 60
+    radius: !state.native ? 67.5 : 60,
+    marginTop: !state.native ? -75 : 0
   }
 }
 

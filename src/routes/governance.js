@@ -27,7 +27,7 @@ import Canvas from '../components/canvas'
 import Progress from '../components/progress'
 import Stacked from '../components/charts/stacked'
 
-import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
+import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
 import { balanceOf } from '../lib/erc20'
 import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
@@ -131,21 +131,25 @@ export default function Governance(){
     let { web3, account } = state
     let contract = toContract(web3.injected, Ndx.abi, NDX)
 
-    await contract.methods.delegate(address).send({ from: account })
-    .on('confirmaton', async(conf, receipt) => {
-      if(conf == 0){
-        if(receipt.status == 1) {
-          let isDelegated = await contract.methods.delegates(state.account).call()
+    try{
+      await contract.methods.delegate(address).send({ from: account })
+      .on('confirmaton', async(conf, receipt) => {
+        if(conf == 0){
+          if(receipt.status == 1) {
+            let isDelegated = await contract.methods.delegates(state.account).call()
 
-          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-          getStatus(isDelegated)
-        } else {
-          dispatch({ type: 'FLAG', payload: TX_REVERT })
+            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+            getStatus(isDelegated)
+          } else {
+            dispatch({ type: 'FLAG', payload: TX_REVERT })
+          }
         }
-      }
-    }).catch((data) => {
-      dispatch({ type: 'FLAG', payload: TX_REJECT })
-    })
+      }).catch((data) => {
+        dispatch({ type: 'FLAG', payload: TX_REJECT })
+      })
+    } catch(e) {
+      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
+    }
   }
 
   const renderDelegation = () => {

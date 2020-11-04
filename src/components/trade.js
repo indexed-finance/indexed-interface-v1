@@ -10,7 +10,7 @@ import NumberFormat from '../utils/format'
 import Adornment from './inputs/adornment'
 import Input from './inputs/input'
 
-import { TX_CONFIRM, TX_REJECT, TX_REVERT, MARKET_ORDER } from '../assets/constants/parameters'
+import { TX_CONFIRM, TX_REJECT, TX_REVERT, MARKET_ORDER, WEB3_PROVIDER } from '../assets/constants/parameters'
 import { getPair, getRouter, decToWeiHex } from '../lib/markets'
 import { balanceOf, getERC20, allowance } from '../lib/erc20'
 import style from '../assets/css/components/trade'
@@ -109,20 +109,24 @@ export default function Trade({ market, metadata }) {
     let { web3, indexes } = state
     let { eth } = web3.injected
 
-    let block = await eth.getBlock('latest')
-    let amount0 = decToWeiHex(web3.injected, i)
-    let amount1 = decToWeiHex(web3.injected, o)
-    let io = { ...input, amount: i }
-    let oi = { ...output, amount: o }
-    let f = () => {}
+    try {
+      let block = await eth.getBlock('latest')
+      let amount0 = decToWeiHex(web3.injected, i)
+      let amount1 = decToWeiHex(web3.injected, o)
+      let io = { ...input, amount: i }
+      let oi = { ...output, amount: o }
+      let f = () => {}
 
-    if(input.address == WETH){
-      f = () => swapEthForTokens(amount0, amount1, block)
-    } else {
-      f = () => swapTokensForEth(amount0, amount1, block)
-     }
+      if(input.address == WETH){
+        f = () => swapEthForTokens(amount0, amount1, block)
+      } else {
+        f = () => swapTokensForEth(amount0, amount1, block)
+      }
 
-    dispatch({ type: 'MODAL', payload: MARKET_ORDER(io, oi, f) })
+      dispatch({ type: 'MODAL', payload: MARKET_ORDER(io, oi, f) })
+    } catch(e) {
+      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
+    }
   }
 
   const swapTokensForEth = async(exactTokens, minETH, recentBlock) => {

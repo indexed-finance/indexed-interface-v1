@@ -24,7 +24,7 @@ import Radio from '../components/inputs/radio'
 import Progress from '../components/progress'
 import Canvas from '../components/canvas'
 
-import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
+import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
 import { toContract } from '../lib/util/contracts'
 import { balanceOf } from '../lib/erc20'
 import style from '../assets/css/routes/proposal'
@@ -64,21 +64,26 @@ export default function Proposal(){
 
   const vote = async() => {
     let { web3, account } = state
-    let contract = toContract(web3.injected, GovernorAlpha.abi, DAO)
     let decision = input === 1
 
-    await contract.methods.castVote(id, decision).send({ from: account })
-    .on('confirmaton', async(conf, receipt) => {
-      if(conf == 0){
-        if(receipt.status == 1) {
-          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-        } else {
-          dispatch({ type: 'FLAG', payload: TX_REVERT })
+    try {
+      let contract = toContract(web3.injected, GovernorAlpha.abi, DAO)
+
+      await contract.methods.castVote(id, decision).send({ from: account })
+      .on('confirmaton', async(conf, receipt) => {
+        if(conf == 0){
+          if(receipt.status == 1) {
+            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+          } else {
+            dispatch({ type: 'FLAG', payload: TX_REVERT })
+          }
         }
-      }
-    }).catch((data) => {
-      dispatch({ type: 'FLAG', payload: TX_REJECT })
-    })
+      }).catch((data) => {
+        dispatch({ type: 'FLAG', payload: TX_REJECT })
+      })
+    } catch(e) {
+      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
+    }
   }
 
   function Blockie({ address, id, width, border }) {
@@ -136,7 +141,7 @@ export default function Proposal(){
     retrieveProposal()
   }, [])
 
-  let { margin, width, progress, radius } = style.getFormatting(state)
+  let { margin, width, progress, radius, marginTop } = style.getFormatting(state)
 
   let forVotes = (parseFloat(metadata.for)/Math.pow(10, 18)).toLocaleString()
   let againstVotes = (parseFloat(metadata.against)/Math.pow(10, 18)).toLocaleString()
@@ -191,7 +196,7 @@ export default function Proposal(){
             </div>
           </Canvas>
         </Grid>
-        <Grid item xs={12} md={4} lg={4} xl={4}>
+        <Grid item xs={12} md={4} lg={4} xl={4} style={{ zIndex: 1 }}>
           <div className={classes.column}>
             <Canvas native={state.native}>
               <div className={classes.modal}>
@@ -239,7 +244,7 @@ export default function Proposal(){
           </Container>
         </Grid>
         <Grid item xs={12} md={4} lg={4} xl={4}>
-          <Canvas native={state.native}>
+          <Canvas native={state.native} style={{ zIndex: -1 }}>
             <div className={classes.log}>
               <List dense classes={classes.table}>
                 {metadata.votes.map((value) => {

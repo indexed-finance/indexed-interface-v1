@@ -16,7 +16,7 @@ import List from '../components/list'
 import ButtonTransaction from '../components/buttons/transaction'
 import ButtonPrimary from '../components/buttons/primary'
 
-import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
+import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
 
 import PoolInitializer from '../assets/constants/abi/PoolInitializer.json'
 import IERC20 from '../assets/constants/abi/IERC20.json'
@@ -40,6 +40,7 @@ const dummy = {
     price: '',
     supply: '',
     marketcap: '',
+    credit: 0,
     history: []
 }
 
@@ -48,7 +49,7 @@ const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
 const useStyles = getStyles(style)
 
 export default function Pools(){
-  const [ balances, setBalances ] = useState({ native: 0, lp: 0 })
+  const [ balances, setBalances ] = useState({ native: 0, lp: 0, credit: 0 })
   const [ instance, setInstance ] = useState(null)
   const [ data, setData ] = useState(dummy)
   const [ events, setEvents ] = useState([])
@@ -80,6 +81,30 @@ export default function Pools(){
     alternative.innerHTML = '$' + parseFloat(ethValue * state.price).toFixed(2)
   }
 
+  const claimCredits = async() => {
+    let { web3, account } = state
+    let { address } = instance.options
+
+    try {
+      let source = toContract(web3.injected, PoolInitializer.abi, address)
+
+      await source.methods.claimTokens().send({ from: account })
+      .on('confirmaton', (conf, receipt) => {
+        if(conf == 0){
+          if(receipt.status == 1) {
+            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+          } else {
+            dispatch({ type: 'FLAG', payload: TX_REVERT })
+          }
+        }
+      }).catch((data) => {
+        dispatch({ type: 'FLAG', payload: TX_REJECT })
+      })
+    } catch (e) {
+      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
+    }
+  }
+
   const getCreditQuoteSingle = async(asset) => {
     let { address, amount } = asset
     let value = decToWeiHex(state.web3.rinkeby, parseFloat(amount))
@@ -106,25 +131,30 @@ export default function Pools(){
   const pledgeTokens = async() => {
     let { web3, account } = state
     let { address } = instance.options
-    let source = toContract(web3.injected, PoolInitializer.abi, address)
-    let [ addresses, amounts, output ] = await getInputs(web3.rinkeby)
 
-    await source.methods.contributeTokens(
-      addresses,
-      amounts,
-      output
-    ).send({ from: account })
-    .on('confirmaton', (conf, receipt) => {
-      if(conf == 0){
-        if(receipt.status == 1) {
-          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-        } else {
-          dispatch({ type: 'FLAG', payload: TX_REVERT })
+    try {
+      let source = toContract(web3.injected, PoolInitializer.abi, address)
+      let [ addresses, amounts, output ] = await getInputs(web3.rinkeby)
+
+      await source.methods.contributeTokens(
+        addresses,
+        amounts,
+        output
+      ).send({ from: account })
+      .on('confirmaton', (conf, receipt) => {
+        if(conf == 0){
+          if(receipt.status == 1) {
+            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+          } else {
+            dispatch({ type: 'FLAG', payload: TX_REVERT })
+          }
         }
-      }
-    }).catch((data) => {
-      dispatch({ type: 'FLAG', payload: TX_REJECT })
-    })
+      }).catch((data) => {
+        dispatch({ type: 'FLAG', payload: TX_REJECT })
+      })
+    } catch(e) {
+      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
+    }
   }
 
   const updateOracle = async() => {
@@ -176,10 +206,11 @@ export default function Pools(){
     let pair = await getPair(web3.rinkeby, WETH, address)
     let target = web3.injected != false ? account : '0x0000000000000000000000000000000000000001'
 
-    let lp = await balanceOf(web3.rinkeby, pair.options.address, target)
+    let lp = pair.options.address != '0x0000000000000000000000000000000000000000' ?
+    await balanceOf(web3.rinkeby, pair.options.address, target) : 0
     let native = await balanceOf(web3.rinkeby, address, target)
 
-    setBalances({ native, lp })
+    setBalances({ ...balances, native, lp })
   }
 
   const getActiveCredit = async() => {
@@ -187,11 +218,12 @@ export default function Pools(){
 
     if(web3.injected && instance){
       let credit = await instance.methods.getCreditOf(account).call()
-      credit = (parseFloat(credit)/Math.pow(10, 18)).toLocaleString({ minimumFractionDigits: 4 })
+      credit = (parseFloat(credit)/Math.pow(10, 18))
 
-      setData({ ...data, credit })
+      setBalances({ ...balances, credit })
     }
   }
+
   useEffect(() => {
     const retrievePool = async() => {
       let { indexes, web3 } = state
@@ -199,13 +231,12 @@ export default function Pools(){
 
       if(Object.keys(indexes).length > 0 && pool[0] != undefined){
         let source = toContract(state.web3.rinkeby, PoolInitializer.abi, pool[0].id)
-        let tokenEvents = await getEvents(web3.rinkeby, address)
+        let tokenEvents = await getEvents(web3.websocket, address)
 
         let target = Object.entries(indexes)
         .find(x => x[1].address == address)
 
         target[1].address = pool[0].id
-        target[1].credit = 0
 
         if(!target[1].active) {
           for(let token in pool[0].tokens){
@@ -225,10 +256,11 @@ export default function Pools(){
             })
           }
         }
+
         await getNativeBalances()
-        setEvents(tokenEvents)
         setInstance(source)
         setData(target[1])
+        setEvents(tokenEvents)
       }
     }
     retrievePool()
@@ -265,6 +297,15 @@ export default function Pools(){
     marginX, margin, width, padding, chartHeight, fontSize, tableWidth
   } = style.getFormatting({ native })
 
+  if(!data.active && !native) {
+    let match = marginX.split(' ')
+
+    match[0] = parseInt(match[0].replace('em', ''))
+    match[0] = match[0] - (match[0] * 0.075)
+    match[0] = `${match[0]}em`
+
+    marginX = match.join(' ')
+  }
 
   return (
     <Fragment>
@@ -273,7 +314,7 @@ export default function Pools(){
           <Grid item xs={12} md={6} lg={7} xl={7} style={{ width: '100%'}}>
           <ParentSize>
             {({ width, height }) => (
-            <Canvas native={state.native} style={{ width }} custom='6.75%'>
+            <Canvas native={native} style={{ width: !native ? width : 'auto' }} custom='6.75%'>
               <div className={classes.market}>
                 {!state.native && (
                   <Fragment>
@@ -319,15 +360,16 @@ export default function Pools(){
                 {!data.active && (
                   <Fragment>
                     <ErrorOutline style={{ float: 'left', fontSize: '2em', marginBottom: -7.5, marginRight: 10, color: 'orange'}} />
-                    <label> This pool is unitialised and needs liquidity to be bootstrapped </label>
+                    <label> This index pool is uninitialized and needs liquidity </label>
                   </Fragment>
                 )}
                 {data.active && (
                   <Fragment>
                     <p> ACTIVE CREDITS </p>
                     <div>
-                      <h2> {data.credit} {data.symbol}</h2>
-                      <ButtonPrimary variant='outlined' margin={{ marginTop: -50, marginBottom: 12.5, marginRight: 12.5 }}>
+                      <h2> {balances.credit.toFixed(4)} {data.symbol}</h2>
+                      <ButtonPrimary onClick={claimCredits} variant='outlined'
+                        margin={{ marginTop: -50, marginBottom: 12.5, marginRight: 12.5 }}>
                         CLAIM
                       </ButtonPrimary>
                     </div>

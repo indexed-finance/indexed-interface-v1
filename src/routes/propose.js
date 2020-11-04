@@ -17,7 +17,7 @@ import Select from '../components/inputs/select'
 import Input from '../components/inputs/input'
 import Container from '../components/container'
 
-import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
+import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
 import style from '../assets/css/routes/propose'
 import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
@@ -160,7 +160,6 @@ export default function Propose(){
     let { web3, account } = state
     let { encodeParameters } = web3.rinkeby.eth.abi
     let [ signatures, calldata, values ] = [ [], [], [] ]
-    let contract = toContract(web3.injected, GovernorAlpha.abi, DAO)
     let addresses = Object.keys(executions)
     let description = getDescription()
 
@@ -186,24 +185,31 @@ export default function Propose(){
       resolve()
     })
 
-    await contract.methods.propose(
-      addresses,
-      values,
-      signatures,
-      calldata,
-      description
-    ).send({ from: account })
-    .on('confirmation', (conf, receipt) => {
-      if(conf == 0){
-        if(receipt.status == 1) {
-          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-        } else {
-          dispatch({ type: 'FLAG', payload: TX_REVERT })
+    try {
+
+      let contract = toContract(web3.injected, GovernorAlpha.abi, DAO)
+
+      await contract.methods.propose(
+        addresses,
+        values,
+        signatures,
+        calldata,
+        description
+      ).send({ from: account })
+      .on('confirmation', (conf, receipt) => {
+        if(conf == 0){
+          if(receipt.status == 1) {
+            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+          } else {
+            dispatch({ type: 'FLAG', payload: TX_REVERT })
+          }
         }
-      }
-    }).catch((data) => {
-      dispatch({ type: 'FLAG', payload: TX_REJECT })
-    })
+      }).catch((data) => {
+        dispatch({ type: 'FLAG', payload: TX_REJECT })
+      })
+    } catch(e){
+      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
+    }
   }
 
   function Entries({ data, pair }) {

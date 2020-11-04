@@ -9,7 +9,7 @@ import IStakingRewards from '../assets/constants/abi/IStakingRewards.json'
 import Countdown from "react-countdown";
 import CountUp from 'react-countup';
 
-import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
+import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
 import style from '../assets/css/routes/supply'
 import Canvas from '../components/canvas'
 import Container from '../components/container'
@@ -57,21 +57,26 @@ export default function Supply() {
   const initialisePool = async() => {
     let { web3, account } = state
     let { stakingToken } = metadata
-    let contract = toContract(web3.injected, StakingRewardsFactory, FACTORY)
 
-    await contract.methods.notifyRewardAmount(stakingToken).send({ from: account })
-    .on('confirmation', (conf, receipt) => {
-      if(conf == 0){
-        if(receipt.status == 1) {
-          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-          setMetadata({ ...metadata, isReady: true })
-        } else {
-          dispatch({ type: 'FLAG', payload: TX_REVERT })
+    try{
+      let contract = toContract(web3.injected, StakingRewardsFactory, FACTORY)
+
+      await contract.methods.notifyRewardAmount(stakingToken).send({ from: account })
+      .on('confirmation', (conf, receipt) => {
+        if(conf == 0){
+          if(receipt.status == 1) {
+            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+            setMetadata({ ...metadata, isReady: true })
+          } else {
+            dispatch({ type: 'FLAG', payload: TX_REVERT })
+          }
         }
-      }
-    }).catch((data) => {
-      dispatch({ type: 'FLAG', payload: TX_REJECT })
-    })
+      }).catch((data) => {
+        dispatch({ type: 'FLAG', payload: TX_REJECT })
+      })
+    } catch(e) {
+      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
+    }
   }
 
   const getAllowance = async() => {
@@ -88,42 +93,52 @@ export default function Supply() {
     let stakingPool = z[ticker]
     let { web3, account } = state
     let { stakingToken } = metadata
-    let contract = getERC20(web3.injected, stakingToken)
-    let amount = decToWeiHex(web3.injected, parseFloat(input))
 
-    await contract.methods.approve(stakingPool, amount).send({ from: account })
-    .on('confirmation', (conf, receipt) => {
-      if(conf == 0){
-        if(receipt.status == 1) {
-          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-          setExecution({ f: stake, label: 'STAKE' })
-        } else {
-          dispatch({ type: 'FLAG', payload: TX_REVERT })
+    try{
+      let contract = getERC20(web3.injected, stakingToken)
+      let amount = decToWeiHex(web3.rinkeby, parseFloat(input))
+
+      await contract.methods.approve(stakingPool, amount).send({ from: account })
+      .on('confirmation', (conf, receipt) => {
+        if(conf == 0){
+          if(receipt.status == 1) {
+            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+            setExecution({ f: stake, label: 'STAKE' })
+          } else {
+            dispatch({ type: 'FLAG', payload: TX_REVERT })
+          }
         }
-      }
-    }).catch((data) => {
-      dispatch({ type: 'FLAG', payload: TX_REJECT })
-    })
+      }).catch((data) => {
+        dispatch({ type: 'FLAG', payload: TX_REJECT })
+      })
+    } catch(e) {
+      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
+    }
   }
 
   const stake = async() => {
     let stakingPool = z[ticker]
     let { web3, account } = state
-    let contract = toContract(web3.injected, IStakingRewards, stakingPool)
-    let amount = decToWeiHex(web3.injected, parseFloat(input))
 
-    await contract.methods.stake(amount).send({ from: account })
-    .on('confirmation', (conf, receipt) => {
-      if(conf == 0){
-        if(receipt.status == 1) {
-          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-        } else {
-          dispatch({ type: 'FLAG', payload: TX_REVERT })
+    try {
+      let contract = toContract(web3.injected, IStakingRewards, stakingPool)
+      let amount = decToWeiHex(web3.rinkeby, parseFloat(input))
+
+      await contract.methods.stake(amount).send({ from: account })
+      .on('confirmation', (conf, receipt) => {
+        if(conf == 0){
+          if(receipt.status == 1) {
+            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+          } else {
+            dispatch({ type: 'FLAG', payload: TX_REVERT })
+          }
         }
-      }
-    }).catch((data) => {
-      dispatch({ type: 'FLAG', payload: TX_REJECT })
-    })
+      }).catch((data) => {
+        dispatch({ type: 'FLAG', payload: TX_REJECT })
+      })
+    } catch (e) {
+      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
+    }
   }
 
   const handleInput = (event) => {

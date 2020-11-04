@@ -26,7 +26,8 @@ let isNight = (currentTime > 20 || currentTime < 6)
 export const initialState = {
   web3: {
     mainnet: new Web3('https://mainnet.infura.io/v3/1c6549e97ff24d9a99ba4e007b538de6'),
-    rinkeby: new Web3('wss://rinkeby.infura.io/ws/v3/1c6549e97ff24d9a99ba4e007b538de6'),
+    rinkeby: new Web3('https://rinkeby.infura.io/v3/1c6549e97ff24d9a99ba4e007b538de6'),
+    websocket: new Web3('wss://rinkeby.infura.io/ws/v3/1c6549e97ff24d9a99ba4e007b538de6'),
     injected: false
   },
   background: isNight ? '#111111' : '#ffffff',
@@ -216,5 +217,6 @@ export const DESKTOP_NORMAL = 1600
 export const TX_CONFIRM = { show: true, message: 'TRANSACTION CONFIRMED', opcode: 'success' }
 export const TX_REVERT = { show: true, message: 'TRANSACTION REVERTED', opcode: 'error' }
 export const TX_REJECT = { show: true, message:'TRANSACTION REJECTED', opcode: 'warning' }
+export const WEB3_PROVIDER = { show: true, message: 'NO WEB3 PROVIDER DETECTED', opcode: 'info' }
 
 export const MARKET_ORDER = (input, output, f) => ({ show: true, title: 'CONFIRM ORDER', message: `You are about to swap ${input.amount} ${input.market} for ${output.amount} ${output.market}.`, actions: [{ label: 'CONFIRM', f: f }, { label: 'REJECT', f: null }] })

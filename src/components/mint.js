@@ -10,7 +10,7 @@ import Avatar from '@material-ui/core/Avatar'
 import List from '@material-ui/core/List'
 import Grid from '@material-ui/core/Grid'
 
-import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
+import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
 import { tokenMetadata } from '../assets/constants/parameters'
 import { balanceOf, getERC20, allowance } from '../lib/erc20'
 import { toContract } from '../lib/util/contracts'
@@ -78,13 +78,18 @@ export default function InteractiveList({ market, metadata }) {
     let { web3, account } = state
     let { address, assets } = metadata
     let { toWei, toBN } = web3.rinkeby.utils
-    let contract = toContract(web3.injected, BPool.abi, address)
-    let input = toWei(parseFloat(amount))
 
-    if(rates.length == 1) {
-      await mintSingle(contract, rates[0].address, rates, input)
-    } else {
-      await mintMultiple(contract, rates, input)
+    try {
+      let input = toWei(parseFloat(amount))
+      let contract = toContract(web3.injected, BPool.abi, address)
+
+      if(rates.length == 1) {
+        await mintSingle(contract, rates[0].address, rates, input)
+      } else {
+        await mintMultiple(contract, rates, input)
+      }
+    } catch(e) {
+      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
     }
   }
 

@@ -12,7 +12,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Checkbox from '@material-ui/core/Checkbox';
 import { toWei } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 
-import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
+import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
 import { balanceOf, getERC20, allowance } from '../lib/erc20'
 import { getRateSingle, getRateMulti, decToWeiHex } from '../lib/markets'
 import { tokenMetadata, initialState } from '../assets/constants/parameters'
@@ -122,23 +122,28 @@ export default function Approvals({ balance, metadata, height, width, input, par
   const approveTokens = async(symbol) => {
     let { web3, account } = state
     let { address } = state.balances[symbol]
-    let contract = getERC20(web3.injected, address)
     let amount = toWei(getInputValue(symbol))
 
-    await contract.methods.approve(metadata.address, amount).send({
-      from: account
-    }).on('confirmation', (conf, receipt) => {
-      if(conf == 0){
-        if(receipt.status == 1) {
-          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-          setInputState(symbol, 0)
-        } else {
-          dispatch({ type: 'FLAG', payload: TX_REVERT })
+    try {
+      let contract = getERC20(web3.injected, address)
+
+      await contract.methods.approve(metadata.address, amount).send({
+        from: account
+      }).on('confirmation', (conf, receipt) => {
+        if(conf == 0){
+          if(receipt.status == 1) {
+            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+            setInputState(symbol, 0)
+          } else {
+            dispatch({ type: 'FLAG', payload: TX_REVERT })
+          }
         }
-      }
-    }).catch((data) => {
-      dispatch({ type: 'FLAG', payload: TX_REJECT })
-    })
+      }).catch((data) => {
+        dispatch({ type: 'FLAG', payload: TX_REJECT })
+      })
+    } catch(e) {
+      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
+    }
   }
 
   const getAllowance = async(target) => {

@@ -11,7 +11,7 @@ import Grid from '@material-ui/core/Grid'
 import { toWei } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 
 import { toContract } from '../lib/util/contracts'
-import { TX_CONFIRM, TX_REJECT, TX_REVERT } from '../assets/constants/parameters'
+import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
 import { balanceOf, getERC20, allowance } from '../lib/erc20'
 import getStyles from '../assets/css'
 import { store } from '../state'
@@ -80,10 +80,15 @@ export default function InteractiveList({ market, metadata }) {
     let { address, assets } = metadata
     let { toBN } = web3.rinkeby.utils
     let input = toWei(parseFloat(amount))
-    let contract = toContract(web3.injected, BPool.abi, address)
 
-    if(selection) await burnToMultiple(contract, input, rates)
-    else await burnToSingle(contract, input, rates[0].amount)
+    try {
+      let contract = toContract(web3.injected, BPool.abi, address)
+
+      if(selection) await burnToMultiple(contract, input, rates)
+      else await burnToSingle(contract, input, rates[0].amount)
+    } catch (e) {
+      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
+    }
   }
 
   const burnToSingle = async(contract, input, recieve) => {
@@ -131,24 +136,29 @@ export default function InteractiveList({ market, metadata }) {
   }
 
   const approveTokens = async(input) => {
-    let contract = getERC20(state.web3.injected, metadata.address)
     let approval = toWei(input)
 
-    await contract.methods
-    .approve(metadata.address, approval).send({
-      from: state.account
-    }).on('confirmation', (conf, receipt) => {
-      if(conf == 0){
-        if(receipt.status == 1) {
-          setExecution({ f: burnTokens, label: 'BURN' })
-          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-        } else {
-          dispatch({ type: 'FLAG', payload: TX_REVERT })
+    try {
+      let contract = getERC20(state.web3.injected, metadata.address)
+
+      await contract.methods
+      .approve(metadata.address, approval).send({
+        from: state.account
+      }).on('confirmation', (conf, receipt) => {
+        if(conf == 0){
+          if(receipt.status == 1) {
+            setExecution({ f: burnTokens, label: 'BURN' })
+            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+          } else {
+            dispatch({ type: 'FLAG', payload: TX_REVERT })
+          }
         }
-      }
-    }).catch((data) => {
-      dispatch({ type: 'FLAG', payload: TX_REJECT })
-    })
+      }).catch((data) => {
+        dispatch({ type: 'FLAG', payload: TX_REJECT })
+      })
+    } catch(e) {
+      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
+    }
   }
 
   const getAllowance = async() => {
