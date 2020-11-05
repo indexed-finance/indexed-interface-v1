@@ -50,7 +50,7 @@ const useStyles = getStyles(style)
 
 export default function Pools(){
   const [ balances, setBalances ] = useState({ native: 0, lp: 0, credit: 0 })
-  const [ instance, setInstance ] = useState(null)
+  const [ instance, setInstance ] = useState({ initializer: {}, contract: {}})
   const [ data, setData ] = useState(dummy)
   const [ events, setEvents ] = useState([])
   const classes = useStyles()
@@ -59,26 +59,16 @@ export default function Pools(){
   let { address } = useParams()
   let { native } = state
 
-  const getCredit = async(targets) => {
+  const getCredit = async(credit) => {
     let element = document.getElementById('credit')
     let alternative = document.getElementById('eth-eqiv')
     let { toBN, toHex } = state.web3.rinkeby.utils
     let ethValue = 0
-    let credit = 0
 
-    if(targets.length <= 1){
-      credit = await getCreditQuoteSingle(targets[0])
-      ethValue = credit
-      element.innerHTML = credit.toLocaleString(
-          undefined, { minimumFractionDigits: 2 }
-      ) + " ETH"
-    } else {
-      credit = await getCreditQuoteMultiple(targets, toBN(0))
-      ethValue = parseFloat(credit.div(toBN(1e18)).toString())
-      element.innerHTML = ethValue.toFixed(2) + " ETH"
-    }
+    ethValue = parseFloat(credit.displayCredit) * state.price
 
-    alternative.innerHTML = '$' + parseFloat(ethValue * state.price).toFixed(2)
+    alternative.innerHTML = '$' + ethValue.toLocaleString({ minimumFractionDigits: 2 })
+    element.innerHTML = credit.displayCredit + " ETH"
   }
 
   const claimCredits = async() => {
@@ -107,25 +97,19 @@ export default function Pools(){
 
   const getCreditQuoteSingle = async(asset) => {
     let { address, amount } = asset
-    let value = decToWeiHex(state.web3.rinkeby, parseFloat(amount))
-    let credit = await instance.methods.getCreditForTokens(address, value).call()
+    let value = toWei(parseFloat(amount))
+    let credit = await instance.initializer.getExpectedCredit(address, value)
 
-    return parseFloat(credit)/Math.pow(10, 18)
+    return credit
   }
 
-  const getCreditQuoteMultiple = async(assets, total) => {
-    for(let x in assets){
-      let { address, amount } = assets[x]
-      let value = decToWeiHex(state.web3.rinkeby, parseFloat(amount))
-      let credit = await instance.methods.getCreditForTokens(address, value).call()
-        .then(v => state.web3.rinkeby.utils.toBN(v))
-        .catch(err => console.log(err))
+  const getCreditQuoteMultiple = async(assets) => {
+    let values = assets.map(i => toWei(parseFloat(i.amount)))
+    let addresses = assets.map(i => i.address)
 
-      if (credit.eqn(0)) console.log(`Got zero credit output for ${address} amount ${amount}`);
+    let credit = await instance.initializer.getExpectedCredits(addresses, values)
 
-      total = total.add(credit);
-    }
-    return total
+    return credit
   }
 
   const pledgeTokens = async() => {
@@ -190,7 +174,7 @@ export default function Pools(){
       let array = inputs.map((v, i) => { return { amount: v, address: targets[i] } })
       value = await getCreditQuoteMultiple(array, toBN(0))
     } else {
-      let query = { address: targets[0], amount: inputs[0] }
+      let query = { address: targets[0], value: inputs[0] }
       value = await getCreditQuoteSingle(query)
     }
     return [ targets, inputs, value ]
@@ -212,7 +196,7 @@ export default function Pools(){
     let { account, web3 } = state
 
     if(web3.injected && instance){
-      let credit = await instance.methods.getCreditOf(account).call()
+      let credit = await instance.contract.methods.getCreditOf(account).call()
       credit = (parseFloat(credit)/Math.pow(10, 18))
 
       setBalances({ ...balances, credit })
@@ -221,7 +205,7 @@ export default function Pools(){
 
   useEffect(() => {
     const retrievePool = async() => {
-      let { indexes, web3 } = state
+      let { indexes, web3, helper } = state
 
       if(Object.keys(indexes).length > 0){
         let target = Object.entries(indexes)
@@ -229,15 +213,16 @@ export default function Pools(){
 
         if(!target[1].active) {
           let pool = await getUnitializedPool(address)
-          let source = toContract(state.web3.rinkeby, PoolInitializer.abi, pool[0].id)
+          let contract = toContract(state.web3.rinkeby, PoolInitializer.abi, pool[0].id)
+          let initializer = helper.uninitialized.find(i => i.pool.address == address)
 
           for(let token in pool[0].tokens){
             let { id } = pool[0].tokens[token]
             let address = id.split('-').pop()
-            let contract = toContract(web3.rinkeby, IERC20.abi, address)
-            let desired = await source.methods.getDesiredAmount(address).call()
+            let asset = toContract(web3.rinkeby, IERC20.abi, address)
+            let desired = await contract.methods.getDesiredAmount(address).call()
             desired = (parseFloat(desired)/Math.pow(10,18)).toFixed(2)
-            let symbol = await contract.methods.symbol().call()
+            let symbol = await asset.methods.symbol().call()
 
             let { name } = tokenMetadata[symbol]
 
@@ -248,7 +233,7 @@ export default function Pools(){
               name
             })
           }
-          setInstance(source)
+          setInstance({ initializer, contract })
         } else {
           let tokenEvents = await getEvents(web3.websocket, address)
 

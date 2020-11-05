@@ -60,11 +60,6 @@ const AmountInput = styled(Input)({
   }
 })
 
-const RecieveInput = styled(Input)({
-  width: 250,
-  marginLeft: -22.5
-})
-
 const Trigger = styled(ButtonPrimary)({
   marginTop: -7.5
 })
@@ -109,6 +104,8 @@ export default function Approvals({ balance, metadata, height, width, input, par
     const currentIndex = checked.indexOf(symbol)
     let newChecked = []
     let newTargets = []
+
+    clearInputs(symbol)
 
     if (currentIndex === -1) {
       newTargets.push(address)
@@ -163,7 +160,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
     return budget/Math.pow(10,18)
   }
 
-  const handleInput = async(event) => {
+  const handleInput = async(event, helper, web3) => {
     let { name } = event.target
     let index = metadata.assets.find(i => i.symbol == name)
 
@@ -171,31 +168,82 @@ export default function Approvals({ balance, metadata, height, width, input, par
       let checkIndex = checked.indexOf(name)
       let { address } = index
 
-      if(checkIndex != -1){
+      if(checkIndex !== -1){
         let selections = getTargetsAndInfo(checked, [])
+        let tokens = []
+        let credit
 
-        await set(selections)
+        if(selections.length <= 1){
+          credit = await getCreditQuoteSingle(selections[0], helper)
+          tokens.push(credit)
+        } else if(targets.length > 1) {
+          credit = await getCreditQuoteMultiple(selections, helper)
+          tokens = credit[1]
+          credit = credit[0]
+        }
+
+        for(let token in tokens){
+          let { address } = tokens[token]
+          let { symbol } = metadata.assets.find(i => i.address == address)
+
+          if(web3.injected){
+            let { remainingApprovalDisplayAmount } = tokens[token]
+            let { amount } = selections[token]
+
+            if(remainingApprovalDisplayAmount != amount){
+              let approval = parseFloat(remainingApprovalDisplayAmount)
+              let required = parseFloat(amount)
+
+              if(approval < required){
+                setInputState(symbol, 1)
+              } else {
+                setInputState(symbol, 0)
+              }
+            } else {
+              setInputState(symbol, 1)
+            }
+          }
+        }
+        await set(credit)
       }
     }
     setFocus(name)
+  }
+
+  const getCreditQuoteSingle = async(asset, helper) => {
+    let { address, amount } = asset
+    let value = toWei(parseFloat(amount))
+    let pool = helper.uninitialized.find(i => i.pool.address == metadata.address)
+
+    let credit = await pool.getExpectedCredit(address, value)
+
+    return credit
+  }
+
+  const getCreditQuoteMultiple = async(assets, helper) => {
+    let values = assets.map(i => toWei(parseFloat(i.amount)))
+    let addresses = assets.map(i => i.address)
+    let pool = helper.uninitialized.find(i => i.pool.address == metadata.address)
+
+    let credit = await pool.getExpectedCredits(addresses, values)
+
+    return credit
   }
 
   const getTargetsAndInfo = (selections, arr) => {
     for(let x in selections){
       let symbol = selections[x]
 
-      if(x > 0){
-        let index = metadata.assets
-        .find(i => i.symbol == symbol)
-        let amount = getInputValue(symbol)
+      let index = metadata.assets
+      .find(i => i.symbol == symbol)
+      let amount = getInputValue(symbol)
 
-        let { address } = index
+      let { address } = index
 
-        if(!isNaN(amount)){
-          arr.push({
-            symbol, amount, address
-          })
-        }
+      if(!isNaN(amount)){
+        arr.push({
+          symbol, amount, address
+        })
       }
     }
     return arr
@@ -225,14 +273,16 @@ export default function Approvals({ balance, metadata, height, width, input, par
   }
 
 
-  const clearInputs = () => {
-    let symbols = metadata.tokens.replace(/\s/g, "").split(',')
+  const clearInputs = (ignore) => {
+    let symbols = metadata.assets.map(i => i.symbol)
 
     for(let asset in symbols){
       let target = document.getElementsByName(symbols[asset])[0]
 
-      setInputState(symbols[asset], null)
-      target.value = null
+      if(symbols[asset] != ignore){
+        setInputState(symbols[asset], null)
+        target.value = null
+      }
     }
   }
 
@@ -281,7 +331,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
         set(rates)
       }
     }
-    const setInputs = () => {
+    const setInputs = async() => {
       if(metadata.assets.length > 0){
         for(let token in metadata.assets){
           let { symbol, desired } = metadata.assets[token]
@@ -306,9 +356,9 @@ export default function Approvals({ balance, metadata, height, width, input, par
 
   useEffect(() => {
     const verifyAllowance = async() => {
-      let { web3, balances } = state
+      let { web3, balances, indexes } = state
 
-      if(web3.injected && balances[focus]){
+      if(web3.injected){
         let { address } = balances[focus]
         let allowance = await getAllowance(address)
         let amount = getInputValue(focus)
@@ -322,6 +372,8 @@ export default function Approvals({ balance, metadata, height, width, input, par
     }
     verifyAllowance()
   }, [ focus ])
+
+  let inputWidth = !state.native ? 200 : 150
 
   return (
     <List className={classes.list} style={{ height, width }} dense={dense}>
@@ -341,7 +393,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
 
           if(statement) f = () => {}
 
-          condition = statement
+          condition = !selected
         } else {
           condition = !selected
         }
@@ -371,9 +423,10 @@ export default function Approvals({ balance, metadata, height, width, input, par
                 <o className={classes.helper} onClick={() => handleBalance(token.symbol)}>
                   BALANCE: {state.balances[token.symbol].amount}
                </o>}
+              style={{ width: inputWidth }}
               InputLabelProps={{ shrink: true }}
               disabled={condition}
-              onChange={handleInput}
+              onChange={(e) => handleInput(e, state.helper, state.web3)}
               name={token.symbol}
               InputProps={{
                 endAdornment:
