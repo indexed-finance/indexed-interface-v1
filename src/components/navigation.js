@@ -55,7 +55,7 @@ export default function Navigation({ mode }) {
     let accounts = await web3.eth.getAccounts()
     let network = await web3.eth.net.getId()
     let account = toChecksumAddress(accounts[0])
-    let helper = await getAllHelpers(web3)
+    let helper = await getAllHelpers(web3, account)
 
     if(network != 4){
       dispatch({

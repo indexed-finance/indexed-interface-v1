@@ -24,10 +24,9 @@ import IERC20 from '../assets/constants/abi/IERC20.json'
 import MockERC20ABI from '../assets/constants/abi/MockERC20.json'
 import { eventColumns, tokenMetadata } from '../assets/constants/parameters'
 import style from '../assets/css/routes/pool'
-import { getUnitializedPool, getPoolSnapshots, getTokenPriceHistory } from '../api/gql'
+import { getUnitializedPool } from '../api/gql'
 import { toContract } from '../lib/util/contracts'
 import { decToWeiHex, getBalances } from '../lib/markets'
-import { prepareOracle } from '../lib/index'
 import { getEvents, balanceOf } from '../lib/erc20'
 import { getPair } from '../lib/markets'
 import getStyles from '../assets/css'
@@ -158,11 +157,6 @@ export default function Pools(){
     }
   }
 
-  const updateOracle = async() => {
-    let { web3, account } = state
-    await prepareOracle(web3.injected, account)
-  }
-
   const getUnderlyingAssets = async() => {
     let { web3, account } = state
 
@@ -233,8 +227,6 @@ export default function Pools(){
         let target = Object.entries(indexes)
         .find(x => x[1].address == address)
 
-        console.log(target)
-
         if(!target[1].active) {
           let pool = await getUnitializedPool(address)
           let source = toContract(state.web3.rinkeby, PoolInitializer.abi, pool[0].id)
@@ -263,7 +255,7 @@ export default function Pools(){
           setEvents(tokenEvents)
         }
 
-        // await getNativeBalances()
+        await getNativeBalances()
         setData(target[1])
       }
     }
@@ -305,7 +297,7 @@ export default function Pools(){
     let match = marginX.split(' ')
 
     match[0] = parseInt(match[0].replace('em', ''))
-    match[0] = match[0] - (match[0] * 0.075)
+    match[0] = match[0] + (match[0] * 0.125)
     match[0] = `${match[0]}em`
 
     marginX = match.join(' ')

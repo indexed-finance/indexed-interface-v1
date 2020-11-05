@@ -157,8 +157,6 @@ export default function VerticalTabs({ data }) {
 
   let { height } = style.getFormatting()
 
-  console.log(data)
-
   return (
     <div className={classes.root} style={{ height }}>
       <div className={classes.tabs}>

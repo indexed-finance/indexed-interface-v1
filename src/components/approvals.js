@@ -37,7 +37,7 @@ const Tick = styled(ListItemIcon)({
 })
 
 const AmountInput = styled(Input)({
-  width: 150,
+  width: 175,
   '& label': {
     fontSize: 12
   },
@@ -107,12 +107,20 @@ export default function Approvals({ balance, metadata, height, width, input, par
   const handleToggle = (value) => () => {
     let { symbol, address } = value
     const currentIndex = checked.indexOf(symbol)
-    const newChecked = []
-    const newTargets = []
+    let newChecked = []
+    let newTargets = []
 
     if (currentIndex === -1) {
       newTargets.push(address)
       newChecked.push(symbol)
+    } else {
+      if(checked.length == 1) {
+        newTargets = metadata.assets.map(i => i.address)
+        newChecked = metadata.assets.map(i => i.symbol)
+      } else {
+        newTargets.push(address)
+        newChecked.push(symbol)
+      }
     }
 
     setTargets(newTargets)
@@ -207,20 +215,13 @@ export default function Approvals({ balance, metadata, height, width, input, par
     setFocus(symbol)
   }
 
-  const handleRequired = (symbol) => {
-    let target = document.getElementById(symbol)
-    let element = document.getElementsByName(symbol)[0]
-
-    element.value = target.innerHTML
-  }
-
   const setInputState = (name, type) => {
     let element = document.getElementsByName(name)[0]
     let { nextSibling } = element.nextSibling
 
     if(type == 0) nextSibling.style.borderColor = '#009966'
     else if (type == 1) nextSibling.style.borderColor = 'red'
-    else nextSibling.style.borderColor = 'orange'
+    else nextSibling.style.borderColor = 'inherit'
   }
 
 
@@ -228,9 +229,10 @@ export default function Approvals({ balance, metadata, height, width, input, par
     let symbols = metadata.tokens.replace(/\s/g, "").split(',')
 
     for(let asset in symbols){
-      let target = document.getElementById(symbols[asset])
+      let target = document.getElementsByName(symbols[asset])[0]
 
-      target.innerHTML = null
+      setInputState(symbols[asset], null)
+      target.value = null
     }
   }
 
@@ -247,25 +249,34 @@ export default function Approvals({ balance, metadata, height, width, input, par
         let pool = helper.initialized.find(i => i.pool.address == address)
 
         if(targets.length == 1){
-          console.log('SINGLE?')
-          console.log(targets[0], amount, input)
           let rate  = await pool.getJoinRateSingle(targets[0], amount)
-          console.log('NO')
-
           rates.push(rate)
           clearInputs()
         } else {
-          console.log('MULTI?')
-          console.log(amount)
           rates = await pool.getJoinRateMulti(amount)
-          console.log('NO')
         }
 
         for(let token in rates){
           let { symbol, displayAmount } = rates[token]
-          let element = document.getElementById(symbol)
+          let element = document.getElementsByName(symbol)[0]
 
-          element.innerHTML = displayAmount
+          if(web3.injected){
+            let { remainingApprovalDisplayAmount } = rates[token]
+
+            if(remainingApprovalDisplayAmount != displayAmount){
+              let approval = parseFloat(remainingApprovalDisplayAmount)
+              let required = parseFloat(displayAmount)
+
+              if(approval < required){
+                setInputState(symbol, 1)
+              } else {
+                setInputState(symbol, 0)
+              }
+            } else {
+              setInputState(symbol, 1)
+            }
+          }
+          element.value = displayAmount
         }
         set(rates)
       }
@@ -274,9 +285,9 @@ export default function Approvals({ balance, metadata, height, width, input, par
       if(metadata.assets.length > 0){
         for(let token in metadata.assets){
           let { symbol, desired } = metadata.assets[token]
-          let element = document.getElementById(symbol)
+          let element = document.getElementsByName(symbol)[0]
 
-          element.innerHTML = parseFloat(desired).toFixed(3)
+          element.value = parseFloat(desired).toFixed(3)
         }
       }
     }
@@ -285,6 +296,13 @@ export default function Approvals({ balance, metadata, height, width, input, par
       else if(param == 'DESIRED') setInputs()
     }
   }, [ input, checked ])
+
+  useEffect(() => {
+    if(metadata.assets){
+      setChecked(metadata.assets.map(i => i.symbol))
+      setTargets(metadata.assets.map(i => i.address))
+    }
+  }, [ metadata ])
 
   useEffect(() => {
     const verifyAllowance = async() => {
@@ -308,7 +326,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
   return (
     <List className={classes.list} style={{ height, width }} dense={dense}>
       {metadata.assets.map((token, index) => {
-        let selected = checked.indexOf(token.symbol) !== -1
+        let selected = checked.indexOf(token.symbol) != -1
         let statement = param == 'DESIRED'
         let f = handleToggle(token)
         let condition = false
@@ -347,14 +365,6 @@ export default function Approvals({ balance, metadata, height, width, input, par
           <ListItemText primary={token.symbol}
             secondary={secondary}
            />
-          {!state.native && (
-            <SecondaryItemText primary={param}
-              secondary={<span onClick={() => handleRequired(token.symbol)}
-                id={token.symbol}
-              />
-              }
-            />
-          )}
           <SecondaryActionAlt>
             <AmountInput variant='outlined' label='AMOUNT' type='number'
               helperText={
