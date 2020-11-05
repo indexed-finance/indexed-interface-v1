@@ -12,6 +12,7 @@ import Container from '../components/container'
 import Spline from '../components/charts/spline'
 import Canvas from '../components/canvas'
 import Approvals from '../components/approvals'
+import Weights from '../components/weights'
 import List from '../components/list'
 import ButtonTransaction from '../components/buttons/transaction'
 import ButtonPrimary from '../components/buttons/primary'
@@ -227,18 +228,17 @@ export default function Pools(){
   useEffect(() => {
     const retrievePool = async() => {
       let { indexes, web3 } = state
-      let pool = await getUnitializedPool(address)
 
-      if(Object.keys(indexes).length > 0 && pool[0] != undefined){
-        let source = toContract(state.web3.rinkeby, PoolInitializer.abi, pool[0].id)
-        let tokenEvents = await getEvents(web3.websocket, address)
-
+      if(Object.keys(indexes).length > 0){
         let target = Object.entries(indexes)
         .find(x => x[1].address == address)
 
-        target[1].address = pool[0].id
+        console.log(target)
 
         if(!target[1].active) {
+          let pool = await getUnitializedPool(address)
+          let source = toContract(state.web3.rinkeby, PoolInitializer.abi, pool[0].id)
+
           for(let token in pool[0].tokens){
             let { id } = pool[0].tokens[token]
             let address = id.split('-').pop()
@@ -246,6 +246,7 @@ export default function Pools(){
             let desired = await source.methods.getDesiredAmount(address).call()
             desired = (parseFloat(desired)/Math.pow(10,18)).toFixed(2)
             let symbol = await contract.methods.symbol().call()
+
             let { name } = tokenMetadata[symbol]
 
             target[1].assets.push({
@@ -255,16 +256,19 @@ export default function Pools(){
               name
             })
           }
+          setInstance(source)
+        } else {
+          let tokenEvents = await getEvents(web3.websocket, address)
+
+          setEvents(tokenEvents)
         }
 
-        await getNativeBalances()
-        setInstance(source)
+        // await getNativeBalances()
         setData(target[1])
-        setEvents(tokenEvents)
       }
     }
     retrievePool()
-  }, [ state.indexes ])
+  }, [ state.indexes, state.request ])
 
   useEffect(() => {
     const retrieveBalances = async() => {
@@ -343,50 +347,57 @@ export default function Pools(){
           </ParentSize>
           </Grid>
           <Grid item xs={12} md={5} lg={5} xl={5}>
-            <Canvas native={native}>
-              <div className={classes.actions}>
-                <p> {data.symbol}: <span>{balances.native}</span></p>
-                <p> UNIV2-ETH-{data.symbol}: <span>{balances.lp}</span></p>
-                <a href={`https://app.uniswap.org/#/add/ETH/${address}`} style={{ float: 'left' }} target='_blank'>
-                  <ButtonPrimary margin={{ marginBottom: 25, padding: '.5em 1.25em' }}  variant='outlined'> ADD LIQUIDITY </ButtonPrimary>
-                </a>
-                <a href={`https://app.uniswap.org/#/remove/${address}/ETH`} style={{ float: 'right' }} target='_blank'>
-                  <ButtonPrimary margin={{ marginBottom: 25, padding: '.5em 1.25em' }}  variant='outlined'> REMOVE LIQUIDITY </ButtonPrimary>
-                </a>
-              </div>
-            </Canvas>
+            {data.active && (
+              <Container margin={margin} title='BALANCES' padding="1em 2em">
+                <div className={classes.actions}>
+                  <p> {data.symbol}: <span>{balances.native}</span></p>
+                  <p> UNIV2-ETH-{data.symbol}: <span>{balances.lp}</span></p>
+                  <a href={`https://app.uniswap.org/#/add/ETH/${address}`} style={{ float: 'left' }} target='_blank'>
+                    <ButtonPrimary margin={{ marginBottom: 15, padding: '.5em 1.25em' }}  variant='outlined'> ADD LIQUIDITY </ButtonPrimary>
+                  </a>
+                  <a href={`https://app.uniswap.org/#/remove/${address}/ETH`} style={{ float: 'right' }} target='_blank'>
+                    <ButtonPrimary margin={{ marginBottom: 15, padding: '.5em 1.25em' }}  variant='outlined'> REMOVE LIQUIDITY </ButtonPrimary>
+                  </a>
+                </div>
+              </Container>
+            )}
             <Container margin={margin} padding="1em 0em" title='ASSETS'>
-              <div className={classes.alert}>
-                {!data.active && (
+              {!data.active && (
+                <div className={classes.alert}>
                   <Fragment>
                     <ErrorOutline style={{ float: 'left', fontSize: '2em', marginBottom: -7.5, marginRight: 10, color: 'orange'}} />
                     <label> This index pool is uninitialized and needs liquidity </label>
                   </Fragment>
-                )}
-                {data.active && (
+                </div>
+              )}
+              <div className={classes.container} style={{ width }}>
+                {!data.active && (
                   <Fragment>
-                    <p> ACTIVE CREDITS </p>
-                    <div>
-                      <h2> {balances.credit.toFixed(4)} {data.symbol}</h2>
-                      <ButtonPrimary onClick={claimCredits} variant='outlined'
-                        margin={{ marginTop: -50, marginBottom: 12.5, marginRight: 12.5 }}>
-                        CLAIM
+                    <Approvals input={data != dummy} param='DESIRED' height={250} metadata={data} set={getCredit}/>
+                    <div className={classes.reciept}>
+                      <p> ENTITLED TO: <span id='credit'/></p>
+                      <p> PLEDGE: <span id='eth-eqiv'/></p>
+                    </div>
+                    <div className={classes.submit}>
+                      <ButtonPrimary variant='outlined' onClick={pledgeTokens} style={{ marginLeft: 0 }}>
+                        INITIALISE
                       </ButtonPrimary>
                     </div>
                   </Fragment>
                 )}
-              </div>
-              <div className={classes.container} style={{ width }}>
-                <Approvals input={data != dummy} param='DESIRED' height={250} metadata={data} set={getCredit}/>
-              </div>
-              <div className={classes.reciept}>
-                <p> ENTITLED TO: <span id='credit'/></p>
-                <p> PLEDGE: <span id='eth-eqiv'/></p>
-              </div>
-              <div className={classes.submit}>
-                <ButtonPrimary variant='outlined' onClick={pledgeTokens} style={{ marginLeft: 0 }}>
-                  INITIALISE
-                </ButtonPrimary>
+                {data.active && (
+                  <div className={classes.assets}>
+                    <Grid container direction='column' alignItems='center' justify='space-around'>
+                      {data.assets.map(asset => (
+                        <Grid item>
+                          <div className={classes.asset}>
+                            <Weights asset={asset} />
+                          </div>
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </div>
+                )}
               </div>
             </Container>
           </Grid>

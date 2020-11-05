@@ -24,7 +24,6 @@ const setStyle = (theme) => ({
     },
   },
   container: {
-    borderBottom: '2px solid #666666',
   },
   events: {
     width: '100%'
@@ -43,17 +42,25 @@ const setStyle = (theme) => ({
       margin: 0
     }
   },
+  asset: {
+    margin: '2em 0em'
+  },
+  assets: {
+    height: 250,
+    overflowY: 'scroll'
+  },
   actions: {
-    padding: '1em 2em',
     '& p span': {
       float: 'right',
       fontFamily: "San Francisco Bold",
       fontWeight: 500,
-      marginRight: 50
-    }
+      marginRight: 0
+    },
+    height: 120
   },
   reciept: {
     padding: '10px 12.5px',
+    borderTop: '2px solid #666666',
     borderBottom: '2px solid #666666',
     width: 'auto',
     '& p': {
@@ -86,7 +93,7 @@ const setStyle = (theme) => ({
 
 const mapping = {
   [DESKTOP_NORMAL]: {
-    marginX: '-33.75em 0em 0em 3em',
+    marginX: '-15em 0em 0em 3em',
     tableWidth: 'calc(65em - 412.5px)',
     margin: '3em 3em',
     width: '100%',
