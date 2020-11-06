@@ -331,21 +331,30 @@ export default function Approvals({ balance, metadata, height, width, input, par
         set(rates)
       }
     }
-    const setInputs = async() => {
-      if(metadata.assets.length > 0){
-        for(let token in metadata.assets){
-          let { symbol, desired } = metadata.assets[token]
-          let element = document.getElementsByName(symbol)[0]
+    const setInputs = async(arr) => {
+      for(let token in metadata.assets){
+        let { symbol, desired, address } = metadata.assets[token]
+        let element = document.getElementsByName(symbol)[0]
 
+        if(checked.indexOf(symbol) !== -1){
+          if(state.web3.injected){
+            let allowance = await getAllowance(address)
+
+            if(allowance < parseFloat(desired)){
+              setInputState(symbol, 1)
+            } else {
+              setInputState(symbol, 0)
+            }
+          }
           element.value = parseFloat(desired).toFixed(3)
         }
       }
     }
-    if(input != null){
+    if(input){
       if(param == 'REQUIRED') getInputs()
-      else if(param == 'DESIRED') setInputs()
+      else setInputs(checked)
     }
-  }, [ input, checked ])
+  }, [ input, checked, state.web3.injected ])
 
   useEffect(() => {
     if(metadata.assets){
@@ -358,8 +367,8 @@ export default function Approvals({ balance, metadata, height, width, input, par
     const verifyAllowance = async() => {
       let { web3, balances, indexes } = state
 
-      if(web3.injected){
-        let { address } = balances[focus]
+      if(web3.injected && focus){
+        let { address } = metadata.assets.find(i => i.symbol == focus)
         let allowance = await getAllowance(address)
         let amount = getInputValue(focus)
 

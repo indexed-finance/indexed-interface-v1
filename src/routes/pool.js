@@ -114,16 +114,16 @@ export default function Pools(){
 
   const pledgeTokens = async() => {
     let { web3, account } = state
-    let { address } = instance.options
+    let [ addresses, amounts, output ] = await getInputs(web3.rinkeby)
+    let { address } = instance.initializer.pool.initializer
 
     try {
-      let source = toContract(web3.injected, PoolInitializer.abi, address)
-      let [ addresses, amounts, output ] = await getInputs(web3.rinkeby)
+      let contract = toContract(web3.injected, PoolInitializer.abi, address)
 
-      await source.methods.contributeTokens(
+      await contract.methods.contributeTokens(
         addresses,
         amounts,
-        output
+        output.credit
       ).send({ from: account })
       .on('confirmaton', (conf, receipt) => {
         if(conf == 0){
@@ -134,6 +134,7 @@ export default function Pools(){
           }
         }
       }).catch((data) => {
+        console.log(data)
         dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
     } catch(e) {
@@ -165,7 +166,7 @@ export default function Pools(){
       let value = parseFloat(element.value)
 
       if(!isNaN(value)){
-        inputs.push(decToWeiHex(web3, value))
+        inputs.push(toWei(value))
         targets.push(address)
       }
     }
@@ -173,10 +174,12 @@ export default function Pools(){
     if(inputs.length > 1){
       let array = inputs.map((v, i) => { return { amount: v, address: targets[i] } })
       value = await getCreditQuoteMultiple(array, toBN(0))
-    } else {
-      let query = { address: targets[0], value: inputs[0] }
+      value = value[0]
+    } else if(inputs.length == 1) {
+      let query = { address: targets[0], amount: inputs[0] }
       value = await getCreditQuoteSingle(query)
     }
+
     return [ targets, inputs, value ]
   }
 
