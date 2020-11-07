@@ -233,7 +233,7 @@ const onResize = () => {
       onResize()
 
       window.addEventListener("resize", onResize)
-      let helper = await getAllHelpers(web3.rinkeby)
+      let helper = state.helper ? state.helper : await getAllHelpers(web3.rinkeby)
       dispatch({ type: 'GENERIC', payload: { changeTheme, helper } })
     }
     initialise()

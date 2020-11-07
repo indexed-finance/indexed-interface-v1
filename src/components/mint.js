@@ -80,8 +80,12 @@ export default function InteractiveList({ market, metadata }) {
     let { toWei, toBN } = web3.rinkeby.utils
 
     try {
-      let input = toWei(parseFloat(amount))
+      let input = toWei(amount)
       let contract = toContract(web3.injected, BPool.abi, address)
+
+
+
+      console.log(rates, input)
 
       if(rates.length == 1) {
         await mintSingle(contract, rates[0].address, rates, input)
@@ -89,6 +93,7 @@ export default function InteractiveList({ market, metadata }) {
         await mintMultiple(contract, rates, input)
       }
     } catch(e) {
+      console.log(e)
       dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
     }
   }
@@ -96,6 +101,7 @@ export default function InteractiveList({ market, metadata }) {
   const mintMultiple = async(contract, conversions, input) => {
     let { web3, account, balances } = state
     let { assets } = metadata
+    
 
     await contract.methods.joinPool(input, conversions.map(t => t.amount))
     .send({

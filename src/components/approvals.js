@@ -124,9 +124,8 @@ export default function Approvals({ balance, metadata, height, width, input, par
     setChecked(newChecked)
   };
 
-  const approveTokens = async(symbol) => {
+  const approveTokens = async(address , symbol) => {
     let { web3, account, helper } = state
-    let { address } = state.balances[symbol]
     let amount = toWei(getInputValue(symbol))
     let pool = helper.uninitialized.find(i => i.pool.address == metadata.address)
     let target = param == 'DESIRED' ? pool.initializer.address : metadata.address
@@ -160,14 +159,12 @@ export default function Approvals({ balance, metadata, height, width, input, par
     let pool = helper.uninitialized.find(i => i.pool.address == metadata.address)
     let { address } = param == 'DESIRED' ? pool.initializer : metadata
 
-    console.log(address, target)
-
     let budget = await allowance(web3.rinkeby, target, account, address)
 
     return budget/Math.pow(10,18)
   }
 
-  const handleInput = async(event, helper, web3) => {
+  const handleInput = async(event, web3) => {
     let { name, value } = event.target
     let index = metadata.assets.find(i => i.symbol == name)
 
@@ -182,11 +179,11 @@ export default function Approvals({ balance, metadata, height, width, input, par
         let tokens = []
         let credit
 
-        if(selections.length <= 1){
-          credit = await getCreditQuoteSingle(selections[0], helper)
+        if(targets.length <= 1){
+          credit = await getCreditQuoteSingle(selections[0])
           tokens.push(credit)
         } else if(targets.length > 1) {
-          credit = await getCreditQuoteMultiple(selections, helper)
+          credit = await getCreditQuoteMultiple(selections)
           tokens = credit[1]
           credit = credit[0]
         }
@@ -198,10 +195,10 @@ export default function Approvals({ balance, metadata, height, width, input, par
           if(web3.injected){
             let { remainingApprovalDisplayAmount } = tokens[token]
             let { amount } = selections[token]
+            let required = parseFloat(amount)
 
             if(remainingApprovalDisplayAmount != amount){
               let approval = parseFloat(remainingApprovalDisplayAmount)
-              let required = parseFloat(amount)
 
               if(approval < required){
                 setInputState(symbol, 1)
@@ -216,27 +213,27 @@ export default function Approvals({ balance, metadata, height, width, input, par
         await set(credit)
       }
     } else {
-      let pool = helper.initialized.find(i => i.pool.address == metadata.address)
-      let rate  = await pool.getJoinRateSingle(targets[0], value)
+      let pool = state.helper.initialized.find(i => i.pool.address == metadata.address)
+      let rate  = await pool.calcAllOutGivenPoolIn(value)
 
       change(rate.displayAmount)
     }
   }
 
-  const getCreditQuoteSingle = async(asset, helper) => {
+  const getCreditQuoteSingle = async(asset) => {
     let { address, amount } = asset
     let value = toWei(parseFloat(amount))
-    let pool = helper.uninitialized.find(i => i.pool.address == metadata.address)
+    let pool = state.helper.uninitialized.find(i => i.pool.address == metadata.address)
 
     let credit = await pool.getExpectedCredit(address, value)
 
     return credit
   }
 
-  const getCreditQuoteMultiple = async(assets, helper) => {
+  const getCreditQuoteMultiple = async(assets) => {
     let values = assets.map(i => toWei(parseFloat(i.amount)))
     let addresses = assets.map(i => i.address)
-    let pool = helper.uninitialized.find(i => i.pool.address == metadata.address)
+    let pool = state.helper.uninitialized.find(i => i.pool.address == metadata.address)
 
     let credit = await pool.getExpectedCredits(addresses, values)
 
@@ -305,18 +302,18 @@ export default function Approvals({ balance, metadata, height, width, input, par
         let { web3, helper } = state
         let { address } = metadata
         let { toBN, toHex } = web3.rinkeby.utils
-        let amount = toWei(parseFloat(`${input}`))
+        let amount = toWei(input)
         let rates = []
         let arr;
 
         let pool = helper.initialized.find(i => i.pool.address == address)
 
         if(targets.length == 1){
-          let rate  = await pool.getJoinRateSingle(targets[0], amount)
+          let rate  = await pool.calcPoolOutGivenSingleIn(targets[0], amount)
           rates.push(rate)
           clearInputs()
         } else {
-          rates = await pool.getJoinRateMulti(amount)
+          rates = await pool.calcAllInGivenPoolOut(amount)
         }
 
         for(let token in rates){
@@ -325,11 +322,12 @@ export default function Approvals({ balance, metadata, height, width, input, par
 
           if(web3.injected){
             let { remainingApprovalDisplayAmount } = rates[token]
+            let approval = parseFloat(remainingApprovalDisplayAmount)
+            let required = parseFloat(displayAmount)
+
+            console.log(approval, required)
 
             if(remainingApprovalDisplayAmount != displayAmount){
-              let approval = parseFloat(remainingApprovalDisplayAmount)
-              let required = parseFloat(displayAmount)
-
               if(approval < required){
                 setInputState(symbol, 1)
               } else {
@@ -352,8 +350,9 @@ export default function Approvals({ balance, metadata, height, width, input, par
         if(checked.indexOf(symbol) !== -1){
           if(state.web3.injected){
             let allowance = await getAllowance(address)
+            let required = parseFloat(desired)
 
-            if(allowance < parseFloat(desired)){
+            if(allowance < desired){
               setInputState(symbol, 1)
             } else {
               setInputState(symbol, 0)
@@ -386,7 +385,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
         let allowance = await getAllowance(address)
         let amount = getInputValue(focus)
 
-        console.log(amount, allowance)
+        console.log(allowance)
 
         if(allowance < parseFloat(amount)){
           setInputState(focus, 1)
@@ -397,6 +396,10 @@ export default function Approvals({ balance, metadata, height, width, input, par
     }
     verifyAllowance()
   }, [ focus ])
+
+  useEffect(( ) => {
+    console.log('INIT HELPER')
+  }, [state.helper])
 
   let inputWidth = !state.native ? 200 : 150
 
@@ -452,11 +455,11 @@ export default function Approvals({ balance, metadata, height, width, input, par
               style={{ width: inputWidth }}
               InputLabelProps={{ shrink: true }}
               disabled={condition}
-              onChange={(e) => handleInput(e, state.helper, state.web3)}
+              onChange={(e) => handleInput(e, state.web3)}
               name={token.symbol}
               InputProps={{
                 endAdornment:
-                <ApproveButton onClick={() => approveTokens(token.symbol)}>
+                <ApproveButton onClick={() => approveTokens(token.address, token.symbol)}>
                   APPROVE
                </ApproveButton>
              }}

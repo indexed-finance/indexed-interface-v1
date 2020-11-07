@@ -117,7 +117,7 @@ export default function Pools(){
   const pledgeTokens = async() => {
     let { web3, account } = state
     let [ addresses, amounts, output ] = await getInputs(web3.rinkeby)
-    let { address } = instance.initializer.pool.initializer
+    let { address } = instance.initializer.initializer
 
     try {
       let contract = toContract(web3.injected, PoolInitializer.abi, address)
@@ -136,7 +136,6 @@ export default function Pools(){
           }
         }
       }).catch((data) => {
-        console.log(data)
         dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
     } catch(e) {
