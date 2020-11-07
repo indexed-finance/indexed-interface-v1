@@ -316,7 +316,7 @@ export default function Trade({ market, metadata }) {
 
   return(
     <Grid container direction='column' alignItems='center' justify='space-around'>
-      <Grid item xs={12} md={12} lg={12} xl={12}>
+      <Grid item xs={12} md={12} lg={12} xl={12} key='0'>
         <Input className={classes.inputs} label="AMOUNT" variant='outlined'
           helperText={
             <o className={classes.helper} onClick={handleBalance}>
@@ -331,13 +331,13 @@ export default function Trade({ market, metadata }) {
           }}
         />
       </Grid >
-      <Grid item xs={12} md={12} lg={12} xl={12}>
+      <Grid item xs={12} md={12} lg={12} xl={12} key='1'>
         <div className={classes.swap}>
           <IconButton onClick={changeOrder}> <Swap/> </IconButton>
           <p>1 {input.market} = {prices.input.toFixed(3)} {output.market}</p>
         </div>
       </Grid>
-      <Grid item xs={12} md={12} lg={12} xl={12}>
+      <Grid item xs={12} md={12} lg={12} xl={12} key='2'>
         <Input className={classes.altInputs} label="RECIEVE" variant='outlined'
           helperText={
           <o className={classes.helper}>
@@ -351,13 +351,13 @@ export default function Trade({ market, metadata }) {
           }}
         />
       </Grid>
-      <Grid item xs={12} md={12} lg={12} xl={12}>
+      <Grid item xs={12} md={12} lg={12} xl={12} key='3'>
           <div className={classes.market} >
             <p> ROUTE: <span> ETH {'->'} {market}</span> </p>
             <p> FEE: <span> </span> </p>
           </div>
       </Grid>
-      <Grid item xs={12} md={12} lg={12} xl={12}>
+      <Grid item xs={12} md={12} lg={12} xl={12} key='4'>
         <Trigger onClick={execution.f}>
           {execution.label}
         </Trigger>
