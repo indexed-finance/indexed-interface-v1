@@ -196,6 +196,7 @@ export default function InteractiveList({ market, metadata }) {
             metadata={metadata}
             set={handleRates}
             input={amount}
+            change={setAmount}
           />
         </div>
       </Grid>

@@ -17,7 +17,9 @@ import List from '../components/list'
 import ButtonTransaction from '../components/buttons/transaction'
 import ButtonPrimary from '../components/buttons/primary'
 
-import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
+import {
+  TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER, UNCLAIMED_CREDITS
+} from '../assets/constants/parameters'
 
 import PoolInitializer from '../assets/constants/abi/PoolInitializer.json'
 import IERC20 from '../assets/constants/abi/IERC20.json'
@@ -50,7 +52,7 @@ const useStyles = getStyles(style)
 
 export default function Pools(){
   const [ balances, setBalances ] = useState({ native: 0, lp: 0, credit: 0 })
-  const [ instance, setInstance ] = useState({ initializer: {}, contract: {}})
+  const [ instance, setInstance ] = useState({ initializer: {}, contract: null })
   const [ data, setData ] = useState(dummy)
   const [ events, setEvents ] = useState([])
   const classes = useStyles()
@@ -198,9 +200,16 @@ export default function Pools(){
   const getActiveCredit = async() => {
     let { account, web3 } = state
 
-    if(web3.injected && instance){
+    if(web3.injected && instance.contract){
       let credit = await instance.contract.methods.getCreditOf(account).call()
       credit = (parseFloat(credit)/Math.pow(10, 18))
+
+      if(credit > 0) {
+        dispatch({
+          type: 'FLAG',
+          payload: UNCLAIMED_CREDITS
+        })
+      }
 
       setBalances({ ...balances, credit })
     }
@@ -244,6 +253,7 @@ export default function Pools(){
         }
 
         await getNativeBalances()
+        await getActiveCredit()
         setData(target[1])
       }
     }
@@ -359,8 +369,11 @@ export default function Pools(){
                       <p> PLEDGE: <span id='eth-eqiv'/></p>
                     </div>
                     <div className={classes.submit}>
-                      <ButtonPrimary variant='outlined' onClick={pledgeTokens} style={{ marginLeft: 0 }}>
-                        INITIALISE
+                      <ButtonPrimary variant='outlined' onClick={pledgeTokens} style={{ marginRight: 0 }}>
+                        PLEDGE
+                      </ButtonPrimary>
+                      <ButtonPrimary variant='outlined' onClick={getUnderlyingAssets} style={{ marginLeft: 0 }}>
+                        GET TOKENS
                       </ButtonPrimary>
                     </div>
                   </Fragment>

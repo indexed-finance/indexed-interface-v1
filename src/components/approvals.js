@@ -87,7 +87,7 @@ const SecondaryItemText =  styled(ListItemText)({
 
 const useStyles = getStyles(style)
 
-export default function Approvals({ balance, metadata, height, width, input, param, set }){
+export default function Approvals({ balance, metadata, height, width, input, param, set, change }){
   const [ component, setComponent ] = useState(<span />)
   const [ isSelected, setSelection ] = useState(true)
   const [ checked, setChecked ] = useState([])
@@ -125,14 +125,18 @@ export default function Approvals({ balance, metadata, height, width, input, par
   };
 
   const approveTokens = async(symbol) => {
-    let { web3, account } = state
+    let { web3, account, helper } = state
     let { address } = state.balances[symbol]
     let amount = toWei(getInputValue(symbol))
+    let pool = helper.uninitialized.find(i => i.pool.address == metadata.address)
+    let target = param == 'DESIRED' ? pool.initializer.address : metadata.address
+
+    console.log(address, target)
 
     try {
       let contract = getERC20(web3.injected, address)
 
-      await contract.methods.approve(metadata.address, amount).send({
+      await contract.methods.approve(target, amount).send({
         from: account
       }).on('confirmation', (conf, receipt) => {
         if(conf == 0){
@@ -152,8 +156,11 @@ export default function Approvals({ balance, metadata, height, width, input, par
   }
 
   const getAllowance = async(target) => {
-    let { web3, account } = state
-    let { address } = metadata
+    let { web3, account, helper } = state
+    let pool = helper.uninitialized.find(i => i.pool.address == metadata.address)
+    let { address } = param == 'DESIRED' ? pool.initializer : metadata
+
+    console.log(address, target)
 
     let budget = await allowance(web3.rinkeby, target, account, address)
 
@@ -161,8 +168,10 @@ export default function Approvals({ balance, metadata, height, width, input, par
   }
 
   const handleInput = async(event, helper, web3) => {
-    let { name } = event.target
+    let { name, value } = event.target
     let index = metadata.assets.find(i => i.symbol == name)
+
+    setFocus(name)
 
     if(param == 'DESIRED' && index != undefined){
       let checkIndex = checked.indexOf(name)
@@ -206,8 +215,12 @@ export default function Approvals({ balance, metadata, height, width, input, par
         }
         await set(credit)
       }
+    } else {
+      let pool = helper.initialized.find(i => i.pool.address == metadata.address)
+      let rate  = await pool.getJoinRateSingle(targets[0], value)
+
+      change(rate.displayAmount)
     }
-    setFocus(name)
   }
 
   const getCreditQuoteSingle = async(asset, helper) => {
@@ -357,7 +370,7 @@ export default function Approvals({ balance, metadata, height, width, input, par
   }, [ input, checked, state.web3.injected ])
 
   useEffect(() => {
-    if(metadata.assets){
+    if(metadata.assets && checked.length == 0){
       setChecked(metadata.assets.map(i => i.symbol))
       setTargets(metadata.assets.map(i => i.address))
     }
@@ -368,9 +381,12 @@ export default function Approvals({ balance, metadata, height, width, input, par
       let { web3, balances, indexes } = state
 
       if(web3.injected && focus){
-        let { address } = metadata.assets.find(i => i.symbol == focus)
+        let { address } = balances[focus]
+
         let allowance = await getAllowance(address)
         let amount = getInputValue(focus)
+
+        console.log(amount, allowance)
 
         if(allowance < parseFloat(amount)){
           setInputState(focus, 1)
@@ -404,7 +420,8 @@ export default function Approvals({ balance, metadata, height, width, input, par
 
           condition = !selected
         } else {
-          condition = !selected
+          condition = checked.length > 1 | !selected
+          statement = !selected
         }
 
        return(
