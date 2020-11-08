@@ -51,6 +51,11 @@ function generate(element) {
   )
 }
 
+function toFixed(num, fixed) {
+    var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?');
+    return parseFloat(num.toString().match(re)[0]);
+}
+
 export default function Mint({ market, metadata }) {
   const [ amount, setAmount ] = useState(null)
   const [ balance, setBalance ] = useState(0)
@@ -71,37 +76,33 @@ export default function Mint({ market, metadata }) {
     }
   }
 
+  const checkInputs = (arr) => {
+    if(!arr[0]) return
+
+    for(let x = 0; x < arr.length; x++){
+      let { symbol, displayAmount, approvalRemainder } = arr[x]
+
+      if(!isNaN(parseFloat(approvalRemainder))){
+        let required = parseFloat(fromWei(approvalRemainder))
+        let display = parseFloat(displayAmount).toFixed(5)
+
+        required = toFixed(required, 4)
+        display = toFixed(display, 4)
+
+        if(required <= display) setInputState(symbol, 1)
+        else if(required > display) setInputState(symbol, 0)
+      }
+    }
+  }
+
   const handleRates = async(arr) => {
     let { web3, helper } = state
     let { address } = metadata
 
-    if(web3.injected && arr.length > 1){
-      for(let x = 0; x < arr.length; x++){
-        let { symbol, displayAmount, approvalRemainder } = arr[x]
+    if(web3.injected) checkInputs(arr)
 
-        if(!isNaN(parseFloat(approvalRemainder))){
-          let required = fromWei(approvalRemainder)
-
-          if(required < parseFloat(displayAmount)){
-            setInputState(symbol, 1)
-          } else {
-            setInputState(symbol, 0)
-          }
-        }
-      }
-      setSingle(false)
-    } else if(arr.length == 1) {
-      let token = arr[0]
-
-      if(token.address && single != token.address){
-        let pool = helper.initialized.find(i => i.pool.address == address)
-        let required =  toTokenAmount(parseFloat(fromWei(token.amount)), 18)
-        let rate  = await pool.calcPoolOutGivenSingleIn(token.address, required)
-
-        setSingle(token.address)
-        setAmount(rate.displayAmount)
-      }
-    }
+    if(arr.length == 1) setSingle(arr[0].address)
+    else setSingle(false)
   }
 
   const setInputState = (name, type) => {
@@ -111,6 +112,20 @@ export default function Mint({ market, metadata }) {
     if(type == 0) nextSibling.style.borderColor = '#009966'
     else if (type == 1) nextSibling.style.borderColor = 'red'
     else nextSibling.style.borderColor = 'inherit'
+  }
+
+  const reorderTokens = async(contract, arr) => {
+    let tokens = await contract.methods.getCurrentTokens().call()
+    let reorg = []
+
+    for(let x = 0; x < arr.length; x++){
+      let { address, amount } = arr[x]
+      let checkSum = toChecksumAddress(address)
+      let index = tokens.indexOf(checkSum)
+
+      reorg[index] = amount
+    }
+    return reorg
   }
 
 
@@ -130,23 +145,13 @@ export default function Mint({ market, metadata }) {
       }
     } catch(e) {
       dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
-      console.log(e)
     }
   }
 
   const mintMultiple = async(contract, conversions, input) => {
     let { web3, account, balances } = state
     let { assets } = metadata
-    let tokens = await contract.methods.getCurrentTokens().call()
-    let amounts = []
-
-    for(let x = 0; x < conversions.length; x++){
-      let { address, amount } = conversions[x]
-      let checkSum = toChecksumAddress(address)
-      let index = tokens.indexOf(checkSum)
-
-      amounts[index] = amount
-    }
+    let amounts = await reorderTokens(contract, conversions)
 
     await contract.methods.joinPool(input, amounts)
     .send({
@@ -169,11 +174,9 @@ export default function Mint({ market, metadata }) {
   }
 
   const mintSingle = async(contract, tokenAddress, conversions, input) => {
-    let { web3, account, balances } = state
-    let { assets } = metadata
     let target = conversions.find(i => i.address == tokenAddress)
-
-    console.log(tokenAddress, input, target.amount)
+    let { assets } = metadata
+    let { account } = state
 
     await contract.methods.joinswapPoolAmountOut(tokenAddress, input, target.amount)
     .send({
@@ -220,9 +223,8 @@ export default function Mint({ market, metadata }) {
 
   useEffect(() => {
     const calcOutputs = async() => {
-      let { helper, web3 } = state
+      let { helper } = state
       let { address } = metadata
-      let { toBN } = web3.rinkeby.utils
       let pool = helper.initialized.find(i => i.pool.address == address)
       let input = toTokenAmount(parseFloat(amount), 18)
       let newRates = []
@@ -247,10 +249,11 @@ export default function Mint({ market, metadata }) {
       setRates(newRates)
     }
     calcOutputs()
-  }, [ amount ])
+  }, [ amount, single ])
 
   useEffect(() => {
-    if(metadata.assets.length > 1 && rates.length < 1){
+    if(metadata.assets.length > 1
+      && rates.length > 0){
       setRates(metadata.assets)
     }
   }, [ metadata ])

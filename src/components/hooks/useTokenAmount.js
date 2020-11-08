@@ -115,14 +115,15 @@ export function useTokenAmounts(tokens, targetAddress) {
   const toggleToken = (i) => {
     let tokenWasSelected = selected[i];
     let newSelected = new Array(tokens.length).fill(false);
+    let isNeighbourSelected = selected[i+1]
 
-    if(!selected[i+1] && tokenWasSelected) {
+    if(!isNeighbourSelected && tokenWasSelected) {
       newSelected = new Array(tokens.length).fill(true);
-    } else if(selected[i+1]){
+    } else if(isNeighbourSelected){
       newSelected[i] = true
+    } else {
+      newSelected[i] = !tokenWasSelected
     }
-
-    console.log(selected[i+1])
 
     setSelected(newSelected);
   }
@@ -140,7 +141,6 @@ export function useTokenAmounts(tokens, targetAddress) {
         balance: initialBalance,
         allowance: initialAllowance
       } = token;
-
 
       newBalances.push(new BigNumber(initialBalance || BN_ZERO ));
       newAmounts.push(new BigNumber(initialAmount || BN_ZERO ));
@@ -168,7 +168,6 @@ export function useTokenAmounts(tokens, targetAddress) {
       let allowance = allowances[i];
 
       let displayAmount = formatBalance(amount, decimals, 4);
-
       let approvalRemainder = allowance.gte(amount) ? BN_ZERO : amount.minus(allowance);
       let approvalNeeded = approvalRemainder.gt(BN_ZERO);
 
@@ -189,12 +188,10 @@ export function useTokenAmounts(tokens, targetAddress) {
                 }
               }
             }).catch((data) => {
-              console.log(data)
               dispatch({ type: 'FLAG', payload: TX_REJECT })
             })
           }
         } catch(e) {
-          console.log(e)
           dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
         }
       }
@@ -235,12 +232,23 @@ export function useTokenAmounts(tokens, targetAddress) {
 
   useEffect(() => {
     let selectedTokens = [];
+    let newAmounts = [];
     for (let i = 0; i < selected.length; i++) {
       if (selected[i]) {
+        if(amounts[i] == BN_ZERO){
+          let initial = new BigNumber(tokens[i].amount);
+          newAmounts.push(initial);
+        } else {
+          newAmounts.push(amounts[i]);
+        }
         selectedTokens.push(output[i]);
+      } else {
+        newAmounts.push(amounts[i]);
+        newAmounts[i] = BN_ZERO;
       }
     }
     setSelections(selectedTokens)
+    setAmounts(newAmounts)
   }, [ selected ])
 
   return {
