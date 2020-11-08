@@ -77,8 +77,8 @@ export default withTooltip<AreaProps, TooltipData>(
     const stockValueScale = useMemo(
       () =>
         scaleLinear({
-          range: [yMax, 0],
-          domain: [(max(stock, getStockValue))*.75, (max(stock, getStockValue) || 0) +  yMax/ 100],
+          range: [yMax*2, (max(stock, getStockValue))*.9],
+          domain: [(max(stock, getStockValue))*.9, (max(stock, getStockValue)*0.99 || 0) + (yMax/ 200)],
           nice: true,
         }),
       [yMax],

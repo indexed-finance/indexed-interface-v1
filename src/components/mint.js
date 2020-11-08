@@ -89,8 +89,8 @@ export default function Mint({ market, metadata }) {
         required = toFixed(required, 4)
         display = toFixed(display, 4)
 
-        if(required <= display) setInputState(symbol, 1)
-        else if(required > display) setInputState(symbol, 0)
+        if(required < display) setInputState(symbol, 1)
+        else if(required => display) setInputState(symbol, 0)
       }
     }
   }

@@ -247,7 +247,6 @@ export default function Pools(){
           setInstance({ initializer, contract })
         } else {
           let tokenEvents = await getEvents(web3.websocket, address)
-
           setEvents(tokenEvents)
         }
 

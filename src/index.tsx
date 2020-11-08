@@ -113,7 +113,7 @@ function Application(){
        let supply = await contract.methods.totalSupply().call()
           .then((supply) => supply/Math.pow(10, 18))
        let decimals = parseInt(await contract.methods.decimals().call())
-       let history = await getTokenPriceHistory(address, 30)
+       let history = await getTokenPriceHistory(address, 60)
 
        let [{ priceUSD }] = history
 

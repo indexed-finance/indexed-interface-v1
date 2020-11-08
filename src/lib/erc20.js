@@ -80,5 +80,8 @@ export async function getEvents(web3, poolAddress) {
     )
   })
 
-  return await Promise.all([ mints, burns ]).then(() => events)
+  return await Promise.all([ mints, burns ])
+  .then(() =>
+    events.sort((a,b) => b.time - a.time)
+  )
 }

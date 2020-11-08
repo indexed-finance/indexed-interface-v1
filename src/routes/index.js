@@ -24,7 +24,7 @@ import { store } from '../state'
 const WETH = '0x554dfe146305944e3d83ef802270b640a43eed44'
 
 const Loader = ({ color, height, width }) => (
-    <div style={{ position: 'absolute', paddingTop: '5.675%' }}>
+    <div style={{ position: 'absolute', paddingTop: '4.75%' }}>
     <ContentLoader
       speed={1}
       height={height}

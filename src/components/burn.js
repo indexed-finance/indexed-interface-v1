@@ -85,9 +85,10 @@ export default function InteractiveList({ market, metadata }) {
       let contract = toContract(web3.injected, BPool.abi, address)
 
       if(selection) await burnToMultiple(contract, input, rates)
-      else await burnToSingle(contract, input, rates[0].amount)
+      else await burnToSingle(contract, input, rates.amount)
     } catch (e) {
       dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
+      console.log(e)
     }
   }
 
@@ -127,7 +128,7 @@ export default function InteractiveList({ market, metadata }) {
           setBalances({ input: inputBalance, output: outputBalance})
           dispatch({ type: 'FLAG', payload: TX_CONFIRM })
         } else {
-          dispatch({ type: 'FLAG', payload: TX_REJECT })
+          dispatch({ type: 'FLAG', payload: TX_REVERT })
         }
       }
     }).catch((data) => {
@@ -250,7 +251,7 @@ export default function InteractiveList({ market, metadata }) {
         let pool = helper.initialized.find(i => i.pool.address == address)
 
         if(selection){
-          rates = await pool.getLeaveRateMulti(input)
+          rates = await pool.calcAllOutGivenPoolIn(input)
 
           for(let token in rates){
             let { symbol, displayAmount } = rates[token]
@@ -259,7 +260,7 @@ export default function InteractiveList({ market, metadata }) {
             element.innerHTML = displayAmount
           }
         } else {
-          rates = await pool.getLeaveRateSingle(output.address, input)
+          rates = await pool.calcSingleOutGivenPoolIn(output.address, input)
           let amount = rates.displayAmount
 
           setComponent(<Single data={{ ...rates, amount }} />)
