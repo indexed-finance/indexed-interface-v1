@@ -64,7 +64,7 @@ const useStyles = getStyles(style)
 export default function TokenInput(props) {
   const classes = useStyles();
 
-  let { state: { web3 } } = useContext(store)
+  let { state: { web3, balances } } = useContext(store)
 
   // Set `amount` to `balance`
   const setAmountToBalance = () => {
@@ -109,7 +109,7 @@ export default function TokenInput(props) {
           type='number'
           helperText={
             <o className={classes.helper} onClick={() => setAmountToBalance()}>
-              BALANCE: {props.token.displayBalance}
+              BALANCE: {balances[props.token.symbol].amount}
            </o>}
           style={{ width: props.inputWidth }}
           InputLabelProps={{ shrink: true }}

@@ -116,11 +116,13 @@ export function useTokenAmounts(tokens, targetAddress) {
     let tokenWasSelected = selected[i];
     let newSelected = new Array(tokens.length).fill(false);
 
-    if(tokenWasSelected) {
-      newSelected[i] = true;
-    } else {
-      newSelected[i] = !tokenWasSelected
+    if(!selected[i+1] && tokenWasSelected) {
+      newSelected = new Array(tokens.length).fill(true);
+    } else if(selected[i+1]){
+      newSelected[i] = true
     }
+
+    console.log(selected[i+1])
 
     setSelected(newSelected);
   }

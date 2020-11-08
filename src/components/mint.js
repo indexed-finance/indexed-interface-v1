@@ -12,6 +12,7 @@ import Grid from '@material-ui/core/Grid'
 
 import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
 import { tokenMetadata } from '../assets/constants/parameters'
+import { toChecksumAddress } from '../assets/constants/functions'
 import { balanceOf, getERC20, allowance } from '../lib/erc20'
 import { toContract } from '../lib/util/contracts'
 
@@ -74,11 +75,11 @@ export default function Mint({ market, metadata }) {
     let { web3, helper } = state
     let { address } = metadata
 
-    if(web3.injected && arr.length < 1){
+    if(web3.injected && arr.length > 1){
       for(let x = 0; x < arr.length; x++){
         let { symbol, displayAmount, approvalRemainder } = arr[x]
 
-        if(approvalRemainder){
+        if(!isNaN(parseFloat(approvalRemainder))){
           let required = fromWei(approvalRemainder)
 
           if(required < parseFloat(displayAmount)){
@@ -116,7 +117,7 @@ export default function Mint({ market, metadata }) {
   const mintTokens = async() => {
     let { web3, account } = state
     let { address, assets } = metadata
-    let { toWei, toBN } = web3.rinkeby.utils
+    let { toWei, toHex } = web3.rinkeby.utils
 
     try {
       let input = toHex(toWei(amount))
@@ -129,14 +130,25 @@ export default function Mint({ market, metadata }) {
       }
     } catch(e) {
       dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
+      console.log(e)
     }
   }
 
   const mintMultiple = async(contract, conversions, input) => {
     let { web3, account, balances } = state
     let { assets } = metadata
+    let tokens = await contract.methods.getCurrentTokens().call()
+    let amounts = []
 
-    await contract.methods.joinPool(input, conversions.map(t => t.amount))
+    for(let x = 0; x < conversions.length; x++){
+      let { address, amount } = conversions[x]
+      let checkSum = toChecksumAddress(address)
+      let index = tokens.indexOf(checkSum)
+
+      amounts[index] = amount
+    }
+
+    await contract.methods.joinPool(input, amounts)
     .send({
       from: account
     }).on('confirmation', async(conf, receipt) => {
@@ -159,8 +171,11 @@ export default function Mint({ market, metadata }) {
   const mintSingle = async(contract, tokenAddress, conversions, input) => {
     let { web3, account, balances } = state
     let { assets } = metadata
+    let target = conversions.find(i => i.address == tokenAddress)
 
-    await contract.methods.joinswapPoolAmountOut(tokenAddress, conversions[0].amount, input)
+    console.log(tokenAddress, input, target.amount)
+
+    await contract.methods.joinswapPoolAmountOut(tokenAddress, input, target.amount)
     .send({
       from: account
     }).on('confirmation', async(conf, receipt) => {
@@ -220,7 +235,7 @@ export default function Mint({ market, metadata }) {
         for(let x = 0;  x < rates.length; x++) {
           let { address } = rates[x]
 
-          if(address == rate.address) {
+          if(address == single) {
             newRates.push(rate)
           } else {
             newRates.push(rates[x])

@@ -344,9 +344,7 @@ export default function Pools(){
                   <a href={`https://app.uniswap.org/#/add/ETH/${address}`} style={{ float: 'left' }} target='_blank'>
                     <ButtonPrimary margin={{ marginBottom: 15, padding: '.5em 1.25em' }}  variant='outlined'> ADD LIQUIDITY </ButtonPrimary>
                   </a>
-                  <a href={`https://app.uniswap.org/#/remove/${address}/ETH`} style={{ float: 'right' }} target='_blank'>
-                    <ButtonPrimary margin={{ marginBottom: 15, padding: '.5em 1.25em' }}  variant='outlined'> REMOVE LIQUIDITY </ButtonPrimary>
-                  </a>
+                    <ButtonPrimary onClick={getUnderlyingAssets} margin={{ marginBottom: 15, padding: '.5em 1.25em' }}  variant='outlined'> REMOVE LIQUIDITY </ButtonPrimary>
                 </div>
               </Container>
             )}
