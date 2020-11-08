@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { styled } from '@material-ui/core/styles'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
@@ -16,9 +16,9 @@ import Input from './inputs/input';
 
 import style from '../assets/css/components/approvals'
 import getStyles from '../assets/css'
+import { store } from '../state'
 
 import { tokenMetadata } from '../assets/constants/parameters';
-
 
 const ApproveButton = styled(ButtonTransaction)({
   fontSize: 10,
@@ -64,6 +64,8 @@ const useStyles = getStyles(style)
 export default function TokenInput(props) {
   const classes = useStyles();
 
+  let { state: { web3 } } = useContext(store)
+
   // Set `amount` to `balance`
   const setAmountToBalance = () => {
     let balance = props.token.balance;
@@ -73,7 +75,11 @@ export default function TokenInput(props) {
   const approveTokens = async (event) => {
     event.preventDefault();
     console.log(`Should approve tokens :D`);
-    props.token.approveRemainder();
+
+    props.token.approveRemaining(
+      props.token.address,
+      web3.injected
+    );
   }
 
   return(
@@ -86,7 +92,7 @@ export default function TokenInput(props) {
         <Tick>
           <Checkbox
             edge="start"
-            checked={props.token.selected}
+            checked={props.token.selected[props.index]}
             disabled={props.disabled}
             tabIndex={-1}
             disableRipple

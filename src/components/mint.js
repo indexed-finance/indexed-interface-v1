@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 
-import { toWei, toTokenAmount } from '@indexed-finance/indexed.js/dist/utils/bignumber';
+import { toWei, toHex, fromWei, toTokenAmount, toBN } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 import { makeStyles, styled } from '@material-ui/core/styles'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
@@ -53,21 +53,65 @@ function generate(element) {
 export default function Mint({ market, metadata }) {
   const [ amount, setAmount ] = useState(null)
   const [ balance, setBalance ] = useState(0)
+  const [ single, setSingle ] = useState(false)
   const [ rates, setRates ] = useState([])
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
 
   const handleAmount = (event) => {
-    let { value } = event.target
-    let input = parseFloat(value)
+    if(event.target){
+      let { value } = event.target
+      let input = parseFloat(value)
 
-    if(!isNaN(input)) setAmount(value)
+      if(!isNaN(input)) setAmount(value)
+    } else {
+      setAmount(event)
+    }
   }
 
-  const handleRates = (arr) => {
-    // setRates(arr)
+  const handleRates = async(arr) => {
+    let { web3, helper } = state
+    let { address } = metadata
+
+    if(web3.injected && arr.length < 1){
+      for(let x = 0; x < arr.length; x++){
+        let { symbol, displayAmount, approvalRemainder } = arr[x]
+
+        if(approvalRemainder){
+          let required = fromWei(approvalRemainder)
+
+          if(required < parseFloat(displayAmount)){
+            setInputState(symbol, 1)
+          } else {
+            setInputState(symbol, 0)
+          }
+        }
+      }
+      setSingle(false)
+    } else if(arr.length == 1) {
+      let token = arr[0]
+
+      if(token.address && single != token.address){
+        let pool = helper.initialized.find(i => i.pool.address == address)
+        let required =  toTokenAmount(parseFloat(fromWei(token.amount)), 18)
+        let rate  = await pool.calcPoolOutGivenSingleIn(token.address, required)
+
+        setSingle(token.address)
+        setAmount(rate.displayAmount)
+      }
+    }
   }
+
+  const setInputState = (name, type) => {
+    let element = document.getElementsByName(name)[0]
+    let { nextSibling } = element.nextSibling
+
+    if(type == 0) nextSibling.style.borderColor = '#009966'
+    else if (type == 1) nextSibling.style.borderColor = 'red'
+    else nextSibling.style.borderColor = 'inherit'
+  }
+
 
   const mintTokens = async() => {
     let { web3, account } = state
@@ -75,11 +119,11 @@ export default function Mint({ market, metadata }) {
     let { toWei, toBN } = web3.rinkeby.utils
 
     try {
-      let input = toWei(amount)
+      let input = toHex(toWei(amount))
       let contract = toContract(web3.injected, BPool.abi, address)
 
-      if(rates.length == 1) {
-        await mintSingle(contract, rates[0].address, rates, input)
+      if(single) {
+        await mintSingle(contract, single, rates, input)
       } else {
         await mintMultiple(contract, rates, input)
       }
@@ -91,7 +135,6 @@ export default function Mint({ market, metadata }) {
   const mintMultiple = async(contract, conversions, input) => {
     let { web3, account, balances } = state
     let { assets } = metadata
-
 
     await contract.methods.joinPool(input, conversions.map(t => t.amount))
     .send({
@@ -167,12 +210,26 @@ export default function Mint({ market, metadata }) {
       let { toBN } = web3.rinkeby.utils
       let pool = helper.initialized.find(i => i.pool.address == address)
       let input = toTokenAmount(parseFloat(amount), 18)
-      let rate  = await pool.calcAllInGivenPoolOut(input)
+      let newRates = []
 
-      console.log(amount)
-      console.log(rate)
+      if(!single) {
+        newRates = await pool.calcAllInGivenPoolOut(input)
+      } else {
+        let rate = await pool.calcSingleInGivenPoolOut(single, input)
 
-      setRates(rate)
+        for(let x = 0;  x < rates.length; x++) {
+          let { address } = rates[x]
+
+          if(address == rate.address) {
+            newRates.push(rate)
+          } else {
+            newRates.push(rates[x])
+            newRates[x].displayAmount = null
+            newRates[x].amount = '0x0'
+          }
+        }
+      }
+      setRates(newRates)
     }
     calcOutputs()
   }, [ amount ])

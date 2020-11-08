@@ -3,6 +3,7 @@ import { formatBalance, toTokenAmount, toWei, BigNumber, toHex } from '@indexed-
 import { store } from '../../state'
 import { getERC20 } from '../../lib/erc20';
 
+import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../../assets/constants/parameters'
 const BN_ZERO = new BigNumber(0);
 
 /**
@@ -70,14 +71,24 @@ export function useTokenAmount({
   }
 }
 
+const setInputState = (name, type) => {
+  let element = document.getElementsByName(name)[0]
+  let { nextSibling } = element.nextSibling
+
+  if(type == 0) nextSibling.style.borderColor = '#009966'
+  else if (type == 1) nextSibling.style.borderColor = 'red'
+  else nextSibling.style.borderColor = 'inherit'
+}
+
 export function useTokenAmounts(tokens, targetAddress) {
   const [balances, setBalances] = useState([]);
   const [amounts, setAmounts] = useState([]);
   const [allowances, setAllowances] = useState([]);
   const [selected, setSelected] = useState([]);
+  const [selections, setSelections] = useState([]);
   const [ output, setOutput ] = useState([])
 
-  let { state: { web3, account } } = useContext(store)
+  let { state: { account }, dispatch } = useContext(store)
 
   const setExact = (i, exactAmount) => {
     let newAmounts = [...amounts ];
@@ -104,9 +115,13 @@ export function useTokenAmounts(tokens, targetAddress) {
   const toggleToken = (i) => {
     let tokenWasSelected = selected[i];
     let newSelected = new Array(tokens.length).fill(false);
-    newSelected[i] = !tokenWasSelected;
-    // if token is already selected, disable it
-    // if token is not selected, disable all others
+
+    if(tokenWasSelected) {
+      newSelected[i] = true;
+    } else {
+      newSelected[i] = !tokenWasSelected
+    }
+
     setSelected(newSelected);
   }
 
@@ -128,7 +143,12 @@ export function useTokenAmounts(tokens, targetAddress) {
       newBalances.push(new BigNumber(initialBalance || BN_ZERO ));
       newAmounts.push(new BigNumber(initialAmount || BN_ZERO ));
       newAllowances.push(new BigNumber(initialAllowance || BN_ZERO ));
-      newSelected.push(true);
+
+      if(selected[i] != undefined){
+        newSelected.push(selected[i])
+      } else {
+        newSelected.push(true)
+      }
 
       setAllowances(newAllowances);
       setSelected(newSelected);
@@ -150,10 +170,30 @@ export function useTokenAmounts(tokens, targetAddress) {
       let approvalRemainder = allowance.gte(amount) ? BN_ZERO : amount.minus(allowance);
       let approvalNeeded = approvalRemainder.gt(BN_ZERO);
 
-      const approveRemainder = async (target) => {
-        const erc20 = getERC20(web3.rinkeby, address);
-        if (approvalRemainder.gte(0)) {
-          await erc20.methods.approve(target, approvalRemainder).send({ from: account });
+      const approveRemaining = async(target, web3) => {
+        try {
+          const erc20 = getERC20(web3, address);
+
+          if (approvalRemainder.gte(0)) {
+            await erc20.methods.approve(target, approvalRemainder)
+            .send({ from: account })
+            .on('confirmation', (conf, receipt) => {
+              if(conf == 0){
+                if(receipt.status == 1) {
+                  dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+                  setInputState(symbol, 0)
+                } else {
+                  dispatch({ type: 'FLAG', payload: TX_REVERT })
+                }
+              }
+            }).catch((data) => {
+              console.log(data)
+              dispatch({ type: 'FLAG', payload: TX_REJECT })
+            })
+          }
+        } catch(e) {
+          console.log(e)
+          dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
         }
       }
 
@@ -172,6 +212,7 @@ export function useTokenAmounts(tokens, targetAddress) {
         allowance,
         approvalNeeded,
         approvalRemainder,
+        approveRemaining,
 
         updateTokensSpent: (spentTokens) => updateTokensSpent(i, spentTokens),
         toggleSelect: () => toggleToken(i),
@@ -190,16 +231,19 @@ export function useTokenAmounts(tokens, targetAddress) {
     setOutput(outTokens)
   }, [ amounts, balances, allowances, selected ]);
 
-  let selectedTokens = [];
-  for (let i = 0; i < selected.length; i++) {
-    if (selected[i]) {
-      selectedTokens.push(output[i]);
+  useEffect(() => {
+    let selectedTokens = [];
+    for (let i = 0; i < selected.length; i++) {
+      if (selected[i]) {
+        selectedTokens.push(output[i]);
+      }
     }
-  }
+    setSelections(selectedTokens)
+  }, [ selected ])
 
   return {
+    selectedTokens: selections,
     tokens: output,
-    selectedTokens,
     amounts,
     setAmounts,
   };

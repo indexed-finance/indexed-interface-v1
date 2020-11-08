@@ -44,22 +44,12 @@ export default function Approvals({ assets, handleTokenAmountsChanged, targetAdd
 
   // call the mint/burn/contribute component to update pool amounts
   useEffect(() => {
-    // fires constantly?
     handleTokenAmountsChanged(selectedTokens)
   }, [selectedTokens]);
 
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
-
-  // const setInputState = (name, type) => {
-  //   let element = document.getElementsByName(name)[0]
-  //   let { nextSibling } = element.nextSibling
-
-  //   if(type == 0) nextSibling.style.borderColor = '#009966'
-  //   else if (type == 1) nextSibling.style.borderColor = 'red'
-  //   else nextSibling.style.borderColor = 'inherit'
-  // }
 
   // const clearInputs = (ignore) => {
   //   let symbols = metadata.assets.map(i => i.symbol)
@@ -76,15 +66,13 @@ export default function Approvals({ assets, handleTokenAmountsChanged, targetAdd
 
   let inputWidth = !state.native ? 200 : 150
 
-  console.log(tokens)
-
   return (
     <List className={classes.list} style={{ height, width }} /* dense={dense} */>
       {
         tokens.map((token, index) => {
           let label = index == tokens.length-1 ? 'last' : 'item'
           let secondary =  state.native ? <span id={token.symbol} /> : null
-          return <TokenInput label={label} secondary={secondary} token={token} inputWidth={inputWidth}  />
+          return <TokenInput index={index} label={label} secondary={secondary} token={token} inputWidth={inputWidth}  />
         })
       }
     </List>
