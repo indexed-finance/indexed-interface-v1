@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 
-import { toWei } from '@indexed-finance/indexed.js/dist/utils/bignumber';
+import { toWei, toTokenAmount } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 import { makeStyles, styled } from '@material-ui/core/styles'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
@@ -51,10 +51,6 @@ function generate(element) {
 }
 
 export default function Mint({ market, metadata }) {
-  const [ component, setComponent ] = useState(<span />)
-  const [ isSelected, setSelection ] = useState(null)
-  const [ focus, setFocus ] = useState(null)
-  const [ dense, setDense ] = useState(false)
   const [ amount, setAmount ] = useState(null)
   const [ balance, setBalance ] = useState(0)
   const [ rates, setRates ] = useState([])
@@ -62,16 +58,15 @@ export default function Mint({ market, metadata }) {
 
   let { state, dispatch } = useContext(store)
 
-  const handleChange = (event) => {
-    setSelection(event.target.checked)
-  }
-
   const handleAmount = (event) => {
-    setAmount(event.target.value)
+    let { value } = event.target
+    let input = parseFloat(value)
+
+    if(!isNaN(input)) setAmount(value)
   }
 
   const handleRates = (arr) => {
-    setRates(arr)
+    // setRates(arr)
   }
 
   const mintTokens = async() => {
@@ -83,17 +78,12 @@ export default function Mint({ market, metadata }) {
       let input = toWei(amount)
       let contract = toContract(web3.injected, BPool.abi, address)
 
-
-
-      console.log(rates, input)
-
       if(rates.length == 1) {
         await mintSingle(contract, rates[0].address, rates, input)
       } else {
         await mintMultiple(contract, rates, input)
       }
     } catch(e) {
-      console.log(e)
       dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
     }
   }
@@ -156,14 +146,9 @@ export default function Mint({ market, metadata }) {
     return parseFloat(balance/Math.pow(10,18)).toFixed(2)
   }
 
-
   const handleBalance = () => {
     setAmount(balance)
   }
-
-  useEffect(() => {
-    setSelection(true)
-  }, [  ])
 
   useEffect(() => {
     const pullBalance = async() => {
@@ -176,18 +161,25 @@ export default function Mint({ market, metadata }) {
   }, [ state.web3.injected ])
 
   useEffect(() => {
-    if(Object.entries(metadata).length > 1){
-      console.log(metadata.assets)
-      setComponent(
-        <Approvals
-          width={width}
-          height='calc(20em - 87.5px)'
-          targetAddress={metadata.address}
-          assets={metadata.assets}
-          handleTokenAmountsChanged={handleRates}
-          input={amount}
-        />
-      )
+    const calcOutputs = async() => {
+      let { helper, web3 } = state
+      let { address } = metadata
+      let { toBN } = web3.rinkeby.utils
+      let pool = helper.initialized.find(i => i.pool.address == address)
+      let input = toTokenAmount(parseFloat(amount), 18)
+      let rate  = await pool.calcAllInGivenPoolOut(input)
+
+      console.log(amount)
+      console.log(rate)
+
+      setRates(rate)
+    }
+    calcOutputs()
+  }, [ amount ])
+
+  useEffect(() => {
+    if(metadata.assets.length > 1 && rates.length < 1){
+      setRates(metadata.assets)
     }
   }, [ metadata ])
 
@@ -202,7 +194,6 @@ export default function Mint({ market, metadata }) {
             BALANCE: {balance}
           </o>}
           onChange={handleAmount}
-          name='mint-input'
           value={amount}
           InputProps={{
             endAdornment: market,
@@ -212,7 +203,14 @@ export default function Mint({ market, metadata }) {
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
         <div className={classes.demo}>
-          {component}
+          <Approvals
+            width={width}
+            height='calc(20em - 87.5px)'
+            targetAddress={metadata.address}
+            assets={rates}
+            handleTokenAmountsChanged={handleRates}
+            input={amount}
+          />
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>

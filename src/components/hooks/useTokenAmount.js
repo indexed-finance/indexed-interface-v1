@@ -123,12 +123,19 @@ export function useTokenAmounts(tokens, targetAddress) {
         balance: initialBalance,
         allowance: initialAllowance
       } = token;
-      newBalances.push(new BigNumber(initialBalance || BN_ZERO));
-      newAmounts.push(new BigNumber(initialAmount || BN_ZERO));
-      newAllowances.push(new BigNumber(initialAllowance || BN_ZERO));
+
+
+      newBalances.push(new BigNumber(initialBalance || BN_ZERO ));
+      newAmounts.push(new BigNumber(initialAmount || BN_ZERO ));
+      newAllowances.push(new BigNumber(initialAllowance || BN_ZERO ));
       newSelected.push(true);
+
+      setAllowances(newAllowances);
+      setSelected(newSelected);
+      setBalances(newBalances);
+      setAmounts(newAmounts);
     }
-  });
+  }, [ tokens ]);
 
   useEffect(() => {
     let outTokens = [];
@@ -137,25 +144,22 @@ export function useTokenAmounts(tokens, targetAddress) {
       let amount = amounts[i];
       let balance = balances[i];
       let allowance = allowances[i];
-      let extraProps = {}
 
-      let displayAmount = amount ? formatBalance(amount, decimals, 4) : 0;
-      balance = balance ? toHex(balance) : '0x0';
-      amount = amount ? toHex(amount): '0x0';
-      allowance = allowance ? toHex(allowance): '0x0';
+      let displayAmount = formatBalance(amount, decimals, 4);
 
-      if(web3.injected){
-        let approvalRemainder = allowance.gte(amount) ? BN_ZERO : amount.minus(allowance);
-        let approvalNeeded = approvalRemainder.gt(BN_ZERO);
+      let approvalRemainder = allowance.gte(amount) ? BN_ZERO : amount.minus(allowance);
+      let approvalNeeded = approvalRemainder.gt(BN_ZERO);
 
-        const approveRemainder = async (target) => {
-          const erc20 = getERC20(web3, address);
-          if (approvalRemainder.gte(0)) {
-            await erc20.methods.approve(target, approvalRemainder).send({ from: account });
-          }
+      const approveRemainder = async (target) => {
+        const erc20 = getERC20(web3.rinkeby, address);
+        if (approvalRemainder.gte(0)) {
+          await erc20.methods.approve(target, approvalRemainder).send({ from: account });
         }
-        extraProps = { approvalRemainder, approvalNeeded }
       }
+
+      balance = toHex(balance);
+      amount = toHex(amount);
+      allowance = toHex(allowance);
 
       outTokens.push({
         decimals,
@@ -166,12 +170,13 @@ export function useTokenAmounts(tokens, targetAddress) {
         balance,
         amount,
         allowance,
+        approvalNeeded,
+        approvalRemainder,
 
         updateTokensSpent: (spentTokens) => updateTokensSpent(i, spentTokens),
         toggleSelect: () => toggleToken(i),
         setExact: (amount) => setExact(i, amount),
         setInput: (amount) => setInput(i, decimals, amount),
-        ...extraProps,
 
         bind: {
           value: displayAmount,

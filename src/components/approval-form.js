@@ -44,6 +44,7 @@ export default function Approvals({ assets, handleTokenAmountsChanged, targetAdd
 
   // call the mint/burn/contribute component to update pool amounts
   useEffect(() => {
+    // fires constantly?
     handleTokenAmountsChanged(selectedTokens)
   }, [selectedTokens]);
 
@@ -74,6 +75,8 @@ export default function Approvals({ assets, handleTokenAmountsChanged, targetAdd
   // }
 
   let inputWidth = !state.native ? 200 : 150
+
+  console.log(tokens)
 
   return (
     <List className={classes.list} style={{ height, width }} /* dense={dense} */>
