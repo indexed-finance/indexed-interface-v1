@@ -21,10 +21,9 @@ import getStyles from '../assets/css'
 import BPool from '../assets/constants/abi/BPool.json'
 import NumberFormat from '../utils/format'
 import ButtonPrimary from './buttons/primary'
-import ButtonTransaction from './buttons/transaction'
 import Adornment from './inputs/adornment'
 import Input from './inputs/input'
-import Approvals from './approvals'
+import Approvals from './approval-form'
 
 import { store } from '../state'
 
@@ -51,7 +50,8 @@ function generate(element) {
   )
 }
 
-export default function InteractiveList({ market, metadata }) {
+export default function Mint({ market, metadata }) {
+  const [ component, setComponent ] = useState(<span />)
   const [ isSelected, setSelection ] = useState(null)
   const [ focus, setFocus ] = useState(null)
   const [ dense, setDense ] = useState(false)
@@ -101,7 +101,7 @@ export default function InteractiveList({ market, metadata }) {
   const mintMultiple = async(contract, conversions, input) => {
     let { web3, account, balances } = state
     let { assets } = metadata
-    
+
 
     await contract.methods.joinPool(input, conversions.map(t => t.amount))
     .send({
@@ -175,6 +175,22 @@ export default function InteractiveList({ market, metadata }) {
     pullBalance()
   }, [ state.web3.injected ])
 
+  useEffect(() => {
+    if(Object.entries(metadata).length > 1){
+      console.log(metadata.assets)
+      setComponent(
+        <Approvals
+          width={width}
+          height='calc(20em - 87.5px)'
+          targetAddress={metadata.address}
+          assets={metadata.assets}
+          handleTokenAmountsChanged={handleRates}
+          input={amount}
+        />
+      )
+    }
+  }, [ metadata ])
+
   let width = !state.native ? '417.5px' : '100vw'
 
   return (
@@ -196,14 +212,7 @@ export default function InteractiveList({ market, metadata }) {
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
         <div className={classes.demo}>
-          <Approvals param='REQUIRED'
-            width={width}
-            height='calc(20em - 87.5px)'
-            metadata={metadata}
-            set={handleRates}
-            input={amount}
-            change={setAmount}
-          />
+          {component}
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>

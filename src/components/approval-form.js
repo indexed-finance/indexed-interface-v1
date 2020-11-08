@@ -33,12 +33,14 @@ import { useTokenAmounts } from './hooks/useTokenAmount'
 /*
 
 helper in parent class:
-on 
+on
 */
 
+const useStyles = getStyles(style)
+
 // balance, metadata, height, width, input, param, set, change, rates
-export default function Approvals({ tokens, handleTokenAmountsChanged, targetAddress, height, width }) {
-  const { tokens, selectedTokens } = useTokenAmounts(tokens, targetAddress);
+export default function Approvals({ assets, handleTokenAmountsChanged, targetAddress, height, width }) {
+  const { tokens, selectedTokens } = useTokenAmounts(assets, targetAddress);
 
   // call the mint/burn/contribute component to update pool amounts
   useEffect(() => {
@@ -76,9 +78,10 @@ export default function Approvals({ tokens, handleTokenAmountsChanged, targetAdd
   return (
     <List className={classes.list} style={{ height, width }} /* dense={dense} */>
       {
-        tokens.map((token) => {
+        tokens.map((token, index) => {
+          let label = index == tokens.length-1 ? 'last' : 'item'
           let secondary =  state.native ? <span id={token.symbol} /> : null
-          return <TokenInput secondary={secondary} token={token} inputWidth={inputWidth}  />
+          return <TokenInput label={label} secondary={secondary} token={token} inputWidth={inputWidth}  />
         })
       }
     </List>

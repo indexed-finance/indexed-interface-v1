@@ -5,11 +5,14 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListItem from '@material-ui/core/ListItem'
 import Avatar from '@material-ui/core/Avatar'
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import Checkbox from '@material-ui/core/Checkbox';
 
 import { toTokenAmount } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 import { bnum } from '@indexed-finance/indexed.js/dist/bmath';
 
-import Input from './inputs/input'
+import ButtonTransaction from './buttons/transaction'
+import Input from './inputs/input';
 
 import style from '../assets/css/components/approvals'
 import getStyles from '../assets/css'

@@ -112,6 +112,7 @@ function Application(){
        contract = new state.web3.mainnet.eth.Contract(IERC20.abi, address)
        let supply = await contract.methods.totalSupply().call()
           .then((supply) => supply/Math.pow(10, 18))
+       let decimals = parseInt(await contract.methods.decimals().call())
        let history = await getTokenPriceHistory(address, 30)
 
        let [{ priceUSD }] = history
@@ -126,6 +127,7 @@ function Application(){
          address: asset.token.id,
          price: priceUSD,
          symbol: symbol,
+         decimals
        })
       }
     }

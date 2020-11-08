@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { formatBalance, toTokenAmount, toWei, BigNumber, toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
-import { store } from '../state'
+import { store } from '../../state'
 import { getERC20 } from '../../lib/erc20';
 
 const BN_ZERO = new BigNumber(0);
@@ -75,6 +75,7 @@ export function useTokenAmounts(tokens, targetAddress) {
   const [amounts, setAmounts] = useState([]);
   const [allowances, setAllowances] = useState([]);
   const [selected, setSelected] = useState([]);
+  const [ output, setOutput ] = useState([])
 
   let { state: { web3, account } } = useContext(store)
 
@@ -99,7 +100,7 @@ export function useTokenAmounts(tokens, targetAddress) {
     setBalances(newBalances);
     setAllowances(newAllowances);
   };
-  
+
   const toggleToken = (i) => {
     let tokenWasSelected = selected[i];
     let newSelected = new Array(tokens.length).fill(false);
@@ -109,7 +110,6 @@ export function useTokenAmounts(tokens, targetAddress) {
     setSelected(newSelected);
   }
 
-  let outTokens = [];
   useEffect(() => {
     let newBalances = [];
     let newAmounts = [];
@@ -131,22 +131,30 @@ export function useTokenAmounts(tokens, targetAddress) {
   });
 
   useEffect(() => {
-    outTokens = [];
+    let outTokens = [];
     for (let i = 0; i < tokens.length; i++) {
       const { decimals, address, symbol } = tokens[i];
       let amount = amounts[i];
       let balance = balances[i];
       let allowance = allowances[i];
+      let extraProps = {}
 
-      let displayAmount = formatBalance(amount, decimals, 4);
-      let approvalRemainder = allowance.gte(amount) ? BN_ZERO : amount.minus(allowance);
-      let approvalNeeded = approvalRemainder.gt(BN_ZERO);
+      let displayAmount = amount ? formatBalance(amount, decimals, 4) : 0;
+      balance = balance ? toHex(balance) : '0x0';
+      amount = amount ? toHex(amount): '0x0';
+      allowance = allowance ? toHex(allowance): '0x0';
 
-      const approveRemainder = async (target) => {
-        const erc20 = getERC20(web3, address);
-        if (approvalRemainder.gte(0)) {
-          await erc20.methods.approve(target, approvalRemainder).send({ from: account });
+      if(web3.injected){
+        let approvalRemainder = allowance.gte(amount) ? BN_ZERO : amount.minus(allowance);
+        let approvalNeeded = approvalRemainder.gt(BN_ZERO);
+
+        const approveRemainder = async (target) => {
+          const erc20 = getERC20(web3, address);
+          if (approvalRemainder.gte(0)) {
+            await erc20.methods.approve(target, approvalRemainder).send({ from: account });
+          }
         }
+        extraProps = { approvalRemainder, approvalNeeded }
       }
 
       outTokens.push({
@@ -154,19 +162,16 @@ export function useTokenAmounts(tokens, targetAddress) {
         address,
         symbol,
         displayAmount,
-        approvalRemainder,
-        approvalNeeded,
-        selected: selected[i],
-
-        balance: toHex(balance),
-        amount: toHex(amount),
-        allowance: toHex(allowance),
+        selected,
+        balance,
+        amount,
+        allowance,
 
         updateTokensSpent: (spentTokens) => updateTokensSpent(i, spentTokens),
         toggleSelect: () => toggleToken(i),
         setExact: (amount) => setExact(i, amount),
         setInput: (amount) => setInput(i, decimals, amount),
-        approveRemainder,
+        ...extraProps,
 
         bind: {
           value: displayAmount,
@@ -177,17 +182,18 @@ export function useTokenAmounts(tokens, targetAddress) {
         }
       });
     }
+    setOutput(outTokens)
   }, [ amounts, balances, allowances, selected ]);
 
   let selectedTokens = [];
   for (let i = 0; i < selected.length; i++) {
     if (selected[i]) {
-      selectedTokens.push(outTokens[i]);
+      selectedTokens.push(output[i]);
     }
   }
 
   return {
-    tokens: outTokens,
+    tokens: output,
     selectedTokens,
     amounts,
     setAmounts,

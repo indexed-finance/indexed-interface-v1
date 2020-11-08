@@ -86,12 +86,15 @@ export default function Trade({ market, metadata }) {
     let rate = await setRate(input.amount, target, address)
 
     setInput({ ...input, address: target, market: symbol })
-    setOutput({ ...output, amount: rate })
-    setPrices({
-      input: parseFloat(pricing.token1Price),
-      output: parseFloat(pricing.token0Price)
-    })
     setContracts({ ...contracts, pair, token })
+    setOutput({ ...output, amount: rate })
+
+    if(pricing) {
+      setPrices({
+        input: parseFloat(pricing.token1Price),
+        output: parseFloat(pricing.token0Price)
+      })
+    }
   }
 
   const changeOrder = () => {
@@ -243,11 +246,14 @@ export default function Trade({ market, metadata }) {
           let pricing = await getMarketMetadata(pair.options.address)
 
           setOutput({ ...output, address: indexes[market].address })
-          setPrices({
-            input: parseFloat(pricing.token0Price),
-            output: parseFloat(pricing.token1Price)
-          })
           setContracts({ pair, router, token })
+
+          if(pricing) {
+            setPrices({
+              input: parseFloat(pricing.token0Price),
+              output: parseFloat(pricing.token1Price)
+            })
+          }
         }
       }
     }
