@@ -171,12 +171,12 @@ export function useTokenAmounts(tokens, targetAddress) {
       let approvalRemainder = allowance.gte(amount) ? BN_ZERO : amount.minus(allowance);
       let approvalNeeded = approvalRemainder.gt(BN_ZERO);
 
-      const approveRemaining = async(target, web3) => {
+      const approveRemaining = async(web3) => {
         try {
           const erc20 = getERC20(web3, address);
 
           if (approvalRemainder.gte(0)) {
-            await erc20.methods.approve(target, approvalRemainder)
+            await erc20.methods.approve(targetAddress, approvalRemainder)
             .send({ from: account })
             .on('confirmation', (conf, receipt) => {
               if(conf == 0){
@@ -222,7 +222,7 @@ export function useTokenAmounts(tokens, targetAddress) {
           value: displayAmount,
           onChange: (event) => {
             event.preventDefault();
-            setInput(event.target.value);
+            setInput(i, decimals, event.target.value);
           }
         }
       });

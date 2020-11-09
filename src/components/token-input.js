@@ -76,10 +76,7 @@ export default function TokenInput(props) {
     event.preventDefault();
     console.log(`Should approve tokens :D`);
 
-    props.token.approveRemaining(
-      props.token.address,
-      web3.injected
-    );
+    props.token.approveRemaining(web3.injected);
   }
 
   return(
