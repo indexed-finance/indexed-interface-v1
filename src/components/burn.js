@@ -327,8 +327,8 @@ export default function InteractiveList({ market, metadata }) {
           <Toggle selected={selection} triggerChange={handleChange} />
         </div>
       </Grid>
-      <Grid item xs={12} md={12} lg={12} xl={12}>
-        <TableContainer className={classes.container} style={{ width }}>
+      <Grid item xs={12} md={12} lg={12} xl={12} style={{ width: '100%'}}>
+        <TableContainer className={classes.container} style={{ width: '100%' }}>
           {component}
         </TableContainer>
       </Grid>

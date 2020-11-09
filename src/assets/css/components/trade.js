@@ -10,6 +10,7 @@ const setStyle = (theme) => ({
     '& .MuiOutlinedInput-adornedEnd': {
       paddingRight: 0
     },
+    marginBottom: 0
   },
   altInputs: {
     width: 250,
@@ -27,10 +28,12 @@ const setStyle = (theme) => ({
     width: '27.5em',
   },
   market: {
-    width: 'fit-content',
+    width: '100%',
     color: theme.palette.secondary.main,
     borderTop: '#666666 solid 2px',
     borderBottom: '#666666 solid 2px',
+    marginTop: 12.5,
+    marginBottom: 12.5,
     '& p': {
       fontSize: 14,
       marginLeft: 12.5

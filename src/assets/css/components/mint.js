@@ -24,31 +24,13 @@ const setStyle = (theme) => ({
     padding: 0,
     overflowY: 'scroll',
     height: 'calc(20em - 75px)',
-    width: 410
+    width: '100%'
   },
   item: {
     borderBottom: 'solid 2px #666666',
     paddingBottom: 17.5,
     paddingTop: 17.5,
     fontSize: 12
-  },
-  divider: {
-    borderTop: '#666666 solid 1px',
-    borderBottom: '#666666 solid 1px',
-    margin: '1.5em 0em 1.5em 0em',
-    width: '27.5em',
-  },
-  altDivider1: {
-    borderTop: '#666666 solid 1px',
-    borderBottom: '#666666 solid 1px',
-    margin: '.5em 0em 0em 0em',
-    width: '27.5em',
-  },
-  altDivider2: {
-    borderTop: '#666666 solid 1px',
-    borderBottom: '#666666 solid 1px',
-    margin: '0em 0em 1.5em 0em',
-    width: '27.5em',
   },
   first: {
     borderBottom: 'solid 2px #666666',

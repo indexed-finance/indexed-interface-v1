@@ -55,7 +55,8 @@ const setStyle = (theme) => ({
     },
   },
   selections: {
-    paddingTop: '1em'
+    paddingTop: '1.25em',
+    marginBottom: 12.5
   },
   market: {
     padding: '.125em 0em',
@@ -85,6 +86,7 @@ const mapping = {
   [DESKTOP_NORMAL]: {
     width: '64.5%',
     height: 'calc(90vh - 20px)',
+    paddingTop: '5.5%',
     marginTop: '-8.5vh',
     maxWidth: '1920px',
     chart: {
@@ -95,6 +97,7 @@ const mapping = {
   [DESKTOP_LARGE]: {
     width: '64.5%',
     height: '91vh',
+    paddingTop: '7.75%',
     maxWidth: '100%',
     marginTop: '-5vh',
     chart: {
@@ -106,6 +109,7 @@ const mapping = {
     width: '61%',
     height: '70vh',
     maxWidth: '60%',
+    paddingTop: '10%',
     marginTop: '-4.5vh',
     chart: {
       height: 'calc(55vh - 52.5px)'
@@ -115,6 +119,7 @@ const mapping = {
   [DESKTOP_HUGE]: {
     width: '59.5%',
     height: 'calc(75vh - 100px)',
+    paddingTop: '7.5%',
     marginTop: '-4.5vh',
     maxWidth: '48%',
     chart: {

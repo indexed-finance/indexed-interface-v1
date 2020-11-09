@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import { useParams } from 'react-router-dom'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
-import { toWei } from '@indexed-finance/indexed.js/dist/utils/bignumber';
+import { toWei, fromWei } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
 
 import Container from '../components/container'
@@ -190,8 +190,11 @@ export default function Pools(){
     let target = web3.injected != false ? account : '0x0000000000000000000000000000000000000001'
 
     let lp = pair.options.address != '0x0000000000000000000000000000000000000000' ?
-    await balanceOf(web3.rinkeby, pair.options.address, target) : 0
-    let native = await balanceOf(web3.rinkeby, address, target)
+    fromWei(await balanceOf(web3.rinkeby, pair.options.address, target)): 0
+    let native = fromWei(await balanceOf(web3.rinkeby, address, target))
+
+    lp = parseFloat(lp).toFixed(2)
+    native = parseFloat(native).toFixed(2)
 
     setBalances({ ...balances, native, lp })
   }
@@ -269,6 +272,7 @@ export default function Pools(){
         await dispatch({ type: 'BALANCE',
           payload: { balances }
         })
+        await getNativeBalances()
       }
      }
 
@@ -367,9 +371,6 @@ export default function Pools(){
                     <div className={classes.submit}>
                       <ButtonPrimary variant='outlined' onClick={pledgeTokens} style={{ marginRight: 0 }}>
                         PLEDGE
-                      </ButtonPrimary>
-                      <ButtonPrimary variant='outlined' onClick={getUnderlyingAssets} style={{ marginLeft: 0 }}>
-                        GET TOKENS
                       </ButtonPrimary>
                     </div>
                   </Fragment>

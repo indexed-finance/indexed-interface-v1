@@ -16,7 +16,7 @@ import { timeFormat } from 'd3-time-format';
 
 type TooltipData = AppleStock;
 
-let stock = appleStock.slice(800);
+let stock;
 
 export const background = '#666666';
 export const background2 = '#FFFFFF';
@@ -59,8 +59,6 @@ export default withTooltip<AreaProps, TooltipData>(
   }: AreaProps & WithTooltipProvidedProps<TooltipData>) => {
     if (width < 10) return null;
 
-    stock = data;
-
     // bounds
     const xMax = width - margin.left - margin.right;
     const yMax = height - margin.top - margin.bottom;
@@ -70,15 +68,15 @@ export default withTooltip<AreaProps, TooltipData>(
       () =>
         scaleTime({
           range: [0, xMax],
-          domain: extent(stock, getDate) as [Date, Date],
+          domain: extent(data, getDate) as [Date, Date],
         }),
       [xMax],
     );
     const stockValueScale = useMemo(
       () =>
         scaleLinear({
-          range: [yMax*2, (max(stock, getStockValue))*.9],
-          domain: [(max(stock, getStockValue))*.9, (max(stock, getStockValue)*0.99 || 0) + (yMax/ 200)],
+          range: [yMax*2, (max(data, getStockValue))*.9],
+          domain: [(max(data, getStockValue))*.9, (max(data, getStockValue)*0.975 || 0) + (yMax/ 200)],
           nice: true,
         }),
       [yMax],
@@ -89,10 +87,10 @@ export default withTooltip<AreaProps, TooltipData>(
       (event: React.TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => {
         const { x } = localPoint(event) || { x: 0 };
         const x0 = dateScale.invert(x);
-        const index = bisectDate(stock, x0, 1);
+        const index = bisectDate(data, x0, 1);
 
-        const d0 = stock[index - 1];
-        const d1 = stock[index];
+        const d0 = data[index - 1];
+        const d1 = data[index];
         let d = d0;
         if (d1 && getDate(d1)) {
           d = x0.valueOf() - getDate(d0).valueOf() > getDate(d1).valueOf() - x0.valueOf() ? d1 : d0;
@@ -135,7 +133,7 @@ export default withTooltip<AreaProps, TooltipData>(
             pointerEvents="none"
           />
           <AreaClosed<AppleStock>
-            data={stock}
+            data={data}
             x={d => dateScale(getDate(d))}
             y={d => stockValueScale(getStockValue(d))}
             yScale={stockValueScale}

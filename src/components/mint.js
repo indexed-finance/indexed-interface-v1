@@ -276,11 +276,11 @@ export default function Mint({ market, metadata }) {
           }}
         />
       </Grid>
-      <Grid item xs={12} md={12} lg={12} xl={12}>
+      <Grid item xs={12} md={12} lg={12} xl={12} style={{ width: '100%'}}>
         <div className={classes.demo}>
           <Approvals
-            width={width}
-            height='calc(20em - 87.5px)'
+            width='100%'
+            height='calc(40vh - 75px)'
             targetAddress={metadata.address}
             assets={rates}
             handleTokenAmountsChanged={handleRates}

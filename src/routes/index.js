@@ -23,8 +23,8 @@ import { store } from '../state'
 
 const WETH = '0x554dfe146305944e3d83ef802270b640a43eed44'
 
-const Loader = ({ color, height, width }) => (
-    <div style={{ position: 'absolute', paddingTop: '4.75%' }}>
+const Loader = ({ color, height, width, paddingTop }) => (
+    <div style={{ position: 'absolute', paddingTop }}>
     <ContentLoader
       speed={1}
       height={height}
@@ -171,7 +171,7 @@ export default function Index(){
     }
   }, [ location.pathname ])
 
-  let { border, maxWidth, width, height, marginTop, chart } = style.getFormatting()
+  let { border, maxWidth, width, height, marginTop, chart, paddingTop } = style.getFormatting()
 
   if(state.native){
     return(
@@ -223,7 +223,7 @@ export default function Index(){
               </ButtonGroup>
             </header>
           </Grid>
-          <Grid item>
+          <Grid item style={{ width: '100%'}}>
             <div className={classes.market}>
               {component}
             </div>
@@ -234,7 +234,7 @@ export default function Index(){
         <ParentSize>
           {({ width, height }) => (
             <Fragment>
-              {!state.request && !metadata.history && (<Loader width={width} height={height} color={state.background}/> )}
+              {!state.request && !metadata.history && (<Loader paddingTop={paddingTop} width={width} height={height} color={state.background}/> )}
               {state.request && metadata.active && metadata.history && (<Area data={metadata.history} width={width} height={height} /> )}
               {state.request && !metadata.active && (<Alert /> )}
             </Fragment>

@@ -39,7 +39,7 @@ const mapping = {
     height: 'calc(20em - 100px)',
   },
   [DESKTOP_LARGE]: {
-    height: '20em'
+    height: '22.5em'
   },
   [DESKTOP_WIDE]: {
     height: 'calc(20em - 100px)'
