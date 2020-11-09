@@ -44,6 +44,8 @@ export default function Trade({ market, metadata }) {
   }
 
   const setRate = async(entry, inputAddress, outputAddress) => {
+    if(prices.input == 0) return
+
     let { injected, rinkeby } = state.web3
     entry = parseFloat(entry)
 
@@ -58,7 +60,6 @@ export default function Trade({ market, metadata }) {
 
       return amount
       }
-    return 0
   }
 
   const getAmountOut = async(i, inputAddress, outputAddress) => {
@@ -284,9 +285,10 @@ export default function Trade({ market, metadata }) {
   useEffect(() => {
     const checkAllowance = async() => {
       let { amount, address } = input
+
       let rate = await setRate(amount, address, output.address)
 
-      if(contracts.router.options != undefined && state.web3.injected != false){
+      if(state.web3.injected){
         let allowance = await getAllowance()
 
         if(allowance < parseFloat(amount) && address != WETH){

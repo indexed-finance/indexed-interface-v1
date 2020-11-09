@@ -13,13 +13,14 @@ const Selection = styled(Select)({
   }
 })
 
-const selections = [
+const defaultSelections = [
   { address:'0xc778417e063141139fce010982780140aa0cd5ab', symbol: 'ETH' },
   { address: '0x2d952ad99184ed4638b9aa288f43de14de3147bf', symbol: 'WBTC' }
 ]
 
-export default function CurrencySelect({ market, onSelect }) {
-  const [currency, setCurrency] = useState('ETH')
+export default function CurrencySelect({ market, onSelect, assets }) {
+  const [ selections, setSelections ] = useState(defaultSelections)
+  const [ currency, setCurrency ] = useState(market)
 
   const handleChange = (event) => {
     let { value } = event.target
@@ -28,6 +29,12 @@ export default function CurrencySelect({ market, onSelect }) {
     setCurrency(value)
     onSelect(address)
   }
+
+  useEffect(() => {
+    if(assets){
+      setSelections(assets)
+    }
+  }, [assets])
 
   return(
     <InputAdornment style={{ paddingRight: 5 }} position="end">

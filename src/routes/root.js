@@ -56,12 +56,12 @@ export default function Root(){
     <div id="canvas">
       <nav style={{ position: 'absolute '}}>
         <ul style={{ display: 'inline-block', listStyleType: 'none', margin: 0, padding: 25, fontSize: '1.25em' }}>
-          <Link onClick={stopRender}>
-            <li style={{ float: 'left', marginRight: 25}}> ABOUT </li>
-          </Link >
           <Link onClick={stopRender} to='/markets'>
             <li style={{ float: 'left',  marginRight: 25 }}> MARKETS </li>
           </Link>
+          <Link onClick={stopRender}>
+            <li style={{ float: 'left', marginRight: 25}}> DOCS </li>
+          </Link >
           <Link onClick={stopRender} to='/stake'>
             <li style={{ float: 'left' }}> STAKE </li>
           </Link>
