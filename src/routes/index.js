@@ -96,8 +96,8 @@ export default function Index(){
     let newStyle = clearSelections()
 
     if(option == 'burn') {
-      setComponent(<Burn metadata={metadata} market={name} / >)
-      newStyle.burn = selected
+      setComponent(<Burn metadata={metadata} market={name} />);
+      newStyle.burn = selected;
     } else if(option == 'mint'){
       setComponent(<Mint metadata={metadata} market={name}/>)
       newStyle.mint = selected
@@ -166,7 +166,7 @@ export default function Index(){
   }, [ name ])
 
   useEffect(() => {
-    if(path == name){
+    if(path === name){
       setPath(name)
     }
   }, [ location.pathname ])
@@ -204,7 +204,7 @@ export default function Index(){
                 <h4 className={classes.price}> {metadata.price} <span className={classes.delta}>({metadata.delta})</span></h4>
               </li>
               <li style={{ float: 'right'}}>
-                <span className={classes.alternative}>VOLUME: {metadata.marketcap}</span>
+                <span className={classes.alternative}>24H VOLUME: ${metadata.volume}</span>
               </li>
             </ul>
           )}

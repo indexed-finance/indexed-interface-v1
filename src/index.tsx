@@ -4,7 +4,7 @@ import Web3 from 'web3'
 
 import { createMuiTheme, makeStyles, ThemeProvider, styled } from '@material-ui/core/styles';
 import {  Switch, Route, BrowserRouter as Router } from 'react-router-dom'
-import { getAllHelpers } from '@indexed-finance/indexed.js';
+import { getAllHelpers, toTokenAmount, formatBalance } from '@indexed-finance/indexed.js';
 
 import IERC20 from './assets/constants/abi/IERC20.json'
 import { StateProvider } from './state'
@@ -13,7 +13,7 @@ import Loader from './components/loader'
 import Modal from './components/modal'
 import Flag from './components/flag'
 
-import { getTokenCategories, getTokenPriceHistory, getIndexPool, getETHPrice } from './api/gql'
+import { getTokenCategories, getTokenPriceHistory, getIndexPool, getETHPrice, getCategoryMetadata } from './api/gql'
 import * as serviceWorker from './utils/serviceWorker'
 import { tokenMetadata } from './assets/constants/parameters'
 import { getIPFSFile } from './api/ipfs'
@@ -96,39 +96,26 @@ function Application(){
   const [ theme, setTheme ] = useState(getTheme(dark))
   const [ mode, setMode ] = useState(dark)
 
-  const getTokenMetadata = async (id, array) => {
-    let pool = await getIndexPool(id)
-
-    for(let token in pool[0].tokens) {
-     let asset = pool[0].tokens[token]
-     let contract = new state.web3.rinkeby.eth.Contract(IERC20.abi, asset.token.id)
-     let symbol = await contract.methods.symbol().call()
+  const getTokenMetadata = async (pool) => {
+    const array = [];
+    for(let token of pool.tokens) {
+      let { name, address, symbol, priceUSD, weight, desiredWeight, decimals, balance } = token;
+     let asset = token;
 
      if(!tokenMetadata[symbol]) {
        console.log(`UNKNOWN ASSET: ${symbol}, ADDRESS: ${asset.token.id}`)
      } else {
-       let { name, address } = tokenMetadata[symbol]
-
-       contract = new state.web3.mainnet.eth.Contract(IERC20.abi, address)
-       let supply = await contract.methods.totalSupply().call()
-          .then((supply) => supply/Math.pow(10, 18))
-       let decimals = parseInt(await contract.methods.decimals().call())
-       let history = await getTokenPriceHistory(address, 90)
-
-       let [{ priceUSD }] = history
 
        array.push({
-         weight: parseInt(asset.denorm)/parseInt(pool[0].totalWeight),
-         desired: parseInt(asset.desiredDenorm)/Math.pow(10, 18),
-         balance: parseInt(asset.balance)/Math.pow(10, 18),
-         history: renameKeys(replace, history).reverse(),
-         marketcap: supply * priceUSD,
+         weight: weight.toNumber(),
+         desired: desiredWeight.toNumber(),
+         balance: toTokenAmount(balance, decimals).toNumber(),
          name: name.toUpperCase(),
-         address: asset.token.id,
+         address,
          price: priceUSD,
-         symbol: symbol,
+         symbol,
          decimals
-       })
+       });
       }
     }
     return array
@@ -149,23 +136,106 @@ function Application(){
     document.body.style.color = color
   }
 
-const onResize = () => {
-  console.log('RESIZE FIRED')
-  dispatch({
-    type: 'RESIZE',
-    payload: {
-      height: window.innerHeight,
-      width: window.innerWidth
-    }
-  })
-}
+  const onResize = () => {
+    console.log('RESIZE FIRED')
+    dispatch({
+      type: 'RESIZE',
+      payload: {
+        height: window.innerHeight,
+        width: window.innerWidth
+      }
+    })
+  }
 
   useEffect(() => {
-    const retrieveCategories = async(indexes, categories) => {
-      let tokenCategories = await getTokenCategories()
-      let ethUSD = await getETHPrice()
+    const retrieveCategories = async() => {
+      let categories = {};
+      let indexes = {};
+      // let tokenCategories = await getTokenCategories()
+      if (!state.helper) return;
+      const addCategory = async (categoryID) => {
+        if (categories[categoryID]) {
+          return;
+        } else {
+          const { name, symbol, description } = await getCategoryMetadata(+categoryID);
+          categories[categoryID] = { name, symbol, description, indexes: [] };
+        }
+      };
 
-      for(let category in tokenCategories) {
+      for (let pool of state.helper.initialized) {
+        const { category, name, symbol, address, tokens } = pool;
+        const categoryID = `0x${category.toString(16)}`;
+        await addCategory(categoryID);
+        let history = await pool.getSnapshots(90);
+        const delta24hr = history.length === 1 ? 1 : (Math.abs(history[0].value - history[1].value) / history[1].value).toFixed(4);
+        const ticker = symbol.toUpperCase();
+        let supply = pool.pool.totalSupply;
+        if (typeof supply !== 'number' && typeof supply != 'string') {
+          supply = formatBalance(supply, 18, 4);
+        }
+        let volume = +(history[0].dailySwapVolumeUSD).toFixed(2);
+        history = history.map(h => ({ close: +(h.value.toFixed(4)), date: new Date(h.date * 1000) }));
+        const price = history[0].close;
+        // history.reverse();
+        const index = {
+          marketcap: (+pool.pool.totalValueLockedUSD).toFixed(2),
+          price,
+          delta: delta24hr,
+          supply,
+          category,
+          name,
+          symbol: ticker,
+          size: pool.pool.size,
+          address,
+          history,
+          assets: tokens,
+          tokens: tokens.map(token => token.symbol).join(', '),
+          active: true,
+          poolHelper: pool,
+          volume
+        };
+        categories[categoryID].indexes.push(ticker);
+        indexes[ticker] = index;
+      }
+      for (let pool of state.helper.uninitialized) {
+        /* tokens: tokens.map(token => token.symbol).join(', '),
+            marketcap: `$${value.toLocaleString()}`,
+            price: `$${price.toLocaleString()}`,
+            delta: `${(change - 1).toFixed(4)}%`,
+            supply: supply.toLocaleString(),
+            category: tokenCategoryId,
+            name: name.toUpperCase(),
+            address: indexAddress,
+            history: history,
+            assets: tokens,
+            symbol: ticker,
+            active */
+        const { category, name, symbol, address, tokens } = pool;
+        const categoryID = `0x${category.toString(16)}`;
+        await addCategory(categoryID);
+        const ticker = symbol.toUpperCase();
+        const index = {
+          marketcap: 0,
+          price: 0,
+          delta: 0,
+          supply: 0,
+          category,
+          name,
+          size: pool.pool.size,
+          symbol: ticker,
+          address,
+          history: [],
+          assets: tokens,
+          tokens: tokens.map(token => token.symbol).join(', '),
+          active: false,
+          poolHelper: pool,
+          volume: 0
+        };
+        categories[categoryID].indexes.push(ticker);
+        indexes[ticker] = index;
+      }
+      /*
+      for (let category in tokenCategories) {
         let { id, metadataHash, indexPools } = tokenCategories[category]
         let { name, symbol } = await getIPFSFile(metadataHash)
         let tokenCategoryId = id
@@ -179,7 +249,8 @@ const onResize = () => {
           let indexAddress = id
 
           let tokens = await getTokenMetadata(id, [])
-          var value = tokens.reduce((a, b) => a + b.balance * b.price, 0)
+          // var value = tokens.reduce((a, b) => a + b.balance * b.price, 0)
+          var value = 0
           var supply = totalSupply/Math.pow(10, 18)
           let ticker = `${symbol}I${size}`
           var price = (value/supply)
@@ -218,14 +289,16 @@ const onResize = () => {
           }
         }
       }
-      await dispatch({ type: 'GENERIC',
+      */
+      await dispatch({
+        type: 'GENERIC',
         payload: {
-          request: true , categories, indexes, ...ethUSD
+          request: true , categories, indexes, /* ...ethUSD */
         }
       })
     }
-    retrieveCategories({}, {})
-  }, [ state.load ])
+    retrieveCategories()
+  }, [ state.load, state.helper, dispatch ])
 
   useEffect(() => {
     const initialise = async() => {
@@ -236,6 +309,7 @@ const onResize = () => {
 
       window.addEventListener("resize", onResize)
       let helper = state.helper ? state.helper : await getAllHelpers(web3.rinkeby)
+      console.log(`DISPATCHING ROOT`)
       dispatch({ type: 'GENERIC', payload: { changeTheme, helper } })
     }
     initialise()

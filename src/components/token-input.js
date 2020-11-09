@@ -89,7 +89,7 @@ export default function TokenInput(props) {
         <Tick>
           <Checkbox
             edge="start"
-            checked={props.token.selected[props.index]}
+            checked={props.token.selected}
             disabled={props.disabled}
             tabIndex={-1}
             disableRipple
