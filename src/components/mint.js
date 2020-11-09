@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 
-import { toWei, toHex, fromWei, toTokenAmount, toBN } from '@indexed-finance/indexed.js/dist/utils/bignumber';
+import { toWei, toHex, fromWei, toTokenAmount, BigNumber  } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 import { makeStyles, styled } from '@material-ui/core/styles'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
@@ -77,20 +77,21 @@ export default function Mint({ market, metadata }) {
   }
 
   const checkInputs = (arr) => {
-    if(!arr[0]) return
+    if(arr[0] == undefined) return
 
     for(let x = 0; x < arr.length; x++){
-      let { symbol, displayAmount, approvalRemainder } = arr[x]
+      let { symbol, amount, approvalRemainder } = arr[x]
 
-      if(!isNaN(parseFloat(approvalRemainder))){
-        let required = parseFloat(fromWei(approvalRemainder))
-        let display = parseFloat(displayAmount).toFixed(5)
+      console.log(arr[x])
 
-        required = toFixed(required, 4)
-        display = toFixed(display, 4)
+      if(approvalRemainder){
+        let requested = new BigNumber(amount);
+        let approvalRemaining = new BigNumber(approvalRemainder);
 
-        if(required < display) setInputState(symbol, 1)
-        else if(required => display) setInputState(symbol, 0)
+        if(approvalRemaining.gt(requested)){
+          if(approvalRemaining <= requested) setInputState(symbol, 1)
+          else if(requested > approvalRemaining) setInputState(symbol, 0)
+        }
       }
     }
   }
@@ -99,10 +100,12 @@ export default function Mint({ market, metadata }) {
     let { web3, helper } = state
     let { address } = metadata
 
-    if(web3.injected) checkInputs(arr)
+    console.log(arr)
 
-    if(arr.length == 1) setSingle(arr[0].address)
-    else setSingle(false)
+    // if(web3.injected) checkInputs(arr)
+
+    // if(arr.length == 1) setSingle(arr[0].address)
+    setSingle(false)
   }
 
   const setInputState = (name, type) => {
@@ -225,8 +228,8 @@ export default function Mint({ market, metadata }) {
     const calcOutputs = async() => {
       let { helper } = state
       let { address } = metadata
-      let pool = helper.initialized.find(i => i.pool.address == address)
       let input = toTokenAmount(parseFloat(amount), 18)
+      let pool = helper.initialized.find(i => i.pool.address == address)
       let newRates = []
 
       if(!single) {
@@ -241,11 +244,12 @@ export default function Mint({ market, metadata }) {
             newRates.push(rate)
           } else {
             newRates.push(rates[x])
-            newRates[x].displayAmount = null
+            newRates[x].displayAmount = '0.00'
             newRates[x].amount = '0x0'
           }
         }
       }
+
       setRates(newRates)
     }
     calcOutputs()

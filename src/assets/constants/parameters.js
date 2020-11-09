@@ -219,6 +219,7 @@ export const TX_CONFIRM = { show: true, message: 'TRANSACTION CONFIRMED', opcode
 export const TX_REVERT = { show: true, message: 'TRANSACTION REVERTED', opcode: 'error' }
 export const TX_REJECT = { show: true, message:'TRANSACTION REJECTED', opcode: 'warning' }
 export const WEB3_PROVIDER = { show: true, message: 'NO WEB3 PROVIDER DETECTED', opcode: 'info' }
-export const UNCLAIMED_CREDITS = { show: true, message: <span>YOU HAVE UNCLAIMED CREDITS FOR THIS POOL, REDEEM THEM <a target='_blank' href='https://google.com'>HERE</a></span>, opcode: 'warning' }
 
 export const MARKET_ORDER = (input, output, f) => ({ show: true, title: 'CONFIRM ORDER', message: `You are about to swap ${input.amount} ${input.market} for ${output.amount} ${output.market}.`, actions: [{ label: 'CONFIRM', f: f }, { label: 'REJECT', f: null }] })
+export const UNCLAIMED_CREDITS = (input, output, f) => ({ show: true, title: 'UNCLAIMED CREDITS', message: `You have unclaimed compensation for this pool, would you like to redeem your share?`, actions: [{ label: 'CONFIRM', f: f }, { label: 'REJECT', f: null }] })
+export const INCORRECT_NETWORK = { show: true, title: 'INCORRECT NETWORK', message: 'The current network is not supported please change to Rinkeby testnet.', actions: [ ] }

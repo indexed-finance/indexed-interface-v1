@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
 
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table'
@@ -42,7 +42,7 @@ const Loader = ({ theme }) => (
 )
 
 const columns = [
-  { id: 'name', label: 'CATEGORY', minWidth: 225 },
+  { id: 'name', label: 'NAME', minWidth: 225 },
   {
     id: 'symbol',
     label: 'SYMBOL',
@@ -89,7 +89,7 @@ export default function StickyHeadTable(props) {
 
   return (
     <Fragment className={classes.root}>
-      <TableContainer style={{ overflowX, height }}>
+    <TableContainer style={{ overflowX, height }} >
         <Table stickyHeader className={classes.table}>
           <TableHead>
             <TableRow>
@@ -107,18 +107,16 @@ export default function StickyHeadTable(props) {
           <TableBody>
             {request && Object.values(indexes).map((row, index) => {
               let backgroundColor = row.active ? 'inherit' : 'rgba(255, 165, 0, 0.6)'
-
               return (
-                <Row selected={market == row.symbol} style={{ backgroundColor }} onClick={() => triggerMarket(row.symbol)} hover tabIndex={-1} key={row.code}>
+                <Row selected={market === row.symbol} style={{ backgroundColor }} onClick={() => triggerMarket(row.symbol)} hover tabIndex={-1} key={row.code}>
                   {columns.map((column) => {
                     const value = row[column.id];
-
-                    if(!row.active && (column.id != 'name' && column.id != 'symbol')) {
-                      return <TableCell key={column.id} align={column.align} />
+                    if(!row.active && (column.id !== 'name' && column.id !== 'symbol')) {
+                      return <TableCell key={column.id + row.symbol} align={column.align} />
                     } else {
                       return (
-                      <TableCell key={column.id} align={column.align}>
-                        {column.format && typeof value === 'number' ? column.format(value) : value}
+                      <TableCell key={column.id + row.symbol} align={column.align}>
+                        {(column.format && typeof value === 'number') ? column.format(value) : value}
                       </TableCell>
                       )
                     }

@@ -227,11 +227,17 @@ export default function InteractiveList({ market, metadata }) {
       <div className={classes.single}>
         <OutputInput label="RECIEVE" variant='outlined'
           value={data.amount}
-          helperText={<o className={classes.helper} onClick={handleBalance}>
-            BALANCE: {balances.output}
-          </o>}
+          helperText={
+            <o className={classes.helper} onClick={handleBalance}>
+              BALANCE: {balances.output}
+            </o>
+          }
           InputProps={{
-            endAdornment: <Adornment market={data.symbol}/>,
+            endAdornment:
+              <Adornment onSelect={() => {}}
+                assets={metadata.assets}
+                market={data.symbol}
+              />,
             inputComponent: NumberFormat
           }}
         />
@@ -304,8 +310,6 @@ export default function InteractiveList({ market, metadata }) {
       setOutput({ ...output, symbol, address })
     }
   }, [ metadata ])
-
-  let width = !state.native ? '400px' : '100vw'
 
   return (
     <Grid container direction='column' alignItems='center' justify='space-around'>

@@ -38,6 +38,8 @@ export async function getPair(web3, addressOne, addressTwo){
     addressTwo
   ).call()
 
+  console.log(pairAddress, addressOne, addressTwo)
+
   return toContract(web3, UniV2PairABI.abi, pairAddress)
 }
 

@@ -19,6 +19,7 @@ import jazzicon from '@metamask/jazzicon'
 import { getAllHelpers } from '@indexed-finance/indexed.js';
 
 import { toChecksumAddress } from '../assets/constants/functions'
+import { WEB3_PROVIDER, INCORRECT_NETWORK } from '../assets/constants/parameters'
 import ndxLight from '../assets/images/indexed-light.png'
 import ndxDark from '../assets/images/indexed-dark.png'
 import style from '../assets/css/components/navigation'
@@ -50,34 +51,30 @@ export default function Navigation({ mode }) {
   }
 
   const connectWeb3 = async() => {
-    const web3 = await getWeb3()
+    try {
+      const web3 = await getWeb3()
 
-    let accounts = await web3.eth.getAccounts()
-    let network = await web3.eth.net.getId()
-    let account = toChecksumAddress(accounts[0])
-    let helper = await getAllHelpers(web3, account)
+      let accounts = await web3.eth.getAccounts()
+      let network = await web3.eth.net.getId()
+      let account = toChecksumAddress(accounts[0])
+      let helper = await getAllHelpers(web3, account)
 
-    if(network != 4){
-      dispatch({
-        type: 'MODAL',
-        payload: {
-          show: true,
-          title: 'INCORRECT NETWORK',
-          message: 'The current network is not supported please change to Rinkeby testnet.',
-          actions: [ ]
-        }
-      })
-    } else {
-      setComponent(<Blockie address={account} />)
-      setAnchorEl(null)
-      setLogin(true)
+      if(network != 4){
+        dispatch({ type: 'MODAL', payload: INCORRECT_NETWORK })
+      } else {
+        setComponent(<Blockie address={account} />)
+        setAnchorEl(null)
+        setLogin(true)
 
-      dispatch({
-        type: 'WEB3',
-        payload: {
-          web3, account, network, helper
-        }
-      })
+        dispatch({
+          type: 'WEB3',
+          payload: {
+            web3, account, network, helper
+          }
+        })
+      }
+    } catch (e) {
+      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
     }
   }
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { formatBalance, toTokenAmount, toWei, BigNumber, toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
+import { formatBalance, toBN, toTokenAmount, toWei, BigNumber, toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 import { store } from '../../state'
 import { getERC20 } from '../../lib/erc20';
 
@@ -134,6 +134,7 @@ export function useTokenAmounts(tokens, targetAddress) {
     let newAllowances = [];
     let newSelected = [];
     // initialSelected || false
+
     for (let i = 0; i < tokens.length; i++) {
       let token = tokens[i];
       const {
@@ -248,6 +249,7 @@ export function useTokenAmounts(tokens, targetAddress) {
         newAmounts[i] = BN_ZERO;
       }
     }
+    console.log(selectedTokens, newAmounts)
     setSelections(selectedTokens)
     setAmounts(newAmounts)
   }, [ selected ])

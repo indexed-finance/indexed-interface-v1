@@ -7,6 +7,7 @@ import { usePalette } from 'react-palette'
 import { tokenMetadata } from '../assets/constants/parameters'
 import style from '../assets/css/components/weights'
 import getStyles from '../assets/css'
+import { formatBalance } from '@indexed-finance/indexed.js'
 
 const useStyles = getStyles(style)
 
@@ -31,6 +32,8 @@ export default function Weight({ asset }) {
       backgroundColor: data.vibrant,
     },
   }))(LinearProgress)
+  let formattedBalance = +formatBalance(asset.balance, asset.decimals, 4);
+  const weight = formatBalance(asset.weight, 18, 4);
 
   return (
     <div className={classes.root}>
@@ -39,9 +42,11 @@ export default function Weight({ asset }) {
       </div>
       <div className={classes.percentage}>
         <span className={classes.title}> {asset.name} [{asset.symbol}] </span>
-        <BorderLinearProgress variant="determinate" value={asset.weight * 100} />
+        <BorderLinearProgress variant="determinate" value={weight * 100} />
         <span className={classes.alternative}>
-          {asset.balance.toLocaleString()} {asset.symbol} ≈ ${(asset.balance * asset.price).toLocaleString()}
+          {
+            (formattedBalance).toLocaleString()
+          } {asset.symbol} ≈ ${(formattedBalance * asset.priceUSD).toLocaleString()}
         </span>
       </div>
     </div>
