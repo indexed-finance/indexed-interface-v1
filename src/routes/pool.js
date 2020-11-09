@@ -11,7 +11,7 @@ import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import Container from '../components/container'
 import Spline from '../components/charts/spline'
 import Canvas from '../components/canvas'
-import Approvals from '../components/approvals'
+import Approvals from '../components/approval-form'
 import Weights from '../components/weights'
 import List from '../components/list'
 import ButtonTransaction from '../components/buttons/transaction'
@@ -60,6 +60,11 @@ export default function Pools(){
   let { state, dispatch } = useContext(store)
   let { address } = useParams()
   let { native } = state
+
+
+  const handleChange = (e) => {
+
+  }
 
   const getCredit = async(credit) => {
     let element = document.getElementById('credit')
@@ -363,7 +368,12 @@ export default function Pools(){
               <div className={classes.container} style={{ width }}>
                 {!data.active && (
                   <Fragment>
-                    <Approvals input={data != dummy} param='DESIRED' height={250} metadata={data} set={getCredit}/>
+                    <Approvals
+                      handleTokenAmountsChanged={handleChange}
+                      targetAddress={address}
+                      assets={data.assets}
+                      height={250}
+                    />
                     <div className={classes.reciept}>
                       <p> ENTITLED TO: <span id='credit'/></p>
                       <p> PLEDGE: <span id='eth-eqiv'/></p>

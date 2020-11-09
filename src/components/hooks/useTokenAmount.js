@@ -134,6 +134,9 @@ export function useTokenAmounts(tokens, targetAddress) {
     let newAllowances = [];
     let newSelected = [];
     // initialSelected || false
+
+    console.log(tokens)
+
     for (let i = 0; i < tokens.length; i++) {
       let token = tokens[i];
       const {
