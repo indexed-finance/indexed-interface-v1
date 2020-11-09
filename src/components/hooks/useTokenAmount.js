@@ -205,7 +205,7 @@ export function useTokenAmounts(tokens, targetAddress) {
         address,
         symbol,
         displayAmount,
-        selected,
+        selected: selected[i],
         balance,
         amount,
         allowance,
@@ -220,6 +220,7 @@ export function useTokenAmounts(tokens, targetAddress) {
 
         bind: {
           value: displayAmount,
+          disabled: !selected[i],
           onChange: (event) => {
             event.preventDefault();
             setInput(i, decimals, event.target.value);
