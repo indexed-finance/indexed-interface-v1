@@ -74,8 +74,6 @@ export default function TokenInput(props) {
     event.preventDefault();
     console.log(`Should approve tokens :D`);
 
-    console.log(token)
-
     token.approveRemaining(web3.injected, account);
   }
 
@@ -107,7 +105,7 @@ export default function TokenInput(props) {
           type='number'
           helperText={
             <o className={classes.helper} onClick={() => setAmountToBalance()}>
-              BALANCE: {token.displayBalance}
+              BALANCE: {balances[token.symbol].amount}
            </o>}
           style={{ width: props.inputWidth }}
           InputLabelProps={{ shrink: true }}

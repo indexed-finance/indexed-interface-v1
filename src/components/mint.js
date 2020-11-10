@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
 
-import { PoolHelper } from '@indexed-finance/indexed.js';
 import { toWei, toHex, fromWei, toTokenAmount, BigNumber  } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 import { makeStyles, styled } from '@material-ui/core/styles'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
@@ -47,6 +46,7 @@ const useStyles = getStyles(style)
 
 export default function Mint({ market, metadata }) {
   let [pool, setPool] = useState(undefined)
+  const [ balance, setBalance ] = useState(0)
 
   const [ rates, setRates ] = useState([])
   const classes = useStyles()
@@ -57,6 +57,15 @@ export default function Mint({ market, metadata }) {
   const findHelper = (i) => {
     return i.initialized.find(i => i.pool.address === metadata.address);
   }
+
+  const getBalance = async() => {
+   let { web3, account } = state
+   let { address } = metadata
+
+   let balance = await balanceOf(web3.rinkeby, address, account)
+
+   return parseFloat(balance/Math.pow(10,18)).toFixed(2)
+ }
 
   const mint = async() => {
     try {
@@ -70,7 +79,7 @@ export default function Mint({ market, metadata }) {
         amount: amounts[i], address: v.address, symbol: v.symbol
       }))
 
-      if(checkInputs(allowances, rates)){
+      if(checkInputs(allowances, rates) != undefined){
         if(isSingle) {
           await mintSingle()
         } else {
@@ -134,10 +143,13 @@ export default function Mint({ market, metadata }) {
    }).on('confirmation', async(conf, receipt) => {
      if(conf == 0) {
        if(receipt.status == 1) {
-         dispatch({ type: 'BALANCE', payload: { assets } })
+         let tokenBalance = await getBalance()
+
          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+         dispatch({ type: 'BALANCE', payload: { assets } })
+         setBalance(tokenBalance)
        } else {
-         return dispatch({ type: 'FLAG', payload: TX_REVERT })
+         dispatch({ type: 'FLAG', payload: TX_REVERT })
        }
      }
    }).catch((data) => {
@@ -156,7 +168,11 @@ export default function Mint({ market, metadata }) {
    }).on('confirmation', async(conf, receipt) => {
      if(conf == 0){
        if(receipt.status == 1) {
+         let tokenBalance = await getBalance()
+
          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+         dispatch({ type: 'BALANCE', payload: { assets } })
+         setBalance(tokenBalance)
        } else {
          dispatch({ type: 'FLAG', payload: TX_REVERT })
        }
@@ -179,6 +195,16 @@ export default function Mint({ market, metadata }) {
     updatePool()
   }, [ mintState.pool ])
 
+  useEffect(() => {
+    const pullBalance = async() => {
+      if(state.web3.injected) {
+        let balance = await getBalance()
+        setBalance(balance)
+      }
+    }
+    pullBalance()
+  }, [ state.web3.injected ])
+
 
   let width = !state.native ? '417.5px' : '100vw'
 
@@ -188,7 +214,7 @@ export default function Mint({ market, metadata }) {
       <Grid item xs={12} md={12} lg={12} xl={12}>
         <RecieveInput label="RECIEVE" variant='outlined'
           helperText={<o className={classes.helper}>
-            BALANCE: {0}
+            BALANCE: {balance}
           </o>}
           {
             ...(bindPoolAmountInput)
