@@ -213,16 +213,14 @@ export default function Governance(){
 
     const submit = async() => {
       if(input != null) {
-        if(input.length == 42){
-          await delegateAddress(input)
-        }
+        await delegateAddress(input)
       }
     }
 
     return(
       <Fragment>
         <p> Allocate your votes to another address:</p>
-        <AddressInput value={input} variant="outlined" label='ADDRESS'/>
+        <AddressInput onChange={handleInput} value={input} variant="outlined" label='ADDRESS'/>
         <ButtonPrimary onClick={submit}> DELEGATE </ButtonPrimary>
       </Fragment>
     )

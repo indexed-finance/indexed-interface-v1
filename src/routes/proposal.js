@@ -42,6 +42,7 @@ const dummy = { title: null, description: null, votes: [], for: 0, against: 0, s
 export default function Proposal(){
   let { state, dispatch } = useContext(store)
   let { id } = useParams()
+  let { native } = state
 
   const [ metadata, setMetadata ] = useState(dummy)
   const [ weight, setWeight ] = useState(null)
@@ -141,7 +142,7 @@ export default function Proposal(){
     retrieveProposal()
   }, [])
 
-  let { margin, width, progress, radius, marginTop } = style.getFormatting(state)
+  let { margin, width, progress, radius, marginTop } = style.getFormatting({ native })
 
   let forVotes = (parseFloat(metadata.for)/Math.pow(10, 18)).toLocaleString()
   let againstVotes = (parseFloat(metadata.against)/Math.pow(10, 18)).toLocaleString()
@@ -196,7 +197,7 @@ export default function Proposal(){
             </div>
           </Canvas>
         </Grid>
-        <Grid item xs={12} md={4} lg={4} xl={4} style={{ zIndex: 1 }}>
+        <Grid item xs={12} md={4} lg={4} xl={4}>
           <div className={classes.column}>
             <Canvas native={state.native}>
               <div className={classes.modal}>
@@ -213,6 +214,30 @@ export default function Proposal(){
                 <ButtonPrimary variant='outlined' style={{ marginBottom: 25 }} onClick={vote}>
                   VOTE
                 </ButtonPrimary>
+              </div>
+            </Canvas>
+            <Canvas native={state.native} style={{ position: 'relative', zIndex: -1, marginTop }}>
+              <div className={classes.log}>
+                <List dense classes={classes.table}>
+                  {metadata.votes.map((value) => {
+                     let { id, voter, option, weight } = value
+                     const color = option ? '#00e79a' : '#ff005a'
+                     const label = option ? 'FOR' : 'AGAINST'
+
+                     return (
+                       <ListItem key={value.address} button style={{ zIndex: 1}}>
+                         <ListItemAvatar>
+                           <Blockie border='3px' width={35} id={voter} address={voter} />
+                         </ListItemAvatar>
+                          <ListItemText
+                            primary={`${voter.substring(0, 6)}...${voter.substring(38, 64)}`}
+                            secondary={<b style={{ color }}>{label}</b>}
+                          />
+                          <ListItemSecondaryAction />
+                       </ListItem>
+                      )
+                    })}
+                </List>
               </div>
             </Canvas>
           </div>
@@ -242,32 +267,6 @@ export default function Proposal(){
               </div>
             </div>
           </Container>
-        </Grid>
-        <Grid item xs={12} md={4} lg={4} xl={4}>
-          <Canvas native={state.native} style={{ zIndex: -1 }}>
-            <div className={classes.log}>
-              <List dense classes={classes.table}>
-                {metadata.votes.map((value) => {
-                   let { id, voter, option, weight } = value
-                   const color = option ? '#00e79a' : '#ff005a'
-                   const label = option ? 'FOR' : 'AGAINST'
-
-                   return (
-                     <ListItem key={value.address} button href='https://google.com'>
-                       <ListItemAvatar>
-                         <Blockie border='3px' width={35} id={voter} address={voter} />
-                       </ListItemAvatar>
-                        <ListItemText
-                          primary={`${voter.substring(0, 6)}...${voter.substring(38, 64)}`}
-                          secondary={<b style={{ color }}>{label}</b>}
-                        />
-                        <ListItemSecondaryAction />
-                     </ListItem>
-                    )
-                  })}
-              </List>
-            </div>
-          </Canvas>
         </Grid>
       </Grid>
     </Grid>

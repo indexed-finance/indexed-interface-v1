@@ -167,6 +167,9 @@ function Application(){
         const categoryID = `0x${category.toString(16)}`;
         await addCategory(categoryID);
         let history = await pool.getSnapshots(90);
+
+        console.log(history)
+
         const delta24hr = history.length === 1 ? 1 : (Math.abs(history[0].value - history[1].value) / history[1].value).toFixed(4);
         const ticker = symbol.toUpperCase();
         let supply = pool.pool.totalSupply;

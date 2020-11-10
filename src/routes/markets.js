@@ -142,14 +142,14 @@ export default function Markets(){
                  <Fragment>
                   <h2> {market.name} [{market.symbol}] </h2>
                   {state.request && !market.active && (<h3 style={{ color: 'orange' }}> UNINITIALISED </h3>)}
-                  {market.active && (<h3 style={{ color: '#999999' }}> {market.price} </h3>)}
+                  {market.active && (<h3 style={{ color: '#999999' }}> ${market.price} </h3>)}
                 </Fragment>
               )}
               {native && (
                  <Fragment>
                   <h3> [{market.symbol}] </h3>
                   {request && !market.active && (<h4 style={{ color: 'orange' }}> UNINITIALISED </h4>)}
-                  {market.active && (<h4 style={{ color: '#999999' }}> {market.price} </h4>)}
+                  {market.active && (<h4 style={{ color: '#999999' }}> ${market.price} </h4>)}
                 </Fragment>
               )}
             </div>
@@ -162,7 +162,7 @@ export default function Markets(){
                     </span>
                   </li>
                   <li>SUPPLY: <span>{market.supply} {market.symbol}</span> </li>
-                  <li>TVL: <span>{market.marketcap}</span></li>
+                  <li>TVL: <span>$ {market.marketcap}</span></li>
                   <li>&nbsp;<span></span> </li>
                   <li>&nbsp;<span></span></li>
                   <Trigger onClick={exploreMarket}> EXPAND </Trigger>
