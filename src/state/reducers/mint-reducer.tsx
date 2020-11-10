@@ -18,6 +18,7 @@ export type MintState = {
   pool?: PoolHelper;
   tokens?: PoolToken[];
   poolAmountOut: BigNumber;
+  poolDisplayAmount: string;
   balances: BigNumber[];
   amounts: BigNumber[];
   allowances: BigNumber[];
@@ -34,6 +35,7 @@ const initialState: MintState = {
   pool: undefined,
   tokens: [] as PoolToken[],
   poolAmountOut: BN_ZERO,
+  poolDisplayAmount: '0',
   balances: [] as BigNumber[],
   amounts: [] as BigNumber[],
   allowances: [] as BigNumber[],
@@ -63,6 +65,7 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
   };
   const setPoolAmount = (action: SetPoolAmount) => {
     newState.poolAmountOut = action.amount;
+    newState.poolDisplayAmount = formatBalance(action.amount, 18, 4);
   };
   const setSingle = (action: SetSingleAmount) => {
     newState.amounts[action.index] = action.amount;
