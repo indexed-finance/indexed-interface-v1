@@ -27,6 +27,7 @@ import Input from './inputs/input'
 import Approvals from './approval-form'
 
 import { store } from '../state'
+import { useMintState } from '../state/mint';
 
 const OutputInput = styled(Input)({
   width: 250,
@@ -57,210 +58,28 @@ function toFixed(num, fixed) {
 }
 
 export default function Mint({ market, metadata }) {
-  const [ amount, setAmount ] = useState(null)
-  const [ balance, setBalance ] = useState(0)
+  let [pool, setPool] = useState(undefined)
+
   const [ single, setSingle ] = useState(false)
   const [ rates, setRates ] = useState([])
   const classes = useStyles()
-
-  let { state, dispatch } = useContext(store)
-
-  const handleAmount = (event) => {
-    if(event.target){
-      let { value } = event.target
-      let input = parseFloat(value)
-
-      if(!isNaN(input)) setAmount(value)
-    } else {
-      setAmount(event)
-    }
-  }
-
-  const checkInputs = (arr) => {
-    if(arr[0] == undefined) return
-
-    for(let x = 0; x < arr.length; x++){
-      let { symbol, amount, approvalRemainder } = arr[x]
-
-      console.log(arr[x])
-
-      if(approvalRemainder){
-        let requested = new BigNumber(amount);
-        let approvalRemaining = new BigNumber(approvalRemainder);
-
-        if(approvalRemaining.gt(requested)){
-          if(approvalRemaining <= requested) setInputState(symbol, 1)
-          else if(requested > approvalRemaining) setInputState(symbol, 0)
-        }
-      }
-    }
-  }
-
-  const handleRates = async(arr) => {
-    let { web3, helper } = state
-    let { address } = metadata
-
-    console.log(arr)
-
-    // if(web3.injected) checkInputs(arr)
-
-    // if(arr.length == 1) setSingle(arr[0].address)
-    setSingle(false)
-  }
-
-  const setInputState = (name, type) => {
-    let element = document.getElementsByName(name)[0]
-    let { nextSibling } = element.nextSibling
-
-    if(type == 0) nextSibling.style.borderColor = '#009966'
-    else if (type == 1) nextSibling.style.borderColor = 'red'
-    else nextSibling.style.borderColor = 'inherit'
-  }
-
-  const reorderTokens = async(contract, arr) => {
-    let tokens = await contract.methods.getCurrentTokens().call()
-    let reorg = []
-
-    for(let x = 0; x < arr.length; x++){
-      let { address, amount } = arr[x]
-      let checkSum = toChecksumAddress(address)
-      let index = tokens.indexOf(checkSum)
-
-      reorg[index] = amount
-    }
-    return reorg
-  }
+  const { useToken, mintState, bindPoolAmountInput, setHelper } = useMintState();
 
 
-  const mintTokens = async() => {
-    let { web3, account } = state
-    let { address, assets } = metadata
-    let { toWei, toHex } = web3.rinkeby.utils
+  let { state, dispatch } = useContext(store);
 
-    try {
-      let input = toHex(toWei(amount))
-      let contract = toContract(web3.injected, BPool.abi, address)
-
-      if(single) {
-        await mintSingle(contract, single, rates, input)
-      } else {
-        await mintMultiple(contract, rates, input)
-      }
-    } catch(e) {
-      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
-    }
-  }
-
-  const mintMultiple = async(contract, conversions, input) => {
-    let { web3, account, balances } = state
-    let { assets } = metadata
-    let amounts = await reorderTokens(contract, conversions)
-
-    await contract.methods.joinPool(input, amounts)
-    .send({
-      from: account
-    }).on('confirmation', async(conf, receipt) => {
-      if(conf == 0) {
-        if(receipt.status == 1) {
-          let tokenBalance = await getBalance()
-
-          dispatch({ type: 'BALANCE', payload: { assets } })
-          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-          setBalance(tokenBalance)
-        } else {
-          return dispatch({ type: 'FLAG', payload: TX_REVERT })
-        }
-      }
-    }).catch((data) => {
-      dispatch({ type: 'FLAG', payload: TX_REJECT })
-    })
-  }
-
-  const mintSingle = async(contract, tokenAddress, conversions, input) => {
-    let target = conversions.find(i => i.address == tokenAddress)
-    let { assets } = metadata
-    let { account } = state
-
-    await contract.methods.joinswapPoolAmountOut(tokenAddress, input, target.amount)
-    .send({
-      from: account
-    }).on('confirmation', async(conf, receipt) => {
-      if(conf == 0){
-        if(receipt.status == 1) {
-          let tokenBalance = await getBalance()
-
-          dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-          dispatch({ type: 'BALANCE', payload: { assets } })
-          setBalance(tokenBalance)
-        } else {
-          dispatch({ type: 'FLAG', payload: TX_REVERT })
-        }
-      }
-    }).catch((data) => {
-      dispatch({ type: 'FLAG', payload: TX_REJECT })
-    })
-  }
-
-  const getBalance = async() => {
-    let { web3, account } = state
-    let { address } = metadata
-
-    let balance = await balanceOf(web3.rinkeby, address, account)
-
-    return parseFloat(balance/Math.pow(10,18)).toFixed(2)
-  }
-
-  const handleBalance = () => {
-    setAmount(balance)
-  }
+  const mint = () => console.log('Would have minted tokens!');
 
   useEffect(() => {
-    const pullBalance = async() => {
-      if(state.web3.injected) {
-        let balance = await getBalance()
-        setBalance(balance)
+    const updatePool = async() => {
+      if (!mintState.pool) {
+        let poolHelper = state.helper.initialized.find(i => i.pool.address === metadata.address);
+        setPool(poolHelper);
+        setHelper(poolHelper);
       }
     }
-    pullBalance()
+    updatePool()
   }, [ state.web3.injected ])
-
-  useEffect(() => {
-    const calcOutputs = async() => {
-      let { helper } = state
-      let { address } = metadata
-      let input = toTokenAmount(parseFloat(amount), 18)
-      let pool = helper.initialized.find(i => i.pool.address == address)
-      let newRates = []
-
-      if(!single) {
-        newRates = await pool.calcAllInGivenPoolOut(input)
-      } else {
-        let rate = await pool.calcSingleInGivenPoolOut(single, input)
-
-        for(let x = 0;  x < rates.length; x++) {
-          let { address } = rates[x]
-
-          if(address == single) {
-            newRates.push(rate)
-          } else {
-            newRates.push(rates[x])
-            newRates[x].displayAmount = '0.00'
-            newRates[x].amount = '0x0'
-          }
-        }
-      }
-
-      setRates(newRates)
-    }
-    calcOutputs()
-  }, [ amount, single ])
-
-  useEffect(() => {
-    if(metadata.assets.length > 1
-      && rates.length > 0){
-      setRates(metadata.assets)
-    }
-  }, [ metadata ])
 
   let width = !state.native ? '417.5px' : '100vw'
 
@@ -269,11 +88,12 @@ export default function Mint({ market, metadata }) {
     <Grid container direction='column' alignItems='center' justify='space-around'>
       <Grid item xs={12} md={12} lg={12} xl={12}>
         <RecieveInput label="RECIEVE" variant='outlined'
-          helperText={<o className={classes.helper} onClick={handleBalance}>
-            BALANCE: {balance}
+          helperText={<o className={classes.helper}>
+            BALANCE: {0}
           </o>}
-          onChange={handleAmount}
-          value={amount}
+          {
+            ...(bindPoolAmountInput)
+          }
           InputProps={{
             endAdornment: market,
             inputComponent: NumberFormat
@@ -285,15 +105,14 @@ export default function Mint({ market, metadata }) {
           <Approvals
             width='100%'
             height='calc(40vh - 75px)'
-            targetAddress={metadata.address}
-            assets={rates}
-            handleTokenAmountsChanged={handleRates}
-            input={amount}
+            // targetAddress={metadata.address}
+            useToken={useToken}
+            tokens={mintState.tokens}
           />
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
-        <Trigger onClick={mintTokens}> MINT </Trigger>
+        <Trigger onClick={mint}> MINT </Trigger>
       </Grid>
     </Grid>
     </div>
