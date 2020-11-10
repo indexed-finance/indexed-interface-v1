@@ -88,7 +88,7 @@ export function useTokenAmounts(tokens, targetAddress) {
   const [selections, setSelections] = useState([]);
   const [ output, setOutput ] = useState([])
 
-  let { state: { account }, dispatch } = useContext(store)
+  let { state: { account, web3 }, dispatch } = useContext(store)
 
   const setExact = (i, exactAmount) => {
     let newAmounts = [...amounts ];
@@ -164,9 +164,9 @@ export function useTokenAmounts(tokens, targetAddress) {
     let outTokens = [];
     for (let i = 0; i < tokens.length; i++) {
       const { decimals, address, symbol } = tokens[i];
-      let amount = amounts[i];
-      let balance = balances[i];
-      let allowance = allowances[i];
+      let amount =  new BigNumber(amounts[i]);
+      let balance = new BigNumber(balances[i]);
+      let allowance = new BigNumber(allowances[i]);
 
       let displayAmount = formatBalance(amount, decimals, 4);
       let approvalRemainder = allowance.gte(amount) ? BN_ZERO : amount.minus(allowance);
@@ -249,7 +249,6 @@ export function useTokenAmounts(tokens, targetAddress) {
         newAmounts[i] = BN_ZERO;
       }
     }
-    console.log(selectedTokens, newAmounts)
     setSelections(selectedTokens)
     setAmounts(newAmounts)
   }, [ selected ])

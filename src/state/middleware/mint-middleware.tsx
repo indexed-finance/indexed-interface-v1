@@ -48,14 +48,14 @@ function mintDispatchMiddleware(dispatch: MintDispatch, state: MintState) {
         { type: 'SET_POOL_AMOUNT', amount: toBN(exactAmount) }
       ];
     }
-    
+
     const setTokenInput = async ({ index, amount }: SetTokenInput): Promise<void> => {
       const { address, decimals } = tokens[index];
       const exactAmount = toTokenAmount(amount, decimals);
       return dispatch(await poolOutGivenSingleIn(address, exactAmount, index));
     };
 
-    const setTokenExact = async ({ index, amount }: SetTokenExact): Promise<void> => {
+    const setTokenExact = async ({ index, amount }: SetTokenExact): Promise<void> => {      
       return dispatch(await poolOutGivenSingleIn(state.tokens[index].address, amount, index));
     }
 

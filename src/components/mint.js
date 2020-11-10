@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 
+import { PoolHelper } from '@indexed-finance/indexed.js';
 import { toWei, toHex, fromWei, toTokenAmount, BigNumber  } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 import { makeStyles, styled } from '@material-ui/core/styles'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
@@ -44,19 +45,6 @@ const Trigger = styled(ButtonPrimary)({
 
 const useStyles = getStyles(style)
 
-function generate(element) {
-  return [0, 1, 2].map((value) =>
-    React.cloneElement(element, {
-      key: value,
-    }),
-  )
-}
-
-function toFixed(num, fixed) {
-    var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?');
-    return parseFloat(num.toString().match(re)[0]);
-}
-
 export default function Mint({ market, metadata }) {
   let [pool, setPool] = useState(undefined)
 
@@ -65,21 +53,133 @@ export default function Mint({ market, metadata }) {
   const classes = useStyles()
   const { useToken, mintState, bindPoolAmountInput, setHelper } = useMintState();
 
-
   let { state, dispatch } = useContext(store);
 
-  const mint = () => console.log('Would have minted tokens!');
+  const findHelper = (i) => {
+    return i.initialized.find(i => i.pool.address === metadata.address);
+  }
+
+  const mint = async() => {
+    let { web3, account, helper } = state
+    let { address, assets } = metadata
+    let { toWei, toHex } = web3.rinkeby.utils
+
+    console.log(mintState)
+
+    try {
+      let input = toWei(0)
+      let contract = toContract(web3.injected, BPool.abi, address)
+
+      if(single) {
+        await mintSingle(contract, single, rates, input)
+      } else {
+        await mintMultiple(contract, rates, input)
+      }
+    } catch(e) {
+      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
+      console.log(e)
+    }
+  }
+
+  const checkInputs = (arr) => {
+   if(arr[0] == undefined) return
+
+   for(let x = 0; x < arr.length; x++){
+     let { symbol, amount, approvalRemainder } = arr[x]
+    }
+ }
+
+ const setInputState = (name, type) => {
+   let element = document.getElementsByName(name)[0]
+   let { nextSibling } = element.nextSibling
+
+   if(type == 0) nextSibling.style.borderColor = '#009966'
+   else if (type == 1) nextSibling.style.borderColor = 'red'
+   else nextSibling.style.borderColor = 'inherit'
+ }
+
+ const reorderTokens = async(contract, arr) => {
+   let tokens = await contract.methods.getCurrentTokens().call()
+   let reorg = []
+
+   for(let x = 0; x < arr.length; x++){
+     let { address, amount } = arr[x]
+     let checkSum = toChecksumAddress(address)
+     let index = tokens.indexOf(checkSum)
+
+     reorg[index] = amount
+   }
+   return reorg
+ }
+
+ const mintMultiple = async(contract, conversions, input) => {
+   let { web3, account, balances } = state
+   let { assets } = metadata
+   let amounts = await reorderTokens(contract, conversions)
+
+   await contract.methods.joinPool(input, amounts)
+   .send({
+     from: account
+   }).on('confirmation', async(conf, receipt) => {
+     if(conf == 0) {
+       if(receipt.status == 1) {
+         dispatch({ type: 'BALANCE', payload: { assets } })
+         dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+       } else {
+         return dispatch({ type: 'FLAG', payload: TX_REVERT })
+       }
+     }
+   }).catch((data) => {
+     dispatch({ type: 'FLAG', payload: TX_REJECT })
+   })
+ }
+
+ const mintSingle = async(contract, tokenAddress, conversions, input) => {
+   let target = conversions.find(i => i.address == tokenAddress)
+   let { assets } = metadata
+   let { account } = state
+
+   await contract.methods.joinswapPoolAmountOut(tokenAddress, input, target.amount)
+   .send({
+     from: account
+   }).on('confirmation', async(conf, receipt) => {
+     if(conf == 0){
+       if(receipt.status == 1) {
+         dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+       } else {
+         dispatch({ type: 'FLAG', payload: TX_REVERT })
+       }
+     }
+   }).catch((data) => {
+     dispatch({ type: 'FLAG', payload: TX_REJECT })
+   })
+ }
 
   useEffect(() => {
     const updatePool = async() => {
       if (!mintState.pool) {
-        let poolHelper = state.helper.initialized.find(i => i.pool.address === metadata.address);
-        setPool(poolHelper);
-        setHelper(poolHelper);
+        let { web3, account, helper } = state
+        let newHelper = findHelper(helper)
+        let provider = web3.injected
+        let userAddress = account
+
+        if(web3.injected){
+          let { pool } = newHelper
+          newHelper = new PoolHelper({
+            provider, pool, userAddress
+          })
+        }
+
+        setHelper(newHelper)
+        setPool(newHelper)
       }
     }
     updatePool()
   }, [ state.web3.injected ])
+
+  useEffect(() => {
+    console.log('pool updated')
+  }, [ mintState.pool ])
 
   let width = !state.native ? '417.5px' : '100vw'
 

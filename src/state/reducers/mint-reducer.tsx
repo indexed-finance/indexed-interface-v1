@@ -88,6 +88,7 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
 
   const setHelper = (action: SetHelper) => {
     newState.pool = action.pool;
+
     newState.tokens = [...action.pool.tokens.map(t => Object.assign({}, t))];
     let size = newState.tokens.length;
     newState.amounts = new Array(size).fill(BN_ZERO);
@@ -125,6 +126,8 @@ export function useMintTokenActions(
 
   let approvalRemainder = allowance.gte(amount) ? BN_ZERO : amount.minus(allowance);
   let approvalNeeded = approvalRemainder.gt(BN_ZERO);
+
+  // console.log(approvalNeeded, state);
 
   let toggle = () => dispatch({ type: 'TOGGLE_SELECT_TOKEN', index });
   let disableInput = !selected || !(state.isSingle);

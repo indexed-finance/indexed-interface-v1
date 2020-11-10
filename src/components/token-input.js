@@ -110,7 +110,7 @@ export default function TokenInput(props) {
           style={{ width: props.inputWidth }}
           InputLabelProps={{ shrink: true }}
           {...(token.bindApproveInput)}
-          // name={props.token.symbol}
+          name={props.token.symbol}
           // onChange={handleSetAmount}
           // value={props.displayAmount}
           InputProps={{
