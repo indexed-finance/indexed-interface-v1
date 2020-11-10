@@ -1,6 +1,7 @@
 import { BigNumber, formatBalance, PoolHelper, toBN, toTokenAmount } from "@indexed-finance/indexed.js";
 import { PoolToken } from "@indexed-finance/indexed.js/dist/types";
 import { useReducer } from "react";
+import { tokenToString } from "typescript";
 
 import {
   SetSingleAmount,
@@ -45,12 +46,20 @@ const initialState: MintState = {
 };
 
 function mintReducer(state: MintState = initialState, actions: MintDispatchAction | MintDispatchAction[]): MintState {
+  console.log('!!!Opened mint reducer :3!!!')
+  console.log('!!!Opened mint reducer :3!!!')
+  console.log('!!!Opened mint reducer :3!!!')
+  console.log('!!!Opened mint reducer :3!!!')
+  console.log('!!!Opened mint reducer :3!!!')
+  console.log('!!!Opened mint reducer :3!!!')
+  console.log('!!!Opened mint reducer :3!!!')
   if (!(Array.isArray(actions))) {
     actions = [actions];
   }
   let newState: MintState = { ...state };
+
   const toggleToken = (action: ToggleToken) => {
-    const { isSingle, selectedIndex  } = newState;
+    const { isSingle, selectedIndex } = newState;
     const { index } = action;
     if (isSingle && index === selectedIndex) {
       newState.selectedIndex = undefined;
@@ -63,16 +72,20 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
       newState.selected[index] = true;
     }
   };
+
   const setPoolAmount = (action: SetPoolAmount) => {
     newState.poolAmountOut = action.amount;
     newState.poolDisplayAmount = formatBalance(action.amount, 18, 4);
   };
+
   const setSingle = (action: SetSingleAmount) => {
     newState.amounts[action.index] = action.amount;
   }
+
   const setAll = (action: SetAllAmount) => {
     newState.amounts = action.amounts;
   }
+
   const setHelper = (action: SetHelper) => {
     newState.pool = action.pool;
     newState.tokens = [...action.pool.tokens.map(t => Object.assign({}, t))];
@@ -82,6 +95,7 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
     newState.balances = new Array(size).fill(BN_ZERO);
     newState.selected = new Array(newState.tokens.length).fill(true);
   }
+
   for (let action of actions) {
     switch (action.type) {
       case 'TOGGLE_SELECT_TOKEN': { toggleToken(action); break; }
@@ -127,18 +141,20 @@ export function useMintTokenActions(
     displayAmount,
     displayBalance,
     setAmountToBalance,
-    bindApproveButton: {
+    toggleSelect: toggle,
+    bindSelectButton: {
       disabled: disableApprove,
       checked: selected,
-      onClick: toggle
+      // onClick: toggle
     },
     bindApproveInput: {
       disabled: disableInput,
       value: displayAmount,
       name: symbol,
       onChange: (event) => {
-        event.preventDefault();
+        // event.preventDefault();
         let value = event.target.value;
+        console.log(`Got On Change Input::`, value);
         if (value === displayAmount) return;
         updateAmount(value);
       }
@@ -155,10 +171,10 @@ export type TokenActions = {
   displayAmount: string;
   displayBalance: string;
   setAmountToBalance: () => void;
-  bindApproveButton: {
+  toggleSelect: () => void;
+  bindSelectButton: {
     disabled: boolean;
     checked: boolean;
-    onClick: () => void;
   };
   bindApproveInput: {
     disabled: boolean;
@@ -176,15 +192,21 @@ export type MintContextType = {
 }
 
 export function useMint() {
-  const [mintState, mintDispatch] = useReducer(mintReducer, undefined);
+  const [mintState, mintDispatch] = useReducer(mintReducer, initialState);
   const dispatch = withMintMiddleware(mintState, mintDispatch);
   const useToken = (index: number): TokenActions => useMintTokenActions(mintState, dispatch, index);
   const setPoolAmount = (amount: string | number) => dispatch({ type: 'SET_POOL_OUTPUT', amount });
   const setHelper = (helper: PoolHelper) => dispatch({ type: 'SET_POOL_HELPER', pool: helper });
+
   return {
     useToken,
-    setPoolAmount,
     mintState,
     setHelper,
+    bindPoolAmountInput: {
+      value: mintState.poolDisplayAmount,
+      onChange: (event) => {
+        setPoolAmount(event.target.value);
+      }
+    }
   };
 }
