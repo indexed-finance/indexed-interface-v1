@@ -12,6 +12,7 @@ import {
   SetHelper, MiddlewareAction
 } from "../actions/mint-actions";
 import { withMintMiddleware } from "../middleware";
+import { getERC20 } from '../../lib/erc20';
 
 const BN_ZERO = new BigNumber(0);
 
@@ -115,10 +116,11 @@ export function useMintTokenActions(
   index: number
 ) {
   let { address, decimals, name, symbol } = state.tokens[index];
+  let { pool } = state
 
-  let allowance = state.allowances[index];
-  let balance = state.balances[index];
-  let amount = state.amounts[index];
+  let allowance = new BigNumber(state.allowances[index]);
+  let balance =  new BigNumber(state.balances[index]);
+  let amount =  new BigNumber(state.amounts[index]);
   let selected = state.selected[index];
 
   let displayAmount = amount.eq(BN_ZERO) ? '0' : formatBalance(amount, decimals, 4);
@@ -127,7 +129,16 @@ export function useMintTokenActions(
   let approvalRemainder = allowance.gte(amount) ? BN_ZERO : amount.minus(allowance);
   let approvalNeeded = approvalRemainder.gt(BN_ZERO);
 
-  // console.log(approvalNeeded, state);
+  const approveRemaining = async(web3, account) => {
+    try {
+      const erc20 = getERC20(web3, address);
+
+      if (approvalRemainder.gte(0)) {
+        await erc20.methods.approve(pool.address, approvalRemainder)
+        .send({ from: account })
+      }
+    } catch(e) { }
+  }
 
   let toggle = () => dispatch({ type: 'TOGGLE_SELECT_TOKEN', index });
   let disableInput = !selected || !(state.isSingle);
@@ -141,6 +152,7 @@ export function useMintTokenActions(
     name,
     symbol,
     approvalNeeded,
+    approveRemaining,
     displayAmount,
     displayBalance,
     setAmountToBalance,

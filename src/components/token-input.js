@@ -64,7 +64,7 @@ const useStyles = getStyles(style)
 export default function TokenInput(props) {
   const classes = useStyles();
   let token = props.useToken(props.index);
-  let { state: { web3, balances } } = useContext(store);
+  let { state: { web3, account, balances } } = useContext(store);
 
   // Set `amount` to `balance`
   const setAmountToBalance = () => token.setAmountToBalance();
@@ -74,7 +74,9 @@ export default function TokenInput(props) {
     event.preventDefault();
     console.log(`Should approve tokens :D`);
 
-    // props.token.approveRemaining(web3.injected);
+    console.log(token)
+
+    token.approveRemaining(web3.injected, account);
   }
 
   return(

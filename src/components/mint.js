@@ -48,7 +48,6 @@ const useStyles = getStyles(style)
 export default function Mint({ market, metadata }) {
   let [pool, setPool] = useState(undefined)
 
-  const [ single, setSingle ] = useState(false)
   const [ rates, setRates ] = useState([])
   const classes = useStyles()
   const { useToken, mintState, bindPoolAmountInput, setHelper } = useMintState();
@@ -60,33 +59,45 @@ export default function Mint({ market, metadata }) {
   }
 
   const mint = async() => {
-    let { web3, account, helper } = state
-    let { address, assets } = metadata
-    let { toWei, toHex } = web3.rinkeby.utils
-
-    console.log(mintState)
-
     try {
-      let input = toWei(0)
+      let { web3, account, helper } = state
+      let { address, assets } = metadata
+      let recentHelper = findHelper(helper)
       let contract = toContract(web3.injected, BPool.abi, address)
+      let { poolAmountOut, isSingle, tokens, amounts, allowances } = mintState
 
-      if(single) {
-        await mintSingle(contract, single, rates, input)
-      } else {
-        await mintMultiple(contract, rates, input)
+      let rates = tokens.map((v,i) => ({
+        amount: amounts[i], address: v.address, symbol: v.symbol
+      }))
+
+      if(checkInputs(allowances, rates)){
+        if(isSingle) {
+          await mintSingle()
+        } else {
+          await mintMultiple(contract, rates, poolAmountOut)
+        }
       }
     } catch(e) {
-      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
-      console.log(e)
-    }
-  }
+        dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
+        console.log(e)
+      }
+   }
 
-  const checkInputs = (arr) => {
-   if(arr[0] == undefined) return
+  const checkInputs = (allowances, rates) => {
+   let canTransact = true
 
-   for(let x = 0; x < arr.length; x++){
-     let { symbol, amount, approvalRemainder } = arr[x]
-    }
+   for(let x = 0; x < allowances.length; x++){
+     let { amount, symbol } = rates[x]
+     let allowance = allowances[x]
+
+     if(amount.gt(allowance)) {
+       setInputState(symbol, 1)
+       canTransact = false
+     } else {
+       setInputState(symbol, 0)
+     }
+   }
+   return canTransact
  }
 
  const setInputState = (name, type) => {
@@ -158,28 +169,16 @@ export default function Mint({ market, metadata }) {
   useEffect(() => {
     const updatePool = async() => {
       if (!mintState.pool) {
-        let { web3, account, helper } = state
+        let { helper } = state
         let newHelper = findHelper(helper)
-        let provider = web3.injected
-        let userAddress = account
-
-        if(web3.injected){
-          let { pool } = newHelper
-          newHelper = new PoolHelper({
-            provider, pool, userAddress
-          })
-        }
 
         setHelper(newHelper)
         setPool(newHelper)
       }
     }
     updatePool()
-  }, [ state.web3.injected ])
-
-  useEffect(() => {
-    console.log('pool updated')
   }, [ mintState.pool ])
+
 
   let width = !state.native ? '417.5px' : '100vw'
 
