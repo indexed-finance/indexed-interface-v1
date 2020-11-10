@@ -148,9 +148,11 @@ export function useMint() {
   const dispatch = withMintMiddleware(mintState, mintDispatch);
   const useToken = (index: number) => useMintTokenActions(mintState, dispatch, index);
   const setPoolAmount = (amount: string | number) => dispatch({ type: 'SET_POOL_OUTPUT', amount });
+  const setHelper = (helper: PoolHelper) => dispatch({ type: 'SET_POOL_HELPER', pool: helper });
   return {
     useToken,
     setPoolAmount,
     mintState,
+    setHelper,
   };
 }
