@@ -20,6 +20,7 @@ import style from '../assets/css/routes/index'
 import getStyles from '../assets/css'
 import { getBalances } from '../lib/markets'
 import { store } from '../state'
+import { MintStateProvider, useMintState } from '../state/mint'
 
 const WETH = '0x554dfe146305944e3d83ef802270b640a43eed44'
 
@@ -99,7 +100,7 @@ export default function Index(){
       setComponent(<Burn metadata={metadata} market={name} />);
       newStyle.burn = selected;
     } else if(option == 'mint'){
-      setComponent(<Mint metadata={metadata} market={name}/>)
+      setComponent(<MintStateProvider><Mint metadata={metadata} market={name}/></MintStateProvider>)
       newStyle.mint = selected
     } else {
       setComponent(<Trade metadata={metadata} market={name} />)
