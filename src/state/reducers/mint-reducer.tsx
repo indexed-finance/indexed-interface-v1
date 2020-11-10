@@ -146,10 +146,39 @@ export function useMintTokenActions(
   }
 }
 
+export type TokenActions = {
+  address: string;
+  decimals: number;
+  name: string;
+  symbol: string;
+  approvalNeeded: boolean;
+  displayAmount: string;
+  displayBalance: string;
+  setAmountToBalance: () => void;
+  bindApproveButton: {
+    disabled: boolean;
+    checked: boolean;
+    onClick: () => void;
+  };
+  bindApproveInput: {
+    disabled: boolean;
+    value: string;
+    name: string;
+    onChange: (event: Event) => void;
+  }
+};
+
+export type MintContextType = {
+  useToken: (index: number) => TokenActions;
+  setPoolAmount: (amount: string | number) => void;
+  mintState: MintState;
+  setHelper: (helper: PoolHelper) => void;
+}
+
 export function useMint() {
   const [mintState, mintDispatch] = useReducer(mintReducer, undefined);
   const dispatch = withMintMiddleware(mintState, mintDispatch);
-  const useToken = (index: number) => useMintTokenActions(mintState, dispatch, index);
+  const useToken = (index: number): TokenActions => useMintTokenActions(mintState, dispatch, index);
   const setPoolAmount = (amount: string | number) => dispatch({ type: 'SET_POOL_OUTPUT', amount });
   const setHelper = (helper: PoolHelper) => dispatch({ type: 'SET_POOL_HELPER', pool: helper });
   return {
