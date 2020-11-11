@@ -30,6 +30,18 @@ const StateProvider = ( { children } ) => {
       case 'GENERIC':
         return { ...state, ...action.payload }
       case 'WEB3':
+        if (action.payload.account && (action.payload.helper || state.helper)) {
+          let account = action.payload.account;
+          let helper = action.payload.helper || state.helper;
+          let allPools = [...helper.initialized, ...helper.uninitialized];
+          for (let pool of allPools) {
+            if (!pool.userAddress) {
+              pool.setUserAddress(account);
+            } else {
+              console.log(`pool already had account ${pool.userAddress}`)
+            }
+          }
+        }
         return {
           ...state, web3: {
             ...state.web3, injected: action.payload.web3
