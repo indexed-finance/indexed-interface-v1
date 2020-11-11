@@ -52,17 +52,6 @@ const renameKeys = (keysMap, obj) =>
 
 const replace = { priceUSD: 'close', date: 'date' }
 
-const toBN = (bn) => {
-  if (BN.isBN(bn)) return bn;
-  if (bn._hex) return new BN(bn._hex.slice(2), 'hex');
-  if (typeof bn == 'string' && bn.slice(0, 2) == '0x') {
-    return new BN(bn.slice(2), 'hex');
-  }
-  return new BN(bn);
-};
-
-const oneToken = new BN('de0b6b3a7640000', 'hex')
-
 function Main({ children }) {
   return children
 }
@@ -95,31 +84,6 @@ function Application(){
 
   const [ theme, setTheme ] = useState(getTheme(dark))
   const [ mode, setMode ] = useState(dark)
-
-  const getTokenMetadata = async (pool) => {
-    const array = [];
-    for(let token of pool.tokens) {
-      let { name, address, symbol, priceUSD, weight, desiredWeight, decimals, balance } = token;
-     let asset = token;
-
-     if(!tokenMetadata[symbol]) {
-       console.log(`UNKNOWN ASSET: ${symbol}, ADDRESS: ${asset.token.id}`)
-     } else {
-
-       array.push({
-         weight: weight.toNumber(),
-         desired: desiredWeight.toNumber(),
-         balance: toTokenAmount(balance, decimals).toNumber(),
-         name: name.toUpperCase(),
-         address,
-         price: priceUSD,
-         symbol,
-         decimals
-       });
-      }
-    }
-    return array
-  }
 
   const changeTheme = (isDark) => {
     let modeChange = isDark ? false : true
@@ -176,7 +140,6 @@ function Application(){
         let volume = +(history[0].dailySwapVolumeUSD).toFixed(2);
         history = history.map(h => ({ close: +(h.value.toFixed(4)), date: new Date(h.date * 1000) }));
         const price = history[0].close;
-        // history.reverse();
         const index = {
           marketcap: (+pool.pool.totalValueLockedUSD).toFixed(2),
           price,
@@ -198,18 +161,6 @@ function Application(){
         indexes[ticker] = index;
       }
       for (let pool of state.helper.uninitialized) {
-        /* tokens: tokens.map(token => token.symbol).join(', '),
-            marketcap: `$${value.toLocaleString()}`,
-            price: `$${price.toLocaleString()}`,
-            delta: `${(change - 1).toFixed(4)}%`,
-            supply: supply.toLocaleString(),
-            category: tokenCategoryId,
-            name: name.toUpperCase(),
-            address: indexAddress,
-            history: history,
-            assets: tokens,
-            symbol: ticker,
-            active */
         const { category, name, symbol, address, tokens } = pool;
         const categoryID = `0x${category.toString(16)}`;
         await addCategory(categoryID);
@@ -234,62 +185,6 @@ function Application(){
         categories[categoryID].indexes.push(ticker);
         indexes[ticker] = index;
       }
-      /*
-      for (let category in tokenCategories) {
-        let { id, metadataHash, indexPools } = tokenCategories[category]
-        let { name, symbol } = await getIPFSFile(metadataHash)
-        let tokenCategoryId = id
-
-        if(!categories[symbol]){
-          categories[tokenCategoryId] = { indexes: [], symbol, name }
-        }
-
-        for(let index in indexPools) {
-          let { id, totalSupply, size } = indexPools[index]
-          let indexAddress = id
-
-          let tokens = await getTokenMetadata(id, [])
-          // var value = tokens.reduce((a, b) => a + b.balance * b.price, 0)
-          var value = 0
-          var supply = totalSupply/Math.pow(10, 18)
-          let ticker = `${symbol}I${size}`
-          var price = (value/supply)
-          let active = true
-          let history = []
-          let change = 0
-
-          try {
-            tokens[0].history.map((meta, index) =>
-              history.push({
-                close: ((meta.close * tokens[0].balance) +
-                  tokens.slice(1).reduce((a, b, i) => a + b.balance * b.history[i].close, 0)
-                )/supply,
-                date: meta.date * 1000
-              })
-            )
-            change = price/history[history.length-2].close
-          } catch (e) {
-            active = false
-          }
-
-          categories[tokenCategoryId].indexes.push(ticker)
-          indexes[ticker] = {
-            tokens: tokens.map(token => token.symbol).join(', '),
-            marketcap: `$${value.toLocaleString()}`,
-            price: `$${price.toLocaleString()}`,
-            delta: `${(change - 1).toFixed(4)}%`,
-            supply: supply.toLocaleString(),
-            category: tokenCategoryId,
-            name: name.toUpperCase(),
-            address: indexAddress,
-            history: history,
-            assets: tokens,
-            symbol: ticker,
-            active
-          }
-        }
-      }
-      */
       await dispatch({
         type: 'GENERIC',
         payload: {
@@ -306,14 +201,13 @@ function Application(){
 
       setBackground(background, color)
       onResize()
-
       window.addEventListener("resize", onResize)
-      let helper = state.helper ? state.helper : await getAllHelpers(web3.rinkeby)
-      console.log(`DISPATCHING ROOT`)
+      let account = state.account;
+      let helper = state.helper ? state.helper : await getAllHelpers(web3.rinkeby, account);
       dispatch({ type: 'GENERIC', payload: { changeTheme, helper } })
     }
     initialise()
-  }, [ ])
+  }, [])
 
     return(
     <ThemeProvider theme={theme}>
