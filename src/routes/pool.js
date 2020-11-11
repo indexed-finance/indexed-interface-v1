@@ -11,7 +11,7 @@ import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import Container from '../components/container'
 import Spline from '../components/charts/spline'
 import Canvas from '../components/canvas'
-import Approvals from '../components/approval-form'
+import Approvals from '../components/index/mint-form'
 import Weights from '../components/weights'
 import List from '../components/list'
 import ButtonTransaction from '../components/buttons/transaction'
@@ -35,6 +35,8 @@ import getStyles from '../assets/css'
 
 import { store } from '../state'
 import { useMintState, MintStateProvider } from '../state/mint';
+import InitializerForm from '../components/pool/initializer-form'
+import { InitializerStateProvider } from '../state/initializer'
 
 const dummy = {
     address: '0x0000000000000000000000000000000000000000',
@@ -65,48 +67,10 @@ function Pool(){
   let { address } = useParams()
   let { native } = state
 
-  const handleChange = (e) => {}
-
   const findHelper = (i) => {
     let res = i.uninitialized.find(i => i.pool.initializer.address === address);
 
     return !res ? i.initialized.find(i => i.pool.address === address) : res
-  }
-
-  const getCredit = async(credit) => {
-    let element = document.getElementById('credit')
-    let alternative = document.getElementById('eth-eqiv')
-    let { toBN, toHex } = state.web3.rinkeby.utils
-    let ethValue = 0
-
-    ethValue = parseFloat(credit.displayCredit) * state.price
-
-    alternative.innerHTML = '$' + ethValue.toLocaleString({ minimumFractionDigits: 2 })
-    element.innerHTML = credit.displayCredit + " ETH"
-  }
-
-  const claimCredits = async() => {
-    let { web3, account } = state
-    let { address } = instance.options
-
-    try {
-      let source = toContract(web3.injected, PoolInitializer.abi, address)
-
-      await source.methods.claimTokens().send({ from: account })
-      .on('confirmaton', (conf, receipt) => {
-        if(conf == 0){
-          if(receipt.status == 1) {
-            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-          } else {
-            dispatch({ type: 'FLAG', payload: TX_REVERT })
-          }
-        }
-      }).catch((data) => {
-        dispatch({ type: 'FLAG', payload: TX_REJECT })
-      })
-    } catch (e) {
-      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
-    }
   }
 
   const getCreditQuoteSingle = async(asset) => {
@@ -376,23 +340,10 @@ function Pool(){
               )}
               <div className={classes.container} style={{ width }}>
                 {!data.active && (
-                  <Fragment>
-                    <Approvals
-                      width='100%'
-                      useToken={useToken}
-                      tokens={mintState.tokens}
-                      height={250}
-                    />
-                    <div className={classes.reciept}>
-                      <p> ENTITLED TO: <span id='credit'/></p>
-                      <p> PLEDGE: <span id='eth-eqiv'/></p>
-                    </div>
-                    <div className={classes.submit}>
-                      <ButtonPrimary variant='outlined' onClick={pledgeTokens} style={{ marginRight: 0 }}>
-                        PLEDGE
-                      </ButtonPrimary>
-                    </div>
-                  </Fragment>
+                  <InitializerStateProvider>
+                    <InitializerForm metadata={{ address }} classes={classes} />
+                  </InitializerStateProvider>
+                 
                 )}
                 {data.active && (
                   <div className={classes.assets}>
