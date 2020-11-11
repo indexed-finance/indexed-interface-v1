@@ -63,7 +63,7 @@ export default function BurnTab({ market, metadata }) {
     <div>
     <Grid container direction='column' alignItems='center' justify='space-around'>
       <Grid item xs={12} md={12} lg={12} xl={12}>
-        <RecieveInput label="RECIEVE" variant='outlined'
+        <RecieveInput label="DESTROY" variant='outlined'
           helperText={<span onClick={setAmountToBalance}> BALANCE: {displayBalance} </span>}
           {
             ...(bindPoolAmountInput)
@@ -75,7 +75,7 @@ export default function BurnTab({ market, metadata }) {
         />
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} style={{ width: '100%'}}>
-        <div>
+        <div style={{ borderTop: '2px solid #666666', borderBottom: '2px solid #666666'}}>
         <BurnForm
             width='100%'
             height='calc(40vh - 75px)'

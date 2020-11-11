@@ -9,6 +9,11 @@ import TokenInputs from '../inputs/token-inputs';
 import ButtonPrimary from '../buttons/primary'
 import { useInitializerState } from '../../state/initializer';
 import { toContract } from '../../lib/util/contracts';
+import PoolInitializer from '../../assets/constants/abi/PoolInitializer.json'
+
+import {
+  TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER, UNCLAIMED_CREDITS
+} from '../../assets/constants/parameters'
 
 // const useStyles = getStyles(style)
 
@@ -17,7 +22,12 @@ export default function InitializerForm({ metadata, classes }) {
   // const classes = useStyles()
 
   const { useToken, initState, setHelper, updatePool, displayTotalCredit } = useInitializerState();
-  let { state, handleTransaction } = useContext(store);
+  let { state, dispatch, account, handleTransaction } = useContext(store);
+
+  const findHelper = (i) => {
+    let { address } = metadata
+    return i.uninitialized.find(i => i.pool.initializer.address === address);
+  }
 
   async function contributeTokens() {
     const abi = require('../../assets/constants/abi/PoolInitializer.json').abi;
@@ -46,11 +56,9 @@ export default function InitializerForm({ metadata, classes }) {
 
   useEffect(() => {
     const setPool = async() => {
-      console.log(`LOOKING FOR:: ${metadata.address}`)
-      console.log(state.helper.uninitialized[0].address);
-      let poolHelper = state.helper.uninitialized.find(i => i.address === metadata.address);
-      console.log(poolHelper);
-      setHelper(poolHelper);
+      let poolHelper = findHelper(state.helper)
+
+      if(poolHelper) setHelper(poolHelper);
     }
     if (!initState.pool && state.helper) setPool();
   }, [ state.web3.injected, state.helper ])
@@ -59,7 +67,7 @@ export default function InitializerForm({ metadata, classes }) {
     <Fragment>
       <TokenInputs useToken={useToken} tokens={initState.tokens} width='100%' height='calc(40vh - 75px)' />
       <div className={classes.reciept}>
-        <p> Credit: <span id='credit'>Ξ{displayTotalCredit}</span></p>
+        <p> CREDIT: <span id='credit'>Ξ{displayTotalCredit}</span></p>
       </div>
       <div className={classes.submit}>
         <ButtonPrimary variant='outlined' onClick={contributeTokens} style={{ marginRight: 0 }}>
