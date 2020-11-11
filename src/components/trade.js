@@ -288,10 +288,10 @@ export default function Trade({ market, metadata }) {
 
       let rate = await setRate(amount, address, output.address)
 
-      if(state.web3.injected){
+      if(state.web3.injected && contracts.router.options) {
         let allowance = await getAllowance()
 
-        if(allowance < parseFloat(amount) && address != WETH){
+        if(allowance < parseFloat(amount) && address.toLowerCase() !== WETH.toLowerCase()){
           setExecution({
             f: () => approveTokens(amount), label: 'APPROVE'
           })
