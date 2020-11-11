@@ -1,5 +1,4 @@
 import { BigNumber, PoolHelper } from "@indexed-finance/indexed.js";
-import { MintState } from "../reducers/mint-reducer";
 
 export type SetHelper = { type: 'SET_POOL_HELPER', pool: PoolHelper };
 export type ToggleToken = { type: 'TOGGLE_SELECT_TOKEN', index: number };
