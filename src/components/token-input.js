@@ -8,8 +8,7 @@ import Avatar from '@material-ui/core/Avatar'
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import { toTokenAmount } from '@indexed-finance/indexed.js/dist/utils/bignumber';
-import { bnum } from '@indexed-finance/indexed.js/dist/bmath';
+import { toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 
 import ButtonTransaction from './buttons/transaction'
 import Input from './inputs/input';
@@ -19,6 +18,7 @@ import getStyles from '../assets/css'
 import { store } from '../state'
 
 import { tokenMetadata } from '../assets/constants/parameters';
+import { getERC20 } from '../lib/erc20';
 
 const ApproveButton = styled(ButtonTransaction)({
   fontSize: 10,
@@ -64,17 +64,17 @@ const useStyles = getStyles(style)
 export default function TokenInput(props) {
   const classes = useStyles();
   let token = props.useToken(props.index);
-  let { state: { web3, balances } } = useContext(store);
+  let { state: { account, web3 }, handleTransaction } = useContext(store);
 
   // Set `amount` to `balance`
   const setAmountToBalance = () => token.setAmountToBalance();
 
-
-  const approveTokens = async (event) => {
-    event.preventDefault();
-    console.log(`Should approve tokens :D`);
-
-    // props.token.approveRemaining(web3.injected);
+  async function approveRemaining() {
+    const erc20 = getERC20(web3.injected, token.address);
+    let fn = erc20.methods.approve(token.target, toHex(token.approvalRemainder))
+    await handleTransaction(fn.send({ from: account }))
+      .then(token.updateDidApprove)
+      .catch((() => {}));
   }
 
   return(
@@ -88,8 +88,6 @@ export default function TokenInput(props) {
           <Checkbox
             edge="start"
             {...(token.bindSelectButton)}
-            // checked={props.token.selected}
-            // disabled={props.disabled}
             tabIndex={-1}
             disableRipple
           />
@@ -110,12 +108,9 @@ export default function TokenInput(props) {
           style={{ width: props.inputWidth }}
           InputLabelProps={{ shrink: true }}
           {...(token.bindApproveInput)}
-          // name={props.token.symbol}
-          // onChange={handleSetAmount}
-          // value={props.displayAmount}
           InputProps={{
             endAdornment:
-            <ApproveButton onClick={approveTokens} disabled={!(token.approvalNeeded)}>
+            <ApproveButton onClick={approveRemaining} disabled={!(token.approvalNeeded)}>
               APPROVE
            </ApproveButton>
          }}
