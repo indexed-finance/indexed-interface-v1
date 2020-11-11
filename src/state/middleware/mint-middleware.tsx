@@ -1,8 +1,11 @@
 import { BigNumber, toBN, toTokenAmount } from "@indexed-finance/indexed.js";
+import { withMiddleware } from ".";
 import { MiddlewareAction, MintDispatch, MintDispatchAction, SetPoolOutput, SetTokenExact, SetTokenInput, ToggleToken } from "../actions/mint-actions";
 import { MintState } from "../reducers/mint-reducer";
 
-/* state => next => action => */
+type MintDispatchType = (action: MiddlewareAction | MintDispatchAction) => Promise<void>;
+
+export const withMintMiddleware = (state: MintState, dispatch: MintDispatch): MintDispatchType => withMiddleware(state, dispatch)(mintMiddleware);
 
 export const mintMiddleware = (state: MintState) => (next: MintDispatch) => mintDispatchMiddleware(next, state);
 
