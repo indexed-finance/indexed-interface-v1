@@ -1,38 +1,21 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useEffect, useContext } from 'react'
 
-import { toWei, toHex, fromWei, toTokenAmount, BigNumber  } from '@indexed-finance/indexed.js/dist/utils/bignumber';
-import { makeStyles, styled } from '@material-ui/core/styles'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
-import ListItemAvatar from '@material-ui/core/ListItemAvatar'
-import ListItemText from '@material-ui/core/ListItemText'
-import ListItem from '@material-ui/core/ListItem'
-import Avatar from '@material-ui/core/Avatar'
-import List from '@material-ui/core/List'
+import { toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
+import { styled } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 
-import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
-import { tokenMetadata } from '../assets/constants/parameters'
-import { toChecksumAddress } from '../assets/constants/functions'
-import { balanceOf, getERC20, allowance } from '../lib/erc20'
 import { toContract } from '../lib/util/contracts'
 
 import style from '../assets/css/components/mint'
 import getStyles from '../assets/css'
 
-import BPool from '../assets/constants/abi/BPool.json'
 import NumberFormat from '../utils/format'
 import ButtonPrimary from './buttons/primary'
-import Adornment from './inputs/adornment'
 import Input from './inputs/input'
 import Approvals from './approval-form'
 
 import { store } from '../state'
 import { useMintState } from '../state/mint';
-
-const OutputInput = styled(Input)({
-  width: 250,
-  marginTop: 75
-})
 
 const RecieveInput = styled(Input)({
   width: 250,
@@ -44,41 +27,42 @@ const Trigger = styled(ButtonPrimary)({
 
 const useStyles = getStyles(style)
 
-function generate(element) {
-  return [0, 1, 2].map((value) =>
-    React.cloneElement(element, {
-      key: value,
-    }),
-  )
-}
-
-function toFixed(num, fixed) {
-    var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?');
-    return parseFloat(num.toString().match(re)[0]);
-}
-
 export default function Mint({ market, metadata }) {
-  let [pool, setPool] = useState(undefined)
-
-  const [ single, setSingle ] = useState(false)
-  const [ rates, setRates ] = useState([])
   const classes = useStyles()
-  const { useToken, mintState, bindPoolAmountInput, setHelper } = useMintState();
+  const { useToken, mintState, bindPoolAmountInput, setHelper, updatePool } = useMintState();
 
+  let { state, handleTransaction } = useContext(store);
 
-  let { state, dispatch } = useContext(store);
-
-  const mint = () => console.log('Would have minted tokens!');
+  const mint = async () => {
+    const abi = require('../assets/constants/abi/BPool.json').abi;
+    const pool = toContract(state.web3.injected, abi, mintState.pool.address);
+    let fn;
+    if (mintState.isSingle) {
+      const token = mintState.tokens[mintState.selectedIndex].address;
+      const poolAmountOut = toHex(mintState.poolAmountOut);
+      const tokenAmountIn = toHex(mintState.amounts[mintState.selectedIndex]);
+      if (mintState.specifiedSide === 'input') {
+        fn = pool.methods.joinswapExternAmountIn(token, tokenAmountIn, poolAmountOut);
+      } else {
+        fn = pool.methods.joinswapPoolAmountOut(token, poolAmountOut, tokenAmountIn);
+      }
+    } else {
+      const maxAmounts = mintState.amounts.map(a => toHex(a));
+      const poolAmountOut = toHex((mintState.poolAmountOut));
+      fn = pool.methods.joinPool(poolAmountOut, maxAmounts);
+    }
+    await handleTransaction(fn.send({ from: state.account }))
+      .then(async () => {
+        await updatePool();
+      }).catch(() => {});
+  }
 
   useEffect(() => {
-    const updatePool = async() => {
-      if (!mintState.pool) {
-        let poolHelper = state.helper.initialized.find(i => i.pool.address === metadata.address);
-        setPool(poolHelper);
-        setHelper(poolHelper);
-      }
+    const setPool = async() => {
+      let poolHelper = state.helper.initialized.find(i => i.pool.address === metadata.address);
+      setHelper(poolHelper);
     }
-    updatePool()
+    if (!mintState.pool) setPool();
   }, [ state.web3.injected ])
 
   let width = !state.native ? '417.5px' : '100vw'
@@ -112,7 +96,7 @@ export default function Mint({ market, metadata }) {
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
-        <Trigger onClick={mint}> MINT </Trigger>
+        <Trigger onClick={mint} disabled={!mintState.ready}> MINT </Trigger>
       </Grid>
     </Grid>
     </div>
