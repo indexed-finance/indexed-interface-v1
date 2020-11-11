@@ -23,6 +23,7 @@ export type MintState = {
   poolDisplayAmount: string;
   balances: BigNumber[];
   amounts: BigNumber[];
+  displayAmounts: string[];
   allowances: BigNumber[];
   selected: boolean[];
   ready: boolean;
@@ -44,6 +45,7 @@ const initialState: MintState = {
   poolDisplayAmount: '0',
   balances: [] as BigNumber[],
   amounts: [] as BigNumber[],
+  displayAmounts: [] as string[],
   allowances: [] as BigNumber[],
   selected: [] as boolean[],
   isSingle: false,
@@ -72,21 +74,30 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
     }
   };
 
+  const cleanInputAmount = (amt: string) => amt.replace(/^(0{1,})(?=(0\.|\d))+/, '').replace(/^\./, '0.');
+
   const setPoolAmount = (action: SetPoolAmount) => {
     newState.poolAmountOut = action.amount;
-    newState.poolDisplayAmount = formatBalance(action.amount, 18, 4);
+    newState.poolDisplayAmount = cleanInputAmount(action.displayAmount);
   };
 
   const setSingle = (action: SetSingleAmount) => {
     newState.amounts[action.index] = action.amount;
+    newState.displayAmounts[action.index] = cleanInputAmount(action.displayAmount);
   }
 
   const setAll = (action: SetAllAmount) => {
     newState.amounts = action.amounts;
+    newState.displayAmounts = action.displayAmounts.map(a => cleanInputAmount(a));
+  }
+
+  const clearAll = () => {
+    const size = newState.tokens.length;
+    newState.amounts = new Array(size).fill(BN_ZERO);
+    newState.displayAmounts = new Array(size).fill('0');
   }
 
   const setSide = (action: SetSpecifiedSide) => {
-    console.log(`Set Side:: ${action.side}`)
     newState.specifiedSide = action.side;
   }
 
@@ -110,6 +121,7 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
     newState.tokens = [...action.pool.tokens.map(t => Object.assign({}, t))];
     newState.amounts = new Array(newState.tokens.length).fill(BN_ZERO);
     newState.selected = new Array(newState.tokens.length).fill(true);
+    newState.displayAmounts = new Array(newState.tokens.length).fill('0');
     updateUserData();
   }
 
@@ -121,6 +133,7 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
       case 'SET_ALL_AMOUNTS': { setAll(action); break; }
       case 'SET_POOL_HELPER': { setHelper(action); break; }
       case 'SET_SPECIFIED_SIDE': { setSide(action); break; }
+      case 'CLEAR_ALL_AMOUNTS': { clearAll(); break; }
     }
   }
   updateUserData();
@@ -139,12 +152,12 @@ export function useMintTokenActions(
 ): TokenActions {
   let { address, decimals, name, symbol } = state.tokens[index];
 
-  let allowance = state.pool.userAddress ? state.pool.userAllowances[address] : BN_ZERO;
-  let balance = state.pool.userAddress ? state.pool.userBalances[address] : BN_ZERO;
+  let allowance = (state.pool.userAddress && state.pool.userAllowances[address]) || BN_ZERO;
+  let balance = (state.pool.userAddress && state.pool.userBalances[address]) || BN_ZERO;
   let amount = state.amounts[index];
   let selected = state.selected[index];
 
-  let displayAmount = amount.eq(BN_ZERO) ? '0' : formatBalance(amount, decimals, 4);
+  let displayAmount = state.displayAmounts[index];
   let displayBalance = balance.eq(BN_ZERO) ? '0' : formatBalance(balance, decimals, 4);
 
   let approvalRemainder = allowance.gte(amount) ? BN_ZERO : amount.minus(allowance);
@@ -173,7 +186,6 @@ export function useMintTokenActions(
     bindSelectButton: {
       disabled: disableApprove,
       checked: selected,
-      // onClick: toggle
     },
     bindApproveInput: {
       disabled: disableInput,
@@ -182,9 +194,9 @@ export function useMintTokenActions(
       onChange: (event) => {
         event.preventDefault();
         let value = event.target.value;
-        console.log(`Got On Change Input::`, value);
-        if (value === displayAmount) return;
-        updateAmount(value);
+        if (value !== displayAmount) {
+          updateAmount(value);
+        }
       }
     }
   }
@@ -226,12 +238,10 @@ export function useMint() {
   const [mintState, mintDispatch] = useReducer(mintReducer, initialState);
   const dispatch = withMintMiddleware(mintState, mintDispatch);
   const useToken = (index: number): TokenActions => useMintTokenActions(mintState, dispatch, index);
+
   const setPoolAmount = (amount: string | number) => {
-    // This can be triggered by the `onChange` handler for either input, so make sure the value is different before updating.
     if (amount !== mintState.poolDisplayAmount) {
-      dispatch({ type: 'SET_POOL_OUTPUT', amount });
-    } else {
-      console.log(`Skipped update because amount did not change`)
+      dispatch({ type: 'SET_POOL_OUTPUT', amount: amount/*  || '0' */ });
     }
   }
   const setHelper = (helper: PoolHelper) => dispatch({ type: 'SET_POOL_HELPER', pool: helper });
@@ -245,6 +255,7 @@ export function useMint() {
     bindPoolAmountInput: {
       value: mintState.poolDisplayAmount,
       onChange: (event) => {
+        event.preventDefault();
         setPoolAmount(event.target.value);
       }
     }
