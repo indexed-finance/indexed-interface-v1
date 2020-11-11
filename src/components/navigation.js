@@ -138,7 +138,7 @@ export default function Navigation({ mode }) {
     )
   }
 
-  function LoggedIn({ trigger }) {
+  function LoggedIn() {
     const classes = useStyles()
 
     return(
