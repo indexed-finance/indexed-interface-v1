@@ -129,13 +129,15 @@ export function useInitializerToken(
   let setAmountToBalance = () => dispatch({ type: 'SET_TOKEN_EXACT', index, amount: balance });
   let updateDidApprove = () => dispatch({ type: 'UPDATE_POOL' });
 
+
+  let symbolAdornment = amount.eq(0) ? null : `Ξ${displayCredit}`;
   return {
     target: pool.address,
     address,
     decimals,
     name,
     symbol,
-    displayCredit,
+    symbolAdornment,
     approvalNeeded,
     approvalRemainder,
     displayAmount,
@@ -169,7 +171,7 @@ export type TokenActions = {
   approvalNeeded: boolean;
   displayAmount: string;
   displayBalance: string;
-  displayCredit: string;
+  symbolAdornment: string | null;
   setAmountToBalance: () => void;
   toggleSelect: () => void;
   updateDidApprove: () => void;
