@@ -4,19 +4,14 @@ import { toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 import { styled } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 
-import { toContract } from '../lib/util/contracts'
+import { toContract } from '../../lib/util/contracts'
 
-import style from '../assets/css/components/mint'
-import getStyles from '../assets/css'
+import NumberFormat from '../../utils/format'
+import ButtonPrimary from '../buttons/primary'
+import Input from '../inputs/input'
 
-import NumberFormat from '../utils/format'
-import ButtonPrimary from './buttons/primary'
-import Input from './inputs/input'
-
-import { store } from '../state'
-import { useBurnState } from '../state/burn';
-import { List } from '@material-ui/core';
-import TokenOutput from './token-output';
+import { store } from '../../state'
+import { useBurnState } from '../../state/burn';
 import BurnForm from './burn-form';
 
 const RecieveInput = styled(Input)({
@@ -27,16 +22,13 @@ const Trigger = styled(ButtonPrimary)({
   marginTop: -7.5
 })
 
-const useStyles = getStyles(style)
-
-export default function Mint({ market, metadata }) {
-  const classes = useStyles()
+export default function BurnTab({ market, metadata }) {
   const { useToken, burnState, bindPoolAmountInput, setHelper, updatePool, displayBalance, setAmountToBalance } = useBurnState();
 
   let { state, handleTransaction } = useContext(store);
 
   const burn = async () => {
-    const abi = require('../assets/constants/abi/BPool.json').abi;
+    const abi = require('../../assets/constants/abi/BPool.json').abi;
     const pool = toContract(state.web3.injected, abi, burnState.pool.address);
     let fn;
     if (burnState.isSingle) {

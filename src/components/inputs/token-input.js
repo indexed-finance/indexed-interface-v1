@@ -10,14 +10,20 @@ import Checkbox from '@material-ui/core/Checkbox';
 
 import { toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 
-import ButtonTransaction from './buttons/transaction'
-import Input from './inputs/input';
+import ButtonTransaction from '../buttons/transaction'
+import Input from './input';
 
-import style from '../assets/css/components/approvals'
-import getStyles from '../assets/css'
-import { store } from '../state'
+import style from '../../assets/css/components/approvals'
+import getStyles from '../../assets/css'
+import { store } from '../../state'
 
-import { tokenMetadata } from '../assets/constants/parameters';
+import { tokenMetadata } from '../../assets/constants/parameters';
+import { getERC20 } from '../../lib/erc20';
+
+const ApproveButton = styled(ButtonTransaction)({
+  fontSize: 10,
+  paddingRight: 5
+})
 
 const Tick = styled(ListItemIcon)({
   minWidth: 35,
@@ -55,9 +61,21 @@ const SecondaryActionAlt = styled(ListItemSecondaryAction)({
 
 const useStyles = getStyles(style)
 
-export default function TokenOutput(props) {
+export default function TokenInput(props) {
   const classes = useStyles();
   let token = props.useToken(props.index);
+  let { state: { account, web3 }, handleTransaction } = useContext(store);
+
+  // Set `amount` to `balance`
+  const setAmountToBalance = () => token.setAmountToBalance();
+
+  async function approveRemaining() {
+    const erc20 = getERC20(web3.injected, token.address);
+    let fn = erc20.methods.approve(token.target, toHex(token.approvalRemainder))
+    await handleTransaction(fn.send({ from: account }))
+      .then(token.updateDidApprove)
+      .catch((() => {}));
+  }
 
   return(
     <ListItem
@@ -83,9 +101,19 @@ export default function TokenOutput(props) {
           variant='outlined'
           label='AMOUNT'
           type='number'
+          helperText={
+            <o className={classes.helper} onClick={() => setAmountToBalance()}>
+              BALANCE: {token.displayBalance}
+           </o>}
           style={{ width: props.inputWidth }}
           InputLabelProps={{ shrink: true }}
-          {...(token.bindInput)}
+          {...(token.bindApproveInput)}
+          InputProps={{
+            endAdornment:
+            <ApproveButton onClick={approveRemaining} disabled={!(token.approvalNeeded)}>
+              APPROVE
+           </ApproveButton>
+         }}
         />
       </SecondaryActionAlt>
     </ListItem>

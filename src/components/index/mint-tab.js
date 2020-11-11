@@ -4,18 +4,18 @@ import { toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 import { styled } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 
-import { toContract } from '../lib/util/contracts'
+import { toContract } from '../../lib/util/contracts'
 
-import style from '../assets/css/components/mint'
-import getStyles from '../assets/css'
+import style from '../../assets/css/components/mint'
+import getStyles from '../../assets/css'
 
-import NumberFormat from '../utils/format'
-import ButtonPrimary from './buttons/primary'
-import Input from './inputs/input'
-import Approvals from './approval-form'
+import NumberFormat from '../../utils/format'
+import ButtonPrimary from '../buttons/primary'
+import Input from '../inputs/input'
+import TokenInputs from '../inputs/token-inputs';
 
-import { store } from '../state'
-import { useMintState } from '../state/mint';
+import { store } from '../../state'
+import { useMintState } from '../../state/mint';
 
 const RecieveInput = styled(Input)({
   width: 250,
@@ -34,7 +34,7 @@ export default function Mint({ market, metadata }) {
   let { state, handleTransaction } = useContext(store);
 
   const mint = async () => {
-    const abi = require('../assets/constants/abi/BPool.json').abi;
+    const abi = require('../../assets/constants/abi/BPool.json').abi;
     const pool = toContract(state.web3.injected, abi, mintState.pool.address);
     let fn;
     if (mintState.isSingle) {
@@ -65,9 +65,6 @@ export default function Mint({ market, metadata }) {
     if (!mintState.pool) setPool();
   }, [ state.web3.injected ])
 
-
-  let width = !state.native ? '417.5px' : '100vw'
-
   return (
     <div className={classes.root}>
     <Grid container direction='column' alignItems='center' justify='space-around'>
@@ -87,10 +84,9 @@ export default function Mint({ market, metadata }) {
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} style={{ width: '100%'}}>
         <div className={classes.demo}>
-          <Approvals
+          <TokenInputs
             width='100%'
             height='calc(40vh - 75px)'
-            // targetAddress={metadata.address}
             useToken={useToken}
             tokens={mintState.tokens}
           />
