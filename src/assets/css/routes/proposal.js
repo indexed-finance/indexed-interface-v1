@@ -1,3 +1,6 @@
+import { DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
+import { screenClass } from '../../constants/functions'
+
 const setStyle = (theme) => ({
   root: {
     width: 'auto'
@@ -137,13 +140,50 @@ const setStyle = (theme) => ({
   }
 })
 
-const getFormatting = (state) => {
+const mapping = {
+  [DESKTOP_NORMAL]: {
+    margin:'-12.5em 3em 3em 3em',
+    width: 'auto',
+    progress: 325,
+    radius: 67.5,
+    marginTop: -25
+  },
+  [DESKTOP_LARGE]: {
+    margin:'-12.5em 3em',
+    width: 'auto',
+    progress: 325,
+    radius: 67.5,
+    marginTop: -25
+  },
+  [DESKTOP_WIDE]: {
+    margin:'-12.5em 3em 3em 3em',
+    width: 'auto',
+    progress: 325,
+    radius: 67.5,
+    marginTop: -25
+  },
+  [DESKTOP_HUGE]: {
+    margin:'-12.5em 3em 3em 3em',
+    width: 'auto',
+    progress: 325,
+    radius: 67.5,
+    marginTop: -25
+  },
+  'NATIVE': {
+    margin: '1.5em 1.5em',
+    width: '65%',
+    progress: 275,
+    radius: 60,
+    marginTop: 0
+  }
+}
+
+const getFormatting = ({ native }) => {
+  let { innerWidth, innerHeight } = window
+  let dimension = native ? 'NATIVE' : screenClass(innerWidth)
+
   return {
-    margin: !state.native ? '2em 3em' : '1.5em 1.5em',
-    width: !state.native ? 'auto' : '65%',
-    progress: !state.native ? 325 : 275,
-    radius: !state.native ? 67.5 : 60,
-    marginTop: !state.native ? -75 : 0
+    ...mapping[dimension]
   }
 }
 

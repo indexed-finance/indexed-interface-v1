@@ -76,9 +76,7 @@ export default withTooltip<AreaProps, TooltipData>(
       () =>
         scaleLinear({
           range: [yMax, 0],
-          // range: [yMax*2, (max(data, getStockValue))*.9],
           domain: [(max(data, getStockValue))*.9, (max(data, getStockValue)*0.975 || 0) + (yMax/ 200)],
-          // domain: [(max(stock, getStockValue))*.75, (max(stock, getStockValue) || 0) +  yMax/ 100],
           nice: true,
         }),
       [yMax],

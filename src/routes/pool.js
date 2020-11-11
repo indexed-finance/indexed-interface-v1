@@ -32,7 +32,9 @@ import { decToWeiHex, getBalances } from '../lib/markets'
 import { getEvents, balanceOf } from '../lib/erc20'
 import { getPair } from '../lib/markets'
 import getStyles from '../assets/css'
+
 import { store } from '../state'
+import { useMintState, MintStateProvider } from '../state/mint';
 
 const dummy = {
     address: '0x0000000000000000000000000000000000000000',
@@ -50,20 +52,25 @@ const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
 
 const useStyles = getStyles(style)
 
-export default function Pools(){
+function Pool(){
+  const { useToken, mintState, bindPoolAmountInput, setHelper } = useMintState();
   const [ balances, setBalances ] = useState({ native: 0, lp: 0, credit: 0 })
   const [ instance, setInstance ] = useState({ initializer: {}, contract: null })
+  const [ pool, setPool ] = useState(undefined)
   const [ data, setData ] = useState(dummy)
   const [ events, setEvents ] = useState([])
   const classes = useStyles()
 
-  let { state, dispatch } = useContext(store)
+  let { state, dispatch } = useContext(store);
   let { address } = useParams()
   let { native } = state
 
+  const handleChange = (e) => {}
 
-  const handleChange = (e) => {
+  const findHelper = (i) => {
+    let res = i.uninitialized.find(i => i.pool.initializer.address === address);
 
+    return !res ? i.initialized.find(i => i.pool.address === address) : res
   }
 
   const getCredit = async(credit) => {
@@ -229,31 +236,17 @@ export default function Pools(){
       if(Object.keys(indexes).length > 0){
         let target = Object.entries(indexes)
         .find(x => x[1].address == address)
+        let initializer = findHelper(helper)
 
         if(!target[1].active) {
-          let pool = await getUnitializedPool(address)
-          let contract = toContract(state.web3.rinkeby, PoolInitializer.abi, pool[0].id)
-          let initializer = helper.uninitialized.find(i => i.pool.address == address)
+          let contract = toContract(state.web3.rinkeby, PoolInitializer.abi, initializer.address)
 
-          for(let token in pool[0].tokens){
-            let { id } = pool[0].tokens[token]
-            let address = id.split('-').pop()
-            let asset = toContract(web3.rinkeby, IERC20.abi, address)
-            let desired = await contract.methods.getDesiredAmount(address).call()
-            desired = (parseFloat(desired)/Math.pow(10,18)).toFixed(2)
-            let symbol = await asset.methods.symbol().call()
+          target[1].assets = initializer.pool.initializer.tokens
 
-            let { name } = tokenMetadata[symbol]
-
-            target[1].assets.push({
-              desired,
-              address,
-              symbol,
-              name
-            })
-          }
           setInstance({ initializer, contract })
         } else {
+          target[1].assets = initializer.pool.tokens
+
           let tokenEvents = await getEvents(web3.websocket, address)
           setEvents(tokenEvents)
         }
@@ -286,6 +279,20 @@ export default function Pools(){
   }, [ state.web3.injected ])
 
   useEffect(() => {
+    const updatePool = async() => {
+      let { helper } = state
+
+      if (!mintState.pool && helper) {
+        let newHelper = findHelper(helper)
+
+        setHelper(newHelper)
+        setPool(newHelper)
+      }
+    }
+    updatePool()
+  }, [ mintState.pool, data ])
+
+  useEffect(() => {
     if(state.web3.injected) getActiveCredit()
     if(!state.load){
       dispatch({
@@ -293,6 +300,8 @@ export default function Pools(){
       })
     }
   }, [ ])
+
+
 
   let {
     marginX, margin, width, padding, chartHeight, fontSize, tableWidth
@@ -352,7 +361,7 @@ export default function Pools(){
                   <a href={`https://app.uniswap.org/#/add/ETH/${address}`} style={{ float: 'left' }} target='_blank'>
                     <ButtonPrimary margin={{ marginBottom: 15, padding: '.5em 1.25em' }}  variant='outlined'> ADD LIQUIDITY </ButtonPrimary>
                   </a>
-                    <ButtonPrimary onClick={getUnderlyingAssets} margin={{ marginBottom: 15, padding: '.5em 1.25em' }}  variant='outlined'> REMOVE LIQUIDITY </ButtonPrimary>
+                    <ButtonPrimary onClick={getUnderlyingAssets} margin={{ marginBottom: 15, padding: '.5em 1.25em' }}  variant='outlined'> GET TOKENS </ButtonPrimary>
                 </div>
               </Container>
             )}
@@ -369,9 +378,9 @@ export default function Pools(){
                 {!data.active && (
                   <Fragment>
                     <Approvals
-                      handleTokenAmountsChanged={handleChange}
-                      targetAddress={address}
-                      assets={data.assets}
+                      width='100%'
+                      useToken={useToken}
+                      tokens={mintState.tokens}
                       height={250}
                     />
                     <div className={classes.reciept}>
@@ -415,5 +424,13 @@ export default function Pools(){
         </Grid>
       </Grid>
     </Fragment>
+  )
+}
+
+export default function Route(){
+  return (
+    <MintStateProvider>
+      <Pool />
+    </MintStateProvider>
   )
 }

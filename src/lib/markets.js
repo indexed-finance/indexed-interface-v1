@@ -4,9 +4,7 @@ import UniV2FactoryABI from '@uniswap/v2-periphery/build/IUniswapV2Factory.json'
 import IERC20 from '../assets/constants/abi/IERC20.json'
 import BPool from '../assets/constants/abi/BPool.json'
 
-import MarketOracle from './market-oracle'
 import { toContract } from './util/contracts'
-import Pool from './pool.js'
 import Decimal from 'decimal.js'
 import BN from 'bn.js'
 
@@ -38,8 +36,6 @@ export async function getPair(web3, addressOne, addressTwo){
     addressTwo
   ).call()
 
-  console.log(pairAddress, addressOne, addressTwo)
-
   return toContract(web3, UniV2PairABI.abi, pairAddress)
 }
 
@@ -65,39 +61,4 @@ export async function getBalances(web3, address, array, map){
 
 export async function getRouter(web3){
   return toContract(web3, UniswapV2Router.abi, ROUTER)
-}
-
-export async function getRateSingle(web3, poolAddress, tokenAddress, poolTokensToMint) {
-  if (!poolTokensToMint || poolTokensToMint == 0) {
-    return [];
-  }
-  let contract = toContract(web3, BPool.abi, poolAddress)
-  let asset = toContract(web3, IERC20.abi, tokenAddress)
-  let pool = await Pool.getPool(web3, contract)
-  let input = oneToken.muln(+poolTokensToMint)
-  let amount = await pool.calcPoolOutGivenSingleIn(tokenAddress, input)
-  let symbol = await asset.methods.symbol().call()
-  let address = tokenAddress
-
-  return [{ amount, symbol, address }]
-}
-
-export async function getRateMulti(web3, poolAddress, poolTokensToMint, opt){
-  if (!poolTokensToMint || poolTokensToMint == 0) {
-    return [];
-  }
-  let contract = toContract(web3, BPool.abi, poolAddress)
-  let pool = await Pool.getPool(web3, contract)
-  let input = oneToken.muln(+poolTokensToMint)
-  let output = await pool.calcAllOutGivenPoolIn(input, opt)
-  let rates = []
-
-  for(let token in output){
-    let { amount, address } = output[token]
-    let asset = toContract(web3, IERC20.abi, address)
-    let symbol = await asset.methods.symbol().call()
-
-    rates.push({ amount, symbol, address })
-  }
-  return rates
 }

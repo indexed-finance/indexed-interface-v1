@@ -1,8 +1,6 @@
-import { BigNumber, formatBalance, PoolHelper, toBN, toHex, toTokenAmount } from "@indexed-finance/indexed.js";
+import { BigNumber, formatBalance, PoolHelper } from "@indexed-finance/indexed.js";
 import { PoolToken } from "@indexed-finance/indexed.js/dist/types";
 import { useReducer } from "react";
-import { tokenToString } from "typescript";
-import { getERC20 } from "../../lib/erc20";
 
 import {
   SetSingleAmount,
@@ -10,7 +8,9 @@ import {
   SetPoolAmount,
   ToggleToken,
   MintDispatchAction,
-  SetHelper, MiddlewareAction, SetSpecifiedSide
+  SetHelper,
+  MiddlewareAction,
+  SetSpecifiedSide
 } from "../actions/mint-actions";
 import { withMintMiddleware } from "../middleware";
 
@@ -106,6 +106,7 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
 
   const setHelper = (action: SetHelper) => {
     newState.pool = action.pool;
+
     newState.tokens = [...action.pool.tokens.map(t => Object.assign({}, t))];
     newState.amounts = new Array(newState.tokens.length).fill(BN_ZERO);
     newState.selected = new Array(newState.tokens.length).fill(true);
@@ -179,7 +180,7 @@ export function useMintTokenActions(
       value: displayAmount,
       name: symbol,
       onChange: (event) => {
-        // event.preventDefault();
+        event.preventDefault();
         let value = event.target.value;
         console.log(`Got On Change Input::`, value);
         if (value === displayAmount) return;

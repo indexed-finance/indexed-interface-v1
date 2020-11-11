@@ -65,6 +65,7 @@ export default function Mint({ market, metadata }) {
     if (!mintState.pool) setPool();
   }, [ state.web3.injected ])
 
+
   let width = !state.native ? '417.5px' : '100vw'
 
   return (

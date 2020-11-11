@@ -2,21 +2,17 @@ import React, { useContext, useState, useEffect, Suspense, lazy } from 'react'
 import ReactDOM from 'react-dom'
 import Web3 from 'web3'
 
-import { createMuiTheme, makeStyles, ThemeProvider, styled } from '@material-ui/core/styles';
+import { createMuiTheme, ThemeProvider, styled } from '@material-ui/core/styles';
 import {  Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 import { getAllHelpers, toTokenAmount, formatBalance } from '@indexed-finance/indexed.js';
 
-import IERC20 from './assets/constants/abi/IERC20.json'
 import { StateProvider } from './state'
 import Navigation from './components/navigation'
 import Loader from './components/loader'
 import Modal from './components/modal'
 import Flag from './components/flag'
 
-import { getTokenCategories, getTokenPriceHistory, getIndexPool, getETHPrice, getCategoryMetadata } from './api/gql'
-import * as serviceWorker from './utils/serviceWorker'
-import { tokenMetadata } from './assets/constants/parameters'
-import { getIPFSFile } from './api/ipfs'
+import { getCategoryMetadata } from './api/gql'
 import { store } from './state'
 import BN from 'bn.js'
 
@@ -131,6 +127,9 @@ function Application(){
         const categoryID = `0x${category.toString(16)}`;
         await addCategory(categoryID);
         let history = await pool.getSnapshots(90);
+
+        console.log(history)
+
         const delta24hr = history.length === 1 ? 1 : (Math.abs(history[0].value - history[1].value) / history[1].value).toFixed(4);
         const ticker = symbol.toUpperCase();
         let supply = pool.pool.totalSupply;
