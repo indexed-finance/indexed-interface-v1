@@ -1,6 +1,6 @@
 import React, { createContext, useReducer } from 'react';
 
-import { initialState } from '../assets/constants/parameters'
+import { initialState, TX_CONFIRMED, TX_PENDING, TX_REJECTED, TX_REVERTED } from '../assets/constants/parameters'
 import { isNative } from '../assets/constants/functions'
 
 const store = createContext(initialState)
@@ -55,7 +55,32 @@ const StateProvider = ( { children } ) => {
     };
   }, initialState)
 
-  return <Provider value={{ state, dispatch }}>{children}</Provider>
+  function handleTransaction(txPromise) {
+    return new Promise((resolve, reject) => {
+      txPromise
+      .on('transactionHash', (transactionHash) => {
+        dispatch(TX_PENDING(transactionHash));
+      })
+      .on('confirmation', async (conf, receipt) => {
+        if(conf === 0){
+          if(receipt.status) {
+            dispatch(TX_CONFIRMED(receipt.transactionHash));
+            resolve();
+          }
+          else {
+            dispatch(TX_REVERTED(receipt.transactionHash));
+            reject();
+          }
+        }
+      })
+      .catch((err) => {
+        dispatch(TX_REJECTED);
+        reject(err);
+      });
+    });
+  }
+
+  return <Provider value={{ state, dispatch, handleTransaction }}>{children}</Provider>
 }
 
 export { store, StateProvider }
