@@ -33,7 +33,7 @@ import getStyles from '../assets/css'
 
 import { store } from '../state'
 import InitializerForm from '../components/pool/initializer-form'
-import { InitializerStateProvider } from '../state/initializer'
+import { InitializerStateProvider, useInitializerState} from '../state/initializer'
 
 const dummy = {
     address: '0x0000000000000000000000000000000000000000',
@@ -52,7 +52,8 @@ const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
 
 const useStyles = getStyles(style)
 
-export default function Pool(){
+function Pool(){
+  const { initState } = useInitializerState();
   const [ balances, setBalances ] = useState({ native: 0, lp: 0, credit: 0 })
   const [ instance, setInstance ] = useState(null)
   const [ events, setEvents ] = useState([])
@@ -122,13 +123,15 @@ export default function Pool(){
         let target = Object.entries(indexes)
         .find(x => x[1].address == address)
         let poolInitializer = findHelper(helper)
+        let { initializer } = poolInitializer.pool
         let contract = toContract(
-          web3.rinkeby, PoolInitializer.abi, poolInitializer.address
+          web3.rinkeby, PoolInitializer.abi, initializer.address
         )
 
         if(!target[1].active) {
           target[1].assets = poolInitializer.pool.initializer.tokens
           target[1].type = 'TARGETS'
+
         } else {
           let tokenEvents = await getEvents(web3.websocket, address)
           target[1].assets = poolInitializer.pool.tokens
@@ -142,7 +145,7 @@ export default function Pool(){
       }
     }
     retrievePool()
-  }, [ state.indexes, state.request ])
+  }, [ state.indexes ])
 
   useEffect(() => {
     const retrieveBalances = async() => {
@@ -242,9 +245,7 @@ export default function Pool(){
               )}
               <div className={classes.container} style={{ width }}>
                 {!data.active && (
-                  <InitializerStateProvider>
-                    <InitializerForm metadata={{ address }} classes={classes} />
-                  </InitializerStateProvider>
+                  <InitializerForm metadata={{ address }} classes={classes} />
                 )}
                 {data.active && (
                   <div className={classes.assets}>
@@ -266,19 +267,25 @@ export default function Pool(){
         <Grid item xs={12} md={7} lg={7} xl={7} style={{ width: '100%' }}>
           <ParentSize>
             {({ width, height }) => (
-              <Container margin={marginX} padding="1em 2em" title={data.type}>
+              <Container margin={marginX} padding="1em 0em" title={data.type}>
                 {data.active && (
                   <div className={classes.events}>
                     <List height={250} columns={eventColumns} data={events} />
                   </div>
                 )}
-                {!data.active && data != dummy && (
-                  <Grid container direction='row' alignItems='flex-start' justify='space-around' spacing={4}>
-                    {data.assets.map(i => (
-                      <Grid item>
-                        <Weights asset={i} />
-                      </Grid>
-                    ))}
+                {!data.active && (
+                  <Grid container direction='row' alignItems='flex-start' justify='space-evenly'>
+                    <div className={classes.targets} style={{ width }}>
+                      {initState.tokens.map((v, i) => {
+                        let { address } = v
+                        let label = 'item'
+
+                        if(i == 0) label = 'first'
+                        else if(i == data.assets.length-1) label = 'last'
+
+                       return <Target state={initState} label={label} i={i} asset={v} />
+                      })}
+                    </div>
                   </Grid>
                 )}
               </Container>
@@ -287,5 +294,34 @@ export default function Pool(){
         </Grid>
       </Grid>
     </Fragment>
+  )
+}
+
+function Target({ state, label, asset, i }){
+  const { useToken } = useInitializerState();
+
+  console.log(state)
+
+  const token = useToken(i)
+
+  console.log(token)
+
+  return(
+    <Grid item style={{ width: '100%' }} className={label}>
+      <div style={{ width: '60%'}}>
+       <Weights asset={asset} />
+      </div>
+      <div style={{ marginTop: '-2em', float: 'right', width: '40%'}}>
+       <label> Ξ 2,340 </label>
+     </div>
+   </Grid>
+  )
+}
+
+export default function Route() {
+  return(
+    <InitializerStateProvider>
+      <Pool />
+    </InitializerStateProvider>
   )
 }

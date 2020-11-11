@@ -88,6 +88,17 @@ const setStyle = (theme) => ({
       marginTop: 15,
       color: '#999999',
     }
+  },
+  targets: {
+    '& .first, .item': {
+      padding: '.75em 2em',
+      borderBottom: '2px solid #666666',
+      height: 100,
+      width: '100%'
+    },
+    '& .last': {
+      padding: '.75em 2em',
+    }
   }
 })
 

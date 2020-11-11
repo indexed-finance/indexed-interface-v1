@@ -41,21 +41,23 @@ export default function Weight({ asset }) {
 
   useEffect(() => {
     let { weight, amountRemaining, symbol, name, balance, decimals, targetBalance } = asset
-    let target = weight ? weight : targetBalance
-    let format = balance ? balance : 0
-    let displayBalance = formatBalance(format, decimals, 4)
+    let displayBalance = formatBalance(balance ? balance : 0, decimals, 4)
+    let target = weight ? weight : targetBalance;
+    let isGeneric = target == weight;
+    let float = isGeneric ? 'inherit' : null
 
-    if(target && metadata == dummy){
+    if(target && metadata == dummy && !isNaN(displayBalance)){
       let desiredWeight = formatBalance(target, 18, 4)
       let displayPercent = target == targetBalance ? displayBalance/desiredWeight : desiredWeight
-
-      console.log(displayPercent)
+      let title = isGeneric ? `≈ ${(balance * asset.priceUSD).toLocaleString()}`
+      : `/ ${desiredWeight.toLocaleString()} ${symbol}`
 
       setMetadata({
         percent: displayPercent * 100,
         weight: desiredWeight,
         balance: +displayBalance,
-        symbol, name
+        symbol, name, title,
+        float
       })
     }
   }, [ asset ])
@@ -65,13 +67,11 @@ export default function Weight({ asset }) {
       <div className={classes.wrapper}>
         <img src={image} className={classes.asset} />
       </div>
-      <div className={classes.percentage}>
+      <div className={classes.precentage} style={{ float: metadata.float }}>
         <span className={classes.title}> {metadata.name} [{metadata.symbol}] </span>
         <BorderLinearProgress variant="determinate" value={metadata.percent} />
         <span className={classes.alternative}>
-          {
-            metadata.balance
-          } {metadata.symbol} ≈ ${(metadata.balance * asset.priceUSD).toLocaleString()}
+          {metadata.balance} {metadata.symbol} {metadata.title}
         </span>
       </div>
     </div>
