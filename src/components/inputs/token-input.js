@@ -95,7 +95,8 @@ export default function TokenInput(props) {
       <ListItemAvatar className={classes.wrapper}>
         <Avatar className={classes.avatar} src={tokenMetadata[token.symbol].image} />
       </ListItemAvatar>
-      <ListItemText primary={token.symbol} secondary={props.secondary} />
+      <ListItemText style={{ width: '30px' }} primary={token.symbol} secondary={props.secondary || token.symbolAdornment} />
+      
       <SecondaryActionAlt>
         <AmountInput
           variant='outlined'
