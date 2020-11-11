@@ -129,14 +129,19 @@ export function useInitializerToken(
   let setAmountToBalance = () => dispatch({ type: 'SET_TOKEN_EXACT', index, amount: balance });
   let updateDidApprove = () => dispatch({ type: 'UPDATE_POOL' });
 
-
   let symbolAdornment = amount.eq(0) ? null : `Ξ${displayCredit}`;
+  let { balance: currentBalance, targetBalance } = state.pool.getTokenByAddress(address);
+  let percentOfDesired = currentBalance.div(targetBalance).times(100).toNumber();
+
   return {
     target: pool.address,
     address,
     decimals,
     name,
     symbol,
+    currentBalance: formatBalance(currentBalance, decimals, 4),
+    targetBalance: formatBalance(targetBalance, decimals, 4),
+    percentOfDesired,
     symbolAdornment,
     approvalNeeded,
     approvalRemainder,
@@ -164,7 +169,10 @@ export function useInitializerToken(
 export type TokenActions = {
   target: string;
   address: string;
+  currentBalance: string,
+  targetBalance: string,
   approvalRemainder: BigNumber;
+  percentOfDesired?: number;
   decimals: number;
   name: string;
   symbol: string;
