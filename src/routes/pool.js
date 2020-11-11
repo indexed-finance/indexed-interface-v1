@@ -122,13 +122,18 @@ function Pool(){
       if(Object.keys(indexes).length > 0 && !instance){
         let target = Object.entries(indexes)
         .find(x => x[1].address == address)
+        let { active } = target[1]
         let poolInitializer = findHelper(helper)
-        let { initializer } = poolInitializer.pool
+        let { pool } = poolInitializer
+        let initializerAddress = !active ? pool.initializer.address : pool.address
+
         let contract = toContract(
-          web3.rinkeby, PoolInitializer.abi, initializer.address
+          web3.rinkeby, PoolInitializer.abi, initializerAddress
         )
 
-        if(!target[1].active) {
+        console.log(active)
+
+        if(!active) {
           target[1].assets = poolInitializer.pool.initializer.tokens
           target[1].type = 'TARGETS'
 
@@ -136,6 +141,8 @@ function Pool(){
           let tokenEvents = await getEvents(web3.websocket, address)
           target[1].assets = poolInitializer.pool.tokens
           target[1].type = 'EVENTS'
+
+          console.log(poolInitializer.pool.tokens)
 
           setEvents(tokenEvents)
         }
@@ -304,12 +311,10 @@ function Target({ state, label, asset, i }){
 
   const token = useToken(i)
 
-  console.log(token)
-
   return(
     <Grid item style={{ width: '100%' }} className={label}>
       <div style={{ width: '60%'}}>
-       <Weights asset={asset} />
+       <Weights asset={token} />
       </div>
       <div style={{ marginTop: '-2em', float: 'right', width: '40%'}}>
        <label> Ξ 2,340 </label>

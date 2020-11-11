@@ -40,20 +40,24 @@ export default function Weight({ asset }) {
   }))(LinearProgress)
 
   useEffect(() => {
-    let { weight, amountRemaining, symbol, name, balance, decimals, targetBalance } = asset
-    let displayBalance = formatBalance(balance ? balance : 0, decimals, 4)
-    let target = weight ? weight : targetBalance;
-    let isGeneric = target == weight;
-    let float = isGeneric ? 'inherit' : null
+    let {
+      weight, symbol, name, balance, percentOfDesired,
+      decimals, targetBalance, currentBalance
+    } = asset
 
-    if(target && metadata == dummy && !isNaN(displayBalance)){
-      let desiredWeight = formatBalance(target, 18, 4)
-      let displayPercent = target == targetBalance ? displayBalance/desiredWeight : desiredWeight
-      let title = isGeneric ? `≈ ${(balance * asset.priceUSD).toLocaleString()}`
+    let target = weight ? weight : targetBalance;
+    let displayBalance = balance ? formatBalance(balance, 18, 4) : currentBalance
+    let isGeneric = target == weight;
+    let float = isGeneric ? 'right' : null
+
+    if(target && metadata == dummy){
+      let desiredWeight = isGeneric ? formatBalance(target, 18, 4) : target
+      let displayPercent = !isGeneric ? percentOfDesired : desiredWeight * 100
+      let title = isGeneric ? `≈ $${(displayBalance * asset.priceUSD).toLocaleString()}`
       : `/ ${desiredWeight.toLocaleString()} ${symbol}`
 
       setMetadata({
-        percent: displayPercent * 100,
+        percent: displayPercent,
         weight: desiredWeight,
         balance: +displayBalance,
         symbol, name, title,
