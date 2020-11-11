@@ -1,7 +1,8 @@
-import { BigNumber, formatBalance, PoolHelper, toBN, toTokenAmount } from "@indexed-finance/indexed.js";
+import { BigNumber, formatBalance, PoolHelper, toBN, toHex, toTokenAmount } from "@indexed-finance/indexed.js";
 import { PoolToken } from "@indexed-finance/indexed.js/dist/types";
 import { useReducer } from "react";
 import { tokenToString } from "typescript";
+import { getERC20 } from "../../lib/erc20";
 
 import {
   SetSingleAmount,
@@ -9,7 +10,7 @@ import {
   SetPoolAmount,
   ToggleToken,
   MintDispatchAction,
-  SetHelper, MiddlewareAction
+  SetHelper, MiddlewareAction, SetSpecifiedSide
 } from "../actions/mint-actions";
 import { withMintMiddleware } from "../middleware";
 
@@ -24,6 +25,8 @@ export type MintState = {
   amounts: BigNumber[];
   allowances: BigNumber[];
   selected: boolean[];
+  ready: boolean;
+  specifiedSide?: 'output' | 'input';
 } & ({
   isSingle: true;
   selectedIndex: number;
@@ -34,6 +37,8 @@ export type MintState = {
 
 const initialState: MintState = {
   pool: undefined,
+  ready: false,
+  specifiedSide: null,
   tokens: [] as PoolToken[],
   poolAmountOut: BN_ZERO,
   poolDisplayAmount: '0',
@@ -46,17 +51,11 @@ const initialState: MintState = {
 };
 
 function mintReducer(state: MintState = initialState, actions: MintDispatchAction | MintDispatchAction[]): MintState {
-  console.log('!!!Opened mint reducer :3!!!')
-  console.log('!!!Opened mint reducer :3!!!')
-  console.log('!!!Opened mint reducer :3!!!')
-  console.log('!!!Opened mint reducer :3!!!')
-  console.log('!!!Opened mint reducer :3!!!')
-  console.log('!!!Opened mint reducer :3!!!')
-  console.log('!!!Opened mint reducer :3!!!')
   if (!(Array.isArray(actions))) {
     actions = [actions];
   }
   let newState: MintState = { ...state };
+  let didUpdateUserData = false;
 
   const toggleToken = (action: ToggleToken) => {
     const { isSingle, selectedIndex } = newState;
@@ -86,14 +85,31 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
     newState.amounts = action.amounts;
   }
 
+  const setSide = (action: SetSpecifiedSide) => {
+    console.log(`Set Side:: ${action.side}`)
+    newState.specifiedSide = action.side;
+  }
+
+  const updateUserData = () => {
+    if (didUpdateUserData) return;
+    let size = newState.tokens.length;
+    let addresses = newState.pool.tokens.map(t => t.address);
+    if (newState.pool.userAddress) {
+      newState.balances = addresses.map(t => new BigNumber(newState.pool.userBalances[t] || BN_ZERO));
+      newState.allowances = addresses.map(t => new BigNumber(newState.pool.userAllowances[t] || BN_ZERO));
+    } else {
+      newState.allowances = new Array(size).fill(BN_ZERO);
+      newState.balances = new Array(size).fill(BN_ZERO);
+    }
+    didUpdateUserData = true;
+  }
+
   const setHelper = (action: SetHelper) => {
     newState.pool = action.pool;
     newState.tokens = [...action.pool.tokens.map(t => Object.assign({}, t))];
-    let size = newState.tokens.length;
-    newState.amounts = new Array(size).fill(BN_ZERO);
-    newState.allowances = new Array(size).fill(BN_ZERO);
-    newState.balances = new Array(size).fill(BN_ZERO);
+    newState.amounts = new Array(newState.tokens.length).fill(BN_ZERO);
     newState.selected = new Array(newState.tokens.length).fill(true);
+    updateUserData();
   }
 
   for (let action of actions) {
@@ -103,8 +119,15 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
       case 'SET_SINGLE_AMOUNT': { setSingle(action); break; }
       case 'SET_ALL_AMOUNTS': { setAll(action); break; }
       case 'SET_POOL_HELPER': { setHelper(action); break; }
+      case 'SET_SPECIFIED_SIDE': { setSide(action); break; }
     }
   }
+  updateUserData();
+
+  let isReady = !newState.poolAmountOut.eq(0) && newState.amounts.filter((amount, i) => {
+    return newState.allowances[i].gte(amount);
+  }).length === newState.tokens.length;
+  newState.ready = isReady;
   return newState;
 }
 
@@ -115,8 +138,8 @@ export function useMintTokenActions(
 ) {
   let { address, decimals, name, symbol } = state.tokens[index];
 
-  let allowance = state.allowances[index];
-  let balance = state.balances[index];
+  let allowance = state.pool.userAddress ? state.pool.userAllowances[address] : BN_ZERO;
+  let balance = state.pool.userAddress ? state.pool.userBalances[address] : BN_ZERO;
   let amount = state.amounts[index];
   let selected = state.selected[index];
 
@@ -131,8 +154,11 @@ export function useMintTokenActions(
   let disableApprove = !approvalNeeded || !selected || balance.lt(approvalRemainder);
   let updateAmount = (input: string | number) => dispatch({ type: 'SET_TOKEN_INPUT', index, amount: input });
   let setAmountToBalance = () => dispatch({ type: 'SET_TOKEN_EXACT', index, amount: balance });
+  let updateDidApprove = () => dispatch({ type: 'UPDATE_POOL' });
 
   return {
+    target: state.pool.address,
+    updateDidApprove,
     address,
     decimals,
     name,
@@ -140,6 +166,7 @@ export function useMintTokenActions(
     approvalNeeded,
     displayAmount,
     displayBalance,
+    approvalRemainder,
     setAmountToBalance,
     toggleSelect: toggle,
     bindSelectButton: {
@@ -195,13 +222,22 @@ export function useMint() {
   const [mintState, mintDispatch] = useReducer(mintReducer, initialState);
   const dispatch = withMintMiddleware(mintState, mintDispatch);
   const useToken = (index: number): TokenActions => useMintTokenActions(mintState, dispatch, index);
-  const setPoolAmount = (amount: string | number) => dispatch({ type: 'SET_POOL_OUTPUT', amount });
+  const setPoolAmount = (amount: string | number) => {
+    // This can be triggered by the `onChange` handler for either input, so make sure the value is different before updating.
+    if (amount !== mintState.poolDisplayAmount) {
+      dispatch({ type: 'SET_POOL_OUTPUT', amount });
+    } else {
+      console.log(`Skipped update because amount did not change`)
+    }
+  }
   const setHelper = (helper: PoolHelper) => dispatch({ type: 'SET_POOL_HELPER', pool: helper });
+  const updatePool = () => dispatch({ type: 'UPDATE_POOL' });
 
   return {
     useToken,
     mintState,
     setHelper,
+    updatePool,
     bindPoolAmountInput: {
       value: mintState.poolDisplayAmount,
       onChange: (event) => {
