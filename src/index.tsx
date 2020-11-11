@@ -1,10 +1,9 @@
 import React, { useContext, useState, useEffect, Suspense, lazy } from 'react'
 import ReactDOM from 'react-dom'
-import Web3 from 'web3'
 
-import { createMuiTheme, ThemeProvider, styled } from '@material-ui/core/styles';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import {  Switch, Route, BrowserRouter as Router } from 'react-router-dom'
-import { getAllHelpers, toTokenAmount, formatBalance } from '@indexed-finance/indexed.js';
+import { getAllHelpers, formatBalance } from '@indexed-finance/indexed.js';
 
 import { StateProvider } from './state'
 import Navigation from './components/navigation'
@@ -14,7 +13,6 @@ import Flag from './components/flag'
 
 import { getCategoryMetadata } from './api/gql'
 import { store } from './state'
-import BN from 'bn.js'
 
 import './assets/css/root.css'
 
@@ -30,23 +28,6 @@ const Supply = lazy(() => import('./routes/supply'))
 const Root = lazy(() => import('./routes/root'))
 const Error404 = lazy(() => import('./routes/404'))
 
-const isNight = () => {
-  let currentTime = (new Date()).getHours()
-  return (currentTime > 20 || currentTime < 6)
-}
-
-const renameKeys = (keysMap, obj) =>
-  obj.map(value =>
-    Object.keys(value).reduce(
-      (acc, key) => ({
-        ...acc,
-        ...{ [keysMap[key] || key]: value[key] }
-      }),
-    {}
-  )
-)
-
-const replace = { priceUSD: 'close', date: 'date' }
 
 function Main({ children }) {
   return children

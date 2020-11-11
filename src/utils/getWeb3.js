@@ -28,7 +28,20 @@ const providerOptions = {
   }
 }
 
-const getWeb3 = () => (
+export const getCachedWeb3 = async () => {
+  const web3Modal = new Web3Modal({
+    network: 'mainnet',
+    cacheProvider: true,
+    providerOptions
+  });
+  if (web3Modal.cachedProvider) {
+    const provider = await web3Modal.connect();
+    return new Web3(provider);
+  }
+  return null;
+}
+
+export const getWeb3 = () => (
   new Promise(async(resolve, reject) => {
     try {
       const web3Modal = new Web3Modal({
@@ -47,5 +60,3 @@ const getWeb3 = () => (
     }
   })
 );
-
-export default getWeb3

@@ -121,7 +121,7 @@ export default function Index(){
       const retrieveBalances = async() => {
         let { account, indexes, web3 } = state
 
-        if(web3.injected){
+        if(web3.injected && indexes && indexes[name]){
           let { assets } = indexes[name]
           let balances =  await getBalances(web3.rinkeby, account, assets, {})
 

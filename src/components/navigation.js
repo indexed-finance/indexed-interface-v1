@@ -1,14 +1,11 @@
-import React, { Fragment, useContext, useState, useEffect, useRef } from 'react'
+import React, { Fragment, useContext, useState, useEffect } from 'react'
 
 import { Link } from 'react-router-dom'
-import { makeStyles, useTheme } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
-import TextField from '@material-ui/core/TextField'
 import Grid from '@material-ui/core/Grid'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -23,7 +20,7 @@ import { WEB3_PROVIDER, INCORRECT_NETWORK } from '../assets/constants/parameters
 import ndxLight from '../assets/images/indexed-light.png'
 import ndxDark from '../assets/images/indexed-dark.png'
 import style from '../assets/css/components/navigation'
-import getWeb3 from '../utils/getWeb3'
+import { getCachedWeb3, getWeb3 } from '../utils/getWeb3'
 import getStyles from '../assets/css'
 import Search from './inputs/search'
 
@@ -37,6 +34,7 @@ export default function Navigation({ mode }) {
   const [ login, setLogin ] = useState(false)
   const [ anchorEl, setAnchorEl ] = useState(null)
   const [ logo, setLogo ] = useState(<img />)
+  const [didCheckCache, setDidCheckCache] = useState(false);
   const location = useLocation()
   const classes = useStyles()
 
@@ -50,29 +48,35 @@ export default function Navigation({ mode }) {
     setAnchorEl(null)
   }
 
+  const handleSetWeb3 = async (web3) => {
+    let accounts = await web3.eth.getAccounts();
+    let account = toChecksumAddress(accounts[0]);
+    let network = await web3.eth.net.getId();
+    let helper = await getAllHelpers(web3, account)
+    if((+network) !== 4){
+      dispatch({ type: 'MODAL', payload: INCORRECT_NETWORK })
+    } else {
+      setComponent(<Blockie address={account} />)
+      setAnchorEl(null)
+      setLogin(true)
+      dispatch({ type: 'WEB3', payload: { web3, account, network, helper } });
+    }
+  }
+
+  useEffect(() => {
+    (async () => {
+      if (didCheckCache) return;
+      const web3 = await getCachedWeb3();
+      setDidCheckCache(true);
+      if (!web3) return;
+      await handleSetWeb3(web3);
+    })();
+  })
+
   const connectWeb3 = async() => {
     try {
-      const web3 = await getWeb3()
-
-      let accounts = await web3.eth.getAccounts()
-      let network = await web3.eth.net.getId()
-      let account = toChecksumAddress(accounts[0])
-      let helper = await getAllHelpers(web3, account)
-
-      if(network != 4){
-        dispatch({ type: 'MODAL', payload: INCORRECT_NETWORK })
-      } else {
-        setComponent(<Blockie address={account} />)
-        setAnchorEl(null)
-        setLogin(true)
-
-        dispatch({
-          type: 'WEB3',
-          payload: {
-            web3, account, network, helper
-          }
-        })
-      }
+      const web3 = await getWeb3();
+      await handleSetWeb3(web3);
     } catch (e) {
       dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
     }
@@ -165,17 +169,14 @@ export default function Navigation({ mode }) {
 
   let marginLeft = !state.native ? 15: 0
 
-  useEffect(() =>{
-    let image = mode ? ndxDark : ndxLight
-
-    setLogo(
-      <img className={classes.logo} src={image} />
-    )
+  useEffect(() => {
+    let image = mode ? ndxDark : ndxLight;
+    setLogo(<img className={classes.logo} src={image} />);
   }, [])
 
   return (
     <div>
-    { location.pathname != '/' && (
+    { location.pathname !== '/' && (
       <div className={classes.root}>
       <AppBar className={classes.appBar} position="fixed">
         <Toolbar>
