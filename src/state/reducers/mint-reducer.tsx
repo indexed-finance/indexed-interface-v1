@@ -136,7 +136,7 @@ export function useMintTokenActions(
   state: MintState,
   dispatch: (action: MintDispatchAction | MiddlewareAction) => Promise<void>,
   index: number
-) {
+): TokenActions {
   let { address, decimals, name, symbol } = state.tokens[index];
 
   let allowance = state.pool.userAddress ? state.pool.userAllowances[address] : BN_ZERO;
@@ -191,15 +191,18 @@ export function useMintTokenActions(
 }
 
 export type TokenActions = {
+  target: string;
   address: string;
   decimals: number;
   name: string;
   symbol: string;
+  approvalRemainder: BigNumber;
   approvalNeeded: boolean;
   displayAmount: string;
   displayBalance: string;
   setAmountToBalance: () => void;
   toggleSelect: () => void;
+  updateDidApprove: () => void;
   bindSelectButton: {
     disabled: boolean;
     checked: boolean;
@@ -208,7 +211,7 @@ export type TokenActions = {
     disabled: boolean;
     value: string;
     name: string;
-    onChange: (event: Event) => void;
+    onChange: (event: any) => void;
   }
 };
 

@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import { InitContextType, InitializerState, useInit } from './reducers/initializer-reducer';
+import { InitContextType, useInitializerReducer } from './reducers/initializer-reducer';
 
 const InitializerStateContext = createContext(undefined);
 
@@ -10,7 +10,7 @@ export const InitializerStateProvider = ({ children }) => {
     mintState,
     setHelper,
   } */
-  const stateHooks = useInit();
+  const stateHooks = useInitializerReducer();
   return (
     <InitializerStateContext.Provider value={stateHooks}>
       {children}
