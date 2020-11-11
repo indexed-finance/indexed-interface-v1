@@ -39,7 +39,7 @@ const setStyle = (theme) => ({
 const mapping = {
   [DESKTOP_NORMAL]: {
     top: 'calc(100px - .375vw)',
-    margin: '-1.5em 3em .25em 3em',
+    margin: '-2.5em 3em .25em 3em',
     resolution: 200,
     height: '43.75%'
   },

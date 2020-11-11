@@ -11,10 +11,8 @@ import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import Container from '../components/container'
 import Spline from '../components/charts/spline'
 import Canvas from '../components/canvas'
-import Approvals from '../components/index/mint-form'
 import Weights from '../components/weights'
 import List from '../components/list'
-import ButtonTransaction from '../components/buttons/transaction'
 import ButtonPrimary from '../components/buttons/primary'
 
 import {
@@ -26,7 +24,7 @@ import IERC20 from '../assets/constants/abi/IERC20.json'
 import MockERC20ABI from '../assets/constants/abi/MockERC20.json'
 import { eventColumns, tokenMetadata } from '../assets/constants/parameters'
 import style from '../assets/css/routes/pool'
-import { getUnitializedPool } from '../api/gql'
+
 import { toContract } from '../lib/util/contracts'
 import { decToWeiHex, getBalances } from '../lib/markets'
 import { getEvents, balanceOf } from '../lib/erc20'
@@ -34,7 +32,6 @@ import { getPair } from '../lib/markets'
 import getStyles from '../assets/css'
 
 import { store } from '../state'
-import { useMintState, MintStateProvider } from '../state/mint';
 import InitializerForm from '../components/pool/initializer-form'
 import { InitializerStateProvider } from '../state/initializer'
 
@@ -54,16 +51,14 @@ const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
 
 const useStyles = getStyles(style)
 
-function Pool(){
-  const { useToken, mintState, bindPoolAmountInput, setHelper } = useMintState();
+export default function Pool(){
   const [ balances, setBalances ] = useState({ native: 0, lp: 0, credit: 0 })
-  const [ instance, setInstance ] = useState({ initializer: {}, contract: null })
-  const [ pool, setPool ] = useState(undefined)
-  const [ data, setData ] = useState(dummy)
+  const [ instance, setInstance ] = useState(null)
   const [ events, setEvents ] = useState([])
+  const [ data, setData ] = useState(dummy)
   const classes = useStyles()
 
-  let { state, dispatch } = useContext(store);
+  let { state, dispatch } = useContext(store)
   let { address } = useParams()
   let { native } = state
 
@@ -71,52 +66,6 @@ function Pool(){
     let res = i.uninitialized.find(i => i.pool.initializer.address === address);
 
     return !res ? i.initialized.find(i => i.pool.address === address) : res
-  }
-
-  const getCreditQuoteSingle = async(asset) => {
-    let { address, amount } = asset
-    let value = toWei(parseFloat(amount))
-    let credit = await instance.initializer.getExpectedCredit(address, value)
-
-    return credit
-  }
-
-  const getCreditQuoteMultiple = async(assets) => {
-    let values = assets.map(i => toWei(parseFloat(i.amount)))
-    let addresses = assets.map(i => i.address)
-
-    let credit = await instance.initializer.getExpectedCredits(addresses, values)
-
-    return credit
-  }
-
-  const pledgeTokens = async() => {
-    let { web3, account } = state
-    let [ addresses, amounts, output ] = await getInputs(web3.rinkeby)
-    let { address } = instance.initializer.initializer
-
-    try {
-      let contract = toContract(web3.injected, PoolInitializer.abi, address)
-
-      await contract.methods.contributeTokens(
-        addresses,
-        amounts,
-        output.credit
-      ).send({ from: account })
-      .on('confirmaton', (conf, receipt) => {
-        if(conf == 0){
-          if(receipt.status == 1) {
-            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
-          } else {
-            dispatch({ type: 'FLAG', payload: TX_REVERT })
-          }
-        }
-      }).catch((data) => {
-        dispatch({ type: 'FLAG', payload: TX_REJECT })
-      })
-    } catch(e) {
-      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
-    }
   }
 
   const getUnderlyingAssets = async() => {
@@ -130,34 +79,6 @@ function Pool(){
       await token.methods.getFreeTokens(account, amount)
       .send({ from: account })
     }
-  }
-
-  const getInputs = async(web3) => {
-    let { toBN } = web3.utils
-    let [ inputs, targets ] = [ [], [] ]
-    let value = 0
-
-    for(let x in data.assets){
-      let { name, address, symbol } = data.assets[x]
-      let element = document.getElementsByName(symbol)[0]
-      let value = parseFloat(element.value)
-
-      if(!isNaN(value)){
-        inputs.push(toWei(value))
-        targets.push(address)
-      }
-    }
-
-    if(inputs.length > 1){
-      let array = inputs.map((v, i) => { return { amount: v, address: targets[i] } })
-      value = await getCreditQuoteMultiple(array, toBN(0))
-      value = value[0]
-    } else if(inputs.length == 1) {
-      let query = { address: targets[0], amount: inputs[0] }
-      value = await getCreditQuoteSingle(query)
-    }
-
-    return [ targets, inputs, value ]
   }
 
   const getNativeBalances = async() => {
@@ -188,7 +109,6 @@ function Pool(){
           payload: UNCLAIMED_CREDITS
         })
       }
-
       setBalances({ ...balances, credit })
     }
   }
@@ -197,26 +117,24 @@ function Pool(){
     const retrievePool = async() => {
       let { indexes, web3, helper } = state
 
-      if(Object.keys(indexes).length > 0){
+      if(Object.keys(indexes).length > 0 && !instance){
         let target = Object.entries(indexes)
         .find(x => x[1].address == address)
-        let initializer = findHelper(helper)
+        let poolInitializer = findHelper(helper)
+        let contract = toContract(
+          web3.rinkeby, PoolInitializer.abi, poolInitializer.address
+        )
 
         if(!target[1].active) {
-          let contract = toContract(state.web3.rinkeby, PoolInitializer.abi, initializer.address)
-
-          target[1].assets = initializer.pool.initializer.tokens
-
-          setInstance({ initializer, contract })
+          target[1].assets = poolInitializer.pool.initializer.tokens
         } else {
-          target[1].assets = initializer.pool.tokens
-
           let tokenEvents = await getEvents(web3.websocket, address)
+          target[1].assets = poolInitializer.pool.tokens
+
           setEvents(tokenEvents)
         }
 
-        await getNativeBalances()
-        await getActiveCredit()
+        setInstance(contract)
         setData(target[1])
       }
     }
@@ -229,43 +147,24 @@ function Pool(){
       let { assets } = data
 
       if(web3.injected){
-        let balances =  await getBalances(web3.rinkeby, account, assets, {})
-
+        let balances =  await getBalances(
+          web3.rinkeby, account, assets, {}
+        )
         await dispatch({ type: 'BALANCE',
           payload: { balances }
         })
         await getNativeBalances()
+        await getActiveCredit()
       }
      }
-
     retrieveBalances()
-    getActiveCredit()
   }, [ state.web3.injected ])
 
   useEffect(() => {
-    const updatePool = async() => {
-      let { helper } = state
-
-      if (!mintState.pool && helper) {
-        let newHelper = findHelper(helper)
-
-        setHelper(newHelper)
-        setPool(newHelper)
-      }
+    if(!state.load) {
+      dispatch({ type: 'LOAD', payload: true })
     }
-    updatePool()
-  }, [ mintState.pool, data ])
-
-  useEffect(() => {
-    if(state.web3.injected) getActiveCredit()
-    if(!state.load){
-      dispatch({
-        type: 'LOAD', payload: true
-      })
-    }
-  }, [ ])
-
-
+  }, [])
 
   let {
     marginX, margin, width, padding, chartHeight, fontSize, tableWidth
@@ -275,7 +174,7 @@ function Pool(){
     let match = marginX.split(' ')
 
     match[0] = parseInt(match[0].replace('em', ''))
-    match[0] = match[0] + (match[0] * 0.125)
+    match[0] = match[0] - (match[0] * 0.25)
     match[0] = `${match[0]}em`
 
     marginX = match.join(' ')
@@ -343,7 +242,6 @@ function Pool(){
                   <InitializerStateProvider>
                     <InitializerForm metadata={{ address }} classes={classes} />
                   </InitializerStateProvider>
-                 
                 )}
                 {data.active && (
                   <div className={classes.assets}>
@@ -375,13 +273,5 @@ function Pool(){
         </Grid>
       </Grid>
     </Fragment>
-  )
-}
-
-export default function Route(){
-  return (
-    <MintStateProvider>
-      <Pool />
-    </MintStateProvider>
   )
 }
