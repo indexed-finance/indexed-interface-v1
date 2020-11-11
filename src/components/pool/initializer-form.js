@@ -34,6 +34,7 @@ export default function InitializerForm({ metadata, classes }) {
     const initializer = toContract(state.web3.injected, abi, initState.pool.address);
     const minimumCredit = initState.creditEthTotal;
     let fn;
+
     if (initState.isSingle) {
       let i = initState.selectedIndex;
       let token = initState.tokens[i].address;
@@ -67,7 +68,7 @@ export default function InitializerForm({ metadata, classes }) {
     <Fragment>
       <TokenInputs useToken={useToken} tokens={initState.tokens} width='100%' height='calc(40vh - 75px)' />
       <div className={classes.reciept}>
-        <p> CREDIT: <span id='credit'>Ξ{displayTotalCredit}</span></p>
+        <p> CREDIT: <span id='credit'>Ξ {displayTotalCredit}</span></p>
       </div>
       <div className={classes.submit}>
         <ButtonPrimary variant='outlined' onClick={contributeTokens} style={{ marginRight: 0 }}>

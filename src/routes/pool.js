@@ -14,6 +14,7 @@ import Canvas from '../components/canvas'
 import Weights from '../components/weights'
 import List from '../components/list'
 import ButtonPrimary from '../components/buttons/primary'
+import { formatBalance } from '@indexed-finance/indexed.js'
 
 import {
   TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER, UNCLAIMED_CREDITS
@@ -45,7 +46,7 @@ const dummy = {
     marketcap: '',
     credit: 0,
     history: [],
-    type: null
+    type: <span> &nbsp;&nbsp;&nbsp;&nbsp;</span>
 }
 
 const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
@@ -131,8 +132,6 @@ function Pool(){
           web3.rinkeby, PoolInitializer.abi, initializerAddress
         )
 
-        console.log(active)
-
         if(!active) {
           target[1].assets = poolInitializer.pool.initializer.tokens
           target[1].type = 'TARGETS'
@@ -141,8 +140,6 @@ function Pool(){
           let tokenEvents = await getEvents(web3.websocket, address)
           target[1].assets = poolInitializer.pool.tokens
           target[1].type = 'EVENTS'
-
-          console.log(poolInitializer.pool.tokens)
 
           setEvents(tokenEvents)
         }
@@ -290,7 +287,7 @@ function Pool(){
                         if(i == 0) label = 'first'
                         else if(i == data.assets.length-1) label = 'last'
 
-                       return <Target state={initState} label={label} i={i} asset={v} />
+                       return <Target label={label} i={i} asset={v} />
                       })}
                     </div>
                   </Grid>
@@ -304,12 +301,12 @@ function Pool(){
   )
 }
 
-function Target({ state, label, asset, i }){
-  const { useToken } = useInitializerState();
-
-  console.log(state)
-
+function Target({ label, asset, i }){
+  const { useToken, initState: { pool } } = useInitializerState();
   const token = useToken(i)
+  const { address, decimals } = asset
+  const market = pool.tokenPrices[address]
+  const price = market ? parseFloat(market.toString()): 0
 
   return(
     <Grid item style={{ width: '100%' }} className={label}>
@@ -317,7 +314,7 @@ function Target({ state, label, asset, i }){
        <Weights asset={token} />
       </div>
       <div style={{ marginTop: '-2em', float: 'right', width: '40%'}}>
-       <label> Ξ 2,340 </label>
+       <label> Ξ {((price * token.currentBalance)).toLocaleString()} </label>
      </div>
    </Grid>
   )

@@ -113,7 +113,7 @@ const mapping = {
     fontSize: 'inherit'
   },
   [DESKTOP_LARGE]: {
-    marginX: '-8.75em 0em 0em 3em',
+    marginX: '-22.5em 0em 0em 3em',
     tableWidth: 'calc(65em - 87.5px)',
     margin: '3em 3em',
     width: '100%',
@@ -122,7 +122,7 @@ const mapping = {
     fontSize: 'inherit'
   },
   [DESKTOP_WIDE]: {
-    marginX: '-11em 0em 0em 3em',
+    marginX: '-40em 0em 0em 3em',
     tableWidth: 'calc(50em - 75px)',
     margin: '3em 3em',
     width: '100%',
@@ -131,7 +131,7 @@ const mapping = {
     fontSize: 'inherit'
   },
   [DESKTOP_HUGE]: {
-    marginX: '-11em 0em 0em 3em',
+    marginX: '-40em 0em 0em 3em',
     tableWidth: 'calc(50em - 75px)',
     margin: '3em 3em',
     width: '100%',

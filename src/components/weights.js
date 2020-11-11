@@ -46,12 +46,12 @@ export default function Weight({ asset }) {
     } = asset
 
     let target = weight ? weight : targetBalance;
-    let displayBalance = balance ? formatBalance(balance, 18, 4) : currentBalance
+    let displayBalance = balance ? formatBalance(balance, decimals, 4) : currentBalance
     let isGeneric = target == weight;
     let float = isGeneric ? 'right' : null
 
     if(target && metadata == dummy){
-      let desiredWeight = isGeneric ? formatBalance(target, 18, 4) : target
+      let desiredWeight = isGeneric ? formatBalance(target, decimals, 4) : target
       let displayPercent = !isGeneric ? percentOfDesired : desiredWeight * 100
       let title = isGeneric ? `≈ $${(displayBalance * asset.priceUSD).toLocaleString()}`
       : `/ ${desiredWeight.toLocaleString()} ${symbol}`
