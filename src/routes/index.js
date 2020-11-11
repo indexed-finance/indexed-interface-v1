@@ -10,9 +10,9 @@ import ContentLoader from "react-content-loader"
 import ButtonMarket from '../components/buttons/market'
 import Area from '../components/charts/area'
 import Trade from '../components/trade'
-import Mint from '../components/mint'
-import Burn from '../components/burn'
-import Tabs from '../components/index-components/tabs'
+import Mint from '../components/index/mint-tab'
+import Burn from '../components/index/burn-tab'
+import Tabs from '../components/index/tabs'
 
 import style from '../assets/css/routes/index'
 import getStyles from '../assets/css'
