@@ -44,7 +44,8 @@ const dummy = {
     supply: '',
     marketcap: '',
     credit: 0,
-    history: []
+    history: [],
+    type: null
 }
 
 const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
@@ -99,11 +100,11 @@ export default function Pool(){
   const getActiveCredit = async() => {
     let { account, web3 } = state
 
-    if(web3.injected && instance.contract){
-      let credit = await instance.contract.methods.getCreditOf(account).call()
+    if(web3.injected && instance){
+      let credit = await instance.methods.getCreditOf(account).call()
       credit = (parseFloat(credit)/Math.pow(10, 18))
 
-      if(credit > 0) {
+      if(credit == 0) {
         dispatch({
           type: 'FLAG',
           payload: UNCLAIMED_CREDITS
@@ -127,9 +128,11 @@ export default function Pool(){
 
         if(!target[1].active) {
           target[1].assets = poolInitializer.pool.initializer.tokens
+          target[1].type = 'TARGETS'
         } else {
           let tokenEvents = await getEvents(web3.websocket, address)
           target[1].assets = poolInitializer.pool.tokens
+          target[1].type = 'EVENTS'
 
           setEvents(tokenEvents)
         }
@@ -263,10 +266,21 @@ export default function Pool(){
         <Grid item xs={12} md={7} lg={7} xl={7} style={{ width: '100%' }}>
           <ParentSize>
             {({ width, height }) => (
-              <Container margin={marginX} padding="1em 2em" title='EVENTS'>
-                <div className={classes.events}>
-                  <List height={250} columns={eventColumns} data={events} />
-                </div>
+              <Container margin={marginX} padding="1em 2em" title={data.type}>
+                {data.active && (
+                  <div className={classes.events}>
+                    <List height={250} columns={eventColumns} data={events} />
+                  </div>
+                )}
+                {!data.active && data != dummy && (
+                  <Grid container direction='row' alignItems='flex-start' justify='space-around' spacing={4}>
+                    {data.assets.map(i => (
+                      <Grid item>
+                        <Weights asset={i} />
+                      </Grid>
+                    ))}
+                  </Grid>
+                )}
               </Container>
             )}
           </ParentSize>
