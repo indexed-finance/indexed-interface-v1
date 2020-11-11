@@ -13,14 +13,10 @@ import mkr from '../assets/images/mkr.png'
 import dai from '../assets/images/dai.png'
 import wbtc from '../assets/images/wbtc.png'
 import comp from '../assets/images/comp.png'
-import busd from '../assets/images/busd.png'
 import knc from '../assets/images/knc.png'
 import link from '../assets/images/link.png'
-import ampl from '../assets/images/ampl.png'
 import bal from '../assets/images/bal.png'
-import snx from '../assets/images/snx.png'
 import yfi from '../assets/images/yfi.png'
-import usdt from '../assets/images/usdt.png'
 import crv from '../assets/images/crv.png'
 import usdc from '../assets/images/usdc.png'
 import uni from '../assets/images/uni.png'
@@ -34,9 +30,7 @@ const Button = styled(ButtonPrimary)({
 })
 
 export default function Root(){
-  const [ path, setPath ] = useState(null)
-  let { state, dispatch } = useContext(store)
-  let history = useHistory()
+  let { state } = useContext(store)
 
   useEffect(() => {
     renderCanvas()
