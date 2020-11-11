@@ -17,7 +17,7 @@ export default function InitializerForm({ metadata, classes }) {
   // const classes = useStyles()
 
   const { useToken, initState, setHelper, updatePool, displayTotalCredit } = useInitializerState();
-  let { state, account, handleTransaction } = useContext(store);
+  let { state, handleTransaction } = useContext(store);
 
   async function contributeTokens() {
     const abi = require('../../assets/constants/abi/PoolInitializer.json').abi;
@@ -39,7 +39,7 @@ export default function InitializerForm({ metadata, classes }) {
       });
       fn = initializer.methods['contributeTokens(address[],uint256[],uint256)'](tokens, amounts, minimumCredit);
     }
-    await handleTransaction(fn.send({ from: account }))
+    await handleTransaction(fn.send({ from: state.account }))
       .then(updatePool)
       .catch(() => {});
   }
