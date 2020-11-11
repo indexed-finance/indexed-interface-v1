@@ -9,7 +9,7 @@ import { toContract } from '../../lib/util/contracts'
 import style from '../../assets/css/components/mint'
 import getStyles from '../../assets/css'
 
-import NumberFormat from '../../utils/format'
+// import NumberFormat from '../../utils/format'
 import ButtonPrimary from '../buttons/primary'
 import Input from '../inputs/input'
 import TokenInputs from '../inputs/token-inputs';
@@ -69,16 +69,15 @@ export default function Mint({ market, metadata }) {
     <div className={classes.root}>
     <Grid container direction='column' alignItems='center' justify='space-around'>
       <Grid item xs={12} md={12} lg={12} xl={12}>
-        <RecieveInput label="RECIEVE" variant='outlined'
-          helperText={<o className={classes.helper}>
-            BALANCE: {0}
-          </o>}
+        <RecieveInput
+          label="RECIEVE"
+          variant='outlined'
+          type='number'
           {
             ...(bindPoolAmountInput)
           }
           InputProps={{
             endAdornment: market,
-            inputComponent: NumberFormat
           }}
         />
       </Grid>
