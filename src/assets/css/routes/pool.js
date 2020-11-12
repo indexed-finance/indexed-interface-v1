@@ -105,38 +105,58 @@ const setStyle = (theme) => ({
 const mapping = {
   [DESKTOP_NORMAL]: {
     marginX: '-15em 0em 0em 3em',
+    loading: '-12.5em 0em 0em 3em',
+    active: '-15em 0em 0em 3em',
+    inactive: '-18.75em 0em 0em 3em',
     tableWidth: 'calc(65em - 412.5px)',
     margin: '3em 3em',
     width: '100%',
     padding: 100,
     chartHeight: 87.5,
+    fullChart: 87.5,
+    halfChart: 43.75,
     fontSize: 'inherit'
   },
   [DESKTOP_LARGE]: {
-    marginX: '-22.5em 0em 0em 3em',
+    marginX: '-17.5em 0em 0em 3em',
+    loading: '-17.5em 0em 0em 3em',
+    active: '-12.5em 0em 0em 3em',
+    inactive: '-27.5em 0em 0em 3em',
     tableWidth: 'calc(65em - 87.5px)',
     margin: '3em 3em',
     width: '100%',
     padding: 100,
     chartHeight: 75,
+    fullChart: 75,
+    halfChart: 37.5,
     fontSize: 'inherit'
   },
   [DESKTOP_WIDE]: {
-    marginX: '-40em 0em 0em 3em',
+    marginX: '-30em 0em 0em 3em',
+    loading: '-30em 0em 0em 3em',
+    active: '-15em 0em 0em 3em',
+    inactive: '-37.5em 0em 0em 3em',
     tableWidth: 'calc(50em - 75px)',
     margin: '3em 3em',
     width: '100%',
     padding: 100,
     chartHeight: 75,
+    fullChart: 75,
+    halfChart: 37.5,
     fontSize: 'inherit'
   },
   [DESKTOP_HUGE]: {
-    marginX: '-40em 0em 0em 3em',
+    marginX: '-30em 0em 0em 3em',
+    loading: '-30em 0em 0em 3em',
+    active: '-13.75em 0em 0em 3em',
+    inactive: '-37.5em 0em 0em 3em',
     tableWidth: 'calc(50em - 75px)',
     margin: '3em 3em',
     width: '100%',
     padding: 100,
     chartHeight: 75,
+    fullChart: 75,
+    halfChart: 37.5,
     fontSize: 'inherit'
   },
   'NATIVE': {
@@ -149,9 +169,24 @@ const mapping = {
   }
 }
 
-const getFormatting = ({ native }) => {
+const getFormatting = ({ native, active, request }) => {
   let { innerWidth, innerHeight } = window
   let dimension = native ? 'NATIVE' : screenClass(innerWidth)
+  let { marginX, chartHeight } = mapping[dimension]
+
+  if(active === null) {
+    mapping[dimension].marginX = mapping[dimension].loading
+  } else if(request) {
+    if(!active) {
+      mapping[dimension].chartHeight = mapping[dimension].halfChart
+      mapping[dimension].marginX = mapping[dimension].inactive
+    } else if(active) {
+      mapping[dimension].chartHeight = mapping[dimension].fullChart
+      mapping[dimension].marginX = mapping[dimension].active
+    }
+  }
+
+  console.log(mapping[dimension].chartHeight)
 
   return {
     ...mapping[dimension]

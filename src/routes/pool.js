@@ -65,7 +65,7 @@ function Pool(){
 
   let { state, dispatch } = useContext(store)
   let { address } = useParams()
-  let { native } = state
+  let { native, request } = state
 
   const findHelper = (i) => {
     let res = i.uninitialized.find(i => i.pool.initializer.address === address);
@@ -181,30 +181,10 @@ function Pool(){
     }
   }, [])
 
+  let { active } = data
   let {
     marginX, margin, width, padding, chartHeight, fontSize, tableWidth
-  } = style.getFormatting({ native })
-
-  if(!data.active && !native) {
-    let match = marginX.split(' ')
-
-    match[0] = parseInt(match[0].replace('em', ''))
-    match[0] = match[0] - (match[0] * 0.25)
-    match[0] = `${match[0]}em`
-
-    marginX = match.join(' ')
-  } if(data.active != null) {
-    if(!data.active) {
-      chartHeight = chartHeight /2
-      let match = marginX.split(' ')
-
-      match[0] = parseInt(match[0].replace('em', ''))
-      match[0] = match[0] + (match[0] * .675)
-      match[0] = `${match[0]}em`
-
-      marginX = match.join(' ')
-    }
-  }
+  } = style.getFormatting({ native, request, active })
 
   return (
     <Fragment>
