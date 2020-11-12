@@ -39,25 +39,37 @@ const setStyle = (theme) => ({
 const mapping = {
   [DESKTOP_NORMAL]: {
     top: 'calc(100px - .375vw)',
-    margin: '-2.5em 3em .25em 3em',
+    margin: '-3.5em 3em .25em 3em',
+    loading: '0em 3em .25em 3em',
+    inactive: '0em 3em .25em 3em',
+    active: '-3.5em 3em .25em 3em',
     resolution: 200,
     height: '43.75%'
   },
   [DESKTOP_LARGE]: {
     top: 'calc(100px - .375vw)',
-    margin: '1.5em 3em',
+    margin: '1.5em 3em .25em 3em',
+    loading: '1.25em 3em .25em 3em',
+    inactive: '1.25em 3em .25em 3em',
+    active: '1.5em 3em .25em 3em',
     resolution: 200,
     height: '48.75%'
   },
   [DESKTOP_WIDE]: {
     top: 'calc(100px - .375vw)',
-    margin: '0em 3em',
+    margin: '-3.5em 3em .25em 3em',
+    loading: '1.5em 3em .25em 3em',
+    inactive: '1.5em 3em .25em 3em',
+    active: '-3.5em 3em .25em 3em',
     resolution: 200,
     height: '37.5%'
   },
   [DESKTOP_HUGE]: {
     top: 'calc(100px - .375vw)',
-    margin: '1.5em 3em',
+    margin: '-1em 3em .25em 3em',
+    loading: '1.5em 3em .25em 3em',
+    inactive: '1.5em 3em .25em 3em',
+    active: '-1em 3em .25em 3em',
     resolution: 200,
     height: '32.5%'
   },
@@ -69,9 +81,23 @@ const mapping = {
   }
 }
 
-const getFormatting = ({ request, native }) => {
+const getFormatting = ({ request, native, active }) => {
   let { innerWidth, innerHeight } = window
   let dimension = native ? 'NATIVE' : screenClass(innerWidth)
+
+  console.log(active, mapping[dimension])
+
+  if(active === null) {
+    mapping[dimension].margin = mapping[dimension].loading
+  } else if(request) {
+    if(!active) {
+      mapping[dimension].margin = mapping[dimension].inactive
+    } else if(active) {
+      mapping[dimension].margin = mapping[dimension].active
+    }
+  }
+
+  console.log(mapping[dimension].margin)
 
   return {
     pre2: !request && native ? '25vh' : 'auto',
