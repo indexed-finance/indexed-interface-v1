@@ -133,18 +133,18 @@ export default function VerticalTabs({ data }) {
           if(orderType == 'BUY'){
             history.push({
               output: `${parseFloat(amount0Out).toFixed(2)} ${data.symbol}`,
+              type: <span style={{ color: '#00e79a'}}> {orderType} </span>,
               input: `${parseFloat(amount1In).toFixed(2)} ETH`,
               tx: hash(short, transaction.id),
-              time: Date.now(timestamp*1000),
-              type: orderType
+              time: Date.now(timestamp*1000)
             })
           } else {
             history.push({
               input: `${parseFloat(amount0In).toFixed(2)} ${data.symbol}`,
+              type: <span style={{ color: '#645eff'}}> {orderType} </span>
               output: `${parseFloat(amount1Out).toFixed(2)} ETH`,
               tx: hash(short, transaction.id),
               time: Date.now(timestamp*1000),
-              type: orderType
             })
           }
         }
@@ -181,29 +181,29 @@ export default function VerticalTabs({ data }) {
         <List height={height} columns={marketColumns} data={trades} />
       </TabPanel>
       <TabPanel className={classes.panels} value={value} index={2}>
-        <Grid item container direction='row' alignItems='flex-start' justify='space-around' spacing={6}>
-          <Grid item>
+        <ul>
+          <li>
             <Link to={`/pool/${data.address}`}>
               <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
                 VIEW POOL
               </ButtonPrimary>
             </Link>
-          </Grid>
-          <Grid item>
+          </li>
+          <li>
             <a target='_blank' href={`https://info.uniswap.org/pool/${data.address}`}>
               <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
                 🦄 UNISWAP
               </ButtonPrimary>
             </a>
-          </Grid>
-          <Grid item>
+          </li>
+          <li>
             <a target='_blank' href={`https://rinkeby.etherscan.io/token/${data.address}`}>
               <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
                 ETHERSCAN
               </ButtonPrimary>
             </a>
-          </Grid>
-        </Grid>
+          </li>
+        </ul>
       </TabPanel>
     </div>
   );

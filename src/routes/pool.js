@@ -45,6 +45,7 @@ const dummy = {
     price: '',
     supply: '',
     marketcap: '',
+    active: null,
     credit: 0,
     history: [],
     type: <span> &nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -192,6 +193,17 @@ function Pool(){
     match[0] = `${match[0]}em`
 
     marginX = match.join(' ')
+  } if(data.active != null) {
+    if(!data.active) {
+      chartHeight = chartHeight /2
+      let match = marginX.split(' ')
+
+      match[0] = parseInt(match[0].replace('em', ''))
+      match[0] = match[0] + (match[0] * .675)
+      match[0] = `${match[0]}em`
+
+      marginX = match.join(' ')
+    }
   }
 
   return (
