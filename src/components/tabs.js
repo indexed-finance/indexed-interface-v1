@@ -141,7 +141,7 @@ export default function VerticalTabs({ data }) {
           } else {
             history.push({
               input: `${parseFloat(amount0In).toFixed(2)} ${data.symbol}`,
-              type: <span style={{ color: '#645eff'}}> {orderType} </span>
+              type: <span style={{ color: '#645eff'}}> {orderType} </span>,
               output: `${parseFloat(amount1Out).toFixed(2)} ETH`,
               tx: hash(short, transaction.id),
               time: Date.now(timestamp*1000),
