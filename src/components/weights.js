@@ -28,7 +28,7 @@ export default function Weight({ asset }) {
       borderRadius: 10,
       marginTop: 5,
       marginBottom: 5,
-      width: 225
+      width: 300
     },
     colorPrimary: {
       backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? 200 : 700],

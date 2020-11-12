@@ -109,8 +109,6 @@ function Application(){
         await addCategory(categoryID);
         let history = await pool.getSnapshots(90);
 
-        console.log(history)
-
         const delta24hr = history.length === 1 ? 1 : (Math.abs(history[0].value - history[1].value) / history[1].value).toFixed(4);
         const ticker = symbol.toUpperCase();
         let supply = pool.pool.totalSupply;
@@ -119,9 +117,9 @@ function Application(){
         }
         let volume = +(history[0].dailySwapVolumeUSD).toFixed(2);
         history = history.map(h => ({ close: +(h.value.toFixed(4)), date: new Date(h.date * 1000) }));
-        const price = history[0].close;
+        const price = parseFloat(history[0].close);
         const index = {
-          marketcap: (+pool.pool.totalValueLockedUSD).toFixed(2),
+          marketcap: parseFloat((+pool.pool.totalValueLockedUSD).toFixed(2)),
           price,
           delta: delta24hr,
           supply,

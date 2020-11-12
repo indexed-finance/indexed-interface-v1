@@ -115,7 +115,10 @@ export default function Search({ selections }) {
         return option.name
       }}
       renderOption={(option) =>
-        <Link className={classes.href} to={`/index/${option.symbol.toLowerCase()}`}>
+        <Link className={classes.href} to={
+          option.active ? `/index/${option.symbol.toLowerCase()}` :
+           `/pool/${option.address.toLowerCase()}`
+        }>
           {`${option.name} [${option.symbol}]`}
         </Link>
       }

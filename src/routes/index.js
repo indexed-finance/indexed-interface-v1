@@ -204,9 +204,6 @@ export default function Index(){
                 <h4 className={classes.price}> ${metadata.price} <span className={classes.delta}>({metadata.delta})</span></h4>
               </li>
               <li style={{ float: 'right'}}>
-                <h3 className={classes.alternative}>TVL: ${metadata.marketcap}</h3>
-              </li>
-              <li style={{ float: 'right'}}>
                 <span className={classes.alternative}>24H VOLUME: ${metadata.volume}</span>
               </li>
             </ul>

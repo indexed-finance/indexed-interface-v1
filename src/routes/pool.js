@@ -15,6 +15,7 @@ import Weights from '../components/weights'
 import List from '../components/list'
 import ButtonPrimary from '../components/buttons/primary'
 import { formatBalance } from '@indexed-finance/indexed.js'
+import Alert from '@material-ui/lab/Alert';
 
 import {
   TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER, UNCLAIMED_CREDITS
@@ -133,9 +134,12 @@ function Pool(){
         )
 
         if(!active) {
-          target[1].assets = poolInitializer.pool.initializer.tokens
-          target[1].type = 'TARGETS'
+          let { totalCreditedWETH } = pool.initializer
+          let accreditedEth = formatBalance(totalCreditedWETH, 18, 4)
 
+          target[1].assets = poolInitializer.pool.initializer.tokens
+          target[1].credit = accreditedEth
+          target[1].type = 'TARGETS'
         } else {
           let tokenEvents = await getEvents(web3.websocket, address)
           target[1].assets = poolInitializer.pool.tokens
@@ -217,8 +221,18 @@ function Pool(){
               </div>
               <div className={classes.stats} style={{ fontSize }}>
                 <ul>
-                  <li> LIQUIDITY: {data.marketcap} </li>
-                  <li> MARKETCAP: {data.marketcap} </li>
+                  {data.active && (
+                    <Fragment>
+                      <li> MARKETCAP: ${data.marketcap.toLocaleString()} </li>
+                      <li> VOLUME: ${data.volume.toLocaleString()} </li>
+                    </Fragment>
+                  )}
+                  {!data.active && (
+                    <Fragment>
+                      <li> POOL CREDIT: Ξ {data.credit} </li>
+                      <li> YOUR CREDIT: Ξ 0 </li>
+                    </Fragment>
+                  )}
                 </ul>
               </div>
             </Canvas>
@@ -241,10 +255,9 @@ function Pool(){
             <Container margin={margin} padding="1em 0em" title='ASSETS'>
               {!data.active && (
                 <div className={classes.alert}>
-                  <Fragment>
-                    <ErrorOutline style={{ float: 'left', fontSize: '2em', marginBottom: -7.5, marginRight: 10, color: 'orange'}} />
-                    <label> This index pool is uninitialized and needs liquidity </label>
-                  </Fragment>
+                  <Alert variant="outlined" severity="warning" style={{  borderWidth: 2 }}>
+                    THIS POOL IS UNINITIALIZED
+                  </Alert>
                 </div>
               )}
               <div className={classes.container} style={{ width }}>
