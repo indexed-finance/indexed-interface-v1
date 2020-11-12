@@ -11,6 +11,7 @@ import Tab from '@material-ui/core/Tab'
 import ContentLoader from "react-content-loader"
 import { Link } from 'react-router-dom'
 
+import { formatBalance, BigNumber } from '@indexed-finance/indexed.js/dist/utils/bignumber'
 import ButtonPrimary from '../buttons/primary'
 import TransactionButton from '../buttons/transaction'
 import WeightedToken from './weighted-token'
@@ -25,6 +26,7 @@ import getStyles from '../../assets/css'
 import { marketColumns } from '../../assets/constants/parameters'
 
 const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
+const BN_ZERO = new BigNumber(0)
 
 const Exit = styled(ExitIcon)({
   fontSize: '1rem'
@@ -96,12 +98,14 @@ function TabPanel(props) {
   )
 }
 
+const dummy = { tokens: [], pool: { feesTotalUSD: 0,  swapFee: BN_ZERO, size: 0 }}
+
 export default function VerticalTabs({ data }) {
   const [ trades, setTrades ] = useState([])
   const [ value, setValue ] = useState(0)
-  const [ meta, setMeta ] = useState([])
+  const [ meta, setMeta ] = useState(dummy)
   const classes = useStyles()
-  const [helper, setHelper] = useState(null);
+  const [helper, setHelper] = useState(undefined);
 
   let { state } = useContext(store);
 
@@ -115,9 +119,10 @@ export default function VerticalTabs({ data }) {
       console.log(`SETPOOL:: ${data.address}`)
       let poolHelper = state.helper.initialized.find(i => i.pool.address === data.address);
       setHelper(poolHelper);
+      setMeta(poolHelper)
       console.log(`Setting Pool Helper!!`);
       console.log(`Helper Has Tokens ${poolHelper.tokens.map(t => t.symbol)}`)
-    }
+        }
     if (data && data.address && state.helper && !helper) setPool();
   }, [ state.web3.injected, data, state.helper ]);
 
@@ -166,11 +171,12 @@ export default function VerticalTabs({ data }) {
           }
         }
         setTrades(history.reverse())
-        setMeta(data.assets)
       }
     }
     getTrades()
   }, [ data ])
+
+  console.log(data)
 
   let { height } = style.getFormatting()
 
@@ -191,7 +197,8 @@ export default function VerticalTabs({ data }) {
 
       <TabPanel className={classes.assets} value={value} index={0}>
         <Grid item container direction='row' alignItems='flex-start' justify='space-around' spacing={4}>
-          {state.request && data.active && helper && helper.tokens.map(token => (<Grid item> <WeightedToken token={token} /> </Grid> ))}
+          {state.request && data.active && helper &&
+            helper.tokens.map(token => (<Grid item> <WeightedToken token={token} /> </Grid> ))}
           {!state.request && (<Loader color={state.background} />)}
         </Grid>
       </TabPanel>
@@ -201,31 +208,38 @@ export default function VerticalTabs({ data }) {
       </TabPanel>
 
       <TabPanel className={classes.panels} value={value} index={2}>
-        <Grid item container direction='row' alignItems='flex-start' justify='space-around' spacing={6}>
+        <div className='item'>
+        <Grid item container direction='column' alignItems='flex-start' justify='space-around' spacing={6}>
           <Grid item>
             <Link to={`/pool/${data.address}`}>
-              <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
+              <ButtonPrimary variant='outlined' margin={{ marginLeft: 50 }}>
                 VIEW POOL
               </ButtonPrimary>
             </Link>
-          </Grid>
-          <Grid item>
-            <a target='_blank' href={`https://info.uniswap.org/pool/${data.address}`}>
-              <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
-                🦄 UNISWAP
-              </ButtonPrimary>
-            </a>
-          </Grid>
-          <Grid item>
             <a target='_blank' href={`https://rinkeby.etherscan.io/token/${data.address}`}>
               <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
                 ETHERSCAN
               </ButtonPrimary>
             </a>
           </Grid>
+          <Grid item>
+            <a target='_blank' href={`https://info.uniswap.org/pool/${data.address}`}>
+              <ButtonPrimary variant='outlined' margin={{ marginRight: 25 }}>
+                🦄 UNISWAP
+              </ButtonPrimary>
+            </a>
+          </Grid>
         </Grid>
+        </div>
+        <div className={classes.stats}>
+          <ul>
+            <li> TVL: ${data.marketcap}</li>
+            <li> SUPPLY: {data.supply}</li>
+            <li> GROSS FEES: ${parseFloat(meta.pool.feesTotalUSD).toFixed(2)}</li>
+            <li> FEES: ${formatBalance(meta.pool.swapFee, 18, 4)}</li>
+          </ul>
+        </div>
       </TabPanel>
     </div>
   );
 }
-  

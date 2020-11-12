@@ -17,12 +17,23 @@ const setStyle = (theme) => ({
   panels: {
     width: '100%',
     padding: 0,
+    '& .item': {
+      paddingTop: '.5em',
+      width: '60%',
+      float: 'left'
+    }
   },
   assets: {
     paddingTop: 7.5,
     overflowY: 'scroll',
     width: '100%',
     height: '100%'
+  },
+  stats: {
+    paddingTop: '.75em',
+    '& ul li': {
+      marginBottom: 15
+    }
   },
   box: {
     '& .MuiGrid-container': {
