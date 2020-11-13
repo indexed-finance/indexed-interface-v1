@@ -74,7 +74,7 @@ export default function PieChart({ metadata, height, ready, native }){
       let remaining = final - current;
       data = [ current, remaining ]
       labels = [ 'FULFILLED', 'REMAINING' ]
-      colors = [ 'orange', '#7a7a7a' ]
+      colors = [ 'orange', theme.palette.primary.main ]
     } else {
       labels = metadata.assets.map(value => value.symbol);
       data = metadata.assets.map(value => +((+formatBalance(value.weight, 18, 4)) * 100).toFixed(1));
@@ -90,7 +90,7 @@ export default function PieChart({ metadata, height, ready, native }){
           var index = ctx.dataIndex
           var label = ctx.chart.data.labels[index]
 
-          if(index == 4) return theme.palette.secondary.main
+          if(index == ctx.chart.data.labels.length -1) return theme.palette.secondary.main
           else return 'white'
         },
         labels: {
