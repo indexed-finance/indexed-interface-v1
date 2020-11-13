@@ -69,9 +69,9 @@ export default function TokenInput(props) {
   let errorMsg = token.errorMessage;
   let error = !!errorMsg;
 
-  let helperText = (error) ? errorMsg : <o className={classes.helper} onClick={() => setAmountToBalance()}>
+  let helperText = (error) ? errorMsg : <div className={classes.helper} onClick={() => setAmountToBalance()}>
     BALANCE: {token.displayBalance}
-  </o>;
+  </div>;
 
   return(
     <ListItem
