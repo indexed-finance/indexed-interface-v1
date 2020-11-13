@@ -77,7 +77,7 @@ function InitializedPoolPage({ address, metadata }){
     const retrievePool = async() => {
       let { indexes, web3, helper } = state
 
-      if(Object.keys(indexes).length > 0 && !instance){
+      if(Object.keys(indexes).length > 0 && !instance && metadata.address !== '0x0000000000000000000000000000000000000000'){
         let target = Object.entries(indexes).find(x => x[1].address === address)
         let pool = findHelper(helper)
         let initializerAddress = pool.address;
