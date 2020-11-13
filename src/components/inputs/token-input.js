@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { styled } from '@material-ui/core/styles'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
@@ -68,6 +68,7 @@ export default function TokenInput(props) {
 
   // Set `amount` to `balance`
   const setAmountToBalance = () => token.setAmountToBalance();
+  const [ label, setLabel ] = useState('DESIRED:')
 
   async function approveRemaining() {
     const erc20 = getERC20(web3.injected, token.address);
@@ -83,6 +84,12 @@ export default function TokenInput(props) {
   let helperText = (error) ? errorMsg : <span className={classes.helper} onClick={() => setAmountToBalance()}>
     {`BALANCE: ${token.displayBalance}`}
   </span>;
+
+  useEffect(() => {
+    if(token.bindSetRemainderButton){
+      setLabel(token.bindSetRemainderButton.value)
+    }
+  }, [ token.bindSetRemainderButton ])
 
   return(
     <ListItem
@@ -104,7 +111,7 @@ export default function TokenInput(props) {
       </ListItemAvatar>
       <ListItemText style={{ width: '30px' }} primary={token.symbol} secondary={props.secondary || token.symbolAdornment} />
       <RemainderButton {...token.bindSetRemainderButton}>
-       {token.bindSetRemainderButton.value}
+       {label}
       </RemainderButton>
       <SecondaryActionAlt>
         <AmountInput
