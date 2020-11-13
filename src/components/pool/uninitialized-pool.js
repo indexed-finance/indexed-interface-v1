@@ -27,11 +27,11 @@ function Target({ label, asset, i }){
 
   return(
     <Grid item style={{ width: '100%' }} className={label}>
-      <div style={{ width: '60%'}}>
+      <div style={{ width: '75%'}}>
        <Weights asset={token} />
       </div>
-      <div style={{ marginTop: '-2em', float: 'right', width: '40%'}}>
-       <label> VALUE Ξ {((price * token.currentBalance)).toLocaleString()} </label>
+      <div style={{ width: '25%', float: 'right',  marginTop: '-2.25em'}}>
+       <label> Ξ {((price * token.currentBalance)).toLocaleString()} </label>
      </div>
    </Grid>
   )
@@ -67,7 +67,7 @@ function UninitializedPoolPage({ address, metadata }) {
   function MetaDisplay() {
     if (!native) {
       return <Fragment>
-        <h2> {name} [{symbol}] </h2>
+        <h2> {name} </h2>
         <h3> {address.substring(0, 6)}...{address.substring(38, 64)} </h3>
       </Fragment>
     }
@@ -84,7 +84,7 @@ function UninitializedPoolPage({ address, metadata }) {
   return (
     <Grid container direction='column' alignItems='flex-start' justify='stretch'>
       <Grid item xs={12} md={12} lg={12} xl={12} container direction='row' alignItems='flex-start' justify='space-between'>
-        <Grid item xs={12} md={6} lg={7} xl={7} style={{ width: '100%'}}>
+        <Grid item xs={12} md={7} lg={7} xl={7} style={{ width: '100%'}}>
         <ParentSize>
           {({ width, height }) => (
           <Canvas native={native} style={{ width: !native ? width : 'auto' }} custom='6.75%'>

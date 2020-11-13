@@ -28,7 +28,7 @@ export default function ExplainCredit(props) {
   }
   const size = props.size || 'small';
   return <Fragment>
-    <IconButton size={size} onClick={handleOpen}>
+    <IconButton size={size} onClick={handleOpen} style={{ margin: 0, padding: 0 }}>
       <HelpOutlineIcon fontSize='inherit' />
     </IconButton>
     {/* <Modal /> */}

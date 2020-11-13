@@ -69,7 +69,7 @@ export default function InitializerForm({ metadata, classes }) {
     <Fragment>
       <TokenInputs useToken={useToken} tokens={initState.tokens} width='100%' height='calc(40vh - 75px)' />
       <div className={classes.reciept}>
-        <p> CREDIT: <span id='credit'>Ξ {displayTotalCredit}</span> <ExplainCredit /> </p>
+        <p>  <ExplainCredit /> CREDIT: <span id='credit'>Ξ {displayTotalCredit}</span> </p>
       </div>
       <div className={classes.submit}>
         <ButtonPrimary variant='outlined' onClick={contributeTokens} style={{ marginRight: 0 }}>

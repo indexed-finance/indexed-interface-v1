@@ -67,7 +67,7 @@ const setStyle = (theme) => ({
       fontSize: 14,
       marginLeft: 12.5
     },
-    '& p span': {
+    '& p span:last-of-type': {
       float: 'right',
       fontFamily: "San Francisco Bold",
       fontWeight: 500,
@@ -93,6 +93,7 @@ const setStyle = (theme) => ({
     '& .first, .item': {
       padding: '.75em 2em',
       borderBottom: '2px solid #666666',
+      paddingTop: '1em',
       height: 100,
       width: '100%'
     },
@@ -121,7 +122,7 @@ const mapping = {
     marginX: '-17.5em 0em 0em 3em',
     loading: '-17.5em 0em 0em 3em',
     active: '-12.5em 0em 0em 3em',
-    inactive: '-27.5em 0em 0em 3em',
+    inactive: '-25em 0em 0em 3em',
     tableWidth: 'calc(65em - 87.5px)',
     margin: '3em 3em',
     width: '100%',
@@ -135,7 +136,7 @@ const mapping = {
     marginX: '-30em 0em 0em 3em',
     loading: '-30em 0em 0em 3em',
     active: '-15em 0em 0em 3em',
-    inactive: '-37.5em 0em 0em 3em',
+    inactive: '-33.5em 0em 0em 3em',
     tableWidth: 'calc(50em - 75px)',
     margin: '3em 3em',
     width: '100%',
@@ -185,8 +186,6 @@ const getFormatting = ({ native, active, request }) => {
       mapping[dimension].marginX = mapping[dimension].active
     }
   }
-
-  console.log(mapping[dimension].chartHeight)
 
   return {
     ...mapping[dimension]

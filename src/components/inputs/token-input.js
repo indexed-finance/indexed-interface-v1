@@ -29,6 +29,17 @@ const Tick = styled(ListItemIcon)({
   minWidth: 35,
 })
 
+const RemainderButton = styled(ButtonTransaction)({
+  color: '#999999 !important',
+  fontSize: 8,
+  position: 'absolute',
+  zIndex: 2,
+  bottom: '1em',
+  '&:hover': {
+    color: 'orange !important'
+  }
+})
+
 const AmountInput = styled(Input)({
   width: 175,
   '& label': {
@@ -92,7 +103,9 @@ export default function TokenInput(props) {
         <Avatar className={classes.avatar} src={tokenMetadata[token.symbol].image} />
       </ListItemAvatar>
       <ListItemText style={{ width: '30px' }} primary={token.symbol} secondary={props.secondary || token.symbolAdornment} />
-      
+      <RemainderButton onClick={token.bindSetRemainderButton.onClick}>
+       {token.bindSetRemainderButton.value}
+      </RemainderButton>
       <SecondaryActionAlt>
         <AmountInput
           error={error}
