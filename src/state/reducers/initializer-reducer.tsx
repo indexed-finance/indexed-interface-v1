@@ -138,6 +138,15 @@ export function useInitializerToken(
   let disableApprove = !approvalNeeded || !selected || balance.lt(approvalRemainder);
   let updateAmount = (input: string | number) => dispatch({ type: 'SET_TOKEN_INPUT', index, amount: input });
   let setAmountToBalance = () => dispatch({ type: 'SET_TOKEN_EXACT', index, amount: balance });
+  let setAmountToRemainder = () => dispatch({ type: 'SET_TOKEN_EXACT', index, amount: balance });
+
+  let displayAmountRemaining = formatBalance(amountRemaining, decimals, 4);
+  let bindSetRemainderButton = {
+    value: `DESIRED: ${displayAmountRemaining}`,
+    disabled: balance.lt(amountRemaining),
+    onClick: setAmountToRemainder
+  }
+
   let updateDidApprove = () => dispatch({ type: 'UPDATE_POOL' });
 
   let symbolAdornment = amount.eq(0) ? null : `Ξ${displayCredit}`;
@@ -158,6 +167,7 @@ export function useInitializerToken(
     name,
     symbol,
     errorMessage,
+    displayAmountRemaining,
     currentBalance: formatBalance(currentBalance, decimals, 4),
     targetBalance: formatBalance(targetBalance, decimals, 4),
     percentOfDesired,
@@ -169,6 +179,7 @@ export function useInitializerToken(
     setAmountToBalance,
     toggleSelect: toggle,
     updateDidApprove,
+    bindSetRemainderButton,
     bindSelectButton: {
       disabled: disableApprove,
       checked: selected,
@@ -190,6 +201,7 @@ export type TokenActions = {
   address: string;
   currentBalance: string,
   targetBalance: string,
+  displayAmountRemaining: string;
   approvalRemainder: BigNumber;
   percentOfDesired?: number;
   decimals: number;
@@ -203,6 +215,11 @@ export type TokenActions = {
   setAmountToBalance: () => void;
   toggleSelect: () => void;
   updateDidApprove: () => void;
+  bindSetRemainderButton: {
+    disabled: boolean;
+    value: string;
+    onClick: () => void;
+  }
   bindSelectButton: {
     disabled: boolean;
     checked: boolean;
