@@ -14,6 +14,7 @@ import PoolInitializer from '../../assets/constants/abi/PoolInitializer.json'
 import {
   TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER, UNCLAIMED_CREDITS
 } from '../../assets/constants/parameters'
+import ExplainCredit from './explain-credit';
 
 // const useStyles = getStyles(style)
 
@@ -22,7 +23,7 @@ export default function InitializerForm({ metadata, classes }) {
   // const classes = useStyles()
 
   const { useToken, initState, setHelper, updatePool, displayTotalCredit } = useInitializerState();
-  let { state, dispatch, account, handleTransaction } = useContext(store);
+  let { state, handleTransaction } = useContext(store);
 
   const findHelper = (i) => {
     let { address } = metadata
@@ -68,7 +69,7 @@ export default function InitializerForm({ metadata, classes }) {
     <Fragment>
       <TokenInputs useToken={useToken} tokens={initState.tokens} width='100%' height='calc(40vh - 75px)' />
       <div className={classes.reciept}>
-        <p> CREDIT: <span id='credit'>Ξ {displayTotalCredit}</span></p>
+        <p> CREDIT: <span id='credit'>Ξ {displayTotalCredit}</span> <ExplainCredit /> </p>
       </div>
       <div className={classes.submit}>
         <ButtonPrimary variant='outlined' onClick={contributeTokens} style={{ marginRight: 0 }}>
