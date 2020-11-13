@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import {  Switch, Route, BrowserRouter as Router } from 'react-router-dom'
-import { getAllHelpers, formatBalance } from '@indexed-finance/indexed.js';
+import { getAllHelpers, formatBalance, BigNumber } from '@indexed-finance/indexed.js';
 
 import { StateProvider } from './state'
 import Navigation from './components/navigation'
@@ -139,10 +139,18 @@ function Application(){
         indexes[ticker] = index;
       }
       for (let pool of state.helper.uninitialized) {
+        await pool.update();
         const { category, name, symbol, address, tokens } = pool;
         const categoryID = `0x${category.toString(16)}`;
         await addCategory(categoryID);
         const ticker = symbol.toUpperCase();
+        let finalValueEstimate = new BigNumber(0);
+        let currentValue = new BigNumber(0);
+        tokens.forEach((token) => {
+          const price = pool.tokenPrices[token.address];
+          currentValue = currentValue.plus(price.times(token.balance));
+          finalValueEstimate = finalValueEstimate.plus(price.times(token.targetBalance));
+        });
         const index = {
           marketcap: 0,
           price: 0,
@@ -158,7 +166,9 @@ function Application(){
           tokens: tokens.map(token => token.symbol).join(', '),
           active: false,
           poolHelper: pool,
-          volume: 0
+          volume: 0,
+          currentValue: formatBalance(currentValue, 18, 4),
+          finalValueEstimate: formatBalance(finalValueEstimate, 18, 4)
         };
         categories[categoryID].indexes.push(ticker);
         indexes[ticker] = index;
