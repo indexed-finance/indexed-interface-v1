@@ -40,10 +40,10 @@ export default function StickyHeadTable({ width, height, action, data, columns, 
         <Table stickyHeader className={classes.table}>
           <Head className={classes.head}>
             <TableRow>
-              {columns.map((column) => (
+              {columns.map((column, i) => (
                 <TableCell
                   className={classes.head}
-                  key={column.id}
+                  key={i}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                 >
@@ -53,7 +53,7 @@ export default function StickyHeadTable({ width, height, action, data, columns, 
             </TableRow>
           </Head>
           <TableBody className={classes.body}>
-            {data.map((row) => {
+            {data.map((row, i) => {
               let f = () => {}
 
               if(href){
@@ -61,7 +61,7 @@ export default function StickyHeadTable({ width, height, action, data, columns, 
               }
 
               return (
-                <Row hover tabIndex={-1} key={row.code} onClick={f}>
+                <Row key={i} hover tabIndex={-1} key={row.code} onClick={f}>
                   {columns.map((column) => {
                     const value = row[column.id];
 
