@@ -11,10 +11,8 @@ export type SetSingleAmount = {
   index: number,
   amount: BigNumber,
   displayAmount: string,
-  allowance: BigNumber,
-  balance: BigNumber
 };
-export type SetAllAmount = { type: 'SET_ALL_AMOUNTS', amounts: BigNumber[], allowances: BigNumber[], balances: BigNumber[], displayAmounts: string[] };
+export type SetAllAmount = { type: 'SET_ALL_AMOUNTS', amounts: BigNumber[], displayAmounts: string[] };
 export type ClearAllAmounts = { type: 'CLEAR_ALL_AMOUNTS' }
 export type SetSpecifiedSide = { type: 'SET_SPECIFIED_SIDE', side: 'input' | 'output' };
 

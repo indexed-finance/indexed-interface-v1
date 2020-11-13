@@ -21,10 +21,8 @@ export type MintState = {
   tokens?: PoolToken[];
   poolAmountOut: BigNumber;
   poolDisplayAmount: string;
-  balances: BigNumber[];
   amounts: BigNumber[];
   displayAmounts: string[];
-  allowances: BigNumber[];
   selected: boolean[];
   ready: boolean;
   specifiedSide?: 'output' | 'input';
@@ -43,10 +41,8 @@ const initialState: MintState = {
   tokens: [] as PoolToken[],
   poolAmountOut: BN_ZERO,
   poolDisplayAmount: '0',
-  balances: [] as BigNumber[],
   amounts: [] as BigNumber[],
   displayAmounts: [] as string[],
-  allowances: [] as BigNumber[],
   selected: [] as boolean[],
   isSingle: false,
   selectedIndex: undefined
@@ -57,7 +53,6 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
     actions = [actions];
   }
   let newState: MintState = { ...state };
-  let didUpdateUserData = false;
 
   const toggleToken = (action: ToggleToken) => {
     const { isSingle, selectedIndex } = newState;
@@ -101,20 +96,6 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
     newState.specifiedSide = action.side;
   }
 
-  const updateUserData = () => {
-    if (didUpdateUserData) return;
-    let size = newState.tokens.length;
-    let addresses = newState.pool.tokens.map(t => t.address);
-    if (newState.pool.userAddress) {
-      newState.balances = addresses.map(t => new BigNumber(newState.pool.userBalances[t] || BN_ZERO));
-      newState.allowances = addresses.map(t => new BigNumber(newState.pool.userAllowances[t] || BN_ZERO));
-    } else {
-      newState.allowances = new Array(size).fill(BN_ZERO);
-      newState.balances = new Array(size).fill(BN_ZERO);
-    }
-    didUpdateUserData = true;
-  }
-
   const setHelper = (action: SetHelper) => {
     newState.pool = action.pool;
 
@@ -122,7 +103,6 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
     newState.amounts = new Array(newState.tokens.length).fill(BN_ZERO);
     newState.selected = new Array(newState.tokens.length).fill(true);
     newState.displayAmounts = new Array(newState.tokens.length).fill('0');
-    updateUserData();
   }
 
   for (let action of actions) {
@@ -136,10 +116,11 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
       case 'CLEAR_ALL_AMOUNTS': { clearAll(); break; }
     }
   }
-  updateUserData();
 
   let isReady = !newState.poolAmountOut.eq(0) && newState.amounts.filter((amount, i) => {
-    return newState.allowances[i].gte(amount);
+    let token = newState.tokens[i].address;
+    let allowance = newState.pool.userAllowances[token] || BN_ZERO;
+    return allowance.gte(amount);
   }).length === newState.tokens.length;
   newState.ready = isReady;
   return newState;
