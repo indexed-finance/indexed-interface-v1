@@ -61,7 +61,7 @@ export async function getEvents(web3, poolAddress) {
     let amount = (parseFloat(value)/Math.pow(10,18)).toLocaleString({ minimumFractionDigits:  3 })
 
     events.push(
-      { time: blockNumber, event: `MINT ${amount} ${symbol}`, tx: hash(shortenHash(transactionHash), transactionHash) },
+      { blockNumber, event: `MINT ${amount} ${symbol}`, tx: hash(shortenHash(transactionHash), transactionHash) },
     )
   })
   let burns = contract.events.Transfer({
@@ -76,12 +76,12 @@ export async function getEvents(web3, poolAddress) {
     let amount = (parseFloat(value)/Math.pow(10,18)).toLocaleString({ minimumFractionDigits:  3 })
 
     events.push(
-      { time: blockNumber, event: `BURN ${amount} ${symbol}`, tx: hash(shortenHash(transactionHash), transactionHash) },
+      { blockNumber, event: `BURN ${amount} ${symbol}`, tx: hash(shortenHash(transactionHash), transactionHash) },
     )
   })
 
   return await Promise.all([ mints, burns ])
   .then(() =>
-    events.sort((a,b) => b.time - a.time)
+    events.sort((a,b) => b.blockNumber - a.blockNumber)
   )
 }
