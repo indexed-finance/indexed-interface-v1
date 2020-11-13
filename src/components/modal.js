@@ -61,7 +61,7 @@ export default function Modal() {
       >
         <DialogTitle onClose={handleClose}>{title}</DialogTitle>
         <DialogContent>
-          <DialogContentText>{message}</DialogContentText>
+          <DialogContentText style={{ whiteSpace: 'pre-line' }}>{message}</DialogContentText>
         </DialogContent>
         <DialogActions>
           {actions.map(act => {
