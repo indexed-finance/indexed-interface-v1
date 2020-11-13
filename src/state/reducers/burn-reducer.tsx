@@ -22,6 +22,7 @@ export type BurnState = {
   poolAmountIn: BigNumber;
   poolDisplayAmount: string;
   amounts: BigNumber[];
+  displayAmounts: string[];
   selected: boolean[];
   ready: boolean;
   specifiedSide?: 'output' | 'input';
@@ -41,6 +42,7 @@ const initialState: BurnState = {
   poolAmountIn: BN_ZERO,
   poolDisplayAmount: '0',
   amounts: [] as BigNumber[],
+  displayAmounts: [] as string[],
   selected: [] as boolean[],
   isSingle: false,
   selectedIndex: undefined
@@ -51,6 +53,8 @@ function burnReducer(state: BurnState = initialState, actions: BurnDispatchActio
     actions = [actions];
   }
   let newState: BurnState = { ...state };
+
+  const cleanInputAmount = (amt: string) => amt.replace(/^(0{1,})(?=(0\.|\d))+/, '').replace(/^\./, '0.') || '0';
 
   const toggleToken = (action: ToggleToken) => {
     const { isSingle, selectedIndex } = newState;
@@ -69,15 +73,17 @@ function burnReducer(state: BurnState = initialState, actions: BurnDispatchActio
 
   const setPoolAmount = (action: SetPoolAmount) => {
     newState.poolAmountIn = action.amount;
-    newState.poolDisplayAmount = formatBalance(action.amount, 18, 4);
+    newState.poolDisplayAmount = cleanInputAmount(action.displayAmount);
   };
 
   const setSingle = (action: SetSingleAmount) => {
     newState.amounts[action.index] = action.amount;
+    newState.displayAmounts[action.index] = cleanInputAmount(action.displayAmount);
   }
 
   const setAll = (action: SetAllAmount) => {
     newState.amounts = action.amounts;
+    newState.displayAmounts = action.displayAmounts.map(cleanInputAmount);
   }
 
   const setSide = (action: SetSpecifiedSide) => {
@@ -89,7 +95,14 @@ function burnReducer(state: BurnState = initialState, actions: BurnDispatchActio
     newState.pool = action.pool;
     newState.tokens = [...action.pool.tokens.map(t => Object.assign({}, t))];
     newState.amounts = new Array(newState.tokens.length).fill(BN_ZERO);
+    newState.displayAmounts = new Array(newState.tokens.length).fill('0');
     newState.selected = newState.tokens.map(t => t.ready);
+  }
+
+  const clearAll = () => {
+    const size = newState.tokens.length;
+    newState.amounts = new Array(size).fill(BN_ZERO);
+    newState.displayAmounts = new Array(size).fill('0');
   }
 
   for (let action of actions) {
@@ -100,6 +113,7 @@ function burnReducer(state: BurnState = initialState, actions: BurnDispatchActio
       case 'SET_ALL_AMOUNTS': { setAll(action); break; }
       case 'SET_POOL_HELPER': { setHelper(action); break; }
       case 'SET_SPECIFIED_SIDE': { setSide(action); break; }
+      case 'CLEAR_ALL_AMOUNTS': { clearAll(); break; }
     }
   }
 
@@ -123,7 +137,7 @@ export function useBurnTokenActions(
   let amount = state.amounts[index];
   let selected = state.selected[index];
 
-  let displayAmount = amount.eq(BN_ZERO) ? '0' : formatBalance(amount, decimals, 4);
+  let displayAmount = state.displayAmounts[index];
   let displayBalance = balance.eq(BN_ZERO) ? '0' : formatBalance(balance, decimals, 4);
 
   let toggle = () => dispatch({ type: 'TOGGLE_SELECT_TOKEN', index });

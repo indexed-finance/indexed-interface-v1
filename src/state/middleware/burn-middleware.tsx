@@ -1,4 +1,4 @@
-import { BigNumber, toBN, toTokenAmount } from "@indexed-finance/indexed.js";
+import { BigNumber, formatBalance, toBN, toTokenAmount } from "@indexed-finance/indexed.js";
 import { withMiddleware } from ".";
 import { MiddlewareAction, BurnDispatch, BurnDispatchAction, SetPoolInput, SetTokenExact, SetTokenOutput, ToggleToken, SetPoolExact } from "../actions/burn-actions";
 import { BurnState } from "../reducers/burn-reducer";
@@ -17,83 +17,92 @@ function burnDispatchMiddleware(dispatch: BurnDispatch, state: BurnState) {
   return (action: MiddlewareAction | BurnDispatchAction): Promise<void> => {
     const { pool, tokens } = state;
 
-    const singleOutGivenPoolIn = async (poolAmountIn: BigNumber, index: number): Promise<BurnDispatchAction[]> => {
+    const singleOutGivenPoolIn = async (poolAmountIn: BigNumber, index: number, poolDisplayAmount: string): Promise<BurnDispatchAction[]> => {
       const token = tokens[index];
       const result = await pool.calcSingleOutGivenPoolIn(token.address, poolAmountIn);
-      let emptyArr = new Array(tokens.length).fill(BN_ZERO);
+      const tokenAmount = toBN(result.amount);
       return [
-        { type: 'SET_ALL_AMOUNTS', amounts: emptyArr, balances: emptyArr, allowances: emptyArr },
-        { type: 'SET_SINGLE_AMOUNT', index, amount: toBN(result.amount), balance: toBN(result.balance || 0), allowance: toBN(result.allowance || 0) },
-        { type: 'SET_POOL_AMOUNT', amount: toBN(poolAmountIn) },
+        { type: 'SET_SPECIFIED_SIDE', side: 'output' },
+        { type: 'CLEAR_ALL_AMOUNTS' },
+        {
+          type: 'SET_SINGLE_AMOUNT',
+          index,
+          amount: tokenAmount,
+          displayAmount: formatBalance(tokenAmount, token.decimals, 4)
+        },
+        { type: 'SET_POOL_AMOUNT', amount: toBN(poolAmountIn), displayAmount: poolDisplayAmount },
         { type: 'SET_SPECIFIED_SIDE', side: 'output' }
       ];
     };
 
-    const poolInGivenSingleOut = async (address: string, exactAmount: BigNumber, index: number): Promise<BurnDispatchAction[]> => {
+    const poolInGivenSingleOut = async (address: string, exactAmount: BigNumber, index: number, displayAmount: string): Promise<BurnDispatchAction[]> => {
       const result = await pool.calcPoolInGivenSingleOut(address, exactAmount);
-      const { amount: poolAmount, allowance, balance  } = result;
-      let emptyArr = new Array(tokens.length).fill(BN_ZERO);
+      // const { amount: poolAmount } = result;
+      const poolAmount = toBN(result.amount);
       return [
-        { type: 'SET_ALL_AMOUNTS', amounts: emptyArr, balances: emptyArr, allowances: emptyArr },
-        { type: 'SET_SINGLE_AMOUNT', index, amount: exactAmount, balance: toBN(balance || 0), allowance: toBN(allowance || 0) },
-        { type: 'SET_POOL_AMOUNT', amount: toBN(poolAmount) },
+        { type: 'SET_SPECIFIED_SIDE', side: 'input' },
+        { type: 'CLEAR_ALL_AMOUNTS' },
+        { type: 'SET_SINGLE_AMOUNT', index, amount: exactAmount, displayAmount },
+        { type: 'SET_POOL_AMOUNT', amount: toBN(poolAmount), displayAmount: formatBalance(toBN(poolAmount), 18, 4) },
         { type: 'SET_SPECIFIED_SIDE', side: 'input' }
       ];
     }
 
-    const allOutGivenPoolIn = async (exactAmount: BigNumber): Promise<BurnDispatchAction[]> => {
+    const allOutGivenPoolIn = async (exactAmount: BigNumber, displayAmount: string): Promise<BurnDispatchAction[]> => {
       const result = await pool.calcAllOutGivenPoolIn(exactAmount);
-      const { balances, allowances, amounts } = result.reduce((obj, { balance, allowance, amount }) => ({
-        balances: [...obj.balances, toBN(balance || 0)],
-        allowances: [...obj.allowances, toBN(allowance || 0)],
-        amounts: [...obj.amounts, toBN(amount)]
-      }), { balances: [], allowances: [], amounts: []});
+      const { amounts, displayAmounts } = result.reduce((obj, { amount, displayAmount }) => ({
+        amounts: [...obj.amounts, toBN(amount)],
+        displayAmounts: [...obj.displayAmounts, displayAmount ]
+      }), { displayAmounts: [], amounts: []});
       return [
-        { type: 'SET_ALL_AMOUNTS', amounts, balances, allowances },
-        { type: 'SET_POOL_AMOUNT', amount: toBN(exactAmount) },
+        { type: 'SET_ALL_AMOUNTS', amounts, displayAmounts },
+        { type: 'SET_POOL_AMOUNT', amount: toBN(exactAmount), displayAmount },
         { type: 'SET_SPECIFIED_SIDE', side: 'output' }
       ];
     }
 
     const setPoolExact = async ({ amount }: SetPoolExact) => {
       const { isSingle, selectedIndex } = state;
+      const displayAmount = formatBalance(amount, 18, 4);
       if (isSingle) {
-        return dispatch(await singleOutGivenPoolIn(amount, selectedIndex));
+        return dispatch(await singleOutGivenPoolIn(amount, selectedIndex, displayAmount));
       } else {
-        return dispatch(await allOutGivenPoolIn(amount));
+        return dispatch(await allOutGivenPoolIn(amount, displayAmount));
       }
     }
 
     const setTokenOutput = async ({ index, amount }: SetTokenOutput): Promise<void> => {
       const { address, decimals } = tokens[index];
       const exactAmount = toTokenAmount(amount, decimals);
-      return dispatch(await poolInGivenSingleOut(address, exactAmount, index));
+      return dispatch(await poolInGivenSingleOut(address, exactAmount, index, amount.toString() || '0'));
     };
 
-    const setTokenExact = async ({ index, amount }: SetTokenExact): Promise<void> => {      
-      return dispatch(await poolInGivenSingleOut(state.tokens[index].address, amount, index));
+    const setTokenExact = async ({ index, amount }: SetTokenExact): Promise<void> => {
+      const { address, decimals } = state.tokens[index];
+      const displayAmouunt = formatBalance(amount, decimals, 4)
+      return dispatch(await poolInGivenSingleOut(address, amount, index, displayAmouunt));
     }
 
     const setPoolInput = async ({ amount }: SetPoolInput): Promise<void> => {
       const { isSingle, selectedIndex } = state;
       const exactAmount = toTokenAmount(amount, 18);
       if (isSingle) {
-        return dispatch(await singleOutGivenPoolIn(exactAmount, selectedIndex));
+        return dispatch(await singleOutGivenPoolIn(exactAmount, selectedIndex, amount.toString() || '0'));
       } else {
-        return dispatch(await allOutGivenPoolIn(exactAmount));
+        return dispatch(await allOutGivenPoolIn(exactAmount, amount.toString() || '0'));
       }
     }
 
     const toggleToken = async (action: ToggleToken): Promise<void> => {
       const { isSingle, selectedIndex } = state;
       if (isSingle && action.index === selectedIndex) {
-        const actions = await allOutGivenPoolIn(state.poolAmountIn);
+        const actions = await allOutGivenPoolIn(state.poolAmountIn, state.poolDisplayAmount);
         return dispatch([
           ...actions,
           { type: 'TOGGLE_SELECT_TOKEN', index: action.index }
         ]);
       } else {
-        const actions = await singleOutGivenPoolIn(state.poolAmountIn, action.index);
+        const actions = await singleOutGivenPoolIn(state.poolAmountIn, action.index, state.poolDisplayAmount);
         return dispatch([
           ...actions,
           { type: 'TOGGLE_SELECT_TOKEN', index: action.index }
@@ -103,10 +112,8 @@ function burnDispatchMiddleware(dispatch: BurnDispatch, state: BurnState) {
 
     const updatePool = async (): Promise<void> => {
       await state.pool.update();
-      const balances = tokens.map(t => toBN(state.pool.userBalances[t.address] || BN_ZERO))
-      const allowances = tokens.map(t => toBN(state.pool.userAllowances[t.address] || BN_ZERO))
       let emptyArr = new Array(tokens.length).fill(BN_ZERO);
-      return dispatch({ type: 'SET_ALL_AMOUNTS', amounts: emptyArr, balances, allowances });
+      return dispatch({ type: 'SET_ALL_AMOUNTS', amounts: emptyArr, displayAmounts: new Array(tokens.length).fill('0') });
     }
 
     const fallback = async (action: BurnDispatchAction) => dispatch(action);
