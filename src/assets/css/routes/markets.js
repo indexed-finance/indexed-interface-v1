@@ -40,7 +40,7 @@ const mapping = {
   [DESKTOP_NORMAL]: {
     top: 'calc(100px - .375vw)',
     margin: '1em 3em .25em 3em',
-    loading: '1em 3em .25em 3em',
+    loading: '-1.5em 3em .25em 3em',
     inactive: '1em 3em .25em 3em',
     active: '-1em 3em .25em 3em',
     resolution: 200,
@@ -48,8 +48,8 @@ const mapping = {
   },
   [DESKTOP_LARGE]: {
     top: 'calc(100px - .375vw)',
-    margin: '1.5em 3em .25em 3em',
-    loading: '1.25em 3em .25em 3em',
+    margin: '1.25em 3em .25em 3em',
+    loading: '2.5em 3em .25em 3em',
     inactive: '1.25em 3em .25em 3em',
     active: '1.5em 3em .25em 3em',
     resolution: 200,
@@ -57,19 +57,19 @@ const mapping = {
   },
   [DESKTOP_WIDE]: {
     top: 'calc(100px - .375vw)',
-    margin: '-3.5em 3em .25em 3em',
+    margin: '1.5em 3em .25em 3em',
     loading: '1.5em 3em .25em 3em',
     inactive: '1.5em 3em .25em 3em',
-    active: '-3.5em 3em .25em 3em',
+    active: '1em 3em .25em 3em',
     resolution: 200,
     height: '37.5%'
   },
   [DESKTOP_HUGE]: {
     top: 'calc(100px - .375vw)',
-    margin: '-1em 3em .25em 3em',
+    margin: '1.5em 3em .25em 3em',
     loading: '1.5em 3em .25em 3em',
     inactive: '1.5em 3em .25em 3em',
-    active: '-1em 3em .25em 3em',
+    active: '1.75em 3em .25em 3em',
     resolution: 200,
     height: '32.5%'
   },
