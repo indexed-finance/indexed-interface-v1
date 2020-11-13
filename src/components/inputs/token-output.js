@@ -63,7 +63,7 @@ export default function TokenOutput(props) {
       className={classes[props.label]}
       button
       onClick={token.toggleSelect}
-      key={token.address}
+      key={props.index}
     >
         <Tick>
           <Checkbox

@@ -39,8 +39,8 @@ export default function CurrencySelect({ market, onSelect, assets }) {
   return(
     <InputAdornment style={{ paddingRight: 5 }} position="end">
       <Selection value={currency} onChange={handleChange} >
-        {selections.map(i => (
-          <MenuItem value={i.symbol}>{i.symbol}</MenuItem>
+        {selections.map((cur, i) => (
+          <MenuItem key={i} value={cur.symbol}>{cur.symbol}</MenuItem>
         ))}
       </Selection>
     </InputAdornment>

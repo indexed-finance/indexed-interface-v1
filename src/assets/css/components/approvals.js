@@ -75,7 +75,8 @@ const setStyle = (theme) => ({
   },
   helper: {
     cursor: 'pointer',
-    fontSize: 10
+    fontSize: 10,
+    marginRight: '0 !important'
   },
   balance: {
     cursor: 'pointer',

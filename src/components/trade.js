@@ -327,9 +327,9 @@ export default function Trade({ market, metadata }) {
       <Grid item xs={12} md={12} lg={12} xl={12} key='0'>
         <Input className={classes.inputs} label="AMOUNT" variant='outlined'
           helperText={
-            <o className={classes.helper} onClick={handleBalance}>
-              BALANCE: {balances.input}
-            </o>}
+            <span className={classes.helper} onClick={handleBalance}>
+              {`BALANCE: ${balances.input}`}
+            </span>}
           onChange={handleChange}
           name="input"
           value={input.amount}
@@ -348,9 +348,9 @@ export default function Trade({ market, metadata }) {
       <Grid item xs={12} md={12} lg={12} xl={12} key='2'>
         <Input className={classes.altInputs} label="RECIEVE" variant='outlined'
           helperText={
-          <o className={classes.helper}>
-            BALANCE: {balances.output}
-          </o>}
+          <span className={classes.helper}>
+            {`BALANCE: ${balances.output}`}
+          </span>}
           value={output.amount}
           name="output"
           InputProps={{

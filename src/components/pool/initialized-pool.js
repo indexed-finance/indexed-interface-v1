@@ -137,7 +137,7 @@ function InitializedPoolPage({ address, metadata }){
 
   return (
     <Fragment>
-      <Grid container direction='column' alignItems='flex-start' justify='stretch'>
+      <Grid container direction='column' alignItems='flex-start'/*  justify='stretch' */>
         <Grid item xs={12} md={12} lg={12} xl={12} container direction='row' alignItems='flex-start' justify='space-between'>
           <Grid item xs={12} md={6} lg={7} xl={7} style={{ width: '100%'}}>
           <ParentSize>
@@ -182,8 +182,8 @@ function InitializedPoolPage({ address, metadata }){
               <div className={classes.container} style={{ width }}>
                 <div className={classes.assets}>
                   <Grid container direction='column' alignItems='center' justify='space-around'>
-                    {metadata.assets.map(asset => (
-                      <Grid item>
+                    {metadata.assets.map((asset, i) => (
+                      <Grid item key={i}>
                         <div className={classes.asset}>
                           <Weights asset={asset} />
                         </div>

@@ -24,7 +24,7 @@ export default function TokenInputs({ tokens, useToken, height, width }) {
         tokens.map((token, index) => {
           let label = index === tokens.length-1 ? 'last' : 'item'
           let secondary =  state.native ? <span id={token.symbol} /> : null
-          return <TokenInput index={index} label={label} secondary={secondary} token={token} useToken={useToken} inputWidth={inputWidth}  />
+          return <TokenInput key={index} index={index} label={label} secondary={secondary} token={token} useToken={useToken} inputWidth={inputWidth}  />
         })
       }
     </List>

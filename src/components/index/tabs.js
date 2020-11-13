@@ -110,19 +110,11 @@ export default function VerticalTabs({ data }) {
   let { state } = useContext(store);
 
   useEffect(() => {
-    if (data && data.address) {
-      console.log(`Got Data Address!!! ${data.address}`)
-    }
-  }, [data]);
-  useEffect(() => {
     const setPool = async() => {
-      console.log(`SETPOOL:: ${data.address}`)
       let poolHelper = state.helper.initialized.find(i => i.pool.address === data.address);
       setHelper(poolHelper);
       setMeta(poolHelper)
-      console.log(`Setting Pool Helper!!`);
-      console.log(`Helper Has Tokens ${poolHelper.tokens.map(t => t.symbol)}`)
-        }
+    }
     if (data && data.address && state.helper && !helper) setPool();
   }, [ state.web3.injected, data, state.helper ]);
 
@@ -189,16 +181,16 @@ export default function VerticalTabs({ data }) {
           value={value}
           onChange={handleChange}
         >
-          <Tab label="ASSETS" {...a11yProps(0)} />
-          <Tab label="TRADES" {...a11yProps(1)} />
-          <Tab label="INFO" {...a11yProps(2)} />
+          <Tab key='assets' label="ASSETS" {...a11yProps(0)} />
+          <Tab key='trades' label="TRADES" {...a11yProps(1)} />
+          <Tab key='info' label="INFO" {...a11yProps(2)} />
         </Tabs>
       </div>
 
       <TabPanel className={classes.assets} value={value} index={0}>
         <Grid item container direction='row' alignItems='flex-start' justify='space-around' spacing={4}>
           {state.request && data.active && helper &&
-            helper.tokens.map(token => (<Grid item> <WeightedToken token={token} /> </Grid> ))}
+            helper.tokens.map((token, i) => (<Grid item key={i}> <WeightedToken token={token} /> </Grid> ))}
           {!state.request && (<Loader color={state.background} />)}
         </Grid>
       </TabPanel>
@@ -209,27 +201,27 @@ export default function VerticalTabs({ data }) {
 
       <TabPanel className={classes.panels} value={value} index={2}>
         <div className='item'>
-        <Grid item container direction='column' alignItems='flex-start' justify='space-around' spacing={6}>
-          <Grid item>
-            <Link to={`/pool/${data.address}`}>
-              <ButtonPrimary variant='outlined' margin={{ marginLeft: 50 }}>
-                VIEW POOL
-              </ButtonPrimary>
-            </Link>
-            <a target='_blank' href={`https://rinkeby.etherscan.io/token/${data.address}`}>
-              <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
-                ETHERSCAN
-              </ButtonPrimary>
-            </a>
+          <Grid item container direction='column' alignItems='flex-start' justify='space-around' spacing={6}>
+            <Grid item key='pool'>
+              <Link to={`/pool/${data.address}`}>
+                <ButtonPrimary variant='outlined' margin={{ marginLeft: 50 }}>
+                  VIEW POOL
+                </ButtonPrimary>
+              </Link>
+              <a target='_blank' rel="noopener noreferrer" href={`https://rinkeby.etherscan.io/token/${data.address}`}>
+                <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
+                  ETHERSCAN
+                </ButtonPrimary>
+              </a>
+            </Grid>
+            <Grid item key='uniswap'>
+              <a target='_blank' rel="noopener noreferrer" href={`https://info.uniswap.org/pool/${data.address}`}>
+                <ButtonPrimary variant='outlined' margin={{ marginRight: 25 }}>
+                  🦄 UNISWAP
+                </ButtonPrimary>
+              </a>
+            </Grid>
           </Grid>
-          <Grid item>
-            <a target='_blank' href={`https://info.uniswap.org/pool/${data.address}`}>
-              <ButtonPrimary variant='outlined' margin={{ marginRight: 25 }}>
-                🦄 UNISWAP
-              </ButtonPrimary>
-            </a>
-          </Grid>
-        </Grid>
         </div>
         <div className={classes.stats}>
           <ul>
