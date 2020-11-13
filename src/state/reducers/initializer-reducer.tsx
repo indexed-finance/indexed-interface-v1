@@ -138,7 +138,7 @@ export function useInitializerToken(
   let disableApprove = !approvalNeeded || !selected || balance.lt(approvalRemainder);
   let updateAmount = (input: string | number) => dispatch({ type: 'SET_TOKEN_INPUT', index, amount: input });
   let setAmountToBalance = () => dispatch({ type: 'SET_TOKEN_EXACT', index, amount: balance });
-  let setAmountToRemainder = () => dispatch({ type: 'SET_TOKEN_EXACT', index, amount: balance });
+  let setAmountToRemainder = () => dispatch({ type: 'SET_TOKEN_EXACT', index, amount: amountRemaining });
 
   let displayAmountRemaining = formatBalance(amountRemaining, decimals, 4);
   let bindSetRemainderButton = {
