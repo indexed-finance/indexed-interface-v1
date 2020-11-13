@@ -37,17 +37,6 @@ const AmountInput = styled(Input)({
   '& fieldset': {
     borderWidth: 1,
   },
-  '& input:valid + fieldset': {
-    borderColor: '#999999',
-    borderWidth: '1px !important',
-  },
-  '& input:invalid + fieldset': {
-    borderColor: 'red',
-    borderWidth: '1px !important',
-  },
-  '& input:valid:focus + fieldset': {
-    borderWidth: '1px !important',
-  },
   '& input': {
     padding: '.75em 0 .75em .75em',
   }
@@ -77,6 +66,13 @@ export default function TokenInput(props) {
       .catch((() => {}));
   }
 
+  let errorMsg = token.errorMessage;
+  let error = !!errorMsg;
+
+  let helperText = (error) ? errorMsg : <o className={classes.helper} onClick={() => setAmountToBalance()}>
+    BALANCE: {token.displayBalance}
+  </o>;
+
   return(
     <ListItem
       className={classes[props.label]}
@@ -99,19 +95,17 @@ export default function TokenInput(props) {
       
       <SecondaryActionAlt>
         <AmountInput
+          error={error}
           variant='outlined'
           label='AMOUNT'
           type='number'
-          helperText={
-            <o className={classes.helper} onClick={() => setAmountToBalance()}>
-              BALANCE: {token.displayBalance}
-           </o>}
+          helperText={helperText}
           style={{ width: props.inputWidth }}
           InputLabelProps={{ shrink: true }}
           {...(token.bindApproveInput)}
           InputProps={{
             endAdornment:
-            <ApproveButton onClick={approveRemaining} disabled={!(token.approvalNeeded)}>
+            <ApproveButton onClick={approveRemaining} disabled={!(token.approvalNeeded) || error}>
               APPROVE
            </ApproveButton>
          }}

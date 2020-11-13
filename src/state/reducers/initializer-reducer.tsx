@@ -19,11 +19,14 @@ export type InitializerState = {
   pool: InitializerHelper;
   tokens?: InitializerToken[];
   amounts: BigNumber[];
+  displayAmounts: string[];
   selected: boolean[];
   creditEthTotal: BigNumber;
   creditEthPerToken: BigNumber[];
   isSingle: boolean;
   selectedIndex?: number;
+  currentValue: BigNumber;
+  finalValueEstimate: BigNumber;
 };
 
 const initialState: InitializerState = {
@@ -32,8 +35,11 @@ const initialState: InitializerState = {
   creditEthTotal: BN_ZERO,
   creditEthPerToken: [] as BigNumber[],
   amounts: [] as BigNumber[],
+  displayAmounts: [] as string[],
   selected: [] as boolean[],
-  isSingle: false
+  isSingle: false,
+  currentValue: BN_ZERO,
+  finalValueEstimate: BN_ZERO
 };
 
 function initializerReducer(state: InitializerState = initialState, actions: InitDispatchAction | InitDispatchAction[]): InitializerState {
@@ -41,6 +47,7 @@ function initializerReducer(state: InitializerState = initialState, actions: Ini
     actions = [actions];
   }
   let newState: InitializerState = { ...state };
+  const cleanInputAmount = (amt: string) => amt.replace(/^(0{1,})(?=(0\.|\d))+/, '').replace(/^\./, '0.');
   
   const updateCreditTotal = () => {
     newState.creditEthTotal = newState.creditEthPerToken.reduce(
@@ -68,6 +75,7 @@ function initializerReducer(state: InitializerState = initialState, actions: Ini
 
   const setTokenAmount = (action: SetTokenAmount) => {
     newState.amounts[action.index] = action.amount;
+    newState.displayAmounts[action.index] = cleanInputAmount(action.displayAmount);
     newState.creditEthPerToken[action.index] = action.credit;
     updateCreditTotal();
   };
@@ -78,6 +86,7 @@ function initializerReducer(state: InitializerState = initialState, actions: Ini
     newState.tokens = [...tokens.map(t => Object.assign({}, t))];
     let size = newState.tokens.length;
     newState.amounts = new Array(size).fill(BN_ZERO);
+    newState.displayAmounts = new Array(size).fill('0');
     newState.selected = new Array(size).fill(false);
     newState.creditEthPerToken = new Array(size).fill(BN_ZERO);
   };
@@ -85,8 +94,11 @@ function initializerReducer(state: InitializerState = initialState, actions: Ini
   const setAll = (action: SetAll) => {
     newState.tokens = action.tokens;
     newState.amounts = action.amounts;
+    newState.displayAmounts = action.displayAmounts.map(cleanInputAmount);
     newState.creditEthPerToken = action.credits;
-    updateCreditTotal();    
+    newState.currentValue = action.currentValue;
+    newState.finalValueEstimate = action.finalValueEstimate;
+    updateCreditTotal();
   }
 
   for (let action of actions) {
@@ -105,7 +117,7 @@ export function useInitializerToken(
   dispatch: (action: InitDispatchAction | MiddlewareAction) => Promise<void>,
   index: number
 ): TokenActions {
-  let { address, decimals, name, symbol } = state.tokens[index];
+  let { address, decimals, name, symbol, amountRemaining } = state.tokens[index];
   let { pool } = state
 
   let allowance = new BigNumber(state.pool.userAllowances[address] || 0);
@@ -113,7 +125,7 @@ export function useInitializerToken(
   let amount =  state.amounts[index];
   let selected = state.selected[index];
 
-  let displayAmount = amount.eq(BN_ZERO) ? '0' : formatBalance(amount, decimals, 4);
+  let displayAmount = state.displayAmounts[index];
   let displayBalance = balance.eq(BN_ZERO) ? '0' : formatBalance(balance, decimals, 4);
 
   let approvalRemainder = allowance.gte(amount) ? BN_ZERO : amount.minus(allowance);
@@ -132,12 +144,20 @@ export function useInitializerToken(
   let { balance: currentBalance, targetBalance } = state.pool.getTokenByAddress(address);
   let percentOfDesired = currentBalance.div(targetBalance).times(100).toNumber();
 
+  let errorMessage: string = '';
+  if (amount.gt(balance)) {
+    errorMessage = 'EXCEEDS BALANCE';
+  } else if (amount.gt(amountRemaining)) {
+    errorMessage = 'EXCEEDS REMAINDER';
+  }
+
   return {
     target: pool.address,
     address,
     decimals,
     name,
     symbol,
+    errorMessage,
     currentBalance: formatBalance(currentBalance, decimals, 4),
     targetBalance: formatBalance(targetBalance, decimals, 4),
     percentOfDesired,
@@ -179,6 +199,7 @@ export type TokenActions = {
   displayAmount: string;
   displayBalance: string;
   symbolAdornment: string | null;
+  errorMessage: string;
   setAmountToBalance: () => void;
   toggleSelect: () => void;
   updateDidApprove: () => void;
@@ -201,6 +222,8 @@ export type InitContextType = {
   displayTotalCredit: string;
   displayPoolTotalCredit: string;
   displayUserCredit: string;
+  displayValue: string;
+  finalValue: string;
   updatePool: () => void;
 }
 
@@ -215,6 +238,9 @@ export function useInitializerReducer(): InitContextType {
   const displayUserCredit = initState.pool ? formatBalance(initState.pool.userCredit, 18, 4) : '0';
   const displayPoolTotalCredit = initState.pool ? formatBalance(initState.pool.totalCreditedWETH, 18, 4) : '0';
 
+  const displayValue = formatBalance(initState.currentValue, 18, 4);
+  const finalValue = formatBalance(initState.finalValueEstimate, 18, 4);
+
   return {
     useToken,
     initState,
@@ -222,6 +248,8 @@ export function useInitializerReducer(): InitContextType {
     displayTotalCredit,
     displayUserCredit,
     displayPoolTotalCredit,
-    updatePool
+    updatePool,
+    displayValue,
+    finalValue
   };
 }

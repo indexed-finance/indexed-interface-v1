@@ -36,6 +36,7 @@ const Input = styled(TextField)({
    borderWidth: 2,
  },
  '& input:invalid + fieldset': {
+   color: 'red',
    borderColor: 'red',
    borderWidth: 2,
  },
@@ -44,21 +45,34 @@ const Input = styled(TextField)({
    borderColor: '#666666',
    paddingRight: '5px !important',
    paddingLeft: '8px !important',
+   color: '#999999',
  },
- '& input:active + fieldset': {
+ '& input:invalid:focus + fieldset': {
+   borderWidth: 2,
+   borderColor: 'red',
+   paddingRight: '5px !important',
+   paddingLeft: '8px !important',
+   color: 'red',
+ },
+ '& input:valid:active + fieldset': {
    color: '#999999',
    borderColor: '#666666'
  },
- '& input:focus + fieldset': {
-   color: '#999999',
-   borderColor: '#666666'
+ '& input:invalid:active + fieldset': {
+   color: 'red',
+   borderColor: 'red'
  },
  '& .MuiOutlinedInput-notchedOutline': {
    border: '2px solid #666666'
  },
+ '& .MuiOutlinedInput-root.Mui-error': {
+    '&  .MuiOutlinedInput-notchedOutline': {
+      border: '2px solid red !important'
+    }
+ },
  '& .MuiOutlinedInput-root.Mui-focused': {
     '&  .MuiOutlinedInput-notchedOutline': {
-      border: '2px solid #666666 !important'
+      border: '2px solid #666666'
     }
  }
 })

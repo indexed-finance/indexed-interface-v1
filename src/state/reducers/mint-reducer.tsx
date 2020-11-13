@@ -74,7 +74,7 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
     }
   };
 
-  const cleanInputAmount = (amt: string) => amt.replace(/^(0{1,})(?=(0\.|\d))+/, '').replace(/^\./, '0.');
+  const cleanInputAmount = (amt: string) => amt.replace(/^(0{1,})(?=(0\.|\d))+/, '').replace(/^\./, '0.') || '0';
 
   const setPoolAmount = (action: SetPoolAmount) => {
     newState.poolAmountOut = action.amount;
@@ -150,31 +150,41 @@ export function useMintTokenActions(
   dispatch: (action: MintDispatchAction | MiddlewareAction) => Promise<void>,
   index: number
 ): TokenActions {
-  let { address, decimals, name, symbol } = state.tokens[index];
+  let { address, decimals, name, symbol, balance: poolBalance } = state.tokens[index];
 
   let allowance = (state.pool.userAddress && state.pool.userAllowances[address]) || BN_ZERO;
   let balance = (state.pool.userAddress && state.pool.userBalances[address]) || BN_ZERO;
   let amount = state.amounts[index];
   let selected = state.selected[index];
 
-  let displayAmount = state.displayAmounts[index];
+  let displayAmount = state.displayAmounts[index] || '0';
   let displayBalance = balance.eq(BN_ZERO) ? '0' : formatBalance(balance, decimals, 4);
 
   let approvalRemainder = allowance.gte(amount) ? BN_ZERO : amount.minus(allowance);
   let approvalNeeded = approvalRemainder.gt(BN_ZERO);
 
   let toggle = () => dispatch({ type: 'TOGGLE_SELECT_TOKEN', index });
-  let disableInput = !selected || !(state.isSingle);
-  let disableApprove = !approvalNeeded || !selected || balance.lt(approvalRemainder);
   let updateAmount = (input: string | number) => dispatch({ type: 'SET_TOKEN_INPUT', index, amount: input });
   let setAmountToBalance = () => dispatch({ type: 'SET_TOKEN_EXACT', index, amount: balance });
   let updateDidApprove = () => dispatch({ type: 'UPDATE_POOL' });
+
+  let errorMessage = '';
+  let maximumInput = poolBalance.div(2);
+  if (amount.gt(balance)) {
+    errorMessage = 'EXCEEDS BALANCE';
+  } else if (amount.gt(maximumInput)) {
+    errorMessage = 'EXCEEDS MAX INPUT';
+  }
+
+  let disableInput = !selected || !(state.isSingle);
+  let disableApprove = !approvalNeeded || !selected || balance.lt(approvalRemainder);
 
   return {
     target: state.pool.address,
     updateDidApprove,
     address,
     decimals,
+    errorMessage,
     name,
     symbol,
     approvalNeeded,
@@ -189,7 +199,7 @@ export function useMintTokenActions(
     },
     bindApproveInput: {
       disabled: disableInput,
-      value: displayAmount,
+      value: displayAmount || '0',
       name: symbol,
       onChange: (event) => {
         event.preventDefault();
@@ -208,6 +218,7 @@ export type TokenActions = {
   decimals: number;
   name: string;
   symbol: string;
+  errorMessage: string;
   approvalRemainder: BigNumber;
   approvalNeeded: boolean;
   displayAmount: string;
@@ -253,7 +264,7 @@ export function useMint() {
     setHelper,
     updatePool,
     bindPoolAmountInput: {
-      value: mintState.poolDisplayAmount,
+      value: mintState.poolDisplayAmount || '0',
       onChange: (event) => {
         event.preventDefault();
         setPoolAmount(event.target.value);
