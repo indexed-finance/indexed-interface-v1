@@ -110,19 +110,11 @@ export default function VerticalTabs({ data }) {
   let { state } = useContext(store);
 
   useEffect(() => {
-    if (data && data.address) {
-      console.log(`Got Data Address!!! ${data.address}`)
-    }
-  }, [data]);
-  useEffect(() => {
     const setPool = async() => {
-      console.log(`SETPOOL:: ${data.address}`)
       let poolHelper = state.helper.initialized.find(i => i.pool.address === data.address);
       setHelper(poolHelper);
       setMeta(poolHelper)
-      console.log(`Setting Pool Helper!!`);
-      console.log(`Helper Has Tokens ${poolHelper.tokens.map(t => t.symbol)}`)
-        }
+    }
     if (data && data.address && state.helper && !helper) setPool();
   }, [ state.web3.injected, data, state.helper ]);
 
