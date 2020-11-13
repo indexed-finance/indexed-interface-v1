@@ -36,6 +36,7 @@ import getStyles from '../assets/css'
 import { store } from '../state'
 import InitializerForm from '../components/pool/initializer-form'
 import { InitializerStateProvider, useInitializerState} from '../state/initializer'
+import UninitializedPool from '../components/pool/uninitialized-pool'
 
 const dummy = {
     address: '0x0000000000000000000000000000000000000000',
@@ -185,6 +186,8 @@ function Pool(){
   let {
     marginX, margin, width, padding, chartHeight, fontSize, tableWidth
   } = style.getFormatting({ native, request, active })
+
+  if (!active) return <UninitializedPool address={address} metadata={data} />
 
   return (
     <Fragment>
