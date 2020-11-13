@@ -7,11 +7,19 @@ export type ToggleToken = { type: 'TOGGLE_SELECT_TOKEN', index: number };
 export type SetTokenAmount = {
   type: 'SET_TOKEN_AMOUNT',
   amount: BigNumber,
+  displayAmount: string,
   credit: BigNumber,
   index: number
 };
-export type SetAll = { type: 'SET_ALL', tokens: InitializerToken[], amounts: BigNumber[], credits: BigNumber[] }
-
+export type SetAll = {
+  type: 'SET_ALL',
+  tokens: InitializerToken[],
+  amounts: BigNumber[],
+  displayAmounts: string[],
+  credits: BigNumber[],
+  currentValue: BigNumber,
+  finalValueEstimate: BigNumber
+};
 
 export type SetTokenExact = { type: 'SET_TOKEN_EXACT', index: number, amount: BigNumber };
 export type SetTokenInput = { type: 'SET_TOKEN_INPUT', index: number, amount: string | number };
