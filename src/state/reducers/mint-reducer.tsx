@@ -150,7 +150,7 @@ export function useMintTokenActions(
   dispatch: (action: MintDispatchAction | MiddlewareAction) => Promise<void>,
   index: number
 ): TokenActions {
-  let { address, decimals, name, symbol, balance: poolBalance } = state.tokens[index];
+  let { address, decimals, name, symbol, usedBalance: poolBalance } = state.tokens[index];
 
   let allowance = (state.pool.userAddress && state.pool.userAllowances[address]) || BN_ZERO;
   let balance = (state.pool.userAddress && state.pool.userBalances[address]) || BN_ZERO;
@@ -173,7 +173,7 @@ export function useMintTokenActions(
   if (amount.gt(balance)) {
     errorMessage = 'EXCEEDS BALANCE';
   } else if (amount.gt(maximumInput)) {
-    errorMessage = 'EXCEEDS MAX INPUT';
+    errorMessage = 'EXCEEDS MAX IN';
   }
 
   let disableInput = !selected || !(state.isSingle);
