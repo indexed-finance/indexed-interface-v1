@@ -194,7 +194,17 @@ export const marketColumns = [
 ]
 
 export const eventColumns = [
-  { id: 'time', label: 'TIME', align: 'left', minWidth: 75 },
+  {
+    id: 'blockNumber',
+    label: 'BLOCK',
+    align: 'left',
+    minWidth: 75,
+    // format: (unixtime) => {
+    //   const newDate = new Date();
+    //   newDate.setTime(unixtime*1000);
+    //   return newDate.toUTCString();
+    // }
+  },
   {
     id: 'event',
     label: 'EVENT',
