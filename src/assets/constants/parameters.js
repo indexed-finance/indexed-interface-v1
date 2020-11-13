@@ -243,6 +243,16 @@ export const TX_CONFIRMED = (txHash, network = 'rinkeby') => toFlagDispatch({ ..
 export const TX_REVERTED = (txHash, network = 'rinkeby') => toFlagDispatch({ ...TX_REVERT, etherscan: txEtherscanProps(txHash, network) });
 export const TX_REJECTED = toFlagDispatch(TX_REJECT);
 
-export const MARKET_ORDER = (input, output, f) => ({ show: true, title: 'CONFIRM ORDER', message: `You are about to swap ${input.amount} ${input.market} for ${output.amount} ${output.market}.`, actions: [{ label: 'CONFIRM', f: f }, { label: 'REJECT', f: null }] })
-export const UNCLAIMED_CREDITS = (input, output, f) => ({ show: true, title: 'UNCLAIMED CREDITS', message: `You have unclaimed compensation for this pool, would you like to redeem your share?`, actions: [{ label: 'CONFIRM', f: f }, { label: 'REJECT', f: null }] })
+export const MARKET_ORDER = (input, output, f) => ({
+  show: true,
+  title: 'CONFIRM ORDER',
+  message: `You are about to swap ${input.amount} ${input.market} for ${output.amount} ${output.market}.`,
+  actions: [{ label: 'CONFIRM', f: f }, { label: 'REJECT', f: null }]
+})
+export const UNCLAIMED_CREDITS = (input, output, f) => ({
+  show: true,
+  title: 'UNCLAIMED CREDITS',
+  message: `You have unclaimed compensation for this pool, would you like to redeem your share?`,
+  actions: [{ label: 'CONFIRM', f: f }, { label: 'REJECT', f: null }]
+})
 export const INCORRECT_NETWORK = { show: true, title: 'INCORRECT NETWORK', message: 'The current network is not supported please change to Rinkeby testnet.', actions: [ ] }

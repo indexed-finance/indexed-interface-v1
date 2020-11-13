@@ -19,40 +19,37 @@ function mintDispatchMiddleware(dispatch: MintDispatch, state: MintState) {
       const token = tokens[index];
       const result = await pool.calcSingleInGivenPoolOut(token.address, poolAmountOut);
       const amount = toBN(result.amount);
-      const balance = toBN(result.balance || 0);
-      const allowance = toBN(result.allowance || 0);
       return [
         { type: 'SET_SPECIFIED_SIDE', side: 'output' },
         { type: 'CLEAR_ALL_AMOUNTS' },
-        { type: 'SET_SINGLE_AMOUNT', index, amount, displayAmount: formatBalance(amount, token.decimals, 4), balance, allowance },
+        { type: 'SET_SINGLE_AMOUNT', index, amount, displayAmount: formatBalance(amount, token.decimals, 4) },
         { type: 'SET_POOL_AMOUNT', amount: poolAmountOut, displayAmount }
       ];
     };
 
     const poolOutGivenSingleIn = async (address: string, amount: BigNumber, displayAmount: string, index: number): Promise<MintDispatchAction[]> => {
       const result = await pool.calcPoolOutGivenSingleIn(address, amount);
-      const { amount: poolAmount, allowance, balance  } = result;
+      const { amount: poolAmount } = result;
       const poolAmountOut = toBN(poolAmount)
       const poolDisplayAmount = formatBalance(poolAmountOut, 18, 4);
+      
       return [
         { type: 'SET_SPECIFIED_SIDE', side: 'input' },
         { type: 'CLEAR_ALL_AMOUNTS' },
-        { type: 'SET_SINGLE_AMOUNT', index, amount, displayAmount, balance: toBN(balance || 0), allowance: toBN(allowance || 0) },
+        { type: 'SET_SINGLE_AMOUNT', index, amount, displayAmount, },
         { type: 'SET_POOL_AMOUNT', amount: toBN(poolAmountOut), displayAmount: poolDisplayAmount }
       ];
     }
 
     const allInGivenPoolOut = async (exactAmount: BigNumber, displayAmount: string): Promise<MintDispatchAction[]> => {
       const result = await pool.calcAllInGivenPoolOut(exactAmount);
-      const { balances, allowances, amounts, displayAmounts } = result.reduce((obj, { balance, allowance, amount }, i) => ({
-        balances: [...obj.balances, toBN(balance || 0)],
-        allowances: [...obj.allowances, toBN(allowance || 0)],
+      const { amounts, displayAmounts } = result.reduce((obj, { amount, decimals }, i) => ({
         amounts: [...obj.amounts, toBN(amount)],
-        displayAmounts: [...obj.displayAmounts, formatBalance(toBN(amount), state.tokens[i].decimals, 4) ]
-      }), { balances: [], allowances: [], amounts: [], displayAmounts: []});
+        displayAmounts: [...obj.displayAmounts, formatBalance(toBN(amount), decimals, 4) ]
+      }), { amounts: [], displayAmounts: []});
       return [
         { type: 'SET_SPECIFIED_SIDE', side: 'output' },
-        { type: 'SET_ALL_AMOUNTS', amounts, balances, allowances, displayAmounts },
+        { type: 'SET_ALL_AMOUNTS', amounts, displayAmounts },
         { type: 'SET_POOL_AMOUNT', amount: toBN(exactAmount), displayAmount }
       ];
     }
@@ -98,11 +95,9 @@ function mintDispatchMiddleware(dispatch: MintDispatch, state: MintState) {
 
     const updatePool = async (): Promise<void> => {
       await state.pool.update();
-      const balances = tokens.map(t => toBN(state.pool.userBalances[t.address] || BN_ZERO))
-      const allowances = tokens.map(t => toBN(state.pool.userAllowances[t.address] || BN_ZERO))
       const amounts = new Array(tokens.length).fill(BN_ZERO);
       const displayAmounts = new Array(tokens.length).fill('0');
-      return dispatch({ type: 'SET_ALL_AMOUNTS', amounts, displayAmounts, balances, allowances });
+      return dispatch({ type: 'SET_ALL_AMOUNTS', amounts, displayAmounts });
     }
 
     const fallback = async (action: MintDispatchAction) => dispatch(action);

@@ -14,7 +14,7 @@ const Exit = styled(ExitIcon)({
 
 function hash(value, og) {
   return (
-    <a style={{ 'text-decoration': 'none' }} href={`https://rinkeby.etherscan.io/tx/${og}`} target='_blank'>
+    <a style={{ textDecoration: 'none' }} href={`https://rinkeby.etherscan.io/tx/${og}`} target='_blank' rel="noopener noreferrer">
       <ButtonTransaction> <o>{value}</o>&nbsp;<Exit/> </ButtonTransaction>
     </a>
   )
