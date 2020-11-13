@@ -68,7 +68,7 @@ export default function Markets(){
     borderBottomLeftRadius: 200,
     borderTopRightRadius: 10,
     borderBottomRightRadius: 10,
-    width: '40%',
+    width: '45%',
     boxShadow: 'none',
     position: 'relative',
     float: 'right',
@@ -99,7 +99,9 @@ export default function Markets(){
   }
 
   useEffect(() => {
-    if(Object.keys(state.indexes).length > 0){
+    if(Object.keys(state.indexes).length > 0
+        && market == dummy
+      ){
       let keys = Object.keys(state.indexes)
 
       setMarket(state.indexes[keys[0]])
@@ -119,6 +121,9 @@ export default function Markets(){
     resolution, top, margin, height, pre, pre2
   } = style.getFormatting({ request, native, active })
 
+
+  console.log('MARGIN', margin)
+
   return (
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>
@@ -129,7 +134,7 @@ export default function Markets(){
             <div className={classes.market}>
               {!native && (
                  <Fragment>
-                  <h2> {market.name} [{market.symbol}] </h2>
+                  <h2> {market.name} </h2>
                   {state.request && !market.active && (<h3 style={{ color: 'orange' }}> UNINITIALISED </h3>)}
                   {market.active && (<h3 style={{ color: '#999999' }}> ${market.price} </h3>)}
                 </Fragment>

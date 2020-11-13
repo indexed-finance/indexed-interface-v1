@@ -43,12 +43,9 @@ export default function Pool(){
   }, [ state.indexes ])
 
   let { active } = data
-  if (data.address === dummy.address) {
-    return <InitializedPool address={address} metadata={data} />
-  }
 
-  if (!active) return <InitializerStateProvider>
+  if (active == false) return <InitializerStateProvider>
     <UninitializedPool address={address} metadata={data} />
   </InitializerStateProvider>
-  return <InitializedPool address={address} metadata={data} />
+  else return <InitializedPool address={address} metadata={data} />
 }

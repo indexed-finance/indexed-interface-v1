@@ -39,10 +39,10 @@ const setStyle = (theme) => ({
 const mapping = {
   [DESKTOP_NORMAL]: {
     top: 'calc(100px - .375vw)',
-    margin: '-3.5em 3em .25em 3em',
-    loading: '0em 3em .25em 3em',
-    inactive: '0em 3em .25em 3em',
-    active: '-3.5em 3em .25em 3em',
+    margin: '1em 3em .25em 3em',
+    loading: '1em 3em .25em 3em',
+    inactive: '1em 3em .25em 3em',
+    active: '-1em 3em .25em 3em',
     resolution: 200,
     height: '43.75%'
   },
@@ -85,8 +85,6 @@ const getFormatting = ({ request, native, active }) => {
   let { innerWidth, innerHeight } = window
   let dimension = native ? 'NATIVE' : screenClass(innerWidth)
 
-  console.log(active, mapping[dimension])
-
   if(active === null) {
     mapping[dimension].margin = mapping[dimension].loading
   } else if(request) {
@@ -96,8 +94,6 @@ const getFormatting = ({ request, native, active }) => {
       mapping[dimension].margin = mapping[dimension].active
     }
   }
-
-  console.log(mapping[dimension].margin)
 
   return {
     pre2: !request && native ? '25vh' : 'auto',
