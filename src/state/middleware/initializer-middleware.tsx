@@ -1,4 +1,4 @@
-import { BigNumber, toTokenAmount } from "@indexed-finance/indexed.js";
+import { BigNumber, formatBalance, toTokenAmount } from "@indexed-finance/indexed.js";
 import { InitializerToken } from "@indexed-finance/indexed.js/dist/types";
 import { withMiddleware } from ".";
 import { MiddlewareAction, InitDispatch, InitDispatchAction, SetTokenInput } from "../actions/initializer-actions";
@@ -20,35 +20,49 @@ function initDispatchMiddleware(dispatch: InitDispatch, state: InitializerState)
       await pool.update();
       let newTokens: InitializerToken[] = [];
       let newAmounts: BigNumber[] = [];
+      let displayAmounts: string[] = [];
       let newCredits: BigNumber[] = [];
+      let finalValueEstimate = new BigNumber(0);
+      let currentValue = new BigNumber(0);
       pool.tokens.forEach((token, i) => {
+        const price = pool.tokenPrices[token.address];
+        currentValue = currentValue.plus(price.times(token.balance));
+        finalValueEstimate = finalValueEstimate.plus(price.times(token.targetBalance));
         if (token.amountRemaining.eq(0)) return;
         newTokens.push(token);
         newAmounts.push(state.amounts[i]);
+        displayAmounts.push(state.displayAmounts[i]);
         newCredits.push(state.creditEthPerToken[i]);
       });
+      // const prices = newTokens.map(t => pool.tokenPrices[t.address]);
+      // const currentValues = 
       dispatch({
         type: 'SET_ALL',
         tokens: newTokens,
         amounts: newAmounts,
-        credits: newCredits
+        displayAmounts,
+        credits: newCredits,
+        currentValue,
+        finalValueEstimate
       });
     };
 
-    const setTokenExact = async ({ index, amount }: { index: number, amount: BigNumber }): Promise<void> => {
+    const setTokenExact = async ({ index, amount, displayAmount }: { index: number, amount: BigNumber, displayAmount?: string }): Promise<void> => {
       const credit = await pool.getExpectedCredit(tokens[index].address, amount);
+      if (!displayAmount) displayAmount = formatBalance(amount, tokens[index].decimals, 4) || '0';
       dispatch({
         type: 'SET_TOKEN_AMOUNT',
         index,
         amount,
+        displayAmount,
         credit: new BigNumber(credit.credit)
       });
     }
 
     const setTokenInput = async ({ index, amount }: SetTokenInput): Promise<void> => {
       const { decimals } = tokens[index];
-      const exactAmount = toTokenAmount(amount, decimals);
-      setTokenExact({ index, amount: exactAmount })
+      const exactAmount = toTokenAmount(amount || 0, decimals);
+      setTokenExact({ index, amount: exactAmount, displayAmount: amount.toString() || '0' })
     };
 
     const fallback = async (action: InitDispatchAction) => dispatch(action);
