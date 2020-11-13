@@ -12,7 +12,6 @@ import {
 } from "../actions/initializer-actions";
 
 import { withInitMiddleware } from "../middleware/index";
-import { getERC20 } from '../../lib/erc20';
 
 const BN_ZERO = new BigNumber(0);
 
@@ -200,6 +199,8 @@ export type InitContextType = {
   initState: InitializerState;
   setHelper: (helper: InitializerHelper) => void;
   displayTotalCredit: string;
+  displayPoolTotalCredit: string;
+  displayUserCredit: string;
   updatePool: () => void;
 }
 
@@ -211,12 +212,16 @@ export function useInitializerReducer(): InitContextType {
   const totalCredit = initState.creditEthTotal;
   const displayTotalCredit = formatBalance(totalCredit, 18, 4);
   const updatePool = () => dispatch({ type: 'UPDATE_POOL' });
+  const displayUserCredit = initState.pool ? formatBalance(initState.pool.userCredit, 18, 4) : '0';
+  const displayPoolTotalCredit = initState.pool ? formatBalance(initState.pool.totalCreditedWETH, 18, 4) : '0';
 
   return {
     useToken,
     initState,
     setHelper,
     displayTotalCredit,
+    displayUserCredit,
+    displayPoolTotalCredit,
     updatePool
   };
 }
