@@ -55,6 +55,9 @@ export default function TokenOutput(props) {
   const classes = useStyles();
   let token = props.useToken(props.index);
 
+  let errorMsg = token.errorMessage;
+  let error = !!errorMsg;
+
   return(
     <ListItem
       className={classes[props.label]}
@@ -76,6 +79,8 @@ export default function TokenOutput(props) {
       <ListItemText primary={token.symbol} secondary={props.secondary} />
       <SecondaryActionAlt>
         <AmountInput
+          error={error}
+          helperText={errorMsg}
           variant='outlined'
           label='AMOUNT'
           type='number'

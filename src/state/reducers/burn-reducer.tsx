@@ -117,7 +117,14 @@ function burnReducer(state: BurnState = initialState, actions: BurnDispatchActio
     }
   }
 
-  let isReady = !newState.poolAmountIn.eq(0) &&
+  let validInputs = true;
+  newState.tokens.forEach((token, i) => {
+    if (newState.amounts[i].gt(token.usedBalance.div(3))) {
+      validInputs = false;
+    }
+  });
+
+  let isReady = validInputs && !newState.poolAmountIn.eq(0) &&
     newState.pool &&
     newState.pool.userPoolBalance &&
     newState.pool.userPoolBalance.gte(newState.poolAmountIn);
@@ -131,7 +138,7 @@ export function useBurnTokenActions(
   dispatch: (action: BurnDispatchAction | MiddlewareAction) => Promise<void>,
   index: number
 ) {
-  let { address, decimals, name, symbol, ready } = state.tokens[index];
+  let { address, decimals, name, symbol, ready, usedBalance: poolBalance } = state.tokens[index];
 
   let balance = state.pool.userAddress ? state.pool.userBalances[address] : BN_ZERO;
   let amount = state.amounts[index];
@@ -146,6 +153,12 @@ export function useBurnTokenActions(
   let updateBalance = () => dispatch({ type: 'UPDATE_POOL' });
   let tokenDisabled = !ready;
 
+  let maximumOutput = poolBalance.div(3);
+  let errorMessage = '';
+  if (amount.gt(maximumOutput)) {
+    errorMessage = 'EXCEEDS MAX OUT';
+  }
+
   return {
     target: state.pool.address,
     updateBalance,
@@ -156,6 +169,7 @@ export function useBurnTokenActions(
     displayAmount,
     displayBalance,
     toggleSelect: toggle,
+    errorMessage,
     bindSelectButton: {
       disabled: tokenDisabled,
       checked: selected,
@@ -181,6 +195,7 @@ export type TokenActions = {
   name: string;
   symbol: string;
   displayAmount: string;
+  errorMessage: string;
   toggleSelect: () => void;
   bindSelectButton: {
     disabled: boolean;
