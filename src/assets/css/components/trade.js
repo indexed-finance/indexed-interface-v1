@@ -9,7 +9,8 @@ const setStyle = (theme) => ({
     width: 250,
     '& .MuiOutlinedInput-adornedEnd': {
       paddingRight: 16,
-      color: `${theme.palette.secondary.main} !important`
+      color: `${theme.palette.secondary.main} !important`,
+      fontSize: '16px !important'
     },
     marginBottom: 0
   },
@@ -34,7 +35,7 @@ const setStyle = (theme) => ({
     color: theme.palette.secondary.main,
     borderTop: '#666666 solid 2px',
     borderBottom: '#666666 solid 2px',
-    marginTop: 12.5,
+    marginTop: 25,
     marginBottom: 12.5,
     '& p': {
       fontSize: 14,

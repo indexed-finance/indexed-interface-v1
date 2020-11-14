@@ -16,7 +16,7 @@ import { store } from '../../state'
 import style from '../../assets/css/routes/pool'
 import getStyles from '../../assets/css'
 import copyToClipboard from '../../lib/copyToClipboard';
-import { Copyable } from '../copyable';
+import Copyable from '../copyable';
 
 const useStyles = getStyles(style);
 
@@ -68,15 +68,27 @@ function UninitializedPoolPage({ address, metadata }) {
 
   function MetaDisplay() {
     if (!native) {
-      return <Fragment>
-        <h2> {name} </h2>
-        <Copyable component={'h3'} text={address}>{address.substring(0, 6)}...{address.substring(38, 64)}</Copyable>
+      return (
+      <Fragment>
+        <h2> {name} [{symbol}] </h2>
+        <div style={{ marginTop: 15 } }>
+          <Copyable text={address} float='right'>
+            <h3>{address.substring(0, 6)}...{address.substring(38, 64)}</h3>
+          </Copyable>
+        </div>
       </Fragment>
+      )
     }
-    return <Fragment>
+    return (
+    <Fragment>
       <h3> {name} [{symbol}] </h3>
-        <Copyable component={'h4'} text={address}>{address.substring(0, 6)}...{address.substring(38, 64)}</Copyable>
+      <div style={{ marginTop: 5} }>
+        <Copyable text={address}>
+          <h4>{address.substring(0, 6)}...{address.substring(38, 64)}</h4>
+        </Copyable>
+      </div>
     </Fragment>
+    )
   }
 
   let {

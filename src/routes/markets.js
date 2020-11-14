@@ -13,6 +13,7 @@ import Pie from '../components/charts/pie'
 import Canvas from '../components/canvas'
 import Table from '../components/table'
 import Loader from '../components/loader'
+import Copyable from '../components/copyable'
 
 import style from '../assets/css/routes/markets'
 import indexed from '../assets/images/indexed.png'
@@ -152,7 +153,11 @@ export default function Markets(){
                 <ul className={classes.options} style={{ width: pre }}>
                   <li>ADDRESS:
                     <span>
-                      {market.address.substring(0, 6)}...{market.address.substring(38, 64)}
+                      <Copyable text={market.address} float='left'>
+                        <label style={{ fontSize: 16 }}>
+                          {market.address.substring(0, 6)}...{market.address.substring(38, 64)}
+                        </label>
+                      </Copyable>
                     </span>
                   </li>
                   <li>SUPPLY: <span>{market.supply} {market.symbol}</span> </li>

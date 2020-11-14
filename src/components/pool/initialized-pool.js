@@ -25,7 +25,7 @@ import getStyles from '../../assets/css'
 
 import { store } from '../../state'
 import copyToClipboard from '../../lib/copyToClipboard';
-import { Copyable } from '../copyable';
+import Copyable from '../copyable';
 
 const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
 
@@ -123,18 +123,31 @@ function InitializedPoolPage({ address, metadata }){
     marginX, margin, width, padding, chartHeight, fontSize
   } = style.getFormatting({ native, request, active: true })
 
+  let { name, symbol } = metadata;
+
   function MetaDisplay() {
-    let { name, symbol } = metadata;
     if (!native) {
-      return <Fragment>
+      return (
+      <Fragment>
         <h2> {name} [{symbol}] </h2>
-      <Copyable text={address} component='h3'>{address.substring(0, 6)}...{address.substring(38, 64)}</Copyable>
+        <div style={{ marginTop: 15 }}>
+          <Copyable text={address} float='right'>
+            <h3>{address.substring(0, 6)}...{address.substring(38, 64)}</h3>
+          </Copyable>
+        </div>
       </Fragment>
+      )
     }
-    return <Fragment>
+    return (
+    <Fragment>
       <h3> {name} [{symbol}] </h3>
-      <Copyable text={address} component='h4'>{address.substring(0, 6)}...{address.substring(38, 64)}</Copyable>
+      <div style={{ marginTop: 5} }>
+        <Copyable text={address}>
+          <h4>{address.substring(0, 6)}...{address.substring(38, 64)}</h4>
+        </Copyable>
+      </div>
     </Fragment>
+    )
   }
 
   return (
