@@ -1,7 +1,7 @@
 import { formatBalance, UniswapHelper } from '@indexed-finance/indexed.js';
 import { toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 import { Grid, IconButton, styled } from '@material-ui/core';
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect, useContext, useState } from 'react'
 import Swap from '@material-ui/icons/SwapCalls'
 
 import style from '../../assets/css/components/trade'
@@ -24,6 +24,7 @@ const Trigger = styled(ButtonPrimary)({
 
 export default function TradeTab({ metadata }) {
   const { useInput, useOutput, tradeState, setHelper, updatePool, whitelistTokens, selectWhitelistToken, switchTokens } = useTradeState();
+  const [approvalNeeded, setApprovalNeeded] = useState(false);
 
   let { state, handleTransaction } = useContext(store);
   const classes = useStyles()
@@ -75,26 +76,23 @@ export default function TradeTab({ metadata }) {
 
   }
 
-  let remainder;
-  if (tradeState.helper) {
+  useEffect(() => {
+    if (!tradeState.helper) return;
     let amount = tradeState.input.amount
     let allowance = tradeState.getAllowanceForPair(tradeState.input.address);
-    console.log(`ALLOWANCE :: ${allowance}`)
-    if (amount.gt(allowance)) remainder = amount.minus(allowance);
+    setApprovalNeeded(amount.gt(allowance));
+  }, [tradeState]);
+
+  async function approveRouter() {
+    if (!approvalNeeded) return;
+    const erc20 = getERC20(state.web3.injected, tradeState.input.address);
+    let fn = erc20.methods.approve('0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D', toHex(tradeState.input.amount))
+    await handleTransaction(fn.send({ from: state.account }))
+      .then(() => updatePool())
+      .catch((() => {}));
   }
 
-  let approveRemaining;
-  if (tradeState.helper) {
-    approveRemaining = async () => {
-      const erc20 = getERC20(state.web3.injected, tradeState.input.address);
-      let fn = erc20.methods.approve('0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D', toHex(remainder))
-      await handleTransaction(fn.send({ from: state.account }))
-        .then(updatePool)
-        .catch((() => {}));
-    }
-  }
   async function executeSwap() {
-    console.log(`Amount In ${tradeState.input.amount} Amount Out ${tradeState.output.amount}`)
     const amountIn = toHex(tradeState.input.amount.integerValue());
     const amountOut = toHex(tradeState.output.amount.integerValue());
     const tokenIn = tradeState.input.address;
@@ -109,14 +107,12 @@ export default function TradeTab({ metadata }) {
       (+timestamp) + 600
     );
     await handleTransaction(fn.send({ from: state.account }));
-    updatePool()
+    updatePool(true);
   }
 
 
   let priceString = tradeState.helper ? `1 ${inputSymbol} = ${tradeState.price} ${outputSymbol}` : '';
-  
 
-  // 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D
 
   let feeString;
   if (tradeState.helper) {
@@ -147,12 +143,11 @@ export default function TradeTab({ metadata }) {
 
       <Grid item xs={12} md={12} lg={12} xl={12} key='3' style={{ width: '100%'}}>
         <div className={classes.market} >
-          {/* <p> ROUTE: <span> ETH {'->'} {market}</span> </p> */}
           <p> FEE: <span> {feeString} </span> </p>
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} key='4'>
-        { remainder && remainder.gt(0) && <Trigger onClick={approveRemaining}> APPROVE </Trigger> }
+        { approvalNeeded && <Trigger onClick={approveRouter}> APPROVE </Trigger> }
         {tradeState.ready && <Trigger onClick={executeSwap}> SWAP </Trigger> }
       </Grid>
     </Grid>
