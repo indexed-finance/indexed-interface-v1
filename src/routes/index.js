@@ -9,7 +9,7 @@ import ContentLoader from "react-content-loader"
 
 import ButtonMarket from '../components/buttons/market'
 import Area from '../components/charts/area'
-import Trade from '../components/trade'
+import TradeTab from '../components/index/trade-tab'
 import Mint from '../components/index/mint-tab'
 import Burn from '../components/index/burn-tab'
 import Tabs from '../components/index/tabs'
@@ -20,6 +20,7 @@ import { getBalances } from '../lib/markets'
 import { store } from '../state'
 import { MintStateProvider } from '../state/mint'
 import { BurnStateProvider } from '../state/burn';
+import { TradeStateProvider } from '../state/trade'
 
 const WETH = '0x554dfe146305944e3d83ef802270b640a43eed44'
 
@@ -72,7 +73,6 @@ export default function Index(){
   name = name.toUpperCase()
 
   const [ styles, setStyles ] = useState({ trade: selected, mint: {}, burn: {}})
-  const [ component, setComponent ] = useState(<Trade market={name}/>)
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const [ metadata, setMetadata ] = useState({})
   const [ execution, setExecution ] = useState('trade')
@@ -96,13 +96,10 @@ export default function Index(){
     let newStyle = clearSelections()
 
     if(option === 'burn') {
-      setComponent(<BurnStateProvider><Burn metadata={metadata} market={name} /></BurnStateProvider>);
       newStyle.burn = selected;
     } else if(option === 'mint'){
-      setComponent(<MintStateProvider><Mint metadata={metadata} market={name}/></MintStateProvider>)
       newStyle.mint = selected
     } else {
-      setComponent(<Trade metadata={metadata} market={name} />)
       newStyle.trade = selected
     }
 
@@ -135,9 +132,14 @@ export default function Index(){
   useEffect(() => {
     const getMetadata = async() => {
       let { indexes, web3, account } = state
-
+      let emptyMetadata = Object.keys(metadata).length === 0;
       if(Object.keys(indexes).length > 0){
+        console.log('Setting MEtadata')
         setMetadata(indexes[name])
+        if (emptyMetadata && execution === 'trade') {
+          console.log('Setting metadata and updating exec')
+          changeExecution('trade')
+        }
       }
     }
     getMetadata()
@@ -152,16 +154,20 @@ export default function Index(){
   useEffect(() => {
     if(!state.load){
       setPath(name)
-      dispatch({
-        type: 'LOAD', payload: true
-      })
+      dispatch({ type: 'LOAD', payload: true })
     }
   }, [ ])
 
   useEffect(() => {
     if(name != null && path != null){
-      setMetadata(state.indexes[name])
+      let emptyMetadata = Object.keys(metadata).length === 0;
+      setMetadata(state.indexes[name]);
+      console.log('Setting MEtadata')
       forceUpdate()
+      if (emptyMetadata && execution === 'trade') {
+        console.log('Setting metadata and updating exec')
+        changeExecution('trade')
+      }
     }
   }, [ name ])
 
@@ -186,7 +192,9 @@ export default function Index(){
           </div>
         </Grid>
         <Grid item>
-          {component}
+          { execution === 'mint' && <MintStateProvider><Mint metadata={metadata} market={name}/></MintStateProvider> }
+          { execution === 'burn' && <BurnStateProvider><Burn metadata={metadata} market={name} /></BurnStateProvider> }
+          { execution === 'trade' && <TradeStateProvider><TradeTab metadata={metadata} market={name} /></TradeStateProvider> }
         </Grid>
       </Grid>
     )
@@ -225,7 +233,9 @@ export default function Index(){
           </Grid>
           <Grid item style={{ width: '100%'}}>
             <div className={classes.market}>
-              {component}
+              { execution === 'mint' && <MintStateProvider><Mint metadata={metadata} market={name}/></MintStateProvider> }
+              { execution === 'burn' && <BurnStateProvider><Burn metadata={metadata} market={name} /></BurnStateProvider> }
+              { execution === 'trade' && <TradeStateProvider><TradeTab metadata={metadata} market={name} /></TradeStateProvider> }
             </div>
           </Grid>
         </Grid>
