@@ -8,3 +8,5 @@ export { withMintMiddleware } from './mint-middleware';
 export { withBurnMiddleware } from './burn-middleware';
 
 export { withInitMiddleware } from './initializer-middleware';
+
+export { withTradeMiddleware } from './trade-middleware';
