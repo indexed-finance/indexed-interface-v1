@@ -1,11 +1,5 @@
 import React, { useContext } from 'react';
 import { styled } from '@material-ui/core/styles'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
-import ListItemAvatar from '@material-ui/core/ListItemAvatar'
-import ListItemText from '@material-ui/core/ListItemText'
-import ListItem from '@material-ui/core/ListItem'
-import Avatar from '@material-ui/core/Avatar'
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 
 import { toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 
@@ -16,10 +10,8 @@ import style from '../../assets/css/components/trade'
 import getStyles from '../../assets/css'
 import { store } from '../../state'
 
-import { tokenMetadata } from '../../assets/constants/parameters';
 import { getERC20 } from '../../lib/erc20';
 import WhitelistSelect from '../inputs/whitelist-select';
-import NDX from '../../assets/images/indexed-light.png'
 import { InputAdornment } from '@material-ui/core';
 
 const ApproveButton = styled(ButtonTransaction)({
@@ -27,32 +19,7 @@ const ApproveButton = styled(ButtonTransaction)({
   paddingRight: 5
 })
 
-const Tick = styled(ListItemIcon)({
-  minWidth: 35,
-})
-
-const AmountInput = styled(Input)({
-  width: 175,
-  '& label': {
-    fontSize: 12
-  },
-  '& fieldset': {
-    borderWidth: 1,
-  },
-  '& input': {
-    padding: '.75em 0 .75em .75em',
-  }
-})
-
-const SecondaryActionAlt = styled(ListItemSecondaryAction)({
-  top: '57.5%',
-  maringLeft: 25,
-  cursor: 'pointer'
-})
-
 const useStyles = getStyles(style)
-
-const tokenImage = (symbol) => tokenMetadata[symbol] ? tokenMetadata[symbol].image : NDX;
 
 export default function TradeInput(props) {
   const classes = useStyles();
@@ -82,12 +49,6 @@ export default function TradeInput(props) {
   } else {
     endAdornment = <InputAdornment style={{ paddingRight: 5 }} position="end">{token.symbol}</InputAdornment>
   }
-  let startAdornment;
-  if (token.isInput) {
-    startAdornment = <ApproveButton onClick={approveRemaining} disabled={!(token.approvalNeeded) || error}>
-        APPROVE
-    </ApproveButton>
-  }
 
   let label = token.isPoolToken ? 'inputs' : 'altInputs'
 
@@ -102,39 +63,7 @@ export default function TradeInput(props) {
       style={{ width: props.inputWidth }}
       InputLabelProps={{ shrink: true }}
       {...(token.bindInput)}
-      InputProps={{
-        // startAdornment,
-        endAdornment
-      }}
+      InputProps={{ endAdornment }}
     />
     );
-    // <ListItem
-    //   className={classes[label]}
-    //   button
-    //   onClick={token.toggleSelect}
-    //   key={token.address}
-    // >
-    //   <ListItemAvatar className={classes.wrapper}>
-    //     <Avatar className={classes.avatar} src={tokenImage(token.symbol)} />
-    //   </ListItemAvatar>
-    //   <ListItemText style={{ width: '30px' }} primary={token.symbol} secondary={props.secondary || token.symbolAdornment} />
-      
-    //   <SecondaryActionAlt>
-    //     <Input
-    //       className={classes.inputs}
-    //       error={error}
-    //       variant='outlined'
-    //       label='AMOUNT'
-    //       type='number'
-    //       helperText={helperText}
-    //       style={{ width: props.inputWidth }}
-    //       InputLabelProps={{ shrink: true }}
-    //       {...(token.bindInput)}
-    //       InputProps={{
-    //         // startAdornment,
-    //         endAdornment
-    //      }}
-    //     />
-    //   </SecondaryActionAlt>
-    // </ListItem>
 }
