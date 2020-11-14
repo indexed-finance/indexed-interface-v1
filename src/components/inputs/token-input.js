@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { styled } from '@material-ui/core/styles'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
@@ -29,6 +29,17 @@ const Tick = styled(ListItemIcon)({
   minWidth: 35,
 })
 
+const RemainderButton = styled(ButtonTransaction)({
+  color: '#999999 !important',
+  fontSize: 8,
+  position: 'absolute',
+  zIndex: 2,
+  bottom: '1em',
+  '&:hover': {
+    color: 'orange !important'
+  }
+})
+
 const AmountInput = styled(Input)({
   width: 175,
   '& label': {
@@ -57,6 +68,7 @@ export default function TokenInput(props) {
 
   // Set `amount` to `balance`
   const setAmountToBalance = () => token.setAmountToBalance();
+  const [ label, setLabel ] = useState('DESIRED:')
 
   async function approveRemaining() {
     const erc20 = getERC20(web3.injected, token.address);
@@ -72,6 +84,12 @@ export default function TokenInput(props) {
   let helperText = (error) ? errorMsg : <span className={classes.helper} onClick={() => setAmountToBalance()}>
     {`BALANCE: ${token.displayBalance}`}
   </span>;
+
+  useEffect(() => {
+    if(token.bindSetRemainderButton){
+      setLabel(token.bindSetRemainderButton.value)
+    }
+  }, [ token.bindSetRemainderButton ])
 
   return(
     <ListItem
@@ -92,7 +110,9 @@ export default function TokenInput(props) {
         <Avatar className={classes.avatar} src={tokenMetadata[token.symbol].image} />
       </ListItemAvatar>
       <ListItemText style={{ width: '30px' }} primary={token.symbol} secondary={props.secondary || token.symbolAdornment} />
-      
+      <RemainderButton {...token.bindSetRemainderButton}>
+       {label}
+      </RemainderButton>
       <SecondaryActionAlt>
         <AmountInput
           error={error}

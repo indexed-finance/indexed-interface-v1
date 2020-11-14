@@ -5,19 +5,19 @@ const mapping = {
   [DESKTOP_NORMAL]: {
     border: 3,
     padding: {
-      top: 15,
-      left: 15,
-      right: 15,
+      top: 5,
+      left: 25,
+      right: 25,
       bottom: 0
     }
   },
   [DESKTOP_LARGE]: {
     border: 4,
     padding: {
-      top: 30,
-      left: 30,
-      right: 30,
-      bottom: 30
+      top: 40,
+      left: 40,
+      right: 40,
+      bottom: 40
     }
   },
   [DESKTOP_WIDE]: {

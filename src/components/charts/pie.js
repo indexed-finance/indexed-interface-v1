@@ -11,6 +11,19 @@ import { formatBalance } from '@indexed-finance/indexed.js'
 
 defaults.global.defaultFontFamily = 'San Francisco Bold';
 
+const dummy = {
+    address: '0x0000000000000000000000000000000000000000',
+    assets: [ ],
+    name: '',
+    symbol: '',
+    price: '',
+    supply: '',
+    marketcap: 0,
+    active: null,
+    volume: 0,
+    history: []
+}
+
 const Loader = ({ height, theme, padding }) => (
     <div style={{ padding: padding.left }}>
       <ContentLoader
@@ -46,14 +59,13 @@ const options  = padding => ({
 })
 
 export default function PieChart({ metadata, height, ready, native }){
-  const [ component, setComponent ] = useState({ element: <span/>, data: {} })
+  const [ component, setComponent ] = useState({ element: <span/>, data: dummy })
   const theme = useTheme()
 
   let colors = [ '#009999', '#00CCCC','#33FFFF', '#99FFFF', `${theme.palette.primary.main}`]
   let labels = [];
   let data = [];
-  console.log(`PIE PIE PIE PIE PIE PIE READY ${ready}`)
-  
+
   if (ready && (typeof metadata.active === 'boolean')) {
     if(!metadata.active) {
       const fmtNumber = (n) => +((+n).toFixed(1))
@@ -61,8 +73,8 @@ export default function PieChart({ metadata, height, ready, native }){
       let final = fmtNumber(metadata.finalValueEstimate);
       let remaining = final - current;
       data = [ current, remaining ]
-      labels = [ 'Current Value (eth)', 'Remaining Value (eth)' ]
-      colors = [ 'orange', 'red' ]
+      labels = [ 'FULFILLED', 'REMAINING' ]
+      colors = [ 'orange', theme.palette.primary.main ]
     } else {
       labels = metadata.assets.map(value => value.symbol);
       data = metadata.assets.map(value => +((+formatBalance(value.weight, 18, 4)) * 100).toFixed(1));
@@ -78,7 +90,7 @@ export default function PieChart({ metadata, height, ready, native }){
           var index = ctx.dataIndex
           var label = ctx.chart.data.labels[index]
 
-          if(index == 4) return theme.palette.secondary.main
+          if(index == ctx.chart.data.labels.length -1) return theme.palette.secondary.main
           else return 'white'
         },
         labels: {
@@ -98,23 +110,15 @@ export default function PieChart({ metadata, height, ready, native }){
   	}]
   })
 
-  useEffect(() => {
-    if(ready){
-      if(component.data != metadata){
-        setComponent({
-          element: <Pie height={height} width={height} options={options(padding)} data={chartConfig(metadata, border)} />,
-          data: metadata
-        })
-      }
-    } else {
-      setComponent({
-        element: <Loader padding={padding} theme={theme} height={height} />,
-        data: metadata
-      })
-    }
-  }, [ ])
 
   let { padding, border } = style.getFormatting(native)
 
-  return component.element
+  return <>
+    {metadata.address == "0x0000000000000000000000000000000000000000" && (
+      <Loader padding={padding} theme={theme} height={height} />
+    )}
+    {metadata.address != "0x0000000000000000000000000000000000000000" && (
+      <Pie height={height} width={height} options={options(padding)} data={chartConfig(metadata, border)} />
+    )}
+  </>
 }

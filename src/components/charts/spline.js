@@ -146,7 +146,7 @@ export default function Spline(props){
         {!ready && (<Loader native={native} padding={p} height={h} theme={theme} />)}
       </div>
     )
-  } else {
+  } else if(!absolute) {
     let paddingTop = 30
     p = -20
 
