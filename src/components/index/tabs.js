@@ -168,8 +168,6 @@ export default function VerticalTabs({ data }) {
     getTrades()
   }, [ data ])
 
-  console.log(data)
-
   let { height } = style.getFormatting()
 
   return (
