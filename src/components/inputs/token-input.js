@@ -110,9 +110,12 @@ export default function TokenInput(props) {
         <Avatar className={classes.avatar} src={tokenMetadata[token.symbol].image} />
       </ListItemAvatar>
       <ListItemText style={{ width: '30px' }} primary={token.symbol} secondary={props.secondary || token.symbolAdornment} />
-      <RemainderButton {...token.bindSetRemainderButton}>
-       {label}
-      </RemainderButton>
+      {
+        token.bindSetRemainderButton && 
+        <RemainderButton {...token.bindSetRemainderButton}>
+         {label}
+        </RemainderButton>
+      }
       <SecondaryActionAlt>
         <AmountInput
           error={error}
