@@ -8,15 +8,17 @@ const setStyle = (theme) => ({
   inputs: {
     width: 250,
     '& .MuiOutlinedInput-adornedEnd': {
-      paddingRight: 0
+      paddingRight: 16,
+      color: `${theme.palette.secondary.main} !important`
     },
     marginBottom: 0
   },
   altInputs: {
     width: 250,
     '& .MuiOutlinedInput-adornedEnd': {
-      paddingRight: 32.5
-    }
+      paddingRight: 14
+    },
+    marginBottom: 0
   },
   swap: {
     textAlign: 'center',
