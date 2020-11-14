@@ -91,6 +91,7 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
   const getAllowanceForPair = (tokenAddress: string): BigNumber => {
     const isInput = compareAddresses(tokenAddress, newState.input.address);
     const isPoolToken = isInput ? newState.input.isPoolToken : newState.output.isPoolToken;
+    console.log(`getAllowanceForPair(): isInput ${isInput} | isPoolToken ${isPoolToken}`)
     const otherToken = isInput ? newState.output.address : newState.input.address;
     const pair = isPoolToken ? newState.helper.getPairForToken(otherToken) : newState.helper.getPairForToken(tokenAddress);
     if (isPoolToken) return pair.allowanceA || BN_ZERO;
@@ -241,7 +242,7 @@ export type TradeContextType = {
   useOutput: () => TokenActions;
   tradeState: TradeState;
   setHelper: (helper: UniswapHelper) => void;
-  updatePool: () => void;
+  updatePool: (clearInputs?: boolean) => void;
   selectWhitelistToken: (index: number) => void;
   whitelistTokens: Array<{ symbol: string, decimals: number, address: string }>;
   switchTokens: () => void;
@@ -251,7 +252,7 @@ export function useTrade(): TradeContextType {
   const [tradeState, tradeDispatch] = useReducer(tradeReducer, initialState);
   const dispatch = withTradeMiddleware(tradeState, tradeDispatch);
   const selectWhitelistToken = (index: number) => dispatch({ type: 'SELECT_WHITELIST_TOKEN', index });
-  const updatePool = () => dispatch({ type: 'UPDATE_POOL' });
+  const updatePool = (clearInputs?: boolean) => dispatch({ type: 'UPDATE_POOL', clearInputs });
   const setHelper = (helper: UniswapHelper) => dispatch({ type: 'SET_UNISWAP_HELPER', helper });
   
   return {

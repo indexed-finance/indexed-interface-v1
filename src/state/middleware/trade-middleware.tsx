@@ -8,7 +8,7 @@ import {
   SetInputAmount,
   SetOutputAmount,
   SetUniswapHelper,
-  SelectWhitelistToken
+  SelectWhitelistToken, UpdateBalances
 } from "../actions/trade-actions";
 import { TradeState } from "../reducers/trade-reducer";
 
@@ -216,10 +216,14 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
       }
     }
 
-    const updatePool = async (): Promise<void> => {
+    const updatePool = async (action: UpdateBalances): Promise<void> => {
       await state.helper.update();
-      const input = { ...state.input, amount: BN_ZERO, displayAmount: '0' }
-      const output = { ...state.output, amount: BN_ZERO, displayAmount: '0' }
+      let input = { ...state.input };
+      let output = { ...state.output };
+      if (action.clearInputs) {
+        input = { ...input, amount: BN_ZERO, displayAmount: '0' }
+        output = { ...output, amount: BN_ZERO, displayAmount: '0' }
+      }
       return dispatch([
         { type: 'SET_INPUT_TOKEN', token: input },
         { type: 'SET_OUTPUT_TOKEN', token: output }
@@ -234,7 +238,7 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
       case 'SET_OUTPUT_AMOUNT': return setOutputAmount(action);
       case 'SWITCH_TOKENS': return switchTokens();
       case 'SET_UNISWAP_HELPER': return setHelper(action);
-      case 'UPDATE_POOL': return updatePool();
+      case 'UPDATE_POOL': return updatePool(action);
       case 'SELECT_WHITELIST_TOKEN': return selectWhitelistToken(action);
       default: return fallback(action);
     }

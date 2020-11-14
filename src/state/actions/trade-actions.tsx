@@ -9,7 +9,7 @@ export type SetPrice = { type: 'SET_PRICE', price: string };
 
 
 // Middleware only
-export type UpdateBalances = { type: 'UPDATE_POOL' };
+export type UpdateBalances = { type: 'UPDATE_POOL', clearInputs?: boolean };
 export type SwitchTokens = { type: 'SWITCH_TOKENS' };
 export type SetInputAmount = { type: 'SET_INPUT_AMOUNT', amount: string };
 export type SetInputExact = { type: 'SET_INPUT_EXACT', amount: BigNumber };
