@@ -70,9 +70,9 @@ export default function TokenInput(props) {
   const setAmountToBalance = () => token.setAmountToBalance();
   const [ label, setLabel ] = useState('DESIRED:')
 
-  async function approveRemaining() {
+  async function approveTarget() {
     const erc20 = getERC20(web3.injected, token.address);
-    let fn = erc20.methods.approve(token.target, toHex(token.approvalRemainder))
+    let fn = erc20.methods.approve(token.target, toHex(token.amount))
     await handleTransaction(fn.send({ from: account }))
       .then(token.updateDidApprove)
       .catch((() => {}));
@@ -128,7 +128,7 @@ export default function TokenInput(props) {
           {...(token.bindApproveInput)}
           InputProps={{
             endAdornment:
-            <ApproveButton onClick={approveRemaining} disabled={!(token.approvalNeeded) || error}>
+            <ApproveButton onClick={approveTarget} disabled={!(token.approvalNeeded) || error}>
               APPROVE
            </ApproveButton>
          }}

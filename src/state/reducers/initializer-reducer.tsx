@@ -128,14 +128,13 @@ export function useInitializerToken(
   let displayAmount = state.displayAmounts[index];
   let displayBalance = balance.eq(BN_ZERO) ? '0' : formatBalance(balance, decimals, 4);
 
-  let approvalRemainder = allowance.gte(amount) ? BN_ZERO : amount.minus(allowance);
-  let approvalNeeded = approvalRemainder.gt(BN_ZERO);
+  let approvalNeeded = allowance.lt(amount);
 
   let displayCredit = formatBalance(state.creditEthPerToken[index], 18, 4);
 
   let toggle = () => dispatch({ type: 'TOGGLE_SELECT_TOKEN', index });
   let disableInput = !selected
-  let disableApprove = !approvalNeeded || !selected || balance.lt(approvalRemainder);
+  let disableApprove = !approvalNeeded || !selected || balance.lt(amount);
   let updateAmount = (input: string | number) => dispatch({ type: 'SET_TOKEN_INPUT', index, amount: input });
   let setAmountToBalance = () => dispatch({ type: 'SET_TOKEN_EXACT', index, amount: balance });
   let setAmountToRemainder = () => dispatch({ type: 'SET_TOKEN_EXACT', index, amount: amountRemaining });
@@ -168,12 +167,12 @@ export function useInitializerToken(
     symbol,
     errorMessage,
     displayAmountRemaining,
+    amount,
     currentBalance: formatBalance(currentBalance, decimals, 4),
     targetBalance: formatBalance(targetBalance, decimals, 4),
     percentOfDesired,
     symbolAdornment,
     approvalNeeded,
-    approvalRemainder,
     displayAmount,
     displayBalance,
     setAmountToBalance,
@@ -202,7 +201,7 @@ export type TokenActions = {
   currentBalance: string,
   targetBalance: string,
   displayAmountRemaining: string;
-  approvalRemainder: BigNumber;
+  amount: BigNumber;
   percentOfDesired?: number;
   decimals: number;
   name: string;

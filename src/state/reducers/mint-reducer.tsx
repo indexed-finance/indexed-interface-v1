@@ -141,8 +141,7 @@ export function useMintTokenActions(
   let displayAmount = state.displayAmounts[index] || '0';
   let displayBalance = balance.eq(BN_ZERO) ? '0' : formatBalance(balance, decimals, 4);
 
-  let approvalRemainder = allowance.gte(amount) ? BN_ZERO : amount.minus(allowance);
-  let approvalNeeded = approvalRemainder.gt(BN_ZERO);
+  let approvalNeeded = allowance.lt(amount);
 
   let toggle = () => dispatch({ type: 'TOGGLE_SELECT_TOKEN', index });
   let updateAmount = (input: string | number) => dispatch({ type: 'SET_TOKEN_INPUT', index, amount: input });
@@ -158,7 +157,7 @@ export function useMintTokenActions(
   }
 
   let disableInput = !selected || !(state.isSingle);
-  let disableApprove = !approvalNeeded || !selected || balance.lt(approvalRemainder);
+  let disableApprove = !approvalNeeded || !selected || balance.lt(amount);
 
   return {
     target: state.pool.address,
@@ -171,7 +170,7 @@ export function useMintTokenActions(
     approvalNeeded,
     displayAmount,
     displayBalance,
-    approvalRemainder,
+    amount,
     setAmountToBalance,
     toggleSelect: toggle,
     bindSelectButton: {
@@ -200,7 +199,7 @@ export type TokenActions = {
   name: string;
   symbol: string;
   errorMessage: string;
-  approvalRemainder: BigNumber;
+  amount: BigNumber;
   approvalNeeded: boolean;
   displayAmount: string;
   displayBalance: string;
