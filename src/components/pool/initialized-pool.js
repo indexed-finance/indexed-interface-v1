@@ -24,6 +24,8 @@ import { getPair } from '../../lib/markets'
 import getStyles from '../../assets/css'
 
 import { store } from '../../state'
+import copyToClipboard from '../../lib/copyToClipboard';
+import { Copyable } from '../copyable';
 
 const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
 
@@ -126,12 +128,12 @@ function InitializedPoolPage({ address, metadata }){
     if (!native) {
       return <Fragment>
         <h2> {name} [{symbol}] </h2>
-        <h3> {address.substring(0, 6)}...{address.substring(38, 64)} </h3>
+      <Copyable text={address} component='h3'>{address.substring(0, 6)}...{address.substring(38, 64)}</Copyable>
       </Fragment>
     }
     return <Fragment>
       <h3> {name} [{symbol}] </h3>
-      <h4> {address.substring(0, 6)}...{address.substring(38, 64)} </h4>
+      <Copyable text={address} component='h4'>{address.substring(0, 6)}...{address.substring(38, 64)}</Copyable>
     </Fragment>
   }
 
