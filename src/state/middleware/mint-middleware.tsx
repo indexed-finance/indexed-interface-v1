@@ -1,6 +1,6 @@
 import { BigNumber, formatBalance, toBN, toTokenAmount } from "@indexed-finance/indexed.js";
 import { withMiddleware } from ".";
-import { MiddlewareAction, MintDispatch, MintDispatchAction, SetPoolOutput, SetTokenExact, SetTokenInput, ToggleToken } from "../actions/mint-actions";
+import { MiddlewareAction, MintDispatch, MintDispatchAction, SetPoolOutput, SetTokenExact, SetTokenInput, ToggleToken, UpdatePool } from "../actions/mint-actions";
 import { MintState } from "../reducers/mint-reducer";
 
 type MintDispatchType = (action: MiddlewareAction | MintDispatchAction) => Promise<void>;
@@ -93,10 +93,16 @@ function mintDispatchMiddleware(dispatch: MintDispatch, state: MintState) {
       }
     }
 
-    const updatePool = async (): Promise<void> => {
+    const updatePool = async (action: UpdatePool): Promise<void> => {
       await state.pool.update();
-      const amounts = new Array(tokens.length).fill(BN_ZERO);
-      const displayAmounts = new Array(tokens.length).fill('0');
+      let amounts: BigNumber[] = [], displayAmounts: string[] = [];
+      if (action.clearInputs) {
+        amounts = new Array(tokens.length).fill(BN_ZERO);
+        displayAmounts = new Array(tokens.length).fill('0');
+      } else {
+        amounts = state.amounts;
+        displayAmounts = state.displayAmounts;
+      }
       return dispatch({ type: 'SET_ALL_AMOUNTS', amounts, displayAmounts });
     }
 
@@ -107,7 +113,7 @@ function mintDispatchMiddleware(dispatch: MintDispatch, state: MintState) {
       case 'SET_TOKEN_INPUT': return setTokenInput(action);
       case 'SET_POOL_OUTPUT': return setPoolOutput(action);
       case 'TOGGLE_SELECT_TOKEN': return toggleToken(action);
-      case 'UPDATE_POOL': return updatePool();
+      case 'UPDATE_POOL': return updatePool(action);
       default: return fallback(action);
     }
   }

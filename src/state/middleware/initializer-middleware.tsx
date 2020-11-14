@@ -1,7 +1,7 @@
-import { BigNumber, formatBalance, toTokenAmount } from "@indexed-finance/indexed.js";
+import { BigNumber, formatBalance, toTokenAmount, toBN } from "@indexed-finance/indexed.js";
 import { InitializerToken } from "@indexed-finance/indexed.js/dist/types";
 import { withMiddleware } from ".";
-import { MiddlewareAction, InitDispatch, InitDispatchAction, SetTokenInput } from "../actions/initializer-actions";
+import { MiddlewareAction, InitDispatch, InitDispatchAction, SetTokenInput, UpdatePool } from "../actions/initializer-actions";
 import { InitializerState } from "../reducers/initializer-reducer";
 
 /* state => next => action => */
@@ -16,7 +16,7 @@ function initDispatchMiddleware(dispatch: InitDispatch, state: InitializerState)
   return (action: MiddlewareAction | InitDispatchAction): Promise<void> => {
     const { pool, tokens } = state;
 
-    const updatePool = async () => {
+    const updatePool = async (action: UpdatePool) => {
       await pool.update();
       let newTokens: InitializerToken[] = [];
       let newAmounts: BigNumber[] = [];
@@ -30,9 +30,16 @@ function initDispatchMiddleware(dispatch: InitDispatch, state: InitializerState)
         finalValueEstimate = finalValueEstimate.plus(price.times(token.targetBalance));
         if (token.amountRemaining.eq(0)) return;
         newTokens.push(token);
-        newAmounts.push(state.amounts[i]);
-        displayAmounts.push(state.displayAmounts[i]);
-        newCredits.push(state.creditEthPerToken[i]);
+        if (action.clearInputs) {
+          newAmounts.push(toBN(0));
+          displayAmounts.push('0');
+          newCredits.push(toBN(0));
+        } else {
+          newAmounts.push(state.amounts[i]);
+          displayAmounts.push(state.displayAmounts[i]);
+          newCredits.push(state.creditEthPerToken[i]);
+        }
+
       });
       // const prices = newTokens.map(t => pool.tokenPrices[t.address]);
       // const currentValues = 
@@ -70,7 +77,7 @@ function initDispatchMiddleware(dispatch: InitDispatch, state: InitializerState)
     switch (action.type) {
       case 'SET_TOKEN_EXACT': return setTokenExact(action);
       case 'SET_TOKEN_INPUT': return setTokenInput(action);
-      case 'UPDATE_POOL': return updatePool();
+      case 'UPDATE_POOL': return updatePool(action);
       default: return fallback(action);
     }
   }

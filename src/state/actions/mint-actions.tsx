@@ -19,7 +19,7 @@ export type SetSpecifiedSide = { type: 'SET_SPECIFIED_SIDE', side: 'input' | 'ou
 export type SetTokenExact = { type: 'SET_TOKEN_EXACT', index: number, amount: BigNumber };
 export type SetTokenInput = { type: 'SET_TOKEN_INPUT', index: number, amount: string | number };
 
-export type UpdatePool = { type: 'UPDATE_POOL' };
+export type UpdatePool = { type: 'UPDATE_POOL', clearInputs?: boolean };
 
 export type MintDispatchAction = ClearAllAmounts | ToggleToken | SetPoolAmount | SetPoolOutput | SetSingleAmount | SetAllAmount | SetHelper | SetSpecifiedSide;
 export type MintDispatch = (actions: MintDispatchAction | MintDispatchAction[]) => void;

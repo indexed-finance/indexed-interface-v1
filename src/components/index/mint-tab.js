@@ -53,7 +53,7 @@ export default function Mint({ market, metadata }) {
     }
     await handleTransaction(fn.send({ from: state.account }))
       .then(async () => {
-        await updatePool();
+        updatePool(true);
       }).catch(() => {});
   }
 

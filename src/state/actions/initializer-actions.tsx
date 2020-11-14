@@ -23,7 +23,7 @@ export type SetAll = {
 
 export type SetTokenExact = { type: 'SET_TOKEN_EXACT', index: number, amount: BigNumber };
 export type SetTokenInput = { type: 'SET_TOKEN_INPUT', index: number, amount: string | number };
-export type UpdatePool = { type: 'UPDATE_POOL' };
+export type UpdatePool = { type: 'UPDATE_POOL', clearInputs?: boolean };
 
 export type InitDispatchAction = ToggleToken | SetHelper | SetTokenAmount | SetAll;
 export type InitDispatch = (actions: InitDispatchAction | InitDispatchAction[]) => void;

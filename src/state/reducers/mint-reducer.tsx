@@ -220,12 +220,13 @@ export type TokenActions = {
 
 export type MintContextType = {
   useToken: (index: number) => TokenActions;
-  setPoolAmount: (amount: string | number) => void;
   mintState: MintState;
   setHelper: (helper: PoolHelper) => void;
+  updatePool: (clearInputs?: boolean) => void;
+  bindPoolAmountInput: { value: string, onChange: (event: any) => void }
 }
 
-export function useMint() {
+export function useMint(): MintContextType {
   const [mintState, mintDispatch] = useReducer(mintReducer, initialState);
   const dispatch = withMintMiddleware(mintState, mintDispatch);
   const useToken = (index: number): TokenActions => useMintTokenActions(mintState, dispatch, index);
@@ -236,7 +237,7 @@ export function useMint() {
     }
   }
   const setHelper = (helper: PoolHelper) => dispatch({ type: 'SET_POOL_HELPER', pool: helper });
-  const updatePool = () => dispatch({ type: 'UPDATE_POOL' });
+  const updatePool = (clearInputs?: boolean) => dispatch({ type: 'UPDATE_POOL', clearInputs });
 
   return {
     useToken,

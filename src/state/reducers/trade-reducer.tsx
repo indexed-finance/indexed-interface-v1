@@ -173,7 +173,6 @@ export type TokenActions = {
   setAmountToBalance?: () => void;
   updateBalance: () => void;
   target?: string;
-  approvalRemainder?: BigNumber;
 };
 
 export function useTradeTokenActions(
@@ -214,14 +213,8 @@ export function useTradeTokenActions(
       setAmount(value.toString());
     }
   };
-  let approvalRemainder: BigNumber | undefined;
-  if (isInput) {
-    let allowance = state.getAllowanceForPair(address);
-    approvalRemainder = allowance.gte(amount) ? BN_ZERO : amount.minus(allowance);
-  }
 
   return {
-    approvalRemainder,
     address,
     decimals,
     symbol,

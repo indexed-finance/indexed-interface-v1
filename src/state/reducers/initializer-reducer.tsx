@@ -240,7 +240,7 @@ export type InitContextType = {
   displayUserCredit: string;
   displayValue: string;
   finalValue: string;
-  updatePool: () => void;
+  updatePool: (clearInputs?: boolean) => void;
 }
 
 export function useInitializerReducer(): InitContextType {
@@ -250,7 +250,7 @@ export function useInitializerReducer(): InitContextType {
   const setHelper = (helper: InitializerHelper) => dispatch({ type: 'SET_POOL_HELPER', pool: helper });
   const totalCredit = initState.creditEthTotal;
   const displayTotalCredit = formatBalance(totalCredit, 18, 4);
-  const updatePool = () => dispatch({ type: 'UPDATE_POOL' });
+  const updatePool = (clearInputs?: boolean) => dispatch({ type: 'UPDATE_POOL', clearInputs });
   const displayUserCredit = initState.pool ? formatBalance(initState.pool.userCredit, 18, 4) : '0';
   const displayPoolTotalCredit = initState.pool ? formatBalance(initState.pool.totalCreditedWETH, 18, 4) : '0';
 

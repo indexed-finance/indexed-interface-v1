@@ -52,7 +52,7 @@ export default function InitializerForm({ metadata, classes }) {
       fn = initializer.methods['contributeTokens(address[],uint256[],uint256)'](tokens, amounts, minimumCredit);
     }
     await handleTransaction(fn.send({ from: state.account }))
-      .then(updatePool)
+      .then(() => updatePool(true))
       .catch(() => {});
   }
 
