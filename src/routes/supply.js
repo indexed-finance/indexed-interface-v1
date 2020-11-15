@@ -77,11 +77,8 @@ export default function Supply() {
         dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
     } catch(e) {
-      console.log(e)
       dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
     }
-
-
   }
 
   const getAllowance = async() => {
@@ -90,18 +87,19 @@ export default function Supply() {
 
     let budget = await allowance(web3.injected, stakingToken, account, id)
 
-    return parseFloat(budget)/Math.pow(10, 18)
+    return formatBalance(new BigNumber(budget), 18, 4)
   }
 
   const approve = async() => {
     let { web3, account } = state
     let { stakingToken, id } = metadata
 
+    console.log(stakingToken, id)
+
     try{
       let contract = getERC20(web3.injected, stakingToken)
-      let amount = decToWeiHex(web3.rinkeby, parseFloat(input))
 
-      await contract.methods.approve(id, amount).send({ from: account })
+      await contract.methods.approve(id, toWei(input)).send({ from: account })
       .on('confirmation', (conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
@@ -115,6 +113,7 @@ export default function Supply() {
         dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
     } catch(e) {
+      console.log(e)
       dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
     }
   }
@@ -128,10 +127,11 @@ export default function Supply() {
       let amount = decToWeiHex(web3.rinkeby, parseFloat(input))
 
       await contract.methods.stake(amount).send({ from: account })
-      .on('confirmation', (conf, receipt) => {
+      .on('confirmation', async(conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
             dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+            await getAccountMetadata(metadata)
           } else {
             dispatch({ type: 'FLAG', payload: TX_REVERT })
           }
@@ -146,36 +146,29 @@ export default function Supply() {
 
   const handleInput = (event) => {
     let { value } = event.target
-    let weight = getPoolWeight(value)
+    let raw = !isNaN(parseFloat(value)) ? value : 0
+    let weight = getPoolWeight(raw)
+    let displayWeight = weight > 1 ? 1 : weight
+    let estimatedReward = metadata.rate * weight
+    let displayReward = estimatedReward > metadata.rate ? metadata.rate : estimatedReward
 
-    let estimatedReward = getEstimatedReward(value, weight)
-    let estimation = document.getElementById('est')
-    let presence = document.getElementById('weight')
-
-    estimation.innerHTML = estimatedReward.toLocaleString({ minimumFractionDigits: 2 })
-    presence.innerHTML = weight.toLocaleString({ minimumFractionDigits: 2 })
+    document.getElementById('est').innerHTML =
+    displayReward.toLocaleString({ minimumFractionDigits: 2 })
+    document.getElementById('weight').innerHTML =
+    (displayWeight * 100).toLocaleString({ minimumFractionDigits: 2 })
 
     setInput(event.target.value)
   }
 
-  const getEstimatedReward = (value, weight) => {
-    let { rate } = metadata
-
-    return parseFloat(rate) * weight
-  }
-
   const getPoolWeight = (value) => {
-    let { totalSupply } = metadata
-    let poolWeight = (parseFloat(totalSupply)/Math.pow(10, 18))
-
-    return parseFloat(value)/poolWeight * 100
+    let currentWeight = metadata.supply == 0 ? 1 : metadata.supply
+    return (parseFloat(value)/currentWeight)
   }
 
   const getAccountMetadata = async(obj) => {
     let { web3, account } = state
 
     if(web3.injected && obj) {
-
       let { stakingToken, totalSupply, id } = obj
       let contract = toContract(web3.rinkeby, IStakingRewards, id)
       let token = getERC20(web3.rinkeby, stakingToken)
@@ -190,10 +183,12 @@ export default function Supply() {
       deposit = formatBalance(new BigNumber(deposit), 18, 4)
       claim = formatBalance(new BigNumber(claim), 18, 4)
 
-      let relative = parseFloat((claim)/(supply + claim))
+      let relative = parseFloat((deposit)/(supply + deposit))
       let returns = obj.rate * (isNaN(relative) ? 1 : relative)
-      let future =  returns == obj.rate ? 0 : parseFloat(claim + returns)
-      let display = returns
+      let future =  parseFloat(claim) + returns
+      let display = claim
+
+      console.log(claim, returns, future)
 
       setStats({ claim, deposit, balance, returns, future, display })
     }
@@ -250,7 +245,7 @@ export default function Supply() {
         let amount = parseFloat(input)
         let allowance = await getAllowance()
 
-        if(amount > allowance){
+        if(allowance == 0 || amount > allowance){
           setExecution({ f: approve, label: 'APPROVE'})
         } else {
           setExecution({ f: stake, label: 'STAKE'
@@ -329,12 +324,12 @@ export default function Supply() {
               </ul>
             )}
           </div>
-          <ButtonPrimary onClick={initialisePool} variant='outlined' margin={{ ...button }}>
+          <ButtonPrimary onClick={execution.f} variant='outlined' margin={{ ...button }}>
             {execution.label}
           </ButtonPrimary>
         </Container>
       </Grid>
-      <Grid item xs={10} md={6} style={{ width: '45%'}}>
+      <Grid item xs={10} md={6}>
         <Canvas>
           <div className={classes.rewards}>
           	<ul className={classes.stats}>
