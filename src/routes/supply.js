@@ -192,10 +192,8 @@ export default function Supply() {
 
       let relative = parseFloat((claim)/(supply + claim))
       let returns = obj.rate * (isNaN(relative) ? 1 : relative)
-      let future =  claim + returns
+      let future =  returns == obj.rate ? 0 : parseFloat(claim + returns)
       let display = returns
-
-      console.log(future, claim)
 
       setStats({ claim, deposit, balance, returns, future, display })
     }
