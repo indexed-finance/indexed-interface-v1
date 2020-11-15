@@ -25,10 +25,8 @@ const useStyles = getStyles(style)
 const DATE_END = 1605586873688
 
 const i = {
-  'DFI5R': [ 'UNI', 'WBTC', 'COMP', 'LINK'],
-  'UNIV2:ETH-DFI5R': [ 'UNI', 'WBTC', 'COMP', 'LINK' ],
-  'GOVI6': [ 'BAL', 'YFI', 'CRV', 'UNI'],
-  'UNIV2:ETH-GOVI6': [ 'UNI', 'YFI', 'CRV', 'BAL']
+  'GOV5r': [ 'BAL', 'YFI', 'CRV', 'UNI'],
+  'UNIV2:ETH-GOV5r': [ 'UNI', 'YFI', 'CRV', 'BAL']
 }
 
 const MyLoader = ({theme, width}) => (
@@ -106,7 +104,6 @@ export default function Stake() {
         let mainWidth = symbol.includes('UNIV2') ? 50 : 30
         let marginRight = symbol.includes('UNIV2') ? 5 : 0
         let rate = (parseFloat(rewardRate)/parseFloat(totalSupply))
-        let ticker = symbol.toUpperCase()
         let label = isReady ? 'STAKE' : 'INITIALIZE'
         let supply = parseFloat(totalSupply)/Math.pow(10,18)
         supply = supply.toLocaleString({ minimumFractionDigits: 2 })
@@ -117,16 +114,18 @@ export default function Stake() {
 
         rate = parseFloat(rate * 60 * 24).toLocaleString()
 
+        console.log(i[symbol], symbol)
+
         return(
           <Grid item xs={10} md={6} style={{ width: '100%' }}>
             <Link className={classes.href} to={`/stake/${symbol.toLowerCase()}`}>
               <Canvas button color={color}>
                 <div className={classes.pool}>
                   <div className={classes.image}>
-                    <img src={tokenMetadata[i[ticker][0]].image} style={{ width: mainWidth, marginRight }} />
-                    <img src={tokenMetadata[i[ticker][1]].image} style={{marginBottom: 25, width }} />
-                    <img src={tokenMetadata[i[ticker][2]].image} style={{ marginLeft: -25, width }} />
-                    <img src={tokenMetadata[i[ticker][3]].image} style={{ marginBottom: 10, width }} />
+                    <img src={tokenMetadata[i[symbol][0]].image} style={{ width: mainWidth, marginRight }} />
+                    <img src={tokenMetadata[i[symbol][1]].image} style={{marginBottom: 25, width }} />
+                    <img src={tokenMetadata[i[symbol][2]].image} style={{ marginLeft: -25, width }} />
+                    <img src={tokenMetadata[i[symbol][3]].image} style={{ marginBottom: 10, width }} />
                   </div>
                   <div className={classes.information}>
                     {!state.native && (

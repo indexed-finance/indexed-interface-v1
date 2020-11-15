@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect, useContext } from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
-import { fromWei } from '@indexed-finance/indexed.js/dist/utils/bignumber';
+import { fromWei, toWei } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 
 import Container from '../container'
 import Spline from '../charts/spline'
@@ -13,6 +13,7 @@ import ButtonPrimary from '../buttons/primary'
 
 import { UNCLAIMED_CREDITS } from '../../assets/constants/parameters'
 
+import MockERC20ABI from '../../assets/constants/abi/MockERC20.json'
 import PoolInitializer from '../../assets/constants/abi/PoolInitializer.json'
 import { eventColumns } from '../../assets/constants/parameters'
 import style from '../../assets/css/routes/pool'
@@ -72,6 +73,20 @@ function InitializedPoolPage({ address, metadata }){
         })
       }
       setBalances({ ...balances, credit })
+    }
+  }
+
+  const getUnderlyingAssets = async() => {
+  let { web3, account, helper } = state
+  let pool = findHelper(helper)
+
+  for(let x in pool.tokens) {
+    let { symbol, address } = pool.tokens[x]
+    let amount = toWei(Math.floor(Math.random() * 10000))
+    const token = new web3.injected.eth.Contract(MockERC20ABI, address)
+
+    await token.methods.getFreeTokens(account, amount)
+    .send({ from: account })
     }
   }
 
@@ -191,6 +206,7 @@ function InitializedPoolPage({ address, metadata }){
                 <a href={`https://app.uniswap.org/#/add/ETH/${address}`} style={{ float: 'left' }} target='_blank'>
                   <ButtonPrimary margin={{ marginBottom: 15, padding: '.5em 1.25em' }}  variant='outlined'> ADD LIQUIDITY </ButtonPrimary>
                 </a>
+                <ButtonPrimary onClick={getUnderlyingAssets} margin={{ margin: 0, padding: '.5em 1.25em' }} variant='outlined'> ADD LIQUIDITY </ButtonPrimary>
               </div>
             </Container>
             <Container margin={margin} padding="1em 0em" title='ASSETS'>
@@ -213,7 +229,7 @@ function InitializedPoolPage({ address, metadata }){
         <Grid item xs={12} md={7} lg={7} xl={7} style={{ width: '100%' }}>
           <ParentSize>
             {({ width, height }) => (
-              <Container margin={marginX} padding="1em 0em" title={metadata.type}>
+              <Container margin={marginX} padding="1em 0em" title="EVENTS">
                 <div className={classes.events}>
                   <List height={250} columns={eventColumns} data={events} />
                 </div>

@@ -9,6 +9,7 @@ import Container from '../container'
 import Spline from '../charts/spline'
 import InitializerForm from './initializer-form';
 import Weights from '../weights';
+import { toWei } from '@indexed-finance/indexed.js'
 
 import { InitializerStateProvider, useInitializerState } from "../../state/initializer";
 import { store } from '../../state'

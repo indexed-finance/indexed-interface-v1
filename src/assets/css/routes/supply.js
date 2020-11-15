@@ -33,7 +33,6 @@ const setStyle = (theme) => ({
   },
   stats: {
     listStyle: 'none',
-    width: '100%',
     padding: 0,
     margin: 0,
     '& li:first-of-type': {

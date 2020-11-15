@@ -20,7 +20,7 @@ import NumberFormat from '../utils/format'
 import { tokenMetadata } from '../assets/constants/parameters'
 import { getStakingPool } from '../api/gql'
 import { balanceOf, allowance, getERC20 } from '../lib/erc20'
-import { decToWeiHex, getBalances } from '../lib/markets'
+import { decToWeiHex, getPair, getBalances } from '../lib/markets'
 import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
@@ -28,19 +28,20 @@ import { store } from '../state'
 const useStyles = getStyles(style)
 
 const FACTORY = '0x48ea38bcd50601594191b9e4edda7490d7a9eb16'
+const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
 
 const z = {
-  'DFI5R': '0xe376e56cdebdf4f47049933a8b158b6f25d42dbd',
-  'UNIV2:ETH-DFI5R': '0xfaadac001786d4dfaaf3eece747c46f285967f2d',
-  'GOVI6': '',
-  'UNIV2:ETH-GOVI6': ''
+  'GOV5r': '0xb7082418955407082bc09daacee9c3013054ce11',
+  'UNIV2:ETH-GOV5r': ''
 }
 
 const i = {
-  'DFI5R': [ 'UNI', 'WBTC', 'COMP', 'LINK'],
-  'UNIV2:ETH-DFI5R': [ 'UNI', 'WBTC', 'COMP', 'LINK' ],
-  'GOVI6': [ 'BAL', 'YFI', 'CRV', 'UNI'],
-  'UNIV2:ETH-GOVI6': [ 'UNI', 'YFI', 'CRV', 'BAL']
+  'GOV5r': [ 'BAL', 'YFI', 'CRV', 'UNI'],
+  'UNIV2:ETH-GOV5r': [ 'UNI', 'YFI', 'CRV', 'BAL']
+}
+
+function uncapitalizeNth(text, n) {
+    return (n > 0 ? text.slice(0, n) : '') + text.charAt(n).toLowerCase() + (n < text.length - 1 ? text.slice(n+1) : '')
 }
 
 export default function Supply() {
@@ -53,6 +54,12 @@ export default function Supply() {
   let { asset } = useParams()
   let classes = useStyles()
   let ticker = asset.toUpperCase()
+
+  const findHelper = (asset) => {
+    return state.helper.initialized.find(i =>
+      i.pool.symbol == uncapitalizeNth(asset, asset.length-1)
+    );
+  };
 
   const initialisePool = async() => {
     let { web3, account } = state
@@ -169,16 +176,15 @@ export default function Supply() {
   }
 
   const getAccountMetadata = async(obj) => {
-    let stakingPool = z[ticker]
-    let { stakingToken, totalSupply } = metadata
+    let { stakingToken, totalSupply, id } = metadata
     let { web3, account } = state
 
     if(obj == undefined){
        obj = Object.entries(metadata)
     }
 
-    if(web3.injected && obj.length > 0){
-      let contract = toContract(web3.rinkeby, IStakingRewards, stakingPool)
+    if(web3.injected && obj.length > 0 && stakingToken) {
+      let contract = toContract(web3.rinkeby, IStakingRewards, id)
       let token = getERC20(web3.rinkeby, stakingToken)
       let claim = await contract.methods.earned(account).call()
       let deposit = await contract.methods.balanceOf(account).call()
@@ -205,37 +211,45 @@ export default function Supply() {
 
   useEffect(() => {
     const getMetadata = async() => {
-      let { web3 } = state
-      let stakingAddress = z[ticker]
-      let data = await getStakingPool(stakingAddress)
-      let { totalSupply, rewardRate, stakingToken, isReady } = data
-      let rate = (parseFloat(rewardRate)/parseFloat(totalSupply))
-      let contract = toContract(web3.rinkeby, IStakingRewards, stakingAddress)
-      let supply = parseFloat(totalSupply)/Math.pow(10, 18)
+      let { web3, request, helper } = state
 
-      if(parseFloat(totalSupply) == 0){
-        rate = (parseFloat(rewardRate)/Math.pow(10, 18))
-      } if(!isReady) {
-        setExecution({
-          f: initialisePool, label: 'INITIALIZE'
-        })
-      } else {
-        setExecution({
-          f: stake, label: 'STAKE'
-        })
-      }
-      data.rate = parseFloat(rate * 60 * 24).toLocaleString()
-      data.per = rate * 60 * 24
-      data.supply = supply.toLocaleString({ minimumFractionDigits: 2 })
+      if(request && helper) {
+        let match = ticker.split('-')
+        let target = match[match.length-1]
+        let { pool } = findHelper(target)
 
-      setMetadata(data)
+        let pair = await getPair(web3.rinkeby, WETH, pool.address)
+        let data = await getStakingPool(pool.address)
 
-      if(web3.injected != false){
-        await getAccountMetadata(data)
+        let { id, totalSupply, rewardRate, stakingToken, isReady } = data
+        let rate = (parseFloat(rewardRate)/parseFloat(totalSupply))
+        let contract = toContract(web3.rinkeby, IStakingRewards, id)
+        let supply = parseFloat(totalSupply)/Math.pow(10, 18)
+
+        if(parseFloat(totalSupply) == 0){
+          rate = (parseFloat(rewardRate)/Math.pow(10, 18))
+        } if(!isReady) {
+          setExecution({
+            f: initialisePool, label: 'INITIALIZE'
+          })
+        } else {
+          setExecution({
+            f: stake, label: 'STAKE'
+          })
+        }
+        data.rate = parseFloat(rate * 60 * 24).toLocaleString()
+        data.per = rate * 60 * 24
+        data.supply = supply.toLocaleString({ minimumFractionDigits: 2 })
+
+        setMetadata(data)
+
+        if(web3.injected != false){
+          await getAccountMetadata(data)
+        }
       }
     }
     getMetadata()
-  }, [])
+  }, [ state.request ])
 
   useEffect(() => {
     const checkAllowance = async() => {
@@ -259,7 +273,7 @@ export default function Supply() {
 
   useEffect(() => {
     getAccountMetadata()
-  }, [ state.web3.injected ])
+  }, [ metadata ])
 
   let {
     padding, marginBottom, marginRight, width, positioning, inputWidth, listPadding, button, height, reward, buttonPos, marginLeft
@@ -336,7 +350,7 @@ export default function Supply() {
           </ButtonPrimary>
         </Container>
       </Grid>
-      <Grid item xs={10} md={6}>
+      <Grid item xs={10} md={6} style={{ width: '45%'}}>
         <Canvas>
           <div className={classes.rewards}>
           	<ul className={classes.stats}>

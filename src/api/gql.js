@@ -56,7 +56,8 @@ const stakingQuery = () => `
 
 const stakeQuery = stakingAddress => `
 {
-  ndxStakingPools(where: { id: "${stakingAddress}"}) {
+  ndxStakingPools(where: { indexPool: "${stakingAddress}"}) {
+    id
     startsAt
 		isReady
     indexPool
