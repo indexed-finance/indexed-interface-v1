@@ -8,6 +8,7 @@ import StakingRewardsFactory from '../assets/constants/abi/StakingRewardsFactory
 import IStakingRewards from '../assets/constants/abi/IStakingRewards.json'
 import Countdown from "react-countdown";
 import CountUp from 'react-countup';
+import { toWei, fromWei } from '@indexed-finance/indexed.js'
 
 import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
 import style from '../assets/css/routes/supply'
@@ -20,7 +21,7 @@ import NumberFormat from '../utils/format'
 import { tokenMetadata } from '../assets/constants/parameters'
 import { getStakingPool } from '../api/gql'
 import { balanceOf, allowance, getERC20 } from '../lib/erc20'
-import { decToWeiHex, getPair, getBalances } from '../lib/markets'
+import { decToWeiHex, getBalances } from '../lib/markets'
 import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
@@ -48,7 +49,7 @@ export default function Supply() {
   let { state, dispatch } = useContext(store)
   let { asset } = useParams()
   let classes = useStyles()
-  let ticker = asset.toUpperCase()
+  let ticker = uncapitalizeNth(asset.toUpperCase(), asset.length-1)
 
   const findHelper = (asset) => {
     return state.helper.initialized.find(i =>
@@ -58,8 +59,6 @@ export default function Supply() {
 
   const initialisePool = async(addr) => {
     let { web3, account } = state
-
-    console.log(addr)
 
     try{
       let contract = toContract(web3.injected, StakingRewardsFactory, FACTORY)
@@ -78,6 +77,7 @@ export default function Supply() {
         dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
     } catch(e) {
+      console.log(e)
       dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
     }
 
@@ -182,14 +182,14 @@ export default function Supply() {
       let deposit = await contract.methods.balanceOf(account).call()
       let balance = await token.methods.balanceOf(account).call()
       let tomorrow = new Date(Date.now())
-      let supply = (parseFloat(totalSupply)/Math.pow(10,18))
+      let supply = fromWei(totalSupply)
       let today = tomorrow
 
-      balance = (parseFloat(balance)/Math.pow(10,18))
-      deposit = (parseFloat(deposit)/Math.pow(10,18))
-      claim = (parseFloat(claim)/Math.pow(10,18))
+      balance = fromWei(balance)
+      deposit = fromWei(deposit)
+      claim = fromWei(claim)
 
-      let returns = metadata.per * (claim)/(supply+claim)
+      let returns = metadata.per * (claim)/(supply + claim)
       let future =  claim + returns
       let display = returns.toLocaleString({ minimumFractionDigits: 2 })
 
@@ -209,20 +209,23 @@ export default function Supply() {
         let match = ticker.split('-')
         let target = match[match.length-1]
         let { pool } = findHelper(target)
+        let isWethPair = ticker.includes('UNI')
+        let data = await getStakingPool(pool.address, isWethPair)
 
-        let pair = await getPair(web3.rinkeby, WETH, pool.address)
-        let data = await getStakingPool(pool.address)
+        console.log(data)
 
-        let { id, totalSupply, rewardRate, stakingToken, isReady } = data
+        let {
+          id, startsAt, stakingToken, totalSupply, trewardRate, rewardRate, isReady,
+         } = data
         let rate = (parseFloat(rewardRate)/parseFloat(totalSupply))
         let contract = toContract(web3.rinkeby, IStakingRewards, id)
-        let supply = parseFloat(totalSupply)/Math.pow(10, 18)
+        let supply = fromWei(totalSupply)
 
         if(parseFloat(totalSupply) == 0){
-          rate = (parseFloat(rewardRate)/Math.pow(10, 18))
+          rate = fromWei(rewardRate)
         } if(!isReady) {
           setExecution({
-            f: () => initialisePool(stakingToken), label: 'INITIALIZE'
+            f: () => initialisePool(target), label: 'INITIALIZE'
           })
         } else {
           setExecution({
@@ -319,10 +322,10 @@ export default function Supply() {
                   </Grid>
                 </Fragment>
              )}
-             {!metadata.isReady && (
+             {!metadata.isReady && metadata.startsAt && (
                 <Grid item xs={6} md={12}>
                   <p>This program is not yet initialised yet, it is possible to do so in </p>
-                  <p> <Countdown date={parseInt(metadata.startsAt)}/> </p>
+                  <p> <Countdown date={metadata.startsAt}/> </p>
                 </Grid>
              )}
             </Grid>
@@ -333,7 +336,7 @@ export default function Supply() {
               </ul>
             )}
           </div>
-          <ButtonPrimary onClick={execution.f} variant='outlined' margin={{ ...button }}>
+          <ButtonPrimary onClick={initialisePool} variant='outlined' margin={{ ...button }}>
             {execution.label}
           </ButtonPrimary>
         </Container>

@@ -56,6 +56,8 @@ export default function Stake() {
       let { web3 } = state
       let data = await getStakingPools()
 
+      console.log(data)
+
       for(let value in data){
         let { id, stakingToken, indexPool } = data[value]
         let staking = toContract(web3.rinkeby, IERC20.abi, stakingToken)
@@ -107,6 +109,8 @@ export default function Stake() {
         let label = isReady ? 'STAKE' : 'INITIALIZE'
         let supply = parseFloat(totalSupply)/Math.pow(10,18)
         supply = supply.toLocaleString({ minimumFractionDigits: 2 })
+
+        console.log(isReady)
 
         if(parseFloat(totalSupply) == 0){
           rate = (parseFloat(rewardRate)/Math.pow(10, 18))

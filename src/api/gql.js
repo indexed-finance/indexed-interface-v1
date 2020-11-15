@@ -54,9 +54,9 @@ const stakingQuery = () => `
 }
 `
 
-const stakeQuery = stakingAddress => `
+const stakeQuery = (stakingAddress, isWethPair) => (`
 {
-  ndxStakingPools(where: { indexPool: "${stakingAddress}"}) {
+  ndxStakingPools(where: { indexPool: "${stakingAddress}", isWethPair: ${isWethPair}}) {
     id
     startsAt
 		isReady
@@ -70,7 +70,7 @@ const stakeQuery = stakingAddress => `
     rewardRate
   }
 }
-`
+`);
 
 const proposalQuery = id => `
   {
@@ -258,8 +258,10 @@ export async function getStakingPools() {
   return ndxStakingPools;
 }
 
-export async function getStakingPool(poolAddress) {
-  const { data: { ndxStakingPools } } = await execRequest(stakeQuery(poolAddress));
+export async function getStakingPool(poolAddress, isWethPair) {
+  console.log(stakeQuery(poolAddress, isWethPair))
+
+  const { data: { ndxStakingPools } } = await execRequest(stakeQuery(poolAddress, isWethPair));
   return ndxStakingPools[0];
 }
 
