@@ -8,7 +8,7 @@ import StakingRewardsFactory from '../assets/constants/abi/StakingRewardsFactory
 import IStakingRewards from '../assets/constants/abi/IStakingRewards.json'
 import Countdown from "react-countdown";
 import CountUp from 'react-countup';
-import { toWei, fromWei } from '@indexed-finance/indexed.js'
+import { toWei, fromWei, formatBalance, BigNumber } from '@indexed-finance/indexed.js'
 
 import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
 import style from '../assets/css/routes/supply'
@@ -175,27 +175,27 @@ export default function Supply() {
     let { web3, account } = state
 
     if(web3.injected && obj) {
+
       let { stakingToken, totalSupply, id } = obj
       let contract = toContract(web3.rinkeby, IStakingRewards, id)
       let token = getERC20(web3.rinkeby, stakingToken)
       let claim = await contract.methods.earned(account).call()
       let deposit = await contract.methods.balanceOf(account).call()
       let balance = await token.methods.balanceOf(account).call()
-      let tomorrow = new Date(Date.now())
-      let supply = fromWei(totalSupply)
-      let today = tomorrow
+      let supply = formatBalance(new BigNumber(totalSupply), 18, 4)
+      let today = new Date(Date.now())
+      let tomorrow = new Date(today.getTime() + 86400)
 
-      balance = fromWei(balance)
-      deposit = fromWei(deposit)
-      claim = fromWei(claim)
+      balance = formatBalance(new BigNumber(balance), 18, 4)
+      deposit = formatBalance(new BigNumber(deposit), 18, 4)
+      claim = formatBalance(new BigNumber(claim), 18, 4)
 
-      let returns = metadata.per * (claim)/(supply + claim)
+      let relative = parseFloat((claim)/(supply + claim))
+      let returns = obj.rate * (isNaN(relative) ? 1 : relative)
       let future =  claim + returns
-      let display = returns.toLocaleString({ minimumFractionDigits: 2 })
+      let display = returns
 
-      tomorrow = new Date(tomorrow.getTime() + 86400)
-      tomorrow = (tomorrow.getTime() - today.getTime())
-      deposit = deposit.toLocaleString({ minimumFractionDigits: 2 })
+      console.log(future, claim)
 
       setStats({ claim, deposit, balance, returns, future, display })
     }
@@ -212,18 +212,15 @@ export default function Supply() {
         let isWethPair = ticker.includes('UNI')
         let data = await getStakingPool(pool.address, isWethPair)
 
-        console.log(data)
-
         let {
           id, startsAt, stakingToken, totalSupply, trewardRate, rewardRate, isReady,
          } = data
-        let rate = (parseFloat(rewardRate)/parseFloat(totalSupply))
         let contract = toContract(web3.rinkeby, IStakingRewards, id)
-        let supply = fromWei(totalSupply)
+        let supply = formatBalance(new BigNumber(totalSupply), 18, 4)
+        let reward = formatBalance(new BigNumber(rewardRate), 18, 4)
+        let rate = reward/(supply == 0 ? 1 : supply)
 
-        if(parseFloat(totalSupply) == 0){
-          rate = fromWei(rewardRate)
-        } if(!isReady) {
+        if(!isReady) {
           setExecution({
             f: () => initialisePool(target), label: 'INITIALIZE'
           })
@@ -232,9 +229,9 @@ export default function Supply() {
             f: stake, label: 'STAKE'
           })
         }
-        data.rate = parseFloat(rate * 60 * 24).toLocaleString()
-        data.per = rate * 60 * 24
-        data.supply = supply.toLocaleString({ minimumFractionDigits: 2 })
+
+        data.rate = rate * (60^2) * 24
+        data.supply = supply
 
         setMetadata(data)
 
@@ -269,8 +266,6 @@ export default function Supply() {
   let {
     padding, marginBottom, marginRight, width, positioning, inputWidth, listPadding, button, height, reward, buttonPos, marginLeft
   } = style.getFormatting(ticker, state.native)
-
-  if(state.web3.injected) getAccountMetadata()
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>

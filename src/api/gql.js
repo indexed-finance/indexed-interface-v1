@@ -259,8 +259,6 @@ export async function getStakingPools() {
 }
 
 export async function getStakingPool(poolAddress, isWethPair) {
-  console.log(stakeQuery(poolAddress, isWethPair))
-
   const { data: { ndxStakingPools } } = await execRequest(stakeQuery(poolAddress, isWethPair));
   return ndxStakingPools[0];
 }
