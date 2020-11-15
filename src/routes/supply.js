@@ -27,13 +27,8 @@ import { store } from '../state'
 
 const useStyles = getStyles(style)
 
-const FACTORY = '0x48ea38bcd50601594191b9e4edda7490d7a9eb16'
+const FACTORY = '0xF53FF1A3962Ea1CCA3F3D90Cb5C22EF3484858b0'
 const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
-
-const z = {
-  'GOV5r': '0xb7082418955407082bc09daacee9c3013054ce11',
-  'UNIV2:ETH-GOV5r': ''
-}
 
 const i = {
   'GOV5r': [ 'BAL', 'YFI', 'CRV', 'UNI'],
@@ -61,14 +56,15 @@ export default function Supply() {
     );
   };
 
-  const initialisePool = async() => {
+  const initialisePool = async(addr) => {
     let { web3, account } = state
-    let { stakingToken } = metadata
+
+    console.log(addr)
 
     try{
       let contract = toContract(web3.injected, StakingRewardsFactory, FACTORY)
 
-      await contract.methods.notifyRewardAmount(stakingToken).send({ from: account })
+      await contract.methods.notifyRewardAmount(addr).send({ from: account })
       .on('confirmation', (conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
@@ -84,28 +80,28 @@ export default function Supply() {
     } catch(e) {
       dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
     }
+
+
   }
 
   const getAllowance = async() => {
-    let stakingPool = z[ticker]
     let { web3, account } = state
-    let { stakingToken } = metadata
+    let { id, stakingToken } = metadata
 
-    let budget = await allowance(web3.injected, stakingToken, account, stakingPool)
+    let budget = await allowance(web3.injected, stakingToken, account, id)
 
     return parseFloat(budget)/Math.pow(10, 18)
   }
 
   const approve = async() => {
-    let stakingPool = z[ticker]
     let { web3, account } = state
-    let { stakingToken } = metadata
+    let { stakingToken, id } = metadata
 
     try{
       let contract = getERC20(web3.injected, stakingToken)
       let amount = decToWeiHex(web3.rinkeby, parseFloat(input))
 
-      await contract.methods.approve(stakingPool, amount).send({ from: account })
+      await contract.methods.approve(id, amount).send({ from: account })
       .on('confirmation', (conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
@@ -124,11 +120,11 @@ export default function Supply() {
   }
 
   const stake = async() => {
-    let stakingPool = z[ticker]
     let { web3, account } = state
+    let { id } = metadata
 
     try {
-      let contract = toContract(web3.injected, IStakingRewards, stakingPool)
+      let contract = toContract(web3.injected, IStakingRewards, id)
       let amount = decToWeiHex(web3.rinkeby, parseFloat(input))
 
       await contract.methods.stake(amount).send({ from: account })
@@ -176,14 +172,10 @@ export default function Supply() {
   }
 
   const getAccountMetadata = async(obj) => {
-    let { stakingToken, totalSupply, id } = metadata
     let { web3, account } = state
 
-    if(obj == undefined){
-       obj = Object.entries(metadata)
-    }
-
-    if(web3.injected && obj.length > 0 && stakingToken) {
+    if(web3.injected && obj) {
+      let { stakingToken, totalSupply, id } = obj
       let contract = toContract(web3.rinkeby, IStakingRewards, id)
       let token = getERC20(web3.rinkeby, stakingToken)
       let claim = await contract.methods.earned(account).call()
@@ -230,7 +222,7 @@ export default function Supply() {
           rate = (parseFloat(rewardRate)/Math.pow(10, 18))
         } if(!isReady) {
           setExecution({
-            f: initialisePool, label: 'INITIALIZE'
+            f: () => initialisePool(stakingToken), label: 'INITIALIZE'
           })
         } else {
           setExecution({
@@ -270,10 +262,6 @@ export default function Supply() {
     }
     checkAllowance()
   }, [ input ])
-
-  useEffect(() => {
-    getAccountMetadata()
-  }, [ metadata ])
 
   let {
     padding, marginBottom, marginRight, width, positioning, inputWidth, listPadding, button, height, reward, buttonPos, marginLeft

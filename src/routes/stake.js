@@ -114,8 +114,6 @@ export default function Stake() {
 
         rate = parseFloat(rate * 60 * 24).toLocaleString()
 
-        console.log(i[symbol], symbol)
-
         return(
           <Grid item xs={10} md={6} style={{ width: '100%' }}>
             <Link className={classes.href} to={`/stake/${symbol.toLowerCase()}`}>
