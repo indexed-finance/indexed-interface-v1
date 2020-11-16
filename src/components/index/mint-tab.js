@@ -21,10 +21,6 @@ const RecieveInput = styled(Input)({
   width: 250,
 })
 
-const Trigger = styled(ButtonPrimary)({
-  marginTop: -7.5
-})
-
 const useStyles = getStyles(style)
 
 export default function Mint({ market, metadata }) {
@@ -85,14 +81,16 @@ export default function Mint({ market, metadata }) {
         <div className={classes.demo}>
           <TokenInputs
             width='100%'
-            height='calc(40vh - 75px)'
+            height='40vh'
             useToken={useToken}
             tokens={mintState.tokens}
           />
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
-        <Trigger onClick={mint} disabled={!mintState.ready}> MINT </Trigger>
+        <ButtonPrimary onClick={mint} disabled={!mintState.ready} margin={{ marginTop: 7.5 }}>
+          MINT
+        </ButtonPrimary>
       </Grid>
     </Grid>
     </div>

@@ -22,7 +22,9 @@ import { MintStateProvider } from '../state/mint'
 import { BurnStateProvider } from '../state/burn';
 import { TradeStateProvider } from '../state/trade'
 
-const WETH = '0x554dfe146305944e3d83ef802270b640a43eed44'
+function uncapitalizeNth(text, n) {
+    return (n > 0 ? text.slice(0, n) : '') + text.charAt(n).toLowerCase() + (n < text.length - 1 ? text.slice(n+1) : '')
+}
 
 const Loader = ({ color, height, width, paddingTop }) => (
     <div style={{ position: 'absolute', paddingTop }}>
@@ -70,7 +72,8 @@ const useStyles = getStyles(style)
 export default function Index(){
   let { state, dispatch } = useContext(store)
   let { name } = useParams()
-  name = name.toUpperCase()
+  
+  name = uncapitalizeNth(name.toUpperCase(), name.length-1)
 
   const [ styles, setStyles ] = useState({ trade: selected, mint: {}, burn: {}})
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);

@@ -36,6 +36,7 @@ export default function Pool(){
 
       if(Object.keys(indexes).length > 0 && data.address === dummy.address){
         let target = Object.entries(indexes).find(x => x[1].address === address)
+
         setData(target[1])
       }
     }

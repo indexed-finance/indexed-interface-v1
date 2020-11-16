@@ -78,14 +78,16 @@ export default function BurnTab({ market, metadata }) {
         <div style={{ borderTop: '2px solid #666666', borderBottom: '2px solid #666666'}}>
         <BurnForm
             width='100%'
-            height='calc(40vh - 75px)'
+            height='40vh'
             useToken={useToken}
             tokens={burnState.tokens}
           />
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
-        <Trigger onClick={burn} disabled={!burnState.ready}> BURN </Trigger>
+        <ButtonPrimary onClick={burn} disabled={!burnState.ready} margin={{ marginTop: 25 }}>
+          BURN
+        </ButtonPrimary>
       </Grid>
     </Grid>
     </div>

@@ -110,7 +110,6 @@ function Application(){
         let history = await pool.getSnapshots(90);
 
         const delta24hr = history.length === 1 ? 1 : (Math.abs(history[0].value - history[1].value) / history[1].value).toFixed(4);
-        const ticker = symbol.toUpperCase();
         let supply = pool.pool.totalSupply;
         if (typeof supply !== 'number' && typeof supply != 'string') {
           supply = formatBalance(supply, 18, 4);
@@ -125,7 +124,7 @@ function Application(){
           supply,
           category,
           name,
-          symbol: ticker,
+          symbol,
           size: pool.pool.size,
           address,
           history,
@@ -135,15 +134,14 @@ function Application(){
           poolHelper: pool,
           volume
         };
-        categories[categoryID].indexes.push(ticker);
-        indexes[ticker] = index;
+        categories[categoryID].indexes.push(symbol);
+        indexes[symbol] = index;
       }
       for (let pool of state.helper.uninitialized) {
         await pool.update();
         const { category, name, symbol, address, tokens } = pool;
         const categoryID = `0x${category.toString(16)}`;
         await addCategory(categoryID);
-        const ticker = symbol.toUpperCase();
         let finalValueEstimate = new BigNumber(0);
         let currentValue = new BigNumber(0);
         tokens.forEach((token) => {
@@ -159,7 +157,7 @@ function Application(){
           category,
           name,
           size: pool.pool.size,
-          symbol: ticker,
+          symbol,
           address,
           history: [],
           assets: tokens,
@@ -170,8 +168,8 @@ function Application(){
           currentValue: formatBalance(currentValue, 18, 4),
           finalValueEstimate: formatBalance(finalValueEstimate, 18, 4)
         };
-        categories[categoryID].indexes.push(ticker);
-        indexes[ticker] = index;
+        categories[categoryID].indexes.push(symbol);
+        indexes[symbol] = index;
       }
       await dispatch({
         type: 'GENERIC',

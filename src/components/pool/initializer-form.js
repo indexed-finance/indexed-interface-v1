@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useEffect } from 'react'
+import React, { Fragment, useState, useContext, useEffect } from 'react'
 
 
 // import style from '../../assets/css/components/approvals'
@@ -22,15 +22,13 @@ import ExplainCredit from './explain-credit';
 
 // balance, metadata, height, width, input, param, set, change, rates
 export default function InitializerForm({ metadata, classes }) {
-  // const classes = useStyles()
+  const [ output, setOutput ] = useState(0)
 
   const { useToken, initState, setHelper, updatePool, displayPoolTotalCredit, displayTotalCredit } = useInitializerState();
   let { state, handleTransaction } = useContext(store);
 
   const calcEstimatedTokenOutput = () => {
     let { tokens, amounts } = initState
-
-    console.log(initState, displayTotalCredit)
 
     let culmativeTargetsUSD = tokens.map((v, i) => v.priceUSD * fromWei(v.targetBalance))
     let culmativeQueryUSD = tokens.map((v, i) => v.priceUSD * fromWei(amounts[i]))
@@ -40,7 +38,7 @@ export default function InitializerForm({ metadata, classes }) {
     let ratioUSDPoolToInputs = displayPoolTotalCredit/culmativeQueryToTargetsRatio
     let estimatedTokenOutput = (displayTotalCredit/ratioUSDPoolToInputs) * 100
 
-    console.log(estimatedTokenOutput)
+    return parseFloat(estimatedTokenOutput).toFixed(2)
   }
 
   const findHelper = (i) => {
@@ -83,10 +81,15 @@ export default function InitializerForm({ metadata, classes }) {
     if (!initState.pool && state.helper) setPool();
   }, [ state.web3.injected, state.helper ])
 
+  useEffect(() => {
+    setOutput(calcEstimatedTokenOutput())
+  }, [ displayTotalCredit ])
+
   return (
     <Fragment>
       <TokenInputs useToken={useToken} tokens={initState.tokens} width='100%' height='calc(40vh - 75px)' />
       <div className={classes.reciept}>
+        <p>  EST TOKENS: <span>{output} {metadata.symbol}</span> </p>
         <p>  <ExplainCredit /> CREDIT: <span id='credit'>Ξ {displayTotalCredit}</span> </p>
       </div>
       <div className={classes.submit}>

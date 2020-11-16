@@ -130,7 +130,7 @@ function UninitializedPoolPage({ address, metadata }) {
               </Alert>
               </div>
             <div className={classes.container} style={{ width }}>
-              <InitializerForm metadata={{ address }} classes={classes} />
+              <InitializerForm metadata={{ address, symbol: metadata.symbol }} classes={classes} />
             </div>
           </Container>
         </Grid>
