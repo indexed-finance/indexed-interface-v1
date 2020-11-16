@@ -11,6 +11,8 @@ import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import NightsStayIcon from '@material-ui/icons/NightsStay';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
+
 import { useLocation } from 'react-router-dom'
 import jazzicon from '@metamask/jazzicon'
 import { getAllHelpers } from '@indexed-finance/indexed.js';
@@ -22,7 +24,6 @@ import ndxDark from '../assets/images/indexed-dark.png'
 import style from '../assets/css/components/navigation'
 import { getCachedWeb3, getWeb3 } from '../utils/getWeb3'
 import getStyles from '../assets/css'
-import Search from './inputs/search'
 
 import { store } from '../state'
 
@@ -188,43 +189,60 @@ export default function Navigation({ mode }) {
                 <Typography variant={!state.native ? 'h4' : 'h5' } className={classes.title}> INDEXED </Typography>
               </Link>
             </Grid>
-            {!state.native && (
-              <Grid item>
-                <Search selections={state.indexes} />
-              </Grid>
-            )}
-            <Grid item>
-              <div className={classes.menu}>
-                <Menu
-                  anchorEl={anchorEl}
-                  keepMounted
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "center",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                >
-                  {login && (<LoggedIn />)}
-                  {!login && (<LoggedOut />)}
-                </Menu>
-              </div>
-              <IconButton onClick={handleClick} className={classes.menuButton}>
-                <MenuIcon color='secondary'/>
-              </IconButton>
               {!state.native && (
-                <IconButton onClick={() => state.changeTheme(mode)}>
-                  {mode && (<Brightness4Icon color='secondary' />)}
-                  {!mode && (<NightsStayIcon color='secondary' />)}
-                </IconButton>
+                <Grid item style={{ display: 'inline-flex', marginLeft: 'auto' }}>
+                  <Link to='/governance' className={classes.href}>
+                    <h3> GOVERNANCE </h3>
+                  </Link>
+                  <Link to='/markets' className={classes.href}>
+                    <h3> MARKETS </h3>
+                  </Link>
+                  <Link to='/stake' className={classes.href}>
+                    <h3> STAKE </h3>
+                  </Link>
+                </Grid>
               )}
-              <div className={classes.profile} style={{ marginLeft }}>
-                {component}
-              </div>
+              {state.native && (
+                <Grid item>
+                  <div className={classes.menu}>
+                  <Menu
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "center",
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                   >
+                    {login && (<LoggedIn />)}
+                    {!login && (<LoggedOut />)}
+                  </Menu>
+                </div>
+                <IconButton onClick={handleClick} className={classes.menuButton}>
+                  <MenuIcon color='secondary'/>
+                </IconButton>
+              </Grid>
+              )}
+              <Grid item>
+                {!state.native && (
+                  <IconButton style={{ marginLeft: 50 }} onClick={() => state.changeTheme(mode)}>
+                    {mode && (<Brightness4Icon color='secondary' />)}
+                    {!mode && (<NightsStayIcon color='secondary' />)}
+                  </IconButton>
+                )}
+                <div className={classes.profile} style={{ marginLeft }}>
+                  {!state.web3.injected && !state.native && (
+                    <IconButton onClick={connectWeb3}>
+                      <AccountBalanceWalletIcon color='secondary' />
+                    </IconButton>
+                  )}
+                  {component}
+                </div>
             </Grid>
           </Grid>
         </Toolbar>

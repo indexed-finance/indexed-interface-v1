@@ -1,12 +1,19 @@
 const setStyle = (theme) => ({
   root: {
     flexGrow: 1,
-    fontFamily: 'San Fransico',
+    fontFamily: 'San Francisco',
     marginBottom: '6em',
   },
   href: {
     color: `${theme.palette.secondary.main} !important`,
+    fontFamily: 'San Francisco',
     textDecoration: 'none !important',
+    '& h3': {
+      padding: 0,
+      margin: 0,
+      marginLeft: 75,
+      marginTop: 5
+    }
   },
   menu: {
     position: 'absolute'
