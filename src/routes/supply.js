@@ -85,7 +85,7 @@ export default function Supply() {
     let { web3, account } = state
     let { id, stakingToken } = metadata
 
-    let budget = await allowance(web3.injected, stakingToken, account, id)
+    let budget = await allowance(web3.rinkeby, stakingToken, account, id)
 
     return formatBalance(new BigNumber(budget), 18, 4)
   }
@@ -237,7 +237,7 @@ export default function Supply() {
       let { web3 } = state
       let obj = Object.entries(metadata)
 
-      if(web3.injected && obj.length > 0) {
+      if(web3.injected && input != null && obj.length > 0) {
         let amount = parseFloat(input)
         let allowance = await getAllowance()
 
