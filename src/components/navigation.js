@@ -12,6 +12,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import NightsStayIcon from '@material-ui/icons/NightsStay';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
+import RemoveCircleOutlinedIcon from '@material-ui/icons/RemoveCircleOutlined';
 
 import { useLocation } from 'react-router-dom'
 import jazzicon from '@metamask/jazzicon'
@@ -83,6 +84,18 @@ export default function Navigation({ mode }) {
     }
   }
 
+  const disconnectWeb3 = () => {
+    setComponent(<Fragment />)
+    dispatch({
+      type: 'WEB3', payload: {
+        helper: state.helper,
+        web3: false,
+        account: null,
+        network: 0,
+      }
+    })
+  }
+
   function Blockie({ address }) {
     let classes = useStyles()
 
@@ -94,14 +107,22 @@ export default function Navigation({ mode }) {
       blockie.style.float = 'right'
       blockie.style.borderRadius = '25px'
       blockie.style.border = '3px solid #666666'
+      blockie.style.marginTop = '5px'
 
       element.appendChild(blockie)
     }, [])
 
     return(
+      <Fragment>
         <a target='_blank' href={`https://etherscan.io/address/${address}`}>
-          <div id="profile-blockie" />
+          <div id='profile-blockie' />
         </a>
+        <IconButton onClick={disconnectWeb3} style={{
+           position: 'absolute', padding: 10, top: 25, marginLeft: 10
+         }}>
+          <RemoveCircleOutlinedIcon color='secondary' style={{ fontSize: 25 }} />
+        </IconButton>
+     </Fragment>
     )
   }
 
@@ -202,41 +223,42 @@ export default function Navigation({ mode }) {
                   </Link>
                 </Grid>
               )}
-              {state.native && (
-                <Grid item>
-                  <div className={classes.menu}>
-                  <Menu
-                    anchorEl={anchorEl}
-                    keepMounted
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "center",
-                    }}
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                   >
-                    {login && (<LoggedIn />)}
-                    {!login && (<LoggedOut />)}
-                  </Menu>
-                </div>
-                <IconButton onClick={handleClick} className={classes.menuButton}>
-                  <MenuIcon color='secondary'/>
-                </IconButton>
-              </Grid>
-              )}
               <Grid item>
                 {!state.native && (
-                  <IconButton style={{ marginLeft: 50 }} onClick={() => state.changeTheme(mode)}>
+                  <IconButton style={{ marginTop: 2.5, marginLeft: 50 }} onClick={() => state.changeTheme(mode)}>
                     {mode && (<Brightness4Icon color='secondary' />)}
                     {!mode && (<NightsStayIcon color='secondary' />)}
                   </IconButton>
                 )}
+                {state.native && (
+                  <Fragment>
+                    <div className={classes.menu}>
+                    <Menu
+                      anchorEl={anchorEl}
+                      keepMounted
+                      open={Boolean(anchorEl)}
+                      onClose={handleClose}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "center",
+                      }}
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                     >
+                      {login && (<LoggedIn />)}
+                      {!login && (<LoggedOut />)}
+                    </Menu>
+                  </div>
+                  <IconButton
+                  onClick={handleClick} className={classes.menuButton}>
+                    <MenuIcon color='secondary'/>
+                  </IconButton>
+                </Fragment>
+                )}
                 <div className={classes.profile} style={{ marginLeft }}>
-                  {!state.web3.injected && !state.native && (
+                  {!state.web3.injected && (
                     <IconButton onClick={connectWeb3}>
                       <AccountBalanceWalletIcon color='secondary' />
                     </IconButton>
