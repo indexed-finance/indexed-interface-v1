@@ -43,7 +43,7 @@ function uncapitalizeNth(text, n) {
 export default function Supply() {
   const [ execution, setExecution ] = useState({ f: () => {}, label: 'STAKE' })
   const [ stats, setStats ] = useState({ claim: 0, deposit: 0, balance: 0 })
-  const [ metadata, setMetadata ] = useState({})
+  const [ metadata, setMetadata ] = useState({ supply: 0, rate: 0 })
   const [ input, setInput ] = useState(null)
 
   let { state, dispatch } = useContext(store)
@@ -93,8 +93,6 @@ export default function Supply() {
   const approve = async() => {
     let { web3, account } = state
     let { stakingToken, id } = metadata
-
-    console.log(stakingToken, id)
 
     try{
       let contract = getERC20(web3.injected, stakingToken)
@@ -148,21 +146,22 @@ export default function Supply() {
     let { value } = event.target
     let raw = !isNaN(parseFloat(value)) ? value : 0
     let weight = getPoolWeight(raw)
-    let displayWeight = weight > 1 ? 1 : weight
-    let estimatedReward = metadata.rate * weight
-    let displayReward = estimatedReward > metadata.rate ? metadata.rate : estimatedReward
+
+    let estimatedRatio = (metadata.rate * weight)
+    let estimatedReward = estimatedRatio > metadata.rate ? metadata.rate : estimatedRatio
+    let displayWeight = weight >= 1 ? weight/4 * 100 : weight/2 * 100
 
     document.getElementById('est').innerHTML =
-    displayReward.toLocaleString({ minimumFractionDigits: 2 })
+    estimatedReward.toLocaleString({ minimumFractionDigits: 2 })
     document.getElementById('weight').innerHTML =
-    (displayWeight * 100).toLocaleString({ minimumFractionDigits: 2 })
+    displayWeight.toLocaleString({ minimumFractionDigits: 2 })
 
     setInput(event.target.value)
   }
 
   const getPoolWeight = (value) => {
     let currentWeight = metadata.supply == 0 ? 1 : metadata.supply
-    return (parseFloat(value)/currentWeight)
+    return (parseFloat(value)/parseFloat(currentWeight + value))
   }
 
   const getAccountMetadata = async(obj) => {
@@ -183,12 +182,10 @@ export default function Supply() {
       deposit = formatBalance(new BigNumber(deposit), 18, 4)
       claim = formatBalance(new BigNumber(claim), 18, 4)
 
-      let relative = parseFloat((deposit)/(supply + deposit))
+      let relative = parseFloat((deposit)/parseFloat(supply + deposit))
       let returns = obj.rate * (isNaN(relative) ? 1 : relative)
-      let future =  parseFloat(claim) + returns
-      let display = claim
-
-      console.log(claim, returns, future)
+      let future = returns != obj.rate ? parseFloat(claim) + returns : claim
+      let display = returns.toLocaleString({ minimumFractionDigits: 2 })
 
       setStats({ claim, deposit, balance, returns, future, display })
     }
@@ -204,7 +201,6 @@ export default function Supply() {
         let { pool } = findHelper(target)
         let isWethPair = ticker.includes('UNI')
         let data = await getStakingPool(pool.address, isWethPair)
-
         let {
           id, startsAt, stakingToken, totalSupply, trewardRate, rewardRate, isReady,
          } = data
@@ -266,7 +262,7 @@ export default function Supply() {
       <div className={classes.top}>
         <Canvas style={{ overflowX: 'hidden' }}>
           <div className={classes.rewards} style={{ width: reward }}>
-            <p> ACTIVE CLAIM </p>
+            <p> NDX EARNED </p>
             <div>
               <h2> <CountUp decimals={6} perserveValue separator="," start={stats.claim} end={stats.future} duration={86400} /> NDX </h2>
               <ButtonPrimary variant='outlined' margin={{ marginTop: buttonPos, marginBottom: 12.5, marginRight: 37.5 }}>
@@ -274,7 +270,7 @@ export default function Supply() {
               </ButtonPrimary>
             </div>
             <ul className={classes.list}>
-              <li> DEPOSIT: {stats.deposit} {asset.toUpperCase()}</li>
+              <li> DEPOSIT: {stats.deposit} {ticker}</li>
               <li> RATE: {stats.display} NDX/DAY</li>
             </ul>
           </div>
@@ -329,12 +325,12 @@ export default function Supply() {
           </ButtonPrimary>
         </Container>
       </Grid>
-      <Grid item xs={10} md={6}>
+      <Grid item xs={10} md={7}>
         <Canvas>
           <div className={classes.rewards}>
           	<ul className={classes.stats}>
-              <li> POOL DEPOSITS: <span style={{ marginLeft }}> {metadata.supply} NDX</span> </li>
-              <li> POOL RATE: <span style={{ marginLeft }}> {metadata.rate} NDX/DAY </span> </li>
+              <li> POOL DEPOSITS: <span style={{ marginLeft }}> {metadata.supply.toLocaleString({ minimumFractionDigits: 2 })} NDX</span> </li>
+              <li> POOL RATE: <span style={{ marginLeft }}> {metadata.rate.toLocaleString({ minimumFractionDigits: 2 })} NDX/DAY </span> </li>
             </ul>
           </div>
         </Canvas>
