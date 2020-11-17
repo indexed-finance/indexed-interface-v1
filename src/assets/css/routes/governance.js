@@ -1,3 +1,6 @@
+import { DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
+import { screenClass } from '../../constants/functions'
+
 const setStyle = (theme) => ({
   proposals: {
    backgroundColor: theme.palette.background.paper,
@@ -32,7 +35,6 @@ const setStyle = (theme) => ({
   },
   legend: {
     position: 'absolute',
-    paddingLeft: '34%',
     marginTop: -18.75,
     '& ul': {
       padding: 0,
@@ -44,7 +46,6 @@ const setStyle = (theme) => ({
     }
   },
   wallet: {
-    height: 230,
     paddingLeft: 25,
     paddingRight: 25,
     '& h4': {
@@ -88,11 +89,41 @@ const setStyle = (theme) => ({
   }
 })
 
-const getFormatting = (state) => {
+const mapping = {
+  [DESKTOP_SMALL]: {
+    wallet: 'calc(150px + 5rem)',
+    paddingLeft: '36.75%',
+  },
+  [DESKTOP_NORMAL]: {
+    wallet: 'calc(200px + 5rem)',
+    paddingLeft: '40%',
+  },
+  [DESKTOP_LARGE]: {
+    wallet: 'calc(267.5px + 5rem)',
+    paddingLeft: '42.5%',
+  },
+  [DESKTOP_WIDE]: {
+    wallet: 'calc(137.5px + 5rem)',
+    paddingLeft: '22%',
+  },
+  [DESKTOP_HUGE]: {
+    wallet: 'calc(225px + 5rem)',
+    paddingLeft: '20.5%',
+  },
+  'NATIVE': {
+    wallet: 'auto',
+  }
+}
+
+const getFormatting = ({ native }) => {
+  let { innerWidth, innerHeight } = window
+  let dimension = native ? 'NATIVE' : screenClass(innerWidth)
+
   return {
-    height: !state.native ? 110 : 200,
-    margin: !state.native ? '3em 3em' : '3em 1.5em',
-    width: !state.native ? '100%' : 1000
+    height: !native ? 110 : 200,
+    margin: !native ? '3em 3em' : '3em 1.5em',
+    width: !native ? '100%' : 1000,
+    ...mapping[dimension]
   }
 }
 

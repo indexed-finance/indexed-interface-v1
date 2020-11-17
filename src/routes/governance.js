@@ -14,8 +14,8 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import Checkbox from '@material-ui/core/Checkbox'
 import Avatar from '@material-ui/core/Avatar'
 import Lozenge from '@atlaskit/lozenge'
-import LinearProgress from '@material-ui/core/LinearProgress'
 import { useHistory } from "react-router-dom";
+import { BigNumber, formatBalance } from '@indexed-finance/indexed.js'
 
 import Ndx from '../assets/constants/abi/Ndx.json'
 import ButtonPrimary from '../components/buttons/primary'
@@ -148,7 +148,6 @@ export default function Governance(){
         dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
     } catch(e) {
-      console.log(e)
       dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
     }
   }
@@ -254,7 +253,7 @@ export default function Governance(){
     setPhase(<Init />)
   }, [])
 
-  let { height, margin, width } = style.getFormatting(state)
+  let { height, margin, width, wallet, paddingLeft } = style.getFormatting({ native: state.native })
 
   return (
     <Fragment>
@@ -262,7 +261,7 @@ export default function Governance(){
         <Grid item xs={12} md={12} lg={12} xl={12} container direction='row' alignItems='flex-start' justify='space-between'>
           <Grid item xs={12} md={5} lg={5} xl={5}>
             <Canvas native={state.native}>
-              <div className={classes.wallet}>
+              <div className={classes.wallet} style={{ height: wallet }}>
                 <h3> BALANCE: {state.balances['NDX'].amount} NDX </h3>
                 <h4> STATUS: {status}</h4>
                 {phase}
@@ -277,7 +276,7 @@ export default function Governance(){
                   <h4> SHARE VALUE: $0.00</h4>
                 </div>
                 {!state.native && (
-                  <div className={classes.legend}>
+                  <div className={classes.legend} style={{ paddingLeft }}>
                     <ul>
                       <li> {metadata.active} NDX<div className={classes.one}/> </li>
                       <li> {metadata.inactive} NDX<div className={classes.two}/></li>
@@ -296,8 +295,8 @@ export default function Governance(){
             <ListWrapper dense style={{ width }}>
               {proposals.map((p, index) => {
                 let f = () => history.push(`/proposal/${p.id.toLowerCase()}`)
-                let forVotes = (parseFloat(p.for)/Math.pow(10, 18)).toLocaleString()
-                let againstVotes = (parseFloat(p.against)/Math.pow(10, 18)).toLocaleString()
+                let againstVotes = formatBalance(new BigNumber(p.against), 18, 4)
+                let forVotes = formatBalance(new BigNumber(p.for), 18, 4)
                 let stateLabel ='active'
 
                 if(parseInt(p.state) > 0) {
