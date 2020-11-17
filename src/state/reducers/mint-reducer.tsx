@@ -223,13 +223,17 @@ export type MintContextType = {
   mintState: MintState;
   setHelper: (helper: PoolHelper) => void;
   updatePool: (clearInputs?: boolean) => void;
-  bindPoolAmountInput: { value: string, onChange: (event: any) => void }
+  bindPoolAmountInput: { value: string, onChange: (event: any) => void };
+  displayBalance: string;
+  setAmountToBalance: () => void;
 }
 
 export function useMint(): MintContextType {
   const [mintState, mintDispatch] = useReducer(mintReducer, initialState);
   const dispatch = withMintMiddleware(mintState, mintDispatch);
   const useToken = (index: number): TokenActions => useMintTokenActions(mintState, dispatch, index);
+  const balance = (mintState.pool && mintState.pool.userPoolBalance) || BN_ZERO;
+  const displayBalance = formatBalance(balance, 18, 4);
 
   const setPoolAmount = (amount: string | number) => {
     if (amount !== mintState.poolDisplayAmount) {
@@ -238,10 +242,13 @@ export function useMint(): MintContextType {
   }
   const setHelper = (helper: PoolHelper) => dispatch({ type: 'SET_POOL_HELPER', pool: helper });
   const updatePool = (clearInputs?: boolean) => dispatch({ type: 'UPDATE_POOL', clearInputs });
+  const setAmountToBalance = () => dispatch({ type: 'SET_POOL_OUTPUT', amount: displayBalance })
 
   return {
     useToken,
     mintState,
+    displayBalance,
+    setAmountToBalance,
     setHelper,
     updatePool,
     bindPoolAmountInput: {

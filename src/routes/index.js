@@ -72,7 +72,7 @@ const useStyles = getStyles(style)
 export default function Index(){
   let { state, dispatch } = useContext(store)
   let { name } = useParams()
-  
+
   name = uncapitalizeNth(name.toUpperCase(), name.length-1)
 
   const [ styles, setStyles ] = useState({ trade: selected, mint: {}, burn: {}})
@@ -83,17 +83,6 @@ export default function Index(){
   const location = useLocation()
   const classes = useStyles()
   const theme = useTheme()
-
-  function Alert(){
-    return(
-      <div className={classes.alert}>
-        <h3> POOL UNINTIALISED </h3>
-        <p> This index fund is not ready yet, you can help bootstrap it and
-        recieve early access <Link to={`/pool/${metadata.address}`} className={classes.href}>here</Link>.
-        </p>
-      </div>
-    )
-  }
 
   const changeExecution = (option) => {
     let newStyle = clearSelections()
@@ -249,7 +238,6 @@ export default function Index(){
             <Fragment>
               {!state.request && !metadata.history && (<Loader paddingTop={paddingTop} width={width} height={height} color={state.background}/> )}
               {state.request && metadata.active && metadata.history && (<Area data={metadata.history} width={width} height={height} /> )}
-              {state.request && !metadata.active && (<Alert /> )}
             </Fragment>
           )}
         </ParentSize>

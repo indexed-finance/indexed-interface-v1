@@ -25,11 +25,6 @@ const setStyle = (theme) => ({
     textAlign: 'center',
     alignItems: 'center'
   },
-  divider: {
-    borderTop: '#666666 solid 1px',
-    margin: '1.5em 0em 1.5em 0em',
-    width: '27.5em',
-  },
   market: {
     width: '100%',
     color: theme.palette.secondary.main,

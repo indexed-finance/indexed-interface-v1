@@ -11,7 +11,6 @@ const setStyle = (theme) => ({
     borderTop: 'solid 2px #666666',
     paddingBottom: 0,
     marginBottom: 25,
-    marginTop: 25
   },
   title: {
     margin: theme.spacing(4, 0, 2),

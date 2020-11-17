@@ -14,7 +14,7 @@ const mapping = {
   },
   [DESKTOP_NORMAL]: {
     overflowX: 'hidden',
-    height: 'calc(100vh - 500px)'
+    height: 'calc(100vh - 600px)'
   },
   [DESKTOP_LARGE]: {
     overflowX: 'hidden',

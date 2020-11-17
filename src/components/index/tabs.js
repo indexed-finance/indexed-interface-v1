@@ -201,16 +201,16 @@ export default function VerticalTabs({ data }) {
         <div className='item'>
           <Grid item container direction='column' alignItems='flex-start' justify='space-around' spacing={6}>
             <Grid item key='pool'>
-              <Link to={`/pool/${data.address}`}>
-                <ButtonPrimary variant='outlined' margin={{ marginLeft: 50 }}>
-                  VIEW POOL
-                </ButtonPrimary>
-              </Link>
               <a target='_blank' rel="noopener noreferrer" href={`https://rinkeby.etherscan.io/token/${data.address}`}>
-                <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
+                <ButtonPrimary variant='outlined' margin={{ marginLeft: 50 }}>
                   ETHERSCAN
                 </ButtonPrimary>
               </a>
+              <Link to={`/pool/${data.address}`}>
+                <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
+                  VIEW POOL
+                </ButtonPrimary>
+              </Link>
             </Grid>
             <Grid item key='uniswap'>
               <a target='_blank' rel="noopener noreferrer" href={`https://info.uniswap.org/pool/${data.address}`}>

@@ -24,19 +24,11 @@ const AmountInput = styled(Input)({
   '& label': {
     fontSize: 12
   },
-  '& fieldset': {
-    borderWidth: 1,
-  },
   '& input:valid + fieldset': {
     borderColor: '#999999',
-    borderWidth: '1px !important',
   },
   '& input:invalid + fieldset': {
     borderColor: 'red',
-    borderWidth: '1px !important',
-  },
-  '& input:valid:focus + fieldset': {
-    borderWidth: '1px !important',
   },
   '& input': {
     padding: '.75em 0 .75em .75em',
@@ -44,8 +36,7 @@ const AmountInput = styled(Input)({
 })
 
 const SecondaryActionAlt = styled(ListItemSecondaryAction)({
-  top: '57.5%',
-  maringLeft: 25,
+  top: '50%',
   cursor: 'pointer'
 })
 

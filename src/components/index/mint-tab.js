@@ -25,7 +25,7 @@ const useStyles = getStyles(style)
 
 export default function Mint({ market, metadata }) {
   const classes = useStyles()
-  const { useToken, mintState, bindPoolAmountInput, setHelper, updatePool } = useMintState();
+  const { useToken, setAmountToBalance, displayBalance, mintState, bindPoolAmountInput, setHelper, updatePool } = useMintState();
 
   let { state, handleTransaction } = useContext(store);
 
@@ -75,6 +75,7 @@ export default function Mint({ market, metadata }) {
           InputProps={{
             endAdornment: market,
           }}
+          helperText={<span onClick={setAmountToBalance}> BALANCE: {displayBalance} </span>}
         />
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} style={{ width: '100%'}}>

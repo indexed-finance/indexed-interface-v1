@@ -181,8 +181,9 @@ export function useBurnTokenActions(
       onChange: (event) => {
         event.preventDefault();
         let value = event.target.value;
-        console.log(`Got On Change Input::`, value);
+
         if (value === displayAmount) return;
+        
         updateAmount(value);
       }
     }
