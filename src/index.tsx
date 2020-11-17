@@ -11,7 +11,7 @@ import Loader from './components/loader'
 import Modal from './components/modal'
 import Flag from './components/flag'
 
-import { getCategoryMetadata } from './api/gql'
+import { getCategoryMetadata, getHistoricValueLocked } from './api/gql'
 import { store } from './state'
 
 import './assets/css/root.css'
@@ -108,6 +108,7 @@ function Application(){
         const categoryID = `0x${category.toString(16)}`;
         await addCategory(categoryID);
         let history = await pool.getSnapshots(90);
+        let liquidity = await getHistoricValueLocked(address, 90);
 
         const delta24hr = history.length === 1 ? 1 : (Math.abs(history[0].value - history[1].value) / history[1].value).toFixed(4);
         let supply = pool.pool.totalSupply;
@@ -116,6 +117,8 @@ function Application(){
         }
         let volume = +(history[0].dailySwapVolumeUSD).toFixed(2);
         history = history.map(h => ({ close: +(h.value.toFixed(4)), date: new Date(h.date * 1000) }));
+        liquidity = liquidity.map(l => ({ close: +parseFloat(l.totalValueLockedUSD).toFixed(4), date: new Date(l.date * 1000) }))
+
         const price = parseFloat(history[0].close);
         const index = {
           marketcap: parseFloat((+pool.pool.totalValueLockedUSD).toFixed(2)),
@@ -130,6 +133,7 @@ function Application(){
           history,
           assets: tokens,
           tokens: tokens.map(token => token.symbol).join(', '),
+          liquidity,
           active: true,
           poolHelper: pool,
           volume
@@ -149,6 +153,7 @@ function Application(){
           currentValue = currentValue.plus(price.times(token.balance));
           finalValueEstimate = finalValueEstimate.plus(price.times(token.targetBalance));
         });
+
         const index = {
           marketcap: 0,
           price: 0,
@@ -174,7 +179,7 @@ function Application(){
       await dispatch({
         type: 'GENERIC',
         payload: {
-          request: true , categories, indexes, /* ...ethUSD */
+          request: true , categories, indexes,
         }
       })
     }

@@ -51,10 +51,15 @@ export default function Root(){
       <nav style={{ position: 'absolute '}}>
         <ul style={{ display: 'inline-block', listStyleType: 'none', margin: 0, padding: 25, fontSize: '1.25em' }}>
           <Link onClick={stopRender} to='/markets'>
-            <li style={{ float: 'left',  marginRight: 25 }}> MARKETS </li>
+            <li style={{ float: 'left',  marginRight: 37.5 }}> MARKETS </li>
           </Link>
+          {!state.native && (
+            <Link onClick={stopRender} to='/governance'>
+              <li style={{ float: 'left', marginRight: 37.5}}> GOVERNANCE </li>
+            </Link >
+          )}
           <Link onClick={stopRender}>
-            <li style={{ float: 'left', marginRight: 25}}> DOCS </li>
+            <li style={{ float: 'left', marginRight: 37.5}}> DOCS </li>
           </Link >
           <Link onClick={stopRender} to='/stake'>
             <li style={{ float: 'left' }}> STAKE </li>

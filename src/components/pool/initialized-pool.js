@@ -94,7 +94,8 @@ function InitializedPoolPage({ address, metadata }){
     const retrievePool = async() => {
       let { indexes, web3, helper } = state
 
-      if(Object.keys(indexes).length > 0 && !instance && metadata.address !== '0x0000000000000000000000000000000000000000'){
+      if(Object.keys(indexes).length > 0 && !instance
+      && metadata.address !== '0x0000000000000000000000000000000000000000'){
         let target = Object.entries(indexes).find(x => x[1].address === address)
         let pool = findHelper(helper)
         let initializerAddress = pool.address;
@@ -182,7 +183,7 @@ function InitializedPoolPage({ address, metadata }){
                   padding={padding}
                   native={native}
                   color='#ffa500'
-                  metadata={metadata}
+                  metadata={{ history: metadata.liquidity }}
                   height={chartHeight}
                 />
               </div>

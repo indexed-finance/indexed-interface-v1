@@ -117,7 +117,7 @@ export default function Spline(props){
     gradient.addColorStop(0.25, `rgba(${rgb}, 0)`)
 
     let data = renameKeys(
-      { close: 'y', date: 'x' }, array.slice(length-8, length)
+      { close: 'y', date: 'x' }, array.slice(length-11, length)
     )
 
     return {

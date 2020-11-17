@@ -105,6 +105,8 @@ export default function Markets(){
       ){
       let keys = Object.keys(state.indexes)
 
+      console.log(state.indexes[keys[0]])
+
       setMarket(state.indexes[keys[0]])
     }
   }, [ state.indexes ])

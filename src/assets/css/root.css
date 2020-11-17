@@ -235,7 +235,7 @@ a:hover {
   position: absolute;
 	display: block;
 	margin: 0 auto;
-	width: 24px;
+	width: 30px;
 	height: 100px;
 	//background: blue;
   top: 82.5%;
@@ -244,18 +244,16 @@ a:hover {
 .scroll_arrows
 {
   display: block;
-  width: 25px;
-  height: 25px;
   -ms-transform: rotate(45deg); /* IE 9 */
   -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
   transform: rotate(45deg);
 
-  border-right: 2px solid black;
-  border-bottom: 2px solid black;
+  border-right: 4px solid black;
+  border-bottom: 4px solid black;
   margin: 0 0 3px 4px;
 
-  width: 16px;
-  height: 16px;
+  width: 22.5px;
+  height: 22.5px;
 }
 .one
 {

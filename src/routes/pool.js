@@ -13,6 +13,7 @@ const dummy = {
     price: '',
     supply: '',
     marketcap: '',
+    liquidity: [],
     volume: '',
     active: null,
     credit: 0,
