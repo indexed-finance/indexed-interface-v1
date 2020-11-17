@@ -1,6 +1,5 @@
 import React, { Fragment, useState, useEffect, useContext } from "react"
 
-import ParentSize from '@vx/responsive/lib/components/ParentSize'
 import { styled, makeStyles, withStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
@@ -14,11 +13,12 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import Checkbox from '@material-ui/core/Checkbox'
 import Avatar from '@material-ui/core/Avatar'
 import Lozenge from '@atlaskit/lozenge'
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import { BigNumber, formatBalance } from '@indexed-finance/indexed.js'
 
 import Ndx from '../assets/constants/abi/Ndx.json'
 import ButtonPrimary from '../components/buttons/primary'
+import ButtonSecondary from '../components/buttons/secondary'
 import Container from '../components/container'
 import Input from '../components/inputs/input'
 import Radio from '../components/inputs/radio'
@@ -38,6 +38,9 @@ import getStyles from '../assets/css'
 
 const NDX = '0x2342084baced2081093de5729de81fcb9de77ca6'
 const NA = '0x0000000000000000000000000000000000000000'
+const INACTIVE = () => <span id='inactive'>INACTIVE</span>
+const DELEGATED = () => <span id='delegated'>DELEGATED</span>
+const ACTIVE = () => <span id='registered'>ACTIVE</span>
 
 const selections = [[{ value: 0, label: null }]];
 
@@ -95,7 +98,7 @@ const useStyles = getStyles(style)
 
 export default function Governance(){
   const [ proposals, setProposals ] = useState([])
-  const [ phase, setPhase ] = useState(<span />)
+  const [ phase, setPhase ] = useState(INACTIVE)
   const [ status, setStatus ] = useState(null)
   const [ metadata, setMetadata ] = useState(dummy)
   const history = useHistory()
@@ -113,7 +116,7 @@ export default function Governance(){
       let amount = (parseFloat(balance)/Math.pow(10, 18))
       .toLocaleString({ minimumFractionDigits: 2 })
 
-      if(isDelegated != NA) setPhase(<Delegate />)
+      if(isDelegated != NA) setPhase(<Delegate show={true}/>)
       else setPhase(<Activate trigger={renderDelegation}/>)
 
       getStatus(isDelegated)
@@ -152,23 +155,28 @@ export default function Governance(){
     }
   }
 
+
+  const goBack = () => {
+    setPhase(<Activate trigger={renderDelegation} />)
+  }
+
   const renderDelegation = () => {
-    setPhase(<Delegate />)
+    setPhase(<Delegate show={false} />)
   }
 
   const getStatus = (delegate) => {
     if(delegate == state.account) {
-      setStatus(<span id='registered'>ACTIVE</span>)
+      setStatus(ACTIVE)
     } else if(delegate != NA){
-      setStatus(<span id='delegated'>DELEGATED</span>)
+      setStatus(DELEGATED)
     } else {
-      setStatus(<span id='inactive'>INACTIVE</span>)
+      setStatus(INACTIVE)
     }
   }
 
   function Init(){
     return (
-      <center style={{ paddingTop: 25 }}>
+      <center style={{ paddingTop: '50%' }}>
         <p> Connect your web3 provider to continue </p>
       </center>
     )
@@ -204,7 +212,7 @@ export default function Governance(){
     )
   }
 
-  function Delegate(){
+  function Delegate({ show }){
     const [ input, setInput ] = useState(null)
 
     const handleInput = (event) => {
@@ -221,7 +229,15 @@ export default function Governance(){
       <Fragment>
         <p> Allocate your votes to another address:</p>
         <AddressInput onChange={handleInput} value={input} variant="outlined" label='ADDRESS'/>
-        <ButtonPrimary onClick={submit}> DELEGATE </ButtonPrimary>
+        <ButtonPrimary onClick={submit} margin={{  marginTop: 12.5, marginLeft: 25 }}> DELEGATE </ButtonPrimary>
+        {show && (
+          <Link to='/propose'>
+            <ButtonSecondary style={{ marginTop: 12.5, marginLeft: 0, float:'left' }}> CREATE PROPOSAL </ButtonSecondary>
+          </Link>
+        )}
+        {!show && (
+          <ButtonPrimary onClick={goBack} style={{ marginTop: 12.5, marginLeft: 0, float:'left' }}> GO BACK </ButtonPrimary>
+        )}
       </Fragment>
     )
   }
@@ -239,9 +255,9 @@ export default function Governance(){
 
       setMetadata({
         snapshots: dailyDistributionSnapshots,
-        active: (parseInt(active)/Math.pow(10, 18)).toLocaleString(),
-        inactive: (parseInt(inactive)/Math.pow(10, 18)).toLocaleString(),
-        delegated: (parseInt(delegated)/Math.pow(10, 18)).toLocaleString()
+        active: parseFloat(formatBalance(new BigNumber(active), 18, 2)).toLocaleString(),
+        inactive: parseFloat(formatBalance(new BigNumber(inactive), 18, 2)).toLocaleString(),
+        delegated: parseFloat(formatBalance(new BigNumber(delegated), 18, 2)).toLocaleString(),
        })
       setProposals(proposals)
     }
