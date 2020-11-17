@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom'
 
 import { formatBalance, BigNumber } from '@indexed-finance/indexed.js/dist/utils/bignumber'
 import ButtonPrimary from '../buttons/primary'
+import ButtonSecondary from '../buttons/secondary'
 import TransactionButton from '../buttons/transaction'
 import WeightedToken from './weighted-token'
 import List from '../list'
@@ -207,9 +208,9 @@ export default function VerticalTabs({ data }) {
                 </ButtonPrimary>
               </a>
               <Link to={`/pool/${data.address}`}>
-                <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
+                <ButtonSecondary variant='outlined' margin={{ margin: 0 }}>
                   VIEW POOL
-                </ButtonPrimary>
+                </ButtonSecondary>
               </Link>
             </Grid>
             <Grid item key='uniswap'>
