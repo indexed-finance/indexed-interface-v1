@@ -122,9 +122,6 @@ export default function Markets(){
     resolution, top, margin, height, pre, pre2
   } = style.getFormatting({ request, native, active })
 
-
-  console.log('MARGIN', margin)
-
   return (
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>

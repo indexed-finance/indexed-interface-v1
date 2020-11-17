@@ -1,4 +1,4 @@
-import { DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
+import { DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
 import { screenClass } from '../../constants/functions'
 
 const setStyle = (theme) => ({
@@ -83,6 +83,17 @@ const setStyle = (theme) => ({
 })
 
 const mapping = {
+  [DESKTOP_SMALL]: {
+    width: '64.5%',
+    height: 'calc(90vh - 20px)',
+    paddingTop: '5.5%',
+    marginTop: '-8.5vh',
+    maxWidth: '1920px',
+    chart: {
+      height: 'calc(55vh - 40px)'
+    },
+    border: 'none'
+  },
   [DESKTOP_NORMAL]: {
     width: '64.5%',
     height: 'calc(90vh - 20px)',

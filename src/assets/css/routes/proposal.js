@@ -1,4 +1,4 @@
-import { DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
+import { DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
 import { screenClass } from '../../constants/functions'
 
 const setStyle = (theme) => ({
@@ -141,6 +141,13 @@ const setStyle = (theme) => ({
 })
 
 const mapping = {
+  [DESKTOP_SMALL]: {
+    margin:'-12.5em 3em 3em 3em',
+    width: 'auto',
+    progress: 325,
+    radius: 67.5,
+    marginTop: -25
+  },
   [DESKTOP_NORMAL]: {
     margin:'-12.5em 3em 3em 3em',
     width: 'auto',

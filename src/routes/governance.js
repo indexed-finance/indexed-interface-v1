@@ -36,7 +36,7 @@ import { getProposals } from '../api/gql'
 import style from '../assets/css/routes/governance'
 import getStyles from '../assets/css'
 
-const NDX = '0xe366577a6712591c2e6f76fdcb96a99ac30a74c3'
+const NDX = '0x2342084baced2081093de5729de81fcb9de77ca6'
 const NA = '0x0000000000000000000000000000000000000000'
 
 const selections = [[{ value: 0, label: null }]];
@@ -148,6 +148,7 @@ export default function Governance(){
         dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
     } catch(e) {
+      console.log(e)
       dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
     }
   }

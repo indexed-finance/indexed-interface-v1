@@ -1,4 +1,4 @@
-import { DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
+import { DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
 import { screenClass } from '../../constants/functions'
 
 const setStyle = (theme) => ({
@@ -46,6 +46,9 @@ const setStyle = (theme) => ({
 })
 
 const mapping = {
+  [DESKTOP_SMALL]: {
+    height: 'calc(20em - 100px)',
+  },
   [DESKTOP_NORMAL]: {
     height: 'calc(20em - 100px)',
   },

@@ -1,7 +1,16 @@
-import { DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
+import { DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
 import { screenClass } from '../../constants/functions'
 
 const mapping = {
+  [DESKTOP_SMALL]: {
+    border: 3,
+    padding: {
+      top: 5,
+      left: 25,
+      right: 25,
+      bottom: 0
+    }
+  },
   [DESKTOP_NORMAL]: {
     border: 3,
     padding: {

@@ -224,6 +224,7 @@ export const DESKTOP_HUGE = 2750
 export const DESKTOP_WIDE = 2749
 export const DESKTOP_LARGE = 1921
 export const DESKTOP_NORMAL = 1600
+export const DESKTOP_SMALL = 1440
 
 export const TX_CONFIRM = { show: true, message: 'TRANSACTION CONFIRMED', opcode: 'success' }
 export const TX_REVERT = { show: true, message: 'TRANSACTION REVERTED', opcode: 'error' }

@@ -1,6 +1,8 @@
 const setStyle = (theme) => ({
   proposals: {
    backgroundColor: theme.palette.background.paper,
+   maxHeight: 'calc(40vh - 150px)',
+   minHeight: 100,
    overflow: 'scroll'
  },
  root: {
