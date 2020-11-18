@@ -255,9 +255,9 @@ export default function Governance(){
 
       setMetadata({
         snapshots: dailyDistributionSnapshots,
-        active: parseFloat(formatBalance(new BigNumber(active), 18, 2)).toLocaleString(),
-        inactive: parseFloat(formatBalance(new BigNumber(inactive), 18, 2)).toLocaleString(),
-        delegated: parseFloat(formatBalance(new BigNumber(delegated), 18, 2)).toLocaleString(),
+        active: parseFloat(formatBalance(new BigNumber(active), 18, 0)).toLocaleString(),
+        inactive: parseFloat(formatBalance(new BigNumber(inactive), 18, 0)).toLocaleString(),
+        delegated: parseFloat(formatBalance(new BigNumber(delegated), 18, 0)).toLocaleString(),
        })
       setProposals(proposals)
     }
@@ -300,7 +300,7 @@ export default function Governance(){
                     </ul>
                   </div>
                 )}
-                <Stacked ready={metadata != dummy} metadata={metadata.snapshots} height={height} />
+                <Stacked ready={metadata !== dummy} metadata={metadata.snapshots} height={height} />
               </div>
             </Canvas>
           </Grid>

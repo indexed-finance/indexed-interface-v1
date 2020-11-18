@@ -1,12 +1,15 @@
-import { BigNumber, formatBalance } from "@indexed-finance/indexed.js";
+import { BigNumber, toWei, formatBalance } from "@indexed-finance/indexed.js";
 import { UniswapHelper } from '@indexed-finance/indexed.js/dist/uniswap-helper';
 import { useReducer } from "react";
 import { TradeMiddlewareAction, TradeDispatchAction, SetInputToken, SetOutputToken, SetUniswapHelper } from "../actions/trade-actions";
 import { withTradeMiddleware } from "../middleware/trade-middleware";
+import Web3 from 'web3'
+
+const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
 
 const whitelist = [
+  { address: '0xc778417e063141139fce010982780140aa0cd5ab', symbol: 'ETH', decimals: 18 },
   { address: '0x5b36B53960Bc1f8b0cAb48AC51F47C8a03c65888', symbol: 'WBTC', decimals: 18 },
-  { address: '0x72710b0b93c8f86aef4ec8bd832868a15df50375', symbol: 'WETH', decimals: 18 },
   { address: '0xea88bdf6917e7e001cb9450e8df08164d75c965e', symbol: 'DAI', decimals: 18 }
 ];
 
@@ -81,14 +84,19 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
   }
 
   const getBalance = (tokenAddress: string): BigNumber => {
-    if (compareAddresses(newState.helper.tokenA.address, tokenAddress)) {
+     if(tokenAddress == WETH){
+       return new BigNumber(toWei(1))
+    } else if (compareAddresses(newState.helper.tokenA.address, tokenAddress)) {
       return newState.helper.tokenABalance || BN_ZERO;
     }
+
     const pair = newState.helper.getPairForToken(tokenAddress);
     return pair.balanceB || BN_ZERO;
   }
 
   const getAllowanceForPair = (tokenAddress: string): BigNumber => {
+    if(tokenAddress == WETH) return new BigNumber(toWei(999999))
+
     const isInput = compareAddresses(tokenAddress, newState.input.address);
     const isPoolToken = isInput ? newState.input.isPoolToken : newState.output.isPoolToken;
     console.log(`getAllowanceForPair(): isInput ${isInput} | isPoolToken ${isPoolToken}`)
@@ -208,7 +216,6 @@ export function useTradeTokenActions(
     onChange: (event) => {
       event.preventDefault();
       let value = event.target.value;
-      console.log(`BINDINPUT::SETAMOUNT::${value}`)
       if (value === displayAmount) return;
       setAmount(value.toString());
     }
@@ -247,7 +254,7 @@ export function useTrade(): TradeContextType {
   const selectWhitelistToken = (index: number) => dispatch({ type: 'SELECT_WHITELIST_TOKEN', index });
   const updatePool = (clearInputs?: boolean) => dispatch({ type: 'UPDATE_POOL', clearInputs });
   const setHelper = (helper: UniswapHelper) => dispatch({ type: 'SET_UNISWAP_HELPER', helper });
-  
+
   return {
     useInput: () => useTradeTokenActions(tradeState, dispatch, tradeState.input.address),
     useOutput: () => useTradeTokenActions(tradeState, dispatch, tradeState.output.address),

@@ -52,7 +52,7 @@ const getFormatting = (ticker, native) => {
     marginRight: ticker.includes('UNIV2') ? 7.5 : 0,
     marginBottom: ticker.includes('UNIV2') ? 0 : 10,
     positioning: !native ? 'center' : 'flex-start',
-    marginLeft: !native ? '15.5em' : '2.5em',
+    marginLeft: !native ? '167.5px' : '2.5em',
     inputWidth: !native ? 200 : 125,
     listPadding: !native ? 'inherit' : 0,
     height: !native ? '10em': '11.5em',

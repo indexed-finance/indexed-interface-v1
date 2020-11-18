@@ -16,6 +16,8 @@ import { toContract } from '../../lib/util/contracts';
 
 const routerABI = require('../../assets/constants/abi/UniswapV2Router.json')
 
+const WETH = "0xc778417e063141139fce010982780140aa0cd5ab"
+
 const useStyles = getStyles(style);
 
 const Trigger = styled(ButtonPrimary)({
@@ -28,7 +30,7 @@ export default function TradeTab({ metadata }) {
 
   let { state, handleTransaction } = useContext(store);
   const classes = useStyles()
-  
+
   let inputWidth = !state.native ? 250 : 150
 
   useEffect(() => {
@@ -80,7 +82,9 @@ export default function TradeTab({ metadata }) {
     if (!tradeState.helper) return;
     let amount = tradeState.input.amount
     let allowance = tradeState.getAllowanceForPair(tradeState.input.address);
-    setApprovalNeeded(amount.gt(allowance));
+
+    if(tradeState.input.address == WETH) setApprovalNeeded(false);
+    else setApprovalNeeded(amount.gt(allowance));
   }, [tradeState]);
 
   async function approveRouter() {
@@ -99,14 +103,33 @@ export default function TradeTab({ metadata }) {
     const tokenOut = tradeState.output.address;
     const pair = toContract(state.web3.injected, routerABI, '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D');
     let { timestamp } = await state.web3.injected.eth.getBlock('latest');
-    let fn = pair.methods.swapExactTokensForTokens(
-      amountIn,
-      amountOut,
-      [tokenIn, tokenOut],
-      state.account,
-      (+timestamp) + 600
-    );
-    await handleTransaction(fn.send({ from: state.account }));
+    let txProps = { from: state.account }
+    let fn = () => {}
+
+    if(tokenIn == WETH) {
+      txProps = { from: state.account, value: amountIn }
+      fn = pair.methods.swapETHForExactTokens(
+        amountOut,
+        [tokenIn, tokenOut],
+        state.account,
+        (+timestamp) + 600);
+    } else if(tokenOut == WETH) {
+      fn = pair.methods.swapExactTokensForETH(
+        amountIn,
+        amountOut,
+        [tokenIn, tokenOut],
+        state.account,
+        (+timestamp) + 600);
+    } else {
+      fn = pair.methods.swapExactTokensForTokens(
+        amountIn,
+        amountOut,
+        [tokenIn, tokenOut],
+        state.account,
+        (+timestamp) + 600);
+    }
+
+    await handleTransaction(fn.send(txProps));
     updatePool(true);
   }
 
@@ -147,7 +170,7 @@ export default function TradeTab({ metadata }) {
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} key='4'>
-        { approvalNeeded && <Trigger onClick={approveRouter}> APPROVE </Trigger> }
+        {approvalNeeded && <Trigger onClick={approveRouter}> APPROVE </Trigger> }
         {tradeState.ready && <Trigger onClick={executeSwap}> SWAP </Trigger> }
       </Grid>
     </Grid>

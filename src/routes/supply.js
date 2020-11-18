@@ -142,6 +142,31 @@ export default function Supply() {
     }
   }
 
+  const claim = async() => {
+    let { web3, account } = state
+    let { id } = metadata
+
+    try {
+      let contract = toContract(web3.injected, IStakingRewards, id)
+
+      await contract.methods.exit().send({ from: account })
+      .on('confirmation', async(conf, receipt) => {
+        if(conf == 0){
+          if(receipt.status == 1) {
+            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+            await getAccountMetadata(metadata)
+          } else {
+            dispatch({ type: 'FLAG', payload: TX_REVERT })
+          }
+        }
+      }).catch((data) => {
+        dispatch({ type: 'FLAG', payload: TX_REJECT })
+      })
+    } catch (e) {
+      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
+    }
+  }
+
   const handleInput = (event) => {
     let { value } = event.target
     let raw = !isNaN(parseFloat(value)) ? value : 0
@@ -265,7 +290,8 @@ export default function Supply() {
             <p> NDX EARNED </p>
             <div>
               <h2> <CountUp decimals={6} perserveValue separator="," start={stats.claim} end={stats.future} duration={86400} /> NDX </h2>
-              <ButtonPrimary variant='outlined' margin={{ marginTop: buttonPos, marginBottom: 12.5, marginRight: 37.5 }}>
+              <ButtonPrimary disabled={!state.web3.injected} onClick={claim} variant='outlined'
+                 margin={{ marginTop: buttonPos, marginBottom: 12.5, marginRight: 37.5 }}>
                 CLAIM
               </ButtonPrimary>
             </div>
@@ -320,7 +346,7 @@ export default function Supply() {
               </ul>
             )}
           </div>
-          <ButtonPrimary onClick={execution.f} variant='outlined' margin={{ ...button }}>
+          <ButtonPrimary disabled={!state.web3.injected} onClick={execution.f} variant='outlined' margin={{ ...button }}>
             {execution.label}
           </ButtonPrimary>
         </Container>
@@ -329,7 +355,7 @@ export default function Supply() {
         <Canvas>
           <div className={classes.rewards}>
           	<ul className={classes.stats}>
-              <li> POOL DEPOSITS: <span style={{ marginLeft }}> {metadata.supply.toLocaleString({ minimumFractionDigits: 2 })} NDX</span> </li>
+              <li> POOL DEPOSITS: <span style={{ marginLeft }}> {metadata.supply.toLocaleString({ minimumFractionDigits: 2 })} {ticker}</span> </li>
               <li> POOL RATE: <span style={{ marginLeft }}> {metadata.rate.toLocaleString({ minimumFractionDigits: 2 })} NDX/DAY </span> </li>
             </ul>
           </div>
