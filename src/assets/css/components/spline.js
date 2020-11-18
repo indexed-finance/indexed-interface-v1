@@ -7,41 +7,41 @@ const mapping = {
   [DESKTOP_SMALL]: {
     width: 'calc(100% - 30vw)',
     h: 'auto',
-    p: 5
+    p: 8.75
   },
   [DESKTOP_NORMAL]: {
     width: 'calc(100% - 30vw)',
     h: 'auto',
-    p: 5
+    p: 11.75
   },
   [DESKTOP_LARGE]: {
     width: 'calc(100% - 30vw)',
     h: 'auto',
-    p: 1
+    p: 13.75
   },
   [DESKTOP_WIDE]: {
     width: 'calc(100% - 55vw)',
     h: 'auto',
-    p: -12.5
+    p: 5
   },
   [DESKTOP_HUGE]: {
     width: 'calc(100% - 55vw)',
     h: 'auto',
-    p: -75
+    p: -40
   },
   [NATIVE_SMALL]: {
     width: 'calc(100% - 30vw)',
-    h: 125,
+    h: 117.5,
     p: 12.5
   },
   [NATIVE_NORMAL]: {
     width: 'calc(100% - 30vw)',
-    h: 125,
+    h: 142.5,
     p: 12.5
   },
   [NATIVE_WIDE]: {
     width: 'calc(100% - 30vw)',
-    h: 125,
+    h: 162.5,
     p: 12.5
   }
 }

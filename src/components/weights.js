@@ -75,7 +75,7 @@ export default function Weight({ asset }) {
         <span className={classes.title}> {metadata.name} [{metadata.symbol}] </span>
         <BorderLinearProgress variant="determinate" value={metadata.percent} />
         <span className={classes.alternative}>
-          {metadata.balance} {metadata.symbol} {metadata.title}
+          {metadata.balance.toLocaleString()} {metadata.symbol} {metadata.title}
         </span>
       </div>
     </div>

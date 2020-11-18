@@ -12,19 +12,19 @@ const setStyle = (theme) => ({
 const mapping = {
   [DESKTOP_SMALL]: {
     overflowX: 'hidden',
-    height: 'calc(100vh - 500px)'
+    height: 'calc(100vh - 512.5px)'
   },
   [DESKTOP_NORMAL]: {
     overflowX: 'hidden',
-    height: 'calc(100vh - 600px)'
+    height: 'calc(100vh - 562.5px)'
   },
   [DESKTOP_LARGE]: {
     overflowX: 'hidden',
-    height: 'calc(100vh - 750px)'
+    height: 'calc(100vh - 625px)'
   },
   [DESKTOP_WIDE]: {
     overflowX: 'hidden',
-    height: 'calc(50vh - 500px)'
+    height: 'calc(50vh - 450px)'
   },
   [DESKTOP_HUGE]: {
     overflowX: 'hidden',
@@ -32,15 +32,15 @@ const mapping = {
   },
   [NATIVE_SMALL]: {
     overflowX: 'scroll',
-    height: 'calc(100vh - 400px)'
+    height: 'calc(100vh - 350px)'
   },
   [NATIVE_NORMAL]: {
     overflowX: 'scroll',
-    height: 'calc(100vh - 400px)'
+    height: 'calc(100vh - 367.5px)'
   },
   [NATIVE_WIDE]: {
     overflowX: 'scroll',
-    height: 'calc(100vh - 400px)'
+    height: 'calc(100vh - 387.5px)'
   }
 }
 

@@ -158,8 +158,8 @@ export default function Markets(){
                     </span>
                   </li>
                   <li>SUPPLY: <span>{market.supply} {market.symbol}</span> </li>
-                  <li>VOLUME: <span>$ {market.volume.toLocaleString()}</span></li>
-                  <li>TVL: <span>$ {market.marketcap.toLocaleString()}</span></li>
+                  <li>VOLUME: <span>${market.volume.toLocaleString()}</span></li>
+                  <li>TVL: <span>${market.marketcap.toLocaleString()}</span></li>
                   <li>&nbsp;<span></span></li>
                   <Trigger onClick={exploreMarket}> EXPAND </Trigger>
                 </ul>
