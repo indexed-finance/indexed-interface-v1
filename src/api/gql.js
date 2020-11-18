@@ -177,17 +177,6 @@ const initializerQuery = (poolAddress) => `
 }
 `
 
-
-const snapshotQuery = (address, timestampFrom, timestampTo) => `
-{
-  dailyPoolSnapshots(where: { pool: "${address}", date_gt: ${timestampFrom}, date_lt: ${timestampTo} }) {
-    id
-    date
-    totalValueLockedUSD
-  }
-}
-`;
-
 // where: { date_gt: "${timestampFrom}", date_lt: "${timestampTo}" }
 
 const tokenDayDataQuery = (tokenAddress, days) => `
@@ -244,18 +233,6 @@ export async function getIndexPool(address) {
 export async function getUnitializedPool(address) {
   const { data: { poolInitializers } } = await execRequest(initializerQuery(address));
   return poolInitializers;
-}
-
-export async function getHistoricValueLocked(address, days) {
-  let today = new Date(Date.now())
-  let oneWeekAgo = new Date(today.getTime() - (days * 86400000))
-  let timestampFrom = parseInt(oneWeekAgo.getTime() / 1000)
-  let timestampTo = parseInt(today.getTime() / 1000)
-
-  const { data: { dailyPoolSnapshots } } = await execRequest(
-    snapshotQuery(address, timestampFrom, timestampTo)
-  );
-  return dailyPoolSnapshots;
 }
 
 export async function getStakingPools() {

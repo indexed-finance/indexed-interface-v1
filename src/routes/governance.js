@@ -300,7 +300,7 @@ export default function Governance(){
                     </ul>
                   </div>
                 )}
-                <Stacked ready={metadata.snapshots.length > 0} metadata={metadata.snapshots} height={height} />
+                <Stacked ready={metadata != dummy} metadata={metadata.snapshots} height={height} />
               </div>
             </Canvas>
           </Grid>

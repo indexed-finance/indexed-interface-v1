@@ -11,7 +11,7 @@ import Loader from './components/loader'
 import Modal from './components/modal'
 import Flag from './components/flag'
 
-import { getCategoryMetadata, getHistoricValueLocked } from './api/gql'
+import { getCategoryMetadata } from './api/gql'
 import { store } from './state'
 
 import './assets/css/root.css'
@@ -78,13 +78,14 @@ function Application(){
   }
 
   const onResize = () => {
-    console.log('RESIZE FIRED')
+    let { innerHeight, innerWidth } = window
+
     dispatch({
       type: 'RESIZE',
       payload: {
-        height: window.innerHeight,
-        width: window.innerWidth
-      }
+          height: innerHeight,
+          width: innerWidth
+       }
     })
   }
 
@@ -107,17 +108,16 @@ function Application(){
         const { category, name, symbol, address, tokens } = pool;
         const categoryID = `0x${category.toString(16)}`;
         await addCategory(categoryID);
-        let history = await pool.getSnapshots(90);
-        let liquidity = await getHistoricValueLocked(address, 90);
+        let snapshots = await pool.getSnapshots(90);
 
-        const delta24hr = history.length === 1 ? 1 : (Math.abs(history[0].value - history[1].value) / history[1].value).toFixed(4);
+        const delta24hr = snapshots.length === 1 ? 1 : (Math.abs(snapshots[0].value - snapshots[1].value) / snapshots[1].value).toFixed(4);
         let supply = pool.pool.totalSupply;
         if (typeof supply !== 'number' && typeof supply != 'string') {
           supply = formatBalance(supply, 18, 4);
         }
-        let volume = +(history[0].dailySwapVolumeUSD).toFixed(2);
-        history = history.map(h => ({ close: +(h.value.toFixed(4)), date: new Date(h.date * 1000) }));
-        liquidity = liquidity.map(l => ({ close: +parseFloat(l.totalValueLockedUSD).toFixed(4), date: new Date(l.date * 1000) }))
+        let volume = +(snapshots[0].dailySwapVolumeUSD).toFixed(2);
+        let history = snapshots.map(h => ({ close: +(h.value.toFixed(4)), date: new Date(h.date * 1000) }));
+        let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(4), date: new Date(l.date * 1000) }))
 
         const price = parseFloat(history[0].close);
         const index = {

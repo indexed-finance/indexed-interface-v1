@@ -109,7 +109,6 @@ function InitializedPoolPage({ address, metadata }){
         target[1].type = 'EVENTS'
 
         setEvents(tokenEvents)
-
         setInstance(contract)
       }
     }
@@ -179,7 +178,7 @@ function InitializedPoolPage({ address, metadata }){
               </div>
               <div className={classes.chart}>
                 <Spline
-                  ready={address !== '0x0000000000000000000000000000000000000000'}
+                  ready={state.request}
                   padding={padding}
                   native={native}
                   color='#ffa500'

@@ -17,8 +17,8 @@ export default function ButtonPrimary(props){
 
   const Restyled = styled(Button)({
     border: '2px solid #999999',
-    background: secondary.main,
-    color: primary.main,
+    background: '#666666',
+    color: 'white',
     borderRadius: 5,
     padding: '.5em 2.25em',
     ...margin,

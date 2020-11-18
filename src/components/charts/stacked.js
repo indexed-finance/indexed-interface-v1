@@ -89,7 +89,7 @@ const options = {
   }
 }
 
-export default function Spline({ ready,  metadata, height }){
+export default function Spline({ ready, metadata, height }){
 
   const getConfig = () => {
     const active = metadata.map(a => parseInt(a.active)/Math.pow(10, 18))

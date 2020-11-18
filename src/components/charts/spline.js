@@ -101,6 +101,7 @@ const options = (padding) => ({
 
 export default function Spline(props){
   let { metadata, height, color, padding, ready, absolute, native } = props
+  const [ component, setComponent ] = useState(null)
   const theme = useTheme()
 
   const getConfig = (canvas) => {
@@ -142,7 +143,7 @@ export default function Spline(props){
 
     return(
       <div style={{'z-index': 1, float: 'left', width, paddingTop: padding , position: 'absolute', overflow: 'hidden'}}>
-        {ready && (<Line height={height} options={options(0)} data={getConfig} redraw />)}
+        {ready && (<Line height={height} options={options(0)} data={getConfig} />)}
         {!ready && (<Loader native={native} padding={p} height={h} theme={theme} />)}
       </div>
     )
@@ -150,11 +151,7 @@ export default function Spline(props){
     let paddingTop = 30
     p = -20
 
-    return (
-      <Fragment>
-        {!ready && (<div style={{ marginBottom: p, paddingTop }}> <Loader height={h} theme={theme} /> </div>)}
-        {ready && (<Line height={height} options={options(padding)} data={getConfig} redraw />)}
-      </Fragment>
-    )
+    if(!ready) return (<div style={{ marginBottom: p, paddingTop }}> <Loader height={h} theme={theme} /> </div>)
+    else return <Line height={height} options={options(padding)} data={getConfig} />
   }
 }
