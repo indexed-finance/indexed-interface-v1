@@ -92,7 +92,7 @@ const ListAvatar = styled(ListItemAvatar)({
   marginRight: 25
 })
 
-const dummy = { snapshots: [], active: 0, inactive: 0, delegated: 0}
+const dummy = { snapshots: [], active: 0, inactive: 0, delegated: 0, voters: 0 }
 
 const useStyles = getStyles(style)
 
@@ -246,13 +246,14 @@ export default function Governance(){
       let { proposals, dailyDistributionSnapshots } = await getProposals()
 
       let length = dailyDistributionSnapshots.length - 1
-      let { active, inactive, delegated } = dailyDistributionSnapshots[length]
+      let { active, inactive, delegated, voters } = dailyDistributionSnapshots[length]
 
       setMetadata({
         snapshots: dailyDistributionSnapshots,
         active: parseFloat(formatBalance(new BigNumber(active), 18, 0)).toLocaleString(),
         inactive: parseFloat(formatBalance(new BigNumber(inactive), 18, 0)).toLocaleString(),
         delegated: parseFloat(formatBalance(new BigNumber(delegated), 18, 0)).toLocaleString(),
+        voters: parseFloat(voters).toLocaleString()
        })
       setProposals(proposals)
     }
@@ -283,7 +284,7 @@ export default function Governance(){
             <Canvas native={state.native}>
               <div className={classes.chart}>
                 <div className={classes.stats}>
-                  <h3> TOTAL VOTERS: 4</h3>
+                  <h3> TOTAL VOTERS: {metadata.voters}</h3>
                   <h4> SHARE VALUE: $0.00</h4>
                 </div>
                 {!state.native && (

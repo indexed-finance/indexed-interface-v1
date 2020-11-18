@@ -32,6 +32,7 @@ const proposalAndDistributionQuery = () => `
 		  active
       inactive
       delegated
+      voters
     }
   }
 `
