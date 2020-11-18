@@ -171,7 +171,7 @@ export default function Governance(){
 
   function Init(){
     return (
-      <center style={{ paddingTop: '50%' }}>
+      <center style={{ paddingTop: 25 }}>
         <p> Connect your web3 provider to continue </p>
       </center>
     )

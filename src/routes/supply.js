@@ -338,8 +338,8 @@ export default function Supply() {
         <Canvas>
           <div className={classes.rewards} style={{ width: reward }}>
           	<ul className={classes.stats}>
-              <li> POOL DEPOSITS: <span style={{ marginLeft }}> {metadata.supply.toLocaleString({ minimumFractionDigits: 2 })} {ticker}</span> </li>
-              <li> POOL RATE: <span style={{ marginLeft }}> {metadata.rate.toLocaleString({ minimumFractionDigits: 2 })} NDX/DAY </span> </li>
+              <li> POOL DEPOSITS: <span> {metadata.supply.toLocaleString({ minimumFractionDigits: 2 })} {ticker}</span> </li>
+              <li> POOL RATE: <span> {metadata.rate.toLocaleString({ minimumFractionDigits: 2 })} NDX/DAY </span> </li>
             </ul>
           </div>
         </Canvas>
