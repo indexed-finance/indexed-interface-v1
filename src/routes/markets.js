@@ -172,7 +172,7 @@ export default function Markets(){
          </div>
         </Grid>
         <Grid item xs={12} md={12} lg={12} xl={12}>
-          <Container margin={margin} padding="1em 2em" title='INDEXES'>
+          <Container margin={margin} padding="1em 0em" title='INDEXES'>
             <Table state={state} market={market.symbol} triggerMarket={changeMarket} />
           </Container>
         </Grid>

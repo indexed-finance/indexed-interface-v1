@@ -37,18 +37,13 @@ export default function Root(){
   }, [ ])
 
   let {
-    fontSize, left, width, marginRight, textWidth, secondary, float
+    fontSize, left, width, nav, marginRight, textWidth, secondary, float
   } = style.getFormatting(state)
-
-  if(state.native && window.innerWidth < 400) {
-    left = '5%'
-    fontSize = '3.75em'
-  }
 
   return (
     <Fragment>
     <div id="canvas">
-      <nav style={{ position: 'absolute '}}>
+      <nav style={{ position: 'absolute' }}>
         <ul style={{ display: 'inline-block', listStyleType: 'none', margin: 0, padding: 25, fontSize: '1.25em' }}>
           <Link onClick={stopRender} to='/markets'>
             <li style={{ float: 'left',  marginRight: 37.5 }}> MARKETS </li>

@@ -11,6 +11,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     '& header': {
       marginTop: '-2em',
+      marginLeft: '1em',
       background: theme.palette.primary.main,
       padding: '0em 1em 0em 1em',
       width: 'fit-content',

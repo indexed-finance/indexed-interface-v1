@@ -199,7 +199,7 @@ function InitializedPoolPage({ address, metadata }){
           </ParentSize>
           </Grid>
           <Grid item xs={12} md={5} lg={5} xl={5}>
-            <Container margin={margin} title='BALANCES' padding="1em 2em">
+            <Container margin={margin} title='BALANCES' padding="1em 0em">
               <div className={classes.actions}>
                 <p> {metadata.symbol}: <span>{balances.native}</span></p>
                 <p> UNIV2-ETH-{metadata.symbol}: <span>{balances.lp}</span></p>

@@ -1,4 +1,6 @@
-import { DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
+import {
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+ } from '../../constants/parameters'
 import { screenClass } from '../../constants/functions'
 
 const setStyle = (theme) => ({
@@ -28,7 +30,15 @@ const mapping = {
     overflowX: 'hidden',
     height: 'calc(50vh - 500px)'
   },
-  'NATIVE': {
+  [NATIVE_SMALL]: {
+    overflowX: 'scroll',
+    height: 'calc(100vh - 400px)'
+  },
+  [NATIVE_NORMAL]: {
+    overflowX: 'scroll',
+    height: 'calc(100vh - 400px)'
+  },
+  [NATIVE_WIDE]: {
     overflowX: 'scroll',
     height: 'calc(100vh - 400px)'
   }
@@ -36,7 +46,7 @@ const mapping = {
 
 const getFormatting = (native) => {
   let { innerWidth, innerHeight } = window
-  let dimension = native ? 'NATIVE' : screenClass(innerWidth)
+  let dimension = screenClass(native, innerWidth)
 
   return {
     ...mapping[dimension]

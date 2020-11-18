@@ -1,3 +1,8 @@
+import {
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+ } from '../../constants/parameters'
+import { screenClass } from '../../constants/functions'
+
 const setStyle = (theme) => ({
   root: {
     flexGrow: 1,
@@ -72,4 +77,37 @@ const setStyle = (theme) => ({
   }
 })
 
-export default { setStyle }
+const mapping = {
+  [DESKTOP_NORMAL]: {
+
+  },
+  [DESKTOP_LARGE]: {
+
+  },
+  [DESKTOP_WIDE]: {
+
+  },
+  [DESKTOP_HUGE]: {
+
+  },
+  [NATIVE_SMALL]: {
+
+  },
+  [NATIVE_NORMAL]: {
+
+  },
+  [NATIVE_WIDE]: {
+
+  },
+}
+
+const getFormatting = (native) => {
+  let { innerWidth, innerHeight } = window
+  let dimension = screenClass(native, innerWidth)
+
+  return {
+    ...mapping[dimension]
+  }
+}
+
+export default { setStyle, getFormatting }

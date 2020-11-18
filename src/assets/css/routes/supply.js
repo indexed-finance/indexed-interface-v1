@@ -1,5 +1,7 @@
-import { DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
-import { screenClass } from '../../constants/functions'
+import {
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+ } from '../../constants/parameters'
+ import { screenClass } from '../../constants/functions'
 
 const setStyle = (theme) => ({
   top: {
@@ -121,7 +123,35 @@ const mapping = {
        marginRight: 25,
     }
   },
-  'NATIVE': {
+  [NATIVE_SMALL]: {
+    margin: '2em 1.5em',
+    padding: '0em 0em 1em',
+    positioning: 'flex-start',
+    inputWidth: 125,
+    listPadding: 0,
+    height: '11.5em',
+    reward: 'calc(22.5em - 64px)',
+    buttonPos: 67.5,
+    button: {
+       marginTop: -37.5,
+       marginRight: -12.5,
+    }
+  },
+  [NATIVE_NORMAL]: {
+    margin: '2em 1.5em',
+    padding: '0em 0em 1em',
+    positioning: 'flex-start',
+    inputWidth: 125,
+    listPadding: 0,
+    height: '11.5em',
+    reward: 'calc(22.5em - 64px)',
+    buttonPos: 67.5,
+    button: {
+       marginTop: -37.5,
+       marginRight: -12.5,
+    }
+  },
+  [NATIVE_WIDE]: {
     margin: '2em 1.5em',
     padding: '0em 0em 1em',
     positioning: 'flex-start',
@@ -141,7 +171,7 @@ const mapping = {
 
 const getFormatting = ({ ticker, native }) => {
   let { innerWidth, innerHeight } = window
-  let dimension = native ? 'NATIVE' : screenClass(innerWidth)
+  let dimension = screenClass(native, innerWidth)
 
   return {
     width: ticker.includes('UNIV2') ? 50 : 30,
@@ -150,4 +180,5 @@ const getFormatting = ({ ticker, native }) => {
     ...mapping[dimension]
   }
 }
+
 export default { setStyle, getFormatting }

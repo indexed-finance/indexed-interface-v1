@@ -1,4 +1,6 @@
-import { DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
+import {
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+ } from '../../constants/parameters'
 import { screenClass } from '../../constants/functions'
 
 const mapping = {
@@ -47,7 +49,25 @@ const mapping = {
       bottom: 30
     }
   },
-  'NATIVE': {
+  [NATIVE_SMALL]: {
+    border: 3,
+    padding: {
+      top: 15,
+      left: 15,
+      right: 15,
+      bottom: 15
+    }
+  },
+  [NATIVE_NORMAL]: {
+    border: 3,
+    padding: {
+      top: 15,
+      left: 15,
+      right: 15,
+      bottom: 15
+    }
+  },
+  [NATIVE_WIDE]: {
     border: 3,
     padding: {
       top: 15,
@@ -60,7 +80,7 @@ const mapping = {
 
 const getFormatting = (native) => {
   let { innerWidth, innerHeight } = window
-  let dimension = native ? 'NATIVE' : screenClass(innerWidth)
+  let dimension = screenClass(native, innerWidth)
 
   return {
     ...mapping[dimension]

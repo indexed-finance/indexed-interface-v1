@@ -1,4 +1,6 @@
-import { DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
+import {
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+ } from '../../constants/parameters'
 import { screenClass } from '../../constants/functions'
 
 const setStyle = (theme) => ({
@@ -68,12 +70,28 @@ const mapping = {
   [DESKTOP_HUGE]: {
     top: 'calc(100px - .375vw)',
     margin: '0em 3em .25em 3em',
+    pre2: 300,
     resolution: 200,
     height: '32.5%'
   },
-  'NATIVE': {
-    top: 'calc(100px - .375vw)',
+  [NATIVE_SMALL]: {
+    top: 'calc(100px + 2.5vh)',
     margin: '.5em 1.5em',
+    pre2: 'calc(250px - 7.5vh)',
+    resolution: 200,
+    height: '38%'
+  },
+  [NATIVE_NORMAL]: {
+    top: 'calc(100px + 2.5vh)',
+    margin: '.5em 1.5em',
+    pre2: 'calc(250px - 7.5vh)',
+    resolution: 200,
+    height: '38%'
+  },
+  [NATIVE_WIDE]: {
+    top: 'calc(100px + 2.5vh)',
+    margin: '.5em 1.5em',
+    pre2: 'calc(250px - 7.5vh)',
     resolution: 200,
     height: '38%'
   }
@@ -81,7 +99,7 @@ const mapping = {
 
 const getFormatting = ({ request, native, active }) => {
   let { innerWidth, innerHeight } = window
-  let dimension = native ? 'NATIVE' : screenClass(innerWidth)
+  let dimension = screenClass(native, innerWidth)
 
   return {
     pre: !request ? 'auto' : '50%',
