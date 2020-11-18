@@ -35,7 +35,7 @@ export default function TransitionAlerts() {
   return (
     <div className={classes.root} style={{ left, bottom }}>
       <Slide direction="up" in={open}>
-        <Alert variant='outlined' severity={opcode || 'info'}
+        <Alert variant='outlined' severity={opcode}
           action={
             <IconButton size="small" onClick={handleClose}>
               <CloseIcon fontSize="inherit" />

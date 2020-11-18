@@ -12,15 +12,10 @@ import { toContract } from '../../lib/util/contracts';
 import PoolInitializer from '../../assets/constants/abi/PoolInitializer.json'
 import { fromWei } from '@indexed-finance/indexed.js'
 
-
-import {
-  TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER, UNCLAIMED_CREDITS
-} from '../../assets/constants/parameters'
 import ExplainCredit from './explain-credit';
 
 // const useStyles = getStyles(style)
 
-// balance, metadata, height, width, input, param, set, change, rates
 export default function InitializerForm({ metadata, classes }) {
   const [ output, setOutput ] = useState(0)
 

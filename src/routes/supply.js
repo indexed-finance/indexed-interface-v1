@@ -10,7 +10,7 @@ import Countdown from "react-countdown";
 import CountUp from 'react-countup';
 import { toWei, fromWei, formatBalance, BigNumber } from '@indexed-finance/indexed.js'
 
-import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
+import { TX_CONFIRMED, TX_REVERTED } from '../assets/constants/parameters'
 import style from '../assets/css/routes/supply'
 import Canvas from '../components/canvas'
 import Container from '../components/container'
@@ -67,18 +67,14 @@ export default function Supply() {
       .on('confirmation', (conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
-            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+            dispatch(TX_CONFIRMED(receipt.transactionHash))
             setMetadata({ ...metadata, isReady: true })
           } else {
-            dispatch({ type: 'FLAG', payload: TX_REVERT })
+            dispatch(TX_REVERTED(receipt.transactionHash))
           }
         }
-      }).catch((data) => {
-        dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
-    } catch(e) {
-      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
-    }
+    } catch(e) {}
   }
 
   const getAllowance = async() => {
@@ -101,19 +97,14 @@ export default function Supply() {
       .on('confirmation', (conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
-            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+            dispatch(TX_CONFIRMED(receipt.transactionHash))
             setExecution({ f: stake, label: 'STAKE' })
           } else {
-            dispatch({ type: 'FLAG', payload: TX_REVERT })
+            dispatch(TX_REVERTED(receipt.transactionHash))
           }
         }
-      }).catch((data) => {
-        dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
-    } catch(e) {
-      console.log(e)
-      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
-    }
+    } catch(e) {}
   }
 
   const stake = async() => {
@@ -128,18 +119,14 @@ export default function Supply() {
       .on('confirmation', async(conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
-            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+            dispatch(TX_CONFIRMED(receipt.transactionHash))
             await getAccountMetadata(metadata)
           } else {
-            dispatch({ type: 'FLAG', payload: TX_REVERT })
+            dispatch(TX_REVERTED(receipt.transactionHash))
           }
         }
-      }).catch((data) => {
-        dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
-    } catch (e) {
-      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
-    }
+    } catch (e) {}
   }
 
   const claim = async() => {
@@ -153,18 +140,14 @@ export default function Supply() {
       .on('confirmation', async(conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
-            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+            dispatch(TX_CONFIRMED(receipt.transactionHash))
             await getAccountMetadata(metadata)
           } else {
-            dispatch({ type: 'FLAG', payload: TX_REVERT })
+            dispatch(TX_REVERTED(receipt.transactionHash))
           }
         }
-      }).catch((data) => {
-        dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
-    } catch (e) {
-      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
-    }
+    } catch(e) {}
   }
 
   const handleInput = (event) => {

@@ -24,7 +24,7 @@ import Radio from '../components/inputs/radio'
 import Progress from '../components/progress'
 import Canvas from '../components/canvas'
 
-import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
+import { TX_CONFIRMED, TX_REVERTED } from '../assets/constants/parameters'
 import { toContract } from '../lib/util/contracts'
 import { balanceOf } from '../lib/erc20'
 import style from '../assets/css/routes/proposal'
@@ -74,17 +74,13 @@ export default function Proposal(){
       .on('confirmaton', async(conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
-            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+            dispatch(TX_CONFIRMED(receipt.transactionHash))
           } else {
-            dispatch({ type: 'FLAG', payload: TX_REVERT })
+            dispatch(TX_REVERTED(receipt.transactionHash))
           }
         }
-      }).catch((data) => {
-        dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
-    } catch(e) {
-      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
-    }
+    } catch(e) {}
   }
 
   function Blockie({ address, id, width, border }) {

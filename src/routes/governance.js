@@ -27,7 +27,7 @@ import Canvas from '../components/canvas'
 import Progress from '../components/progress'
 import Stacked from '../components/charts/stacked'
 
-import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
+import { TX_CONFIRMED, TX_REVERTED } from '../assets/constants/parameters'
 import { balanceOf } from '../lib/erc20'
 import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
@@ -140,19 +140,14 @@ export default function Governance(){
         if(conf == 0){
           if(receipt.status == 1) {
             let isDelegated = await contract.methods.delegates(state.account).call()
-
-            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+            dispatch(TX_CONFIRMED(receipt.transactionHash))
             getStatus(isDelegated)
           } else {
-            dispatch({ type: 'FLAG', payload: TX_REVERT })
+            dispatch(TX_REVERTED(receipt.transactionHash))
           }
         }
-      }).catch((data) => {
-        dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
-    } catch(e) {
-      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
-    }
+    } catch(e) {}
   }
 
 
