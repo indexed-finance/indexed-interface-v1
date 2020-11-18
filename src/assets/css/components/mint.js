@@ -1,4 +1,9 @@
-const setStyle = (theme) => ({
+import {
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+ } from '../../constants/parameters'
+ import { screenClass } from '../../constants/functions'
+
+ const setStyle = (theme) => ({
   root: {
     flexGrow: 1,
     '& .MuiGrid-container': {
@@ -90,4 +95,40 @@ const setStyle = (theme) => ({
   }
 })
 
-export default { setStyle }
+const mapping = {
+  [DESKTOP_SMALL]: {
+    width: 'auto'
+  },
+  [DESKTOP_NORMAL]: {
+    width: 'auto'
+  },
+  [DESKTOP_LARGE]: {
+    width: 'auto'
+  },
+  [DESKTOP_WIDE]: {
+    width: 'auto'
+  },
+  [DESKTOP_HUGE]: {
+    width: 'auto'
+  },
+  [NATIVE_SMALL]: {
+    width: '100vw'
+  },
+  [NATIVE_NORMAL]: {
+    width: '100vw'
+  },
+  [NATIVE_WIDE]: {
+    width: '100vw'
+  },
+}
+
+const getFormatting = (native) => {
+  let { innerWidth, innerHeight } = window
+  let dimension = screenClass(native, innerWidth)
+
+  return {
+    ...mapping[dimension]
+  }
+}
+
+export default { setStyle, getFormatting }

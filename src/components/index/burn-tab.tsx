@@ -13,6 +13,7 @@ import Input from '../inputs/input'
 import { store } from '../../state'
 import { useBurnState } from '../../state/burn';
 import BurnForm from './burn-form';
+import style from '../../assets/css/components/mint'
 
 const RecieveInput = styled(Input)({
   width: 250,
@@ -59,9 +60,11 @@ export default function BurnTab({ market, metadata }) {
     if (!burnState.pool) setPool();
   }, [ state.web3.injected ])
 
+  let { width } = style.getFormatting(state.native)
+
   return (
     <div>
-    <Grid container direction='column' alignItems='center' justify='space-around'>
+    <Grid container direction='column' alignItems='center' justify='space-around' style={{ width }}>
       <Grid item xs={12} md={12} lg={12} xl={12}>
         <RecieveInput label="DESTROY" variant='outlined'
           helperText={<span onClick={setAmountToBalance}> BALANCE: {displayBalance} </span>}
