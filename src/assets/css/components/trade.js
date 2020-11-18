@@ -54,19 +54,19 @@ const setStyle = (theme) => ({
 
 const mapping = {
   [DESKTOP_SMALL]: {
-    width: '30vw'
+    width: 'auto'
   },
   [DESKTOP_NORMAL]: {
-    width: '30vw'
+    width: 'auto'
   },
   [DESKTOP_LARGE]: {
-    width: '25vw'
+    width: 'auto'
   },
   [DESKTOP_WIDE]: {
-    width: '22.5vw'
+    width: 'auto'
   },
   [DESKTOP_HUGE]: {
-    width: '20vw'
+    width: 'auto'
   },
   [NATIVE_SMALL]: {
     width: '100vw'

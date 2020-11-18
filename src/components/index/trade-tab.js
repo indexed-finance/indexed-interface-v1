@@ -136,7 +136,6 @@ export default function TradeTab({ metadata }) {
 
   let priceString = tradeState.helper ? `1 ${inputSymbol} = ${tradeState.price} ${outputSymbol}` : '';
 
-
   let feeString;
   if (tradeState.helper) {
     const { amount, decimals, address } = tradeState.output;
@@ -145,8 +144,10 @@ export default function TradeTab({ metadata }) {
     feeString = `${fee} ${symbol}`;
   }
 
+  let { width } = style.getFormatting(state.native)
+
   return (
-    <Grid container direction='column' alignItems='center' justify='space-around'>
+    <Grid container direction='column' alignItems='center' justify='space-around' style={{ width }}>
       <Grid item xs={12} md={12} lg={12} xl={12} key='0'>
         {
           tradeState.helper && <TradeInput inputWidth={inputWidth} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useInput} />
