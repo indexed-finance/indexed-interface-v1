@@ -59,16 +59,16 @@ export const isChecksumAddress = (address) => {
 
 export const screenClass = (native, width) => {
   if(!native) {
-    if(width < DESKTOP_NORMAL) return DESKTOP_SMALL
+    if(width <= DESKTOP_SMALL) return DESKTOP_SMALL
     else if(width <= DESKTOP_NORMAL) return DESKTOP_NORMAL
     else if(width > DESKTOP_NORMAL){
-      if(DESKTOP_LARGE >= width)return DESKTOP_LARGE
+      if(DESKTOP_LARGE >= width) return DESKTOP_LARGE
       if(width <= DESKTOP_WIDE) return DESKTOP_WIDE
       else return DESKTOP_HUGE
     }
   } else {
-    if(width <= NATIVE_WIDE) return NATIVE_WIDE
-    else if(width <= NATIVE_SMALL) return NATIVE_SMALL
-    else return NATIVE_NORMAL
+    if(width <= NATIVE_SMALL) return NATIVE_SMALL
+    else if(width <= NATIVE_NORMAL) return NATIVE_NORMAL
+    else return NATIVE_WIDE
   }
 }
