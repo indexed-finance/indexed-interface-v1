@@ -157,7 +157,7 @@ export default function Supply() {
 
     let estimatedRatio = (metadata.rate * weight)
     let estimatedReward = estimatedRatio > metadata.rate ? metadata.rate : estimatedRatio
-    let displayWeight = weight >= 1 ? weight/4 * 100 : weight/2 * 100
+    let displayWeight = weight > 1 ? (weight - (metadata.supply/raw))/weight * 100 : weight/2 * 100
 
     document.getElementById('est').innerHTML =
     estimatedReward.toLocaleString({ minimumFractionDigits: 2 })
@@ -262,7 +262,7 @@ export default function Supply() {
 
   let {
     padding, marginBottom, marginRight, width, positioning, inputWidth, listPadding, button, height, reward, buttonPos, marginLeft
-  } = style.getFormatting(ticker, state.native)
+  } = style.getFormatting({ ticker, native: state.native })
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
@@ -334,9 +334,9 @@ export default function Supply() {
           </ButtonPrimary>
         </Container>
       </Grid>
-      <Grid item xs={10} md={7}>
+      <Grid item xs={10} md={6}>
         <Canvas>
-          <div className={classes.rewards}>
+          <div className={classes.rewards} style={{ width: reward }}>
           	<ul className={classes.stats}>
               <li> POOL DEPOSITS: <span style={{ marginLeft }}> {metadata.supply.toLocaleString({ minimumFractionDigits: 2 })} {ticker}</span> </li>
               <li> POOL RATE: <span style={{ marginLeft }}> {metadata.rate.toLocaleString({ minimumFractionDigits: 2 })} NDX/DAY </span> </li>
