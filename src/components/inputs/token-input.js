@@ -8,7 +8,7 @@ import Avatar from '@material-ui/core/Avatar'
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import { toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
+import { BigNumber, toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 
 import ButtonTransaction from '../buttons/transaction'
 import Input from './input';
@@ -72,7 +72,7 @@ export default function TokenInput(props) {
 
   async function approveTarget() {
     const erc20 = getERC20(web3.injected, token.address);
-    let fn = erc20.methods.approve(token.target, toHex(token.amount))
+    let fn = erc20.methods.approve(token.target, toHex(token.maximumAmountIn || token.amount))
     await handleTransaction(fn.send({ from: account }))
       .then(token.updateDidApprove)
       .catch((() => {}));
