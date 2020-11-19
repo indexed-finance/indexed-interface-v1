@@ -1,4 +1,6 @@
-import { DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
+import {
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+ } from '../../constants/parameters'
 import { screenClass } from '../../constants/functions'
 
 const setStyle = (theme) => ({
@@ -50,6 +52,7 @@ const setStyle = (theme) => ({
     overflowY: 'scroll'
   },
   actions: {
+    padding: '0em 2em',
     '& p span': {
       float: 'right',
       fontFamily: "San Francisco Bold",
@@ -174,7 +177,23 @@ const mapping = {
     halfChart: 37.5,
     fontSize: 'inherit'
   },
-  'NATIVE': {
+  [NATIVE_SMALL]: {
+    marginX: '.5em 1.5em',
+    margin: '3em 1.5em',
+    width: '100%',
+    padding: 112.5,
+    chartHeight: 200,
+    fontSize: '.875em'
+  },
+  [NATIVE_NORMAL]: {
+    marginX: '.5em 1.5em',
+    margin: '3em 1.5em',
+    width: '100%',
+    padding: 112.5,
+    chartHeight: 200,
+    fontSize: '.875em'
+  },
+  [NATIVE_WIDE]: {
     marginX: '.5em 1.5em',
     margin: '3em 1.5em',
     width: '100%',
@@ -186,7 +205,7 @@ const mapping = {
 
 const getFormatting = ({ native, active, request }) => {
   let { innerWidth, innerHeight } = window
-  let dimension = native ? 'NATIVE' : screenClass(innerWidth)
+  let dimension = screenClass(native, innerWidth)
   let { marginX, chartHeight } = mapping[dimension]
 
   if(active === null) {

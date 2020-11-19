@@ -1,4 +1,6 @@
-import { DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
+import {
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+ } from '../../constants/parameters'
 import { screenClass } from '../../constants/functions'
 
 const setStyle = (theme) => ({
@@ -51,28 +53,37 @@ const setStyle = (theme) => ({
 
 const mapping = {
   [DESKTOP_SMALL]: {
-    width: '30vw'
+    width: 'auto'
   },
   [DESKTOP_NORMAL]: {
-    width: '30vw'
+    width: 'auto'
   },
   [DESKTOP_LARGE]: {
-    width: '25vw'
+    width: 'auto'
   },
   [DESKTOP_WIDE]: {
-    width: '22.5vw'
+    width: 'auto'
   },
   [DESKTOP_HUGE]: {
-    width: '20vw'
-  }
+    width: 'auto'
+  },
+  [NATIVE_SMALL]: {
+    width: '100vw'
+  },
+  [NATIVE_NORMAL]: {
+    width: '100vw'
+  },
+  [NATIVE_WIDE]: {
+    width: '100vw'
+  },
 }
 
 const getFormatting = (native) => {
   let { innerWidth, innerHeight } = window
-  let dimension = screenClass(innerWidth)
+  let dimension = screenClass(native, innerWidth)
 
   return {
-    width: native ? '100vw' : mapping[dimension].width
+    ...mapping[dimension]
   }
 }
 

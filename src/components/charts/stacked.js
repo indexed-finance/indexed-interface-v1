@@ -89,8 +89,9 @@ const options = {
   }
 }
 
-export default function Spline({ ready,  metadata, height }){
-
+export default function Spline({ ready, metadata, height }){
+  const [ config, setConfig ] = useState({})
+  
   const getConfig = () => {
     const active = metadata.map(a => parseInt(a.active)/Math.pow(10, 18))
     const inactive = metadata.map(i => parseInt(i.inactive)/Math.pow(10, 18))
@@ -126,9 +127,11 @@ export default function Spline({ ready,  metadata, height }){
       }
     }
 
+
+
   return (
     <div style={{ 'z-index': 1, float: 'left', width: '100%'}}>
-      <Line height={height} options={options} data={getConfig()} redraw id='stacked'/>
+      <Line height={height} options={options} data={getConfig()} id='stacked'/>
     </div>
   )
 }

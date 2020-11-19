@@ -105,8 +105,6 @@ export default function Markets(){
       ){
       let keys = Object.keys(state.indexes)
 
-      console.log(state.indexes[keys[0]])
-
       setMarket(state.indexes[keys[0]])
     }
   }, [ state.indexes ])
@@ -160,8 +158,8 @@ export default function Markets(){
                     </span>
                   </li>
                   <li>SUPPLY: <span>{market.supply} {market.symbol}</span> </li>
-                  <li>VOLUME: <span>$ {market.volume.toLocaleString()}</span></li>
-                  <li>TVL: <span>$ {market.marketcap.toLocaleString()}</span></li>
+                  <li>VOLUME: <span>${market.volume.toLocaleString()}</span></li>
+                  <li>TVL: <span>${market.marketcap.toLocaleString()}</span></li>
                   <li>&nbsp;<span></span></li>
                   <Trigger onClick={exploreMarket}> EXPAND </Trigger>
                 </ul>
@@ -174,7 +172,7 @@ export default function Markets(){
          </div>
         </Grid>
         <Grid item xs={12} md={12} lg={12} xl={12}>
-          <Container margin={margin} padding="1em 2em" title='INDEXES'>
+          <Container margin={margin} padding="1em 0em" title='INDEXES'>
             <Table state={state} market={market.symbol} triggerMarket={changeMarket} />
           </Container>
         </Grid>

@@ -1,3 +1,8 @@
+import {
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+ } from '../../constants/parameters'
+import { screenClass } from '../../constants/functions'
+
 const setStyle = (theme) => ({
   root: {
     flexGrow: 1,
@@ -18,6 +23,14 @@ const setStyle = (theme) => ({
   menu: {
     position: 'absolute'
   },
+  nav: {
+     display: 'inline-flex',
+     marginLeft: 'auto'
+  },
+  iconButton: {
+    marginTop: theme.spacing(.5),
+    marginLeft: 50
+  },
   appBar: {
     borderBottom: 'solid 3px #666666',
     boxShadow: 'none',
@@ -29,7 +42,8 @@ const setStyle = (theme) => ({
     paddingRight: '0px !important'
   },
   menuButton: {
-    marginRight: theme.spacing(1)
+    marginRight: theme.spacing(1),
+    marginTop: theme.spacing(.375),
   },
   title: {
     fontFamily: 'San Francisco Bold',
@@ -72,4 +86,64 @@ const setStyle = (theme) => ({
   }
 })
 
-export default { setStyle }
+const mapping = {
+  [DESKTOP_SMALL]: {
+    paddingTop: '.75vh',
+    display: 'INDEXED',
+    marginLeft: 15,
+    width: 40
+  },
+  [DESKTOP_NORMAL]: {
+    paddingTop: '.75vh',
+    display: 'INDEXED',
+    marginLeft: 15,
+    width: 40
+  },
+  [DESKTOP_LARGE]: {
+    paddingTop: '.75vh',
+    display: 'INDEXED',
+    marginLeft: 15,
+    width: 40
+  },
+  [DESKTOP_WIDE]: {
+    paddingTop: '.75vh',
+    display: 'INDEXED',
+    marginLeft: 15,
+    width: 40
+  },
+  [DESKTOP_HUGE]: {
+    paddingTop: '.75vh',
+    display: 'INDEXED',
+    marginLeft: 15,
+    width: 40
+  },
+  [NATIVE_SMALL]: {
+    paddingTop: '1.5vh',
+    display: 'NDX',
+    marginLeft: 0,
+    width: 30
+  },
+  [NATIVE_NORMAL]: {
+    paddingTop: '1.5vh',
+    display: 'INDEXED',
+    marginLeft: 0,
+    width: 30
+  },
+  [NATIVE_WIDE]: {
+    paddingTop: '1.5vh',
+    display: 'INDEXED',
+    marginLeft: 0,
+    width: 30
+  },
+}
+
+const getFormatting = (native) => {
+  let { innerWidth, innerHeight } = window
+  let dimension = screenClass(native, innerWidth)
+
+  return {
+    ...mapping[dimension]
+  }
+}
+
+export default { setStyle, getFormatting }

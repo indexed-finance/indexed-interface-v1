@@ -16,7 +16,7 @@ import getStyles from '../assets/css'
 const useStyles = getStyles(style)
 
 const Row = styled(TableRow)({
-  border: '3px solid #666666',
+  borderBottom: '3px solid #666666',
   cursor: 'pointer',
   '& .Mui-selected': {
     backgroundColor: 'rgba(102,	255, 255) !important',
@@ -92,7 +92,7 @@ export default function StickyHeadTable(props) {
     <TableContainer style={{ overflowX, height }} >
         <Table stickyHeader className={classes.table}>
           <TableHead>
-            <TableRow>
+            <Row>
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
@@ -102,7 +102,7 @@ export default function StickyHeadTable(props) {
                   {column.label}
                 </TableCell>
               ))}
-            </TableRow>
+            </Row>
           </TableHead>
           <TableBody>
             {request && Object.values(indexes).map((row, index) => {

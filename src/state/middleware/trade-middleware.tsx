@@ -13,8 +13,8 @@ import {
 import { TradeState } from "../reducers/trade-reducer";
 
 const whitelist = [
+  { address: '0xc778417e063141139fce010982780140aa0cd5ab', symbol: 'weth', decimals: 18 },
   { address: '0x5b36B53960Bc1f8b0cAb48AC51F47C8a03c65888', symbol: 'wbtc', decimals: 18 },
-  { address: '0x72710b0b93c8f86aef4ec8bd832868a15df50375', symbol: 'weth', decimals: 18 },
   { address: '0xea88bdf6917e7e001cb9450e8df08164d75c965e', symbol: 'dai', decimals: 18 }
 ];
 
@@ -68,7 +68,7 @@ const whitelist = [
 //     setSelectedOutput(_tokenOut);
 //   }
 
-  
+
 
 //   async function setInputValue(display) {
 //     const exact = toTokenAmount(display, selectedInput.decimals);
@@ -84,7 +84,7 @@ const whitelist = [
 //     setInputAmount({ display: input.displayAmount, exact: input.amount });
 //   }
 
-  
+
 
 // }
 
@@ -197,10 +197,16 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
         decimals: wlToken.decimals,
         isPoolToken: false
       }
+
+      console.log(wlToken)
+
       if (state.input.isPoolToken) {
         const { amount, address } = state.input;
         const outputAmount = await state.helper.getAmountOut(address, wlToken.address, amount);
         const { displayAmount: price } = await state.helper.getAmountOut(state.input.address, address, toWei(1));
+
+        console.log(amount, address, outputAmount)
+
         dispatch([
           { type: 'SET_OUTPUT_TOKEN', token: { ...newToken, ...outputAmount } },
           { type: 'SET_PRICE', price }
@@ -209,6 +215,9 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
         const { amount, address } = state.output;
         const inputAmount = await state.helper.getAmountIn(wlToken.address, address, amount);
         const { displayAmount: price } = await state.helper.getAmountOut(address, state.output.address, toWei(1));
+
+        console.log(amount, address, inputAmount)
+
         dispatch([
           { type: 'SET_INPUT_TOKEN', token: { ...newToken, ...inputAmount } },
           { type: 'SET_PRICE', price }

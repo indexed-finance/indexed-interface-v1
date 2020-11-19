@@ -1,3 +1,8 @@
+import {
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+ } from '../../constants/parameters'
+ import { screenClass } from '../../constants/functions'
+
 const setStyle = (theme) => ({
   top: {
     marginTop: '3em',
@@ -44,24 +49,135 @@ const setStyle = (theme) => ({
   },
 })
 
-const getFormatting = (ticker, native) => {
+const mapping = {
+  [DESKTOP_SMALL]: {
+    margin: '3em 3em',
+    padding: '0em 2em 1em',
+    positioning: 'center',
+    wallet: '#',
+    marginLeft: '167.5px',
+    inputWidth: 200,
+    listPadding: 'inherit',
+    height: '10em',
+    reward: '34em',
+    buttonPos: -55,
+    button: {
+       marginTop: -50,
+       marginRight: 25,
+    }
+  },
+  [DESKTOP_NORMAL]: {
+    margin: '3em 3em',
+    padding: '0em 2em 1em',
+    positioning: 'center',
+    marginLeft: '167.5px',
+    inputWidth: 200,
+    listPadding: 'inherit',
+    height: '10em',
+    reward: '34em',
+    buttonPos: -55,
+    button: {
+       marginTop: -50,
+       marginRight: 25,
+    }
+  },
+  [DESKTOP_LARGE]: {
+    margin: '3em 3em',
+    padding: '0em 2em 1em',
+    positioning: 'center',
+    inputWidth: 200,
+    listPadding: 'inherit',
+    height: '10em',
+    reward: '34em',
+    buttonPos: -55,
+    button: {
+       marginTop: -50,
+       marginRight: 25,
+    }
+  },
+  [DESKTOP_WIDE]: {
+    margin: '3em 3em',
+    padding: '0em 2em 1em',
+    positioning: 'center',
+    inputWidth: 200,
+    listPadding: 'inherit',
+    height: '10em',
+    reward: '34em',
+    buttonPos: -55,
+    button: {
+       marginTop: -50,
+       marginRight: 25,
+    }
+  },
+  [DESKTOP_HUGE]: {
+    margin: '3em 3em',
+    padding: '0em 2em 1em',
+    positioning: 'center',
+    inputWidth: 200,
+    listPadding: 'inherit',
+    height: '10em',
+    reward: '34em',
+    buttonPos: -55,
+    button: {
+       marginTop: -50,
+       marginRight: 25,
+    }
+  },
+  [NATIVE_SMALL]: {
+    margin: '2em 1.5em',
+    padding: '0em 0em 1em',
+    positioning: 'flex-start',
+    inputWidth: 125,
+    listPadding: 0,
+    height: '11.5em',
+    reward: 'calc(22.5em - 64px)',
+    buttonPos: 67.5,
+    button: {
+       marginTop: -37.5,
+       marginRight: -12.5,
+    }
+  },
+  [NATIVE_NORMAL]: {
+    margin: '2em 1.5em',
+    padding: '0em 0em 1em',
+    positioning: 'flex-start',
+    inputWidth: 125,
+    listPadding: 0,
+    height: '11.5em',
+    reward: 'calc(22.5em - 64px)',
+    buttonPos: 67.5,
+    button: {
+       marginTop: -37.5,
+       marginRight: -12.5,
+    }
+  },
+  [NATIVE_WIDE]: {
+    margin: '2em 1.5em',
+    padding: '0em 0em 1em',
+    positioning: 'flex-start',
+    inputWidth: 125,
+    listPadding: 0,
+    height: '11.5em',
+    reward: 'calc(22.5em - 64px)',
+    buttonPos: 67.5,
+    button: {
+       marginTop: -37.5,
+       marginRight: -12.5,
+    }
+  }
+}
+
+
+
+const getFormatting = ({ ticker, native }) => {
+  let { innerWidth, innerHeight } = window
+  let dimension = screenClass(native, innerWidth)
+
   return {
-    margin: !native ? '3em 3em' : '2em 1.5em',
-    padding: !native ?  '0em 2em 1em' : '0em 0em 1em',
     width: ticker.includes('UNIV2') ? 50 : 30,
     marginRight: ticker.includes('UNIV2') ? 7.5 : 0,
     marginBottom: ticker.includes('UNIV2') ? 0 : 10,
-    positioning: !native ? 'center' : 'flex-start',
-    marginLeft: !native ? '15.5em' : '2.5em',
-    inputWidth: !native ? 200 : 125,
-    listPadding: !native ? 'inherit' : 0,
-    height: !native ? '10em': '11.5em',
-    reward: !native ? '34em': 'calc(22.5em - 64px)',
-    buttonPos: !native ? -55 : 67.5,
-    button: {
-       marginTop: !native ? -50 : -37.5,
-       marginRight: !native? 25 : -12.5,
-    }
+    ...mapping[dimension]
   }
 }
 

@@ -1,4 +1,6 @@
-import { DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
+import {
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+ } from '../../constants/parameters'
 import { screenClass } from '../../constants/functions'
 
 const setStyle = (theme) => ({
@@ -137,14 +139,24 @@ const mapping = {
       height: 'calc(55vh - 52.5px)'
     },
     border: 'solid 3px #666666',
-  }
+  },
+  [NATIVE_SMALL]: {
+
+  },
+  [NATIVE_NORMAL]: {
+
+  },
+  [NATIVE_WIDE]: {
+  },
 }
 
 const getFormatting = () => {
   let { innerWidth, innerHeight } = window
-  let dimension = screenClass(innerWidth)
+  let dimension = screenClass(false, innerWidth)
 
-  return { ...mapping[dimension] }
+  return {
+    ...mapping[dimension]
+  }
 }
 
 export default { setStyle, getFormatting }

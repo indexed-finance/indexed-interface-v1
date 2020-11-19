@@ -1,5 +1,7 @@
-import { DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
-import { screenClass } from '../../constants/functions'
+import {
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+ } from '../../constants/parameters'
+ import { screenClass } from '../../constants/functions'
 
 const setStyle = (theme) => ({
   proposals: {
@@ -93,36 +95,63 @@ const mapping = {
   [DESKTOP_SMALL]: {
     wallet: 'calc(150px + 5rem)',
     paddingLeft: '36.75%',
+    margin: '3em 3em',
+    height: 110,
+    width: '100%'
   },
   [DESKTOP_NORMAL]: {
     wallet: 'calc(200px + 5rem)',
     paddingLeft: '40%',
+    margin: '3em 3em',
+    height: 110,
+    width: '100%'
   },
   [DESKTOP_LARGE]: {
     wallet: 'calc(267.5px + 5rem)',
     paddingLeft: '42.5%',
+    margin: '3em 3em',
+    height: 110,
+    width: '100%'
   },
   [DESKTOP_WIDE]: {
     wallet: 'calc(137.5px + 5rem)',
     paddingLeft: '22%',
+    margin: '3em 3em',
+    height: 110,
+    width: '100%'
   },
   [DESKTOP_HUGE]: {
     wallet: 'calc(225px + 5rem)',
     paddingLeft: '20.5%',
+    margin: '3em 3em',
+    height: 110,
+    width: '100%'
   },
-  'NATIVE': {
+  [NATIVE_SMALL]: {
     wallet: 'auto',
+    margin: '3em 1.5em',
+    height: 200,
+    width: 1000
+  },
+  [NATIVE_NORMAL]: {
+    wallet: 'auto',
+    margin: '3em 1.5em',
+    height: 200,
+    width: 1000
+  },
+  [NATIVE_WIDE]: {
+    wallet: 'auto',
+    margin: '3em 1.5em',
+    height: 200,
+    width: 1000
   }
 }
 
 const getFormatting = ({ native }) => {
   let { innerWidth, innerHeight } = window
-  let dimension = native ? 'NATIVE' : screenClass(innerWidth)
+  let dimension = screenClass(native, innerWidth)
 
   return {
-    height: !native ? 110 : 200,
-    margin: !native ? '3em 3em' : '3em 1.5em',
-    width: !native ? '100%' : 1000,
     ...mapping[dimension]
   }
 }

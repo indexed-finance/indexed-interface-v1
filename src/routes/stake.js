@@ -56,8 +56,6 @@ export default function Stake() {
       let { web3 } = state
       let data = await getStakingPools()
 
-      console.log(data)
-
       for(let value in data){
         let { id, stakingToken, indexPool } = data[value]
         let staking = toContract(web3.rinkeby, IERC20.abi, stakingToken)

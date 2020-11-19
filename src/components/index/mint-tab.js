@@ -61,9 +61,11 @@ export default function Mint({ market, metadata }) {
     if (!mintState.pool) setPool();
   }, [ state.web3.injected ])
 
+
+  let { width } = style.getFormatting(state.native)
+
   return (
-    <div className={classes.root}>
-    <Grid container direction='column' alignItems='center' justify='space-around'>
+    <Grid container direction='column' alignItems='center' justify='space-around' style={{ width }}>
       <Grid item xs={12} md={12} lg={12} xl={12}>
         <RecieveInput
           label="RECIEVE"
@@ -94,6 +96,5 @@ export default function Mint({ market, metadata }) {
         </ButtonPrimary>
       </Grid>
     </Grid>
-    </div>
   );
 }

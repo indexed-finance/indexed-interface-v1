@@ -10,7 +10,7 @@ import Countdown from "react-countdown";
 import CountUp from 'react-countup';
 import { toWei, fromWei, formatBalance, BigNumber } from '@indexed-finance/indexed.js'
 
-import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
+import { TX_CONFIRMED, TX_REVERTED } from '../assets/constants/parameters'
 import style from '../assets/css/routes/supply'
 import Canvas from '../components/canvas'
 import Container from '../components/container'
@@ -67,18 +67,14 @@ export default function Supply() {
       .on('confirmation', (conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
-            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+            dispatch(TX_CONFIRMED(receipt.transactionHash))
             setMetadata({ ...metadata, isReady: true })
           } else {
-            dispatch({ type: 'FLAG', payload: TX_REVERT })
+            dispatch(TX_REVERTED(receipt.transactionHash))
           }
         }
-      }).catch((data) => {
-        dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
-    } catch(e) {
-      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
-    }
+    } catch(e) {}
   }
 
   const getAllowance = async() => {
@@ -101,19 +97,14 @@ export default function Supply() {
       .on('confirmation', (conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
-            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+            dispatch(TX_CONFIRMED(receipt.transactionHash))
             setExecution({ f: stake, label: 'STAKE' })
           } else {
-            dispatch({ type: 'FLAG', payload: TX_REVERT })
+            dispatch(TX_REVERTED(receipt.transactionHash))
           }
         }
-      }).catch((data) => {
-        dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
-    } catch(e) {
-      console.log(e)
-      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
-    }
+    } catch(e) {}
   }
 
   const stake = async() => {
@@ -128,18 +119,35 @@ export default function Supply() {
       .on('confirmation', async(conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
-            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+            dispatch(TX_CONFIRMED(receipt.transactionHash))
             await getAccountMetadata(metadata)
           } else {
-            dispatch({ type: 'FLAG', payload: TX_REVERT })
+            dispatch(TX_REVERTED(receipt.transactionHash))
           }
         }
-      }).catch((data) => {
-        dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
-    } catch (e) {
-      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
-    }
+    } catch (e) {}
+  }
+
+  const claim = async() => {
+    let { web3, account } = state
+    let { id } = metadata
+
+    try {
+      let contract = toContract(web3.injected, IStakingRewards, id)
+
+      await contract.methods.exit().send({ from: account })
+      .on('confirmation', async(conf, receipt) => {
+        if(conf == 0){
+          if(receipt.status == 1) {
+            dispatch(TX_CONFIRMED(receipt.transactionHash))
+            await getAccountMetadata(metadata)
+          } else {
+            dispatch(TX_REVERTED(receipt.transactionHash))
+          }
+        }
+      })
+    } catch(e) {}
   }
 
   const handleInput = (event) => {
@@ -149,7 +157,7 @@ export default function Supply() {
 
     let estimatedRatio = (metadata.rate * weight)
     let estimatedReward = estimatedRatio > metadata.rate ? metadata.rate : estimatedRatio
-    let displayWeight = weight >= 1 ? weight/4 * 100 : weight/2 * 100
+    let displayWeight = weight > 1 ? (weight - (metadata.supply/raw))/weight * 100 : weight/2 * 100
 
     document.getElementById('est').innerHTML =
     estimatedReward.toLocaleString({ minimumFractionDigits: 2 })
@@ -254,7 +262,7 @@ export default function Supply() {
 
   let {
     padding, marginBottom, marginRight, width, positioning, inputWidth, listPadding, button, height, reward, buttonPos, marginLeft
-  } = style.getFormatting(ticker, state.native)
+  } = style.getFormatting({ ticker, native: state.native })
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
@@ -265,7 +273,8 @@ export default function Supply() {
             <p> NDX EARNED </p>
             <div>
               <h2> <CountUp decimals={6} perserveValue separator="," start={stats.claim} end={stats.future} duration={86400} /> NDX </h2>
-              <ButtonPrimary variant='outlined' margin={{ marginTop: buttonPos, marginBottom: 12.5, marginRight: 37.5 }}>
+              <ButtonPrimary disabled={!state.web3.injected} onClick={claim} variant='outlined'
+                 margin={{ marginTop: buttonPos, marginBottom: 12.5, marginRight: 37.5 }}>
                 CLAIM
               </ButtonPrimary>
             </div>
@@ -320,17 +329,17 @@ export default function Supply() {
               </ul>
             )}
           </div>
-          <ButtonPrimary onClick={execution.f} variant='outlined' margin={{ ...button }}>
+          <ButtonPrimary disabled={!state.web3.injected} onClick={execution.f} variant='outlined' margin={{ ...button }}>
             {execution.label}
           </ButtonPrimary>
         </Container>
       </Grid>
-      <Grid item xs={10} md={7}>
+      <Grid item xs={10} md={6}>
         <Canvas>
-          <div className={classes.rewards}>
+          <div className={classes.rewards} style={{ width: reward }}>
           	<ul className={classes.stats}>
-              <li> POOL DEPOSITS: <span style={{ marginLeft }}> {metadata.supply.toLocaleString({ minimumFractionDigits: 2 })} NDX</span> </li>
-              <li> POOL RATE: <span style={{ marginLeft }}> {metadata.rate.toLocaleString({ minimumFractionDigits: 2 })} NDX/DAY </span> </li>
+              <li> POOL DEPOSITS: <span> {metadata.supply.toLocaleString({ minimumFractionDigits: 2 })} {ticker}</span> </li>
+              <li> POOL RATE: <span> {metadata.rate.toLocaleString({ minimumFractionDigits: 2 })} NDX/DAY </span> </li>
             </ul>
           </div>
         </Canvas>

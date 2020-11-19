@@ -27,7 +27,7 @@ import Canvas from '../components/canvas'
 import Progress from '../components/progress'
 import Stacked from '../components/charts/stacked'
 
-import { TX_CONFIRM, TX_REJECT, TX_REVERT, WEB3_PROVIDER } from '../assets/constants/parameters'
+import { TX_CONFIRMED, TX_REVERTED } from '../assets/constants/parameters'
 import { balanceOf } from '../lib/erc20'
 import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
@@ -92,7 +92,7 @@ const ListAvatar = styled(ListItemAvatar)({
   marginRight: 25
 })
 
-const dummy = { snapshots: [], active: 0, inactive: 0, delegated: 0}
+const dummy = { snapshots: [], active: 0, inactive: 0, delegated: 0, voters: 0 }
 
 const useStyles = getStyles(style)
 
@@ -140,19 +140,14 @@ export default function Governance(){
         if(conf == 0){
           if(receipt.status == 1) {
             let isDelegated = await contract.methods.delegates(state.account).call()
-
-            dispatch({ type: 'FLAG', payload: TX_CONFIRM })
+            dispatch(TX_CONFIRMED(receipt.transactionHash))
             getStatus(isDelegated)
           } else {
-            dispatch({ type: 'FLAG', payload: TX_REVERT })
+            dispatch(TX_REVERTED(receipt.transactionHash))
           }
         }
-      }).catch((data) => {
-        dispatch({ type: 'FLAG', payload: TX_REJECT })
       })
-    } catch(e) {
-      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
-    }
+    } catch(e) {}
   }
 
 
@@ -176,7 +171,7 @@ export default function Governance(){
 
   function Init(){
     return (
-      <center style={{ paddingTop: '50%' }}>
+      <center style={{ paddingTop: 25 }}>
         <p> Connect your web3 provider to continue </p>
       </center>
     )
@@ -251,13 +246,14 @@ export default function Governance(){
       let { proposals, dailyDistributionSnapshots } = await getProposals()
 
       let length = dailyDistributionSnapshots.length - 1
-      let { active, inactive, delegated } = dailyDistributionSnapshots[length]
+      let { active, inactive, delegated, voters } = dailyDistributionSnapshots[length]
 
       setMetadata({
         snapshots: dailyDistributionSnapshots,
-        active: parseFloat(formatBalance(new BigNumber(active), 18, 2)).toLocaleString(),
-        inactive: parseFloat(formatBalance(new BigNumber(inactive), 18, 2)).toLocaleString(),
-        delegated: parseFloat(formatBalance(new BigNumber(delegated), 18, 2)).toLocaleString(),
+        active: parseFloat(formatBalance(new BigNumber(active), 18, 0)).toLocaleString(),
+        inactive: parseFloat(formatBalance(new BigNumber(inactive), 18, 0)).toLocaleString(),
+        delegated: parseFloat(formatBalance(new BigNumber(delegated), 18, 0)).toLocaleString(),
+        voters: parseFloat(voters).toLocaleString()
        })
       setProposals(proposals)
     }
@@ -288,7 +284,7 @@ export default function Governance(){
             <Canvas native={state.native}>
               <div className={classes.chart}>
                 <div className={classes.stats}>
-                  <h3> TOTAL VOTERS: 4</h3>
+                  <h3> TOTAL VOTERS: {metadata.voters}</h3>
                   <h4> SHARE VALUE: $0.00</h4>
                 </div>
                 {!state.native && (
@@ -300,7 +296,7 @@ export default function Governance(){
                     </ul>
                   </div>
                 )}
-                <Stacked ready={metadata.snapshots.length > 0} metadata={metadata.snapshots} height={height} />
+                <Stacked ready={metadata !== dummy} metadata={metadata.snapshots} height={height} />
               </div>
             </Canvas>
           </Grid>

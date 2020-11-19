@@ -1,42 +1,54 @@
-import { DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE } from '../../constants/parameters'
+import {
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+ } from '../../constants/parameters'
 import { screenClass } from '../../constants/functions'
 
 const mapping = {
   [DESKTOP_SMALL]: {
     width: 'calc(100% - 30vw)',
     h: 'auto',
-    p: 5
+    p: 8.75
   },
   [DESKTOP_NORMAL]: {
     width: 'calc(100% - 30vw)',
     h: 'auto',
-    p: 5
+    p: 11.75
   },
   [DESKTOP_LARGE]: {
     width: 'calc(100% - 30vw)',
     h: 'auto',
-    p: 1
+    p: 13.75
   },
   [DESKTOP_WIDE]: {
     width: 'calc(100% - 55vw)',
     h: 'auto',
-    p: -12.5
+    p: 5
   },
   [DESKTOP_HUGE]: {
     width: 'calc(100% - 55vw)',
     h: 'auto',
-    p: -75
+    p: -40
   },
-  'NATIVE': {
+  [NATIVE_SMALL]: {
     width: 'calc(100% - 30vw)',
-    h: 125,
+    h: 117.5,
+    p: 12.5
+  },
+  [NATIVE_NORMAL]: {
+    width: 'calc(100% - 30vw)',
+    h: 142.5,
+    p: 12.5
+  },
+  [NATIVE_WIDE]: {
+    width: 'calc(100% - 30vw)',
+    h: 162.5,
     p: 12.5
   }
 }
 
 const getFormatting = (native) => {
   let { innerWidth, innerHeight } = window
-  let dimension = native ? 'NATIVE' : screenClass(innerWidth)
+  let dimension = screenClass(native, innerWidth)
 
   return {
     ...mapping[dimension]

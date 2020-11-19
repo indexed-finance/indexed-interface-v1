@@ -32,10 +32,8 @@ const useStyles = getStyles(style)
 
 export default function Navigation({ mode }) {
   const [ component, setComponent ] = useState(<Fragment/>)
-  const [ display, setDisplay ] = useState(<Fragment />)
   const [ login, setLogin ] = useState(false)
   const [ anchorEl, setAnchorEl ] = useState(null)
-  const [ logo, setLogo ] = useState(<img />)
   const [didCheckCache, setDidCheckCache] = useState(false);
   const location = useLocation()
   const classes = useStyles()
@@ -189,12 +187,7 @@ export default function Navigation({ mode }) {
     )
   }
 
-  let marginLeft = !state.native ? 15: 0
-
-  useEffect(() => {
-    let image = mode ? ndxDark : ndxLight;
-    setLogo(<img className={classes.logo} src={image} />);
-  }, [])
+  let { marginLeft, display, width, paddingTop } = style.getFormatting(state.native)
 
   return (
     <div>
@@ -205,13 +198,13 @@ export default function Navigation({ mode }) {
           <Grid container direction='row' alignItems='center' justify='space-between'>
             <Grid item>
               <Link to='/'>
-                {mode && (<img className={classes.logo} style={{ width: !state.native ? 40 : 30,  paddingTop: !state.native ? '.75vh': '1.5vh' }} src={ndxDark} />)}
-                {!mode && (<img className={classes.logo} style={{ width: !state.native ? 40 : 30, paddingTop: !state.native ? '.75vh': '1.5vh'}} src={ndxLight} />)}
-                <Typography variant={!state.native ? 'h4' : 'h5' } className={classes.title}> INDEXED </Typography>
+                {mode && (<img className={classes.logo} style={{ width, paddingTop }} src={ndxDark} />)}
+                {!mode && (<img className={classes.logo} style={{ width, paddingTop }} src={ndxLight} />)}
+                <Typography variant={!state.native ? 'h4' : 'h5' } className={classes.title}> {display} </Typography>
               </Link>
             </Grid>
               {!state.native && (
-                <Grid item style={{ display: 'inline-flex', marginLeft: 'auto' }}>
+                <Grid item className={classes.nav}>
                   <Link to='/governance' className={classes.href}>
                     <h3> GOVERNANCE </h3>
                   </Link>
@@ -225,7 +218,7 @@ export default function Navigation({ mode }) {
               )}
               <Grid item>
                 {!state.native && (
-                  <IconButton style={{ marginTop: 2.5, marginLeft: 50 }} onClick={() => state.changeTheme(mode)}>
+                  <IconButton className={classes.iconButton} onClick={() => state.changeTheme(mode)}>
                     {mode && (<Brightness4Icon color='secondary' />)}
                     {!mode && (<NightsStayIcon color='secondary' />)}
                   </IconButton>

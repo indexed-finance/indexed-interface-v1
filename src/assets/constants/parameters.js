@@ -222,13 +222,15 @@ export const eventColumns = [
 
 export const DESKTOP_HUGE = 2750
 export const DESKTOP_WIDE = 2749
-export const DESKTOP_LARGE = 1921
+export const DESKTOP_LARGE = 1920
 export const DESKTOP_NORMAL = 1600
 export const DESKTOP_SMALL = 1440
+export const NATIVE_WIDE = 400
+export const NATIVE_NORMAL = 399
+export const NATIVE_SMALL = 320
 
 export const TX_CONFIRM = { show: true, message: 'TRANSACTION CONFIRMED', opcode: 'success' }
 export const TX_REVERT = { show: true, message: 'TRANSACTION REVERTED', opcode: 'error' }
-export const TX_REJECT = { show: true, message:'TRANSACTION REJECTED', opcode: 'warning' }
 export const WEB3_PROVIDER = { show: true, message: 'NO WEB3 PROVIDER DETECTED', opcode: 'info' }
 
 const toFlagDispatch = (payload) => ({ type: 'FLAG', payload });
@@ -242,7 +244,7 @@ export const TX_PENDING = (txHash, network = 'rinkeby') => toFlagDispatch({
 });
 export const TX_CONFIRMED = (txHash, network = 'rinkeby') => toFlagDispatch({ ...TX_CONFIRM, etherscan: txEtherscanProps(txHash, network) });
 export const TX_REVERTED = (txHash, network = 'rinkeby') => toFlagDispatch({ ...TX_REVERT, etherscan: txEtherscanProps(txHash, network) });
-export const TX_REJECTED = toFlagDispatch(TX_REJECT);
+export const NO_PROVIDER = toFlagDispatch(WEB3_PROVIDER);
 
 export const MARKET_ORDER = (input, output, f) => ({
   show: true,
@@ -250,7 +252,7 @@ export const MARKET_ORDER = (input, output, f) => ({
   message: `You are about to swap ${input.amount} ${input.market} for ${output.amount} ${output.market}.`,
   actions: [{ label: 'CONFIRM', f: f }, { label: 'REJECT', f: null }]
 })
-export const UNCLAIMED_CREDITS = (input, output, f) => ({
+export const UNCLAIMED_CREDITS = (f) => ({
   show: true,
   title: 'UNCLAIMED CREDITS',
   message: `You have unclaimed compensation for this pool, would you like to redeem your share?`,

@@ -37,19 +37,14 @@ export default function Root(){
   }, [ ])
 
   let {
-    fontSize, left, width, marginRight, textWidth, secondary, float
+    fontSize, left, width, nav, marginRight, textWidth, secondary, float, indicator
   } = style.getFormatting(state)
-
-  if(state.native && window.innerWidth < 400) {
-    left = '5%'
-    fontSize = '3.75em'
-  }
 
   return (
     <Fragment>
     <div id="canvas">
-      <nav style={{ position: 'absolute '}}>
-        <ul style={{ display: 'inline-block', listStyleType: 'none', margin: 0, padding: 25, fontSize: '1.25em' }}>
+      <nav style={{ position: 'absolute' }}>
+        <ul style={{ display: 'inline-block', listStyleType: 'none', margin: 0, padding: 25, fontSize: nav }}>
           <Link onClick={stopRender} to='/markets'>
             <li style={{ float: 'left',  marginRight: 37.5 }}> MARKETS </li>
           </Link>
@@ -79,10 +74,10 @@ export default function Root(){
           <ButtonPrimary id='landing-button'> ENTER </ButtonPrimary>
         </Link>
       </div>
-      <div class="mouse_wave">
-      	<span class="scroll_arrows one"></span>
-      	<span class="scroll_arrows two"></span>
-      	<span class="scroll_arrows three"></span>
+      <div class="mouse_wave" style={indicator.parent}>
+      	<span class="scroll_arrows one" style={indicator.arrows}></span>
+      	<span class="scroll_arrows two" style={indicator.arrows}></span>
+      	<span class="scroll_arrows three" style={indicator.arrows}></span>
       </div>
     </div>
     <Grid container direction='column' alignItems='flex-start' justify='space-between'>
