@@ -9,13 +9,13 @@ import { toContract } from '../../lib/util/contracts'
 import style from '../../assets/css/components/mint'
 import getStyles from '../../assets/css'
 
-// import NumberFormat from '../../utils/format'
 import ButtonPrimary from '../buttons/primary'
 import Input from '../inputs/input'
 import TokenInputs from '../inputs/token-inputs';
 
 import { store } from '../../state'
 import { useMintState } from '../../state/mint';
+import Slippage from '../inputs/slippage';
 
 const RecieveInput = styled(Input)({
   width: 250,
@@ -25,7 +25,7 @@ const useStyles = getStyles(style)
 
 export default function Mint({ market, metadata }) {
   const classes = useStyles()
-  const { useToken, setAmountToBalance, displayBalance, mintState, bindPoolAmountInput, setHelper, updatePool } = useMintState();
+  const { useToken, mintState, bindPoolAmountInput, setHelper, updatePool, setSlippage } = useMintState();
 
   let { state, handleTransaction } = useContext(store);
 
@@ -35,16 +35,23 @@ export default function Mint({ market, metadata }) {
     let fn;
     if (mintState.isSingle) {
       const token = mintState.tokens[mintState.selectedIndex].address;
-      const poolAmountOut = toHex(mintState.poolAmountOut);
-      const tokenAmountIn = toHex(mintState.amounts[mintState.selectedIndex]);
       if (mintState.specifiedSide === 'input') {
-        fn = pool.methods.joinswapExternAmountIn(token, tokenAmountIn, poolAmountOut);
+        const minAmountOut = toHex(mintState.minPoolAmountOut);
+        const tokenAmountIn = toHex(mintState.amounts[mintState.selectedIndex]);
+        fn = pool.methods.joinswapExternAmountIn(token, tokenAmountIn, minAmountOut);
       } else {
-        fn = pool.methods.joinswapPoolAmountOut(token, poolAmountOut, tokenAmountIn);
+        const poolAmountOut = toHex(mintState.poolAmountOut);
+        const maxTokenAmountIn = toHex(mintState.maxAmounts[mintState.selectedIndex]);
+        fn = pool.methods.joinswapPoolAmountOut(token, poolAmountOut, maxTokenAmountIn);
       }
     } else {
-      const maxAmounts = mintState.amounts.map(a => toHex(a));
-      const poolAmountOut = toHex((mintState.poolAmountOut));
+      const currentTokens = await pool.methods.getCurrentTokens().call();
+      const maxAmounts = new Array(currentTokens.length).fill(null);
+      currentTokens.forEach((address, realIndex) => {
+        const localIndex = mintState.tokens.map(t => t.address.toLowerCase()).indexOf(address.toLowerCase());
+        maxAmounts[realIndex] = toHex(mintState.maxAmounts[localIndex]);
+      });
+      const poolAmountOut = toHex(mintState.poolAmountOut);
       fn = pool.methods.joinPool(poolAmountOut, maxAmounts);
     }
     await handleTransaction(fn.send({ from: state.account }))
@@ -74,10 +81,7 @@ export default function Mint({ market, metadata }) {
           {
             ...(bindPoolAmountInput)
           }
-          InputProps={{
-            endAdornment: market,
-          }}
-          helperText={<span onClick={setAmountToBalance}> BALANCE: {displayBalance} </span>}
+          InputProps={{ endAdornment: market }}
         />
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} style={{ width: '100%'}}>
@@ -89,6 +93,9 @@ export default function Mint({ market, metadata }) {
             tokens={mintState.tokens}
           />
         </div>
+      </Grid>
+      <Grid item xs={12} md={12} lg={12} xl={12}>
+        <Slippage setSlippage={setSlippage} slippage={mintState.slippage} />
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
         <ButtonPrimary onClick={mint} disabled={!mintState.ready} margin={{ marginTop: 7.5 }}>
