@@ -3,6 +3,8 @@ import { BigNumber, PoolHelper } from "@indexed-finance/indexed.js";
 export type SetHelper = { type: 'SET_POOL_HELPER', pool: PoolHelper };
 export type ToggleToken = { type: 'TOGGLE_SELECT_TOKEN', index: number };
 
+export type SetSlippage = { type: 'SET_SLIPPAGE', slippage: number };
+
 export type SetPoolAmount = { type: 'SET_POOL_AMOUNT', amount: BigNumber, displayAmount: string };
 export type SetPoolOutput = { type: 'SET_POOL_OUTPUT', amount: string | number };
 
@@ -21,7 +23,7 @@ export type SetTokenInput = { type: 'SET_TOKEN_INPUT', index: number, amount: st
 
 export type UpdatePool = { type: 'UPDATE_POOL', clearInputs?: boolean };
 
-export type MintDispatchAction = ClearAllAmounts | ToggleToken | SetPoolAmount | SetPoolOutput | SetSingleAmount | SetAllAmount | SetHelper | SetSpecifiedSide;
+export type MintDispatchAction = ClearAllAmounts | ToggleToken | SetPoolAmount | SetPoolOutput | SetSingleAmount | SetAllAmount | SetHelper | SetSpecifiedSide | SetSlippage;
 export type MintDispatch = (actions: MintDispatchAction | MintDispatchAction[]) => void;
 
 export type MiddlewareAction = SetTokenInput | SetTokenExact | SetPoolAmount | SetPoolOutput | UpdatePool;
