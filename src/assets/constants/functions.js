@@ -1,6 +1,6 @@
 import { keccak_256, sha3_256 } from 'js-sha3'
 import {
-  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, DESKTOP_MASSIVE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
 } from './parameters'
 
 export const toChecksumAddress = (address) => {
@@ -62,8 +62,9 @@ export const screenClass = (native, width) => {
     if(width <= DESKTOP_SMALL) return DESKTOP_SMALL
     else if(width <= DESKTOP_NORMAL) return DESKTOP_NORMAL
     else if(width > DESKTOP_NORMAL){
-      if(DESKTOP_LARGE >= width) return DESKTOP_LARGE
-      if(width <= DESKTOP_WIDE) return DESKTOP_WIDE
+      if(DESKTOP_MASSIVE <= width) return DESKTOP_MASSIVE
+      else if(width <= DESKTOP_LARGE) return DESKTOP_LARGE
+      else if(width <= DESKTOP_WIDE) return DESKTOP_WIDE
       else return DESKTOP_HUGE
     }
   } else {

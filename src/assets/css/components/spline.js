@@ -1,5 +1,5 @@
 import {
-  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, DESKTOP_MASSIVE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
  } from '../../constants/parameters'
 import { screenClass } from '../../constants/functions'
 
@@ -22,12 +22,17 @@ const mapping = {
   [DESKTOP_WIDE]: {
     width: 'calc(100% - 55vw)',
     h: 'auto',
-    p: 5
+    p: 16.75
   },
   [DESKTOP_HUGE]: {
     width: 'calc(100% - 55vw)',
     h: 'auto',
     p: -40
+  },
+  [DESKTOP_MASSIVE]: {
+    width: 'calc(100% - 55vw)',
+    h: 'auto',
+    p: -42.5
   },
   [NATIVE_SMALL]: {
     width: 'calc(100% - 30vw)',

@@ -1,12 +1,11 @@
 import {
-  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, DESKTOP_MASSIVE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
  } from '../../constants/parameters'
 import { screenClass } from '../../constants/functions'
 
 const setStyle = (theme) => ({
   market: {
     position: 'absolute',
-    paddingLeft: 25,
     paddingTop: 0,
     '& h2': {
       marginBottom: 0,
@@ -42,6 +41,7 @@ const mapping = {
   [DESKTOP_SMALL]: {
     top: 'calc(100px - .375vh)',
     margin: '0em 3em .25em 3em',
+    paddingLeft: 25,
     pre2: 287.5,
     resolution: 200,
     height: '43.75%'
@@ -50,39 +50,53 @@ const mapping = {
     top: 'calc(120px - .25vh)',
     margin: '0em 3em .25em 3em',
     pre2: 325,
+    paddingLeft: 25,
     resolution: 200,
     height: '43.75%'
   },
   [DESKTOP_LARGE]: {
     top: 'calc(125px - .2375vh)',
     margin: '0em 3em .25em 3em',
+    paddingLeft: 25,
     pre2: 387.5,
     resolution: 200,
     height: '48.75%'
   },
   [DESKTOP_WIDE]: {
-    top: 'calc(125px - .375vh)',
+    top: 'calc(165px - .5vh)',
     margin: '0em 3em .25em 3em',
-    pre2: 300,
+    paddingLeft: 25,
+    pre2: 350,
     resolution: 200,
     height: '37.5%'
   },
   [DESKTOP_HUGE]: {
     top: 'calc(135px - .35vh)',
     margin: '0em 3em .25em 3em',
-    pre2: 335,
+    paddingLeft: 25,
+    pre2: 350,
+    resolution: 200,
+    height: '32.5%'
+  },
+  [DESKTOP_MASSIVE]: {
+    top: 'calc(150px - .35vh)',
+    margin: '0em 3em .25em 3em',
+    paddingLeft: 25,
+    pre2: 390,
     resolution: 200,
     height: '32.5%'
   },
   [NATIVE_SMALL]: {
     top: 'calc(100px + .05vh)',
     margin: '0em 1.5em',
+    paddingLeft: 12.5,
     pre2: 'calc(250px - 15vh)',
     resolution: 200,
     height: '35%'
   },
   [NATIVE_NORMAL]: {
     top: 'calc(100px + 2.5vh)',
+    paddingLeft: 12.5,
     margin: '0em 1.5em',
     pre2: 'calc(247.5px - 8.125vh)',
     resolution: 200,
@@ -90,6 +104,7 @@ const mapping = {
   },
   [NATIVE_WIDE]: {
     top: 'calc(100px + 4.375vh)',
+    paddingLeft: 12.5,
     margin: '0em 1.5em',
     pre2: 'calc(250px - 5.75vh)',
     resolution: 200,

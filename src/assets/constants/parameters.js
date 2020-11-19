@@ -220,6 +220,7 @@ export const eventColumns = [
   },
 ]
 
+export const DESKTOP_MASSIVE = 3750
 export const DESKTOP_HUGE = 2750
 export const DESKTOP_WIDE = 2749
 export const DESKTOP_LARGE = 1920

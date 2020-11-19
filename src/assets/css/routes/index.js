@@ -1,12 +1,11 @@
 import {
-  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, DESKTOP_MASSIVE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
  } from '../../constants/parameters'
 import { screenClass } from '../../constants/functions'
 
 const setStyle = (theme) => ({
   root: {
     overflow: 'hidden',
-    maxWidth: '1920px',
     marginLeft: 'auto',
     marginRight:  'auto',
   },
@@ -90,7 +89,7 @@ const mapping = {
     height: 'calc(90vh - 20px)',
     paddingTop: '5.5%',
     marginTop: '-8.5vh',
-    maxWidth: '1920px',
+    maxWidth: '100%',
     chart: {
       height: 'calc(55vh - 40px)'
     },
@@ -101,7 +100,7 @@ const mapping = {
     height: 'calc(90vh - 20px)',
     paddingTop: '5.5%',
     marginTop: '-8.5vh',
-    maxWidth: '1920px',
+    maxWidth: '100%',
     chart: {
       height: 'calc(55vh - 40px)'
     },
@@ -121,7 +120,7 @@ const mapping = {
   [DESKTOP_WIDE]: {
     width: '61%',
     height: '70vh',
-    maxWidth: '60%',
+    maxWidth: '67.5%',
     paddingTop: '10%',
     marginTop: '-4.5vh',
     chart: {
@@ -130,6 +129,17 @@ const mapping = {
     border: 'solid 3px #666666'
   },
   [DESKTOP_HUGE]: {
+    width: '59.5%',
+    height: 'calc(75vh - 100px)',
+    paddingTop: '7.5%',
+    marginTop: '-4.5vh',
+    maxWidth: '48%',
+    chart: {
+      height: 'calc(55vh - 52.5px)'
+    },
+    border: 'solid 3px #666666',
+  },
+  [DESKTOP_MASSIVE]: {
     width: '59.5%',
     height: 'calc(75vh - 100px)',
     paddingTop: '7.5%',

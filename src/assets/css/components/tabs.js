@@ -1,5 +1,5 @@
 import {
-  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, DESKTOP_MASSIVE
  } from '../../constants/parameters'
 import { screenClass } from '../../constants/functions'
 
@@ -61,6 +61,9 @@ const mapping = {
     height: 'calc(20em - 100px)'
   },
   [DESKTOP_HUGE]: {
+    height: 'calc(20em - 100px)'
+  },
+  [DESKTOP_MASSIVE]: {
     height: 'calc(20em - 100px)'
   },
 }

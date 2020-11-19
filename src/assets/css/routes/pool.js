@@ -1,5 +1,5 @@
 import {
-  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, DESKTOP_MASSIVE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
  } from '../../constants/parameters'
 import { screenClass } from '../../constants/functions'
 
@@ -164,6 +164,20 @@ const mapping = {
     fontSize: 'inherit'
   },
   [DESKTOP_HUGE]: {
+    marginX: '-30em 0em 0em 3em',
+    loading: '-30em 0em 0em 3em',
+    active: '-13.75em 0em 0em 3em',
+    inactive: '-37.5em 0em 0em 3em',
+    tableWidth: 'calc(50em - 75px)',
+    margin: '3em 3em',
+    width: '100%',
+    padding: 100,
+    chartHeight: 75,
+    fullChart: 75,
+    halfChart: 37.5,
+    fontSize: 'inherit'
+  },
+  [DESKTOP_MASSIVE]: {
     marginX: '-30em 0em 0em 3em',
     loading: '-30em 0em 0em 3em',
     active: '-13.75em 0em 0em 3em',
