@@ -135,7 +135,7 @@ function InitializedPoolPage({ address, metadata }){
   }, [ state.web3.injected ])
 
   let {
-    marginX, margin, width, padding, chartHeight, fontSize, percent
+    marginX, margin, width, padding, chartHeight, fontSize, percent, balanceHeight
   } = style.getFormatting({ native, request, active: true })
 
   let { name, symbol } = metadata;
@@ -200,13 +200,15 @@ function InitializedPoolPage({ address, metadata }){
           </Grid>
           <Grid item xs={12} md={5} lg={5} xl={5}>
             <Container margin={margin} title='BALANCES' padding="1em 0em">
-              <div className={classes.actions}>
+              <div className={classes.actions} style={{ height: balanceHeight }}>
                 <p> {metadata.symbol}: <span>{balances.native}</span></p>
                 <p> UNIV2-ETH-{metadata.symbol}: <span>{balances.lp}</span></p>
                 <a href={`https://app.uniswap.org/#/add/ETH/${address}`} style={{ float: 'left' }} target='_blank'>
                   <ButtonPrimary margin={{ marginBottom: 15, padding: '.5em 1.25em' }}  variant='outlined'> ADD LIQUIDITY </ButtonPrimary>
                 </a>
-                <ButtonPrimary onClick={getUnderlyingAssets} margin={{ margin: 0, padding: '.5em 1.25em' }} variant='outlined'> ADD LIQUIDITY </ButtonPrimary>
+                <a href={`https://app.uniswap.org/#/add/ETH/${address}`} style={{ float: 'right' }} target='_blank'>
+                  <ButtonPrimary margin={{ margin: 0, padding: '.5em 1.25em' }}  variant='outlined'> ADD LIQUIDITY </ButtonPrimary>
+                </a>
               </div>
             </Container>
             <Container margin={margin} padding="1em 0em" title='ASSETS'>
@@ -216,7 +218,7 @@ function InitializedPoolPage({ address, metadata }){
                     {metadata.assets.map((asset, i) => (
                       <Grid item key={i}>
                         <div className={classes.asset}>
-                          <Weights asset={asset} />
+                          <Weights native={state.native} asset={asset} />
                         </div>
                       </Grid>
                     ))}

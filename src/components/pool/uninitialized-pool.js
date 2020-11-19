@@ -21,7 +21,7 @@ import Copyable from '../copyable';
 
 const useStyles = getStyles(style);
 
-function Target({ label, asset, i }){
+function Target({ label, asset, i, height, r }){
   const { useToken, initState: { pool } } = useInitializerState();
   const token = useToken(i)
   const { address } = asset
@@ -29,11 +29,11 @@ function Target({ label, asset, i }){
   const price = market ? parseFloat(market.toString()): 0
 
   return(
-    <Grid item style={{ width: '100%' }} className={label}>
-      <div style={{ width: '75%'}}>
-       <Weights asset={token} />
+    <Grid item style={{ height }} className={label}>
+      <div>
+       <Weights native={r} asset={token} />
       </div>
-      <div style={{ width: '25%', float: 'right',  marginTop: '-2.25em'}}>
+      <div style={{ float: 'right',  marginTop:  !r ? '-2.25em' : '.75em'}}>
        <label> Ξ {((price * token.currentBalance)).toLocaleString()} </label>
      </div>
    </Grid>
@@ -82,7 +82,7 @@ function UninitializedPoolPage({ address, metadata }) {
     }
     return (
     <Fragment>
-      <h3> {name} [{symbol}] </h3>
+      <h4> {name} [{symbol}] </h4>
       <div style={{ marginTop: 5} }>
         <Copyable text={address}>
           <h4>{address.substring(0, 6)}...{address.substring(38, 64)}</h4>
@@ -93,7 +93,7 @@ function UninitializedPoolPage({ address, metadata }) {
   }
 
   let {
-    marginX, margin, width, padding, chartHeight, fontSize, percent
+    marginX, margin, width, padding, chartHeight, fontSize, percent, targetHeight, paddingRight
   } = style.getFormatting({ native, request, active: false });
 
   return (
@@ -112,9 +112,9 @@ function UninitializedPoolPage({ address, metadata }) {
             <div className={classes.stats} style={{ fontSize }}>
               <ul>
                 <Fragment>
-                  <li><ExplainCredit /></li>
-                  <li> TOTAL CREDIT: Ξ {displayPoolTotalCredit} </li>
-                  <li> YOUR CREDIT: Ξ {displayUserCredit} </li>
+                  <li style={{ paddingRight }}><ExplainCredit /></li>
+                  <li style={{ paddingRight }}> TOTAL CREDIT: Ξ {displayPoolTotalCredit} </li>
+                  <li style={{ paddingRight }}> YOUR CREDIT: Ξ {displayUserCredit} </li>
                 </Fragment>
               </ul>
             </div>
@@ -140,14 +140,14 @@ function UninitializedPoolPage({ address, metadata }) {
           {({ width }) => (
             <Container margin={marginX} padding="1em 0em" title="TARGETS">
               <Grid container direction='row' alignItems='flex-start' justify='space-evenly'>
-                <div className={classes.targets} style={{ width }}>
+                <div className={classes.targets} style={{ width: !state.native ? width : 'auto' }}>
                   {initState.tokens.map((v, i) => {
                     let label = 'item';
 
                     if(i === 0) label = 'first';
                     else if(i === (initState.tokens.length - 1)) label = 'last';
 
-                    return <Target label={label} i={i} asset={v} />
+                    return <Target r={state.native} height={targetHeight} label={label} i={i} asset={v} />
                   })}
                 </div>
               </Grid>

@@ -21,7 +21,6 @@ const setStyle = (theme) => ({
         display: 'inline',
         textAlign: 'left',
         float: 'left',
-        paddingRight: 37.5
       },
     },
   },
@@ -68,13 +67,11 @@ const setStyle = (theme) => ({
     width: 'auto',
     '& p': {
       fontSize: 14,
-      marginLeft: 12.5
     },
     '& p span:last-of-type': {
       float: 'right',
       fontFamily: "San Francisco Bold",
       fontWeight: 500,
-      marginRight: 50
     }
   },
   market: {
@@ -97,7 +94,6 @@ const setStyle = (theme) => ({
       padding: '.75em 2em',
       borderBottom: '2px solid #666666',
       paddingTop: '1em',
-      height: 100,
       width: '100%'
     },
     '& .last': {
@@ -114,10 +110,12 @@ const mapping = {
     percent: '6.75%',
     width: '100%',
     padding: 100,
+    paddingRight: 37.5,
     chartHeight: 87.5,
     fullChart: 87.5,
     halfChart: 43.75,
-    fontSize: 'inherit'
+    fontSize: 'inherit',
+    balanceHeight: 'auto'
   },
   [DESKTOP_NORMAL]: {
     active: '-18.75em 0em 3em 3em',
@@ -129,7 +127,10 @@ const mapping = {
     chartHeight: 87.5,
     fullChart: 87.5,
     halfChart: 43.75,
-    fontSize: 'inherit'
+    paddingRight: 37.5,
+    fontSize: 'inherit',
+    targetHeight: 100,
+    balanceHeight: 'auto'
   },
   [DESKTOP_LARGE]: {
     active: '-17.875em 0em 3em 3em',
@@ -141,7 +142,10 @@ const mapping = {
     chartHeight: 75,
     fullChart: 75,
     halfChart: 37.5,
-    fontSize: 'inherit'
+    fontSize: 'inherit',
+    paddingRight: 37.5,
+    targetHeight: 100,
+    balanceHeight: 'auto'
   },
   [DESKTOP_WIDE]: {
     active: '-19.5em 0em 3em 3em',
@@ -153,7 +157,10 @@ const mapping = {
     chartHeight: 75,
     fullChart: 75,
     halfChart: 37.5,
-    fontSize: 'inherit'
+    paddingRight: 37.5,
+    fontSize: 'inherit',
+    targetHeight: 100,
+    balanceHeight: 'auto'
   },
   [DESKTOP_HUGE]: {
     active: '-20.75em 0em 3em 3em',
@@ -162,10 +169,13 @@ const mapping = {
     width: '100%',
     percent: '6%',
     padding: 100,
+    paddingRight: 37.5,
     chartHeight: 75,
     fullChart: 75,
     halfChart: 37.5,
-    fontSize: 'inherit'
+    fontSize: 'inherit',
+    targetHeight: 100,
+    balanceHeight: 'auto'
   },
   [DESKTOP_MASSIVE]: {
     active: '-18em 0em 3em 3em',
@@ -173,11 +183,14 @@ const mapping = {
     margin: '3em 3em',
     width: '100%',
     padding: 100,
+    paddingRight: 37.5,
     percent: '5%',
     chartHeight: 75,
     fullChart: 75,
     halfChart: 37.5,
-    fontSize: 'inherit'
+    fontSize: 'inherit',
+    targetHeight: 100,
+    balanceHeight: 'auto'
   },
   [NATIVE_SMALL]: {
     marginX: '.5em 1.5em',
@@ -185,8 +198,12 @@ const mapping = {
     width: 'auto',
     percent: '0%',
     padding: 112.5,
+    paddingRight: 0,
     chartHeight: 200,
-    fontSize: '.875em'
+    halfChart: 112.5,
+    fontSize: '.875em',
+    targetHeight: 175,
+    balanceHeight: 187.5
   },
   [NATIVE_NORMAL]: {
     marginX: '.5em 1.5em',
@@ -194,8 +211,12 @@ const mapping = {
     width: 'auto',
     percent: '0%',
     padding: 112.5,
+    paddingRight: 12.5,
     chartHeight: 200,
-    fontSize: '.875em'
+    halfChart: 100,
+    fontSize: '.875em',
+    targetHeight: 150,
+    balanceHeight: 175
   },
   [NATIVE_WIDE]: {
     marginX: '.5em 1.5em',
@@ -204,7 +225,11 @@ const mapping = {
     padding: 112.5,
     percent: '0%',
     chartHeight: 200,
-    fontSize: '.875em'
+    halfChart: 100,
+    paddingRight: 12.5,
+    fontSize: '.875em',
+    targetHeight: 137.5,
+    balanceHeight: 175
   }
 }
 
@@ -214,11 +239,11 @@ const getFormatting = ({ native, active, request }) => {
   let { marginX, chartHeight } = mapping[dimension]
 
   if(!active) {
+    if(!native) mapping[dimension].marginX = mapping[dimension].inactive
     mapping[dimension].chartHeight = mapping[dimension].halfChart
-    mapping[dimension].marginX = mapping[dimension].inactive
   } else if(active) {
+    if(!native) mapping[dimension].marginX = mapping[dimension].active
     mapping[dimension].chartHeight = mapping[dimension].fullChart
-    mapping[dimension].marginX = mapping[dimension].active
   }
 
   return {

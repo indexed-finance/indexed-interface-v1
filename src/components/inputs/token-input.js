@@ -64,7 +64,7 @@ const useStyles = getStyles(style)
 export default function TokenInput(props) {
   const classes = useStyles();
   let token = props.useToken(props.index);
-  let { state: { account, web3 }, handleTransaction } = useContext(store);
+  let { state: { account, native, web3 }, handleTransaction } = useContext(store);
 
   // Set `amount` to `balance`
   const setAmountToBalance = () => token.setAmountToBalance();
@@ -91,6 +91,8 @@ export default function TokenInput(props) {
     }
   }, [ token.bindSetRemainderButton ])
 
+  let { show, inputWidth } = style.getFormatting(native)
+
   return(
     <ListItem
       className={classes[props.label]}
@@ -106,12 +108,14 @@ export default function TokenInput(props) {
             disableRipple
           />
         </Tick>
-      <ListItemAvatar className={classes.wrapper}>
-        <Avatar className={classes.avatar} src={tokenMetadata[token.symbol].image} />
-      </ListItemAvatar>
+       {show && (
+        <ListItemAvatar className={classes.wrapper}>
+          <Avatar className={classes.avatar} src={tokenMetadata[token.symbol].image} />
+        </ListItemAvatar>
+      )}
       <ListItemText style={{ width: '30px' }} primary={token.symbol} secondary={props.secondary || token.symbolAdornment} />
       {
-        token.bindSetRemainderButton && 
+        token.bindSetRemainderButton && !native &&
         <RemainderButton {...token.bindSetRemainderButton}>
          {label}
         </RemainderButton>
@@ -123,7 +127,7 @@ export default function TokenInput(props) {
           label='AMOUNT'
           type='number'
           helperText={helperText}
-          style={{ width: props.inputWidth }}
+          style={{ width: inputWidth }}
           InputLabelProps={{ shrink: true }}
           {...(token.bindApproveInput)}
           InputProps={{
