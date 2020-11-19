@@ -171,7 +171,7 @@ const mapping = {
   },
   [DESKTOP_MASSIVE]: {
     width: '59.5%',
-    height: 'calc(67.5vh - 75px)',
+    height: 'calc(57.5vh - 75px)',
     paddingTop: '7.675%',
     marginRight: 125,
     marginTop: '-3vh',

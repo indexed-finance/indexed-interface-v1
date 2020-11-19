@@ -45,11 +45,11 @@ const setStyle = (theme) => ({
     }
   },
   asset: {
-    margin: '2em 0em'
+    margin: '2em 0em',
   },
   assets: {
-    height: 250,
-    overflowY: 'scroll'
+    overflowY: 'scroll',
+    height: 'calc(25em - 50px)'
   },
   actions: {
     padding: '0em 2em',
@@ -108,12 +108,10 @@ const setStyle = (theme) => ({
 
 const mapping = {
   [DESKTOP_SMALL]: {
-    marginX: '-15em 0em 0em 3em',
-    loading: '-12.5em 0em 0em 3em',
-    active: '-15em 0em 0em 3em',
-    inactive: '-18.75em 0em 0em 3em',
-    tableWidth: 'calc(65em - 412.5px)',
+    active: '-21.5em 0em 3em 3em',
+    inactive: '-27em 0em 3em 3em',
     margin: '3em 3em',
+    percent: '6.75%',
     width: '100%',
     padding: 100,
     chartHeight: 87.5,
@@ -122,12 +120,10 @@ const mapping = {
     fontSize: 'inherit'
   },
   [DESKTOP_NORMAL]: {
-    marginX: '-15em 0em 0em 3em',
-    loading: '-12.5em 0em 0em 3em',
-    active: '-15em 0em 0em 3em',
-    inactive: '-18.75em 0em 0em 3em',
-    tableWidth: 'calc(65em - 412.5px)',
+    active: '-18.75em 0em 3em 3em',
+    inactive: '-35.75em 0em 3em 3em',
     margin: '3em 3em',
+    percent: '6.5%',
     width: '100%',
     padding: 100,
     chartHeight: 87.5,
@@ -136,13 +132,11 @@ const mapping = {
     fontSize: 'inherit'
   },
   [DESKTOP_LARGE]: {
-    marginX: '-17.5em 0em 0em 3em',
-    loading: '-17.5em 0em 0em 3em',
-    active: '-12.5em 0em 0em 3em',
-    inactive: '-25em 0em 0em 3em',
-    tableWidth: 'calc(65em - 87.5px)',
+    active: '-17.875em 0em 3em 3em',
+    inactive: '-34.25em 0em 3em 3em',
     margin: '3em 3em',
     width: '100%',
+    percent: '5.25%',
     padding: 100,
     chartHeight: 75,
     fullChart: 75,
@@ -150,27 +144,23 @@ const mapping = {
     fontSize: 'inherit'
   },
   [DESKTOP_WIDE]: {
-    marginX: '-30em 0em 0em 3em',
-    loading: '-30em 0em 0em 3em',
-    active: '-15em 0em 0em 3em',
-    inactive: '-33.5em 0em 0em 3em',
-    tableWidth: 'calc(50em - 75px)',
+    active: '-19.5em 0em 3em 3em',
+    inactive: '-39.25em 0em 3em 3em',
     margin: '3em 3em',
     width: '100%',
     padding: 100,
+    percent: '5.5%',
     chartHeight: 75,
     fullChart: 75,
     halfChart: 37.5,
     fontSize: 'inherit'
   },
   [DESKTOP_HUGE]: {
-    marginX: '-30em 0em 0em 3em',
-    loading: '-30em 0em 0em 3em',
-    active: '-13.75em 0em 0em 3em',
-    inactive: '-37.5em 0em 0em 3em',
-    tableWidth: 'calc(50em - 75px)',
+    active: '-20.75em 0em 3em 3em',
+    inactive: '-39.5em 0em 3em 3em',
     margin: '3em 3em',
     width: '100%',
+    percent: '6%',
     padding: 100,
     chartHeight: 75,
     fullChart: 75,
@@ -178,14 +168,12 @@ const mapping = {
     fontSize: 'inherit'
   },
   [DESKTOP_MASSIVE]: {
-    marginX: '-30em 0em 0em 3em',
-    loading: '-30em 0em 0em 3em',
-    active: '-13.75em 0em 0em 3em',
-    inactive: '-37.5em 0em 0em 3em',
-    tableWidth: 'calc(50em - 75px)',
+    active: '-18em 0em 3em 3em',
+    inactive: '-35.75em 0em 3em 3em',
     margin: '3em 3em',
     width: '100%',
     padding: 100,
+    percent: '5%',
     chartHeight: 75,
     fullChart: 75,
     halfChart: 37.5,
@@ -194,7 +182,8 @@ const mapping = {
   [NATIVE_SMALL]: {
     marginX: '.5em 1.5em',
     margin: '3em 1.5em',
-    width: '100%',
+    width: 'auto',
+    percent: '0%',
     padding: 112.5,
     chartHeight: 200,
     fontSize: '.875em'
@@ -202,7 +191,8 @@ const mapping = {
   [NATIVE_NORMAL]: {
     marginX: '.5em 1.5em',
     margin: '3em 1.5em',
-    width: '100%',
+    width: 'auto',
+    percent: '0%',
     padding: 112.5,
     chartHeight: 200,
     fontSize: '.875em'
@@ -210,8 +200,9 @@ const mapping = {
   [NATIVE_WIDE]: {
     marginX: '.5em 1.5em',
     margin: '3em 1.5em',
-    width: '100%',
+    width: 'auto',
     padding: 112.5,
+    percent: '0%',
     chartHeight: 200,
     fontSize: '.875em'
   }
@@ -222,16 +213,12 @@ const getFormatting = ({ native, active, request }) => {
   let dimension = screenClass(native, innerWidth)
   let { marginX, chartHeight } = mapping[dimension]
 
-  if(active === null) {
-    mapping[dimension].marginX = mapping[dimension].loading
-  } else if(request) {
-    if(!active) {
-      mapping[dimension].chartHeight = mapping[dimension].halfChart
-      mapping[dimension].marginX = mapping[dimension].inactive
-    } else if(active) {
-      mapping[dimension].chartHeight = mapping[dimension].fullChart
-      mapping[dimension].marginX = mapping[dimension].active
-    }
+  if(!active) {
+    mapping[dimension].chartHeight = mapping[dimension].halfChart
+    mapping[dimension].marginX = mapping[dimension].inactive
+  } else if(active) {
+    mapping[dimension].chartHeight = mapping[dimension].fullChart
+    mapping[dimension].marginX = mapping[dimension].active
   }
 
   return {

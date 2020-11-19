@@ -1,8 +1,7 @@
 import React, { Fragment, useState, useContext, useEffect } from 'react'
 
 
-// import style from '../../assets/css/components/approvals'
-// import getStyles from '../../assets/css'
+import style from '../../assets/css/components/form'
 import { store } from '../../state'
 
 import TokenInputs from '../inputs/token-inputs';
@@ -80,9 +79,11 @@ export default function InitializerForm({ metadata, classes }) {
     setOutput(calcEstimatedTokenOutput())
   }, [ displayTotalCredit ])
 
+  let { height } = style.getFormatting(state.native)
+
   return (
     <Fragment>
-      <TokenInputs useToken={useToken} tokens={initState.tokens} width='100%' height='calc(40vh - 75px)' />
+      <TokenInputs useToken={useToken} tokens={initState.tokens} width='100%' height={height} />
       <div className={classes.reciept}>
         <p>  EST TOKENS: <span>{output} {metadata.symbol}</span> </p>
         <p>  <ExplainCredit /> CREDIT: <span id='credit'>Ξ {displayTotalCredit}</span> </p>

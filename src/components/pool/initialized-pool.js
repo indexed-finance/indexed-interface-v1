@@ -135,7 +135,7 @@ function InitializedPoolPage({ address, metadata }){
   }, [ state.web3.injected ])
 
   let {
-    marginX, margin, width, padding, chartHeight, fontSize
+    marginX, margin, width, padding, chartHeight, fontSize, percent
   } = style.getFormatting({ native, request, active: true })
 
   let { name, symbol } = metadata;
@@ -172,7 +172,7 @@ function InitializedPoolPage({ address, metadata }){
           <Grid item xs={12} md={6} lg={7} xl={7} style={{ width: '100%'}}>
           <ParentSize>
             {({ width, height }) => (
-            <Canvas native={native} style={{ width: !native ? width : 'auto' }} custom='6.75%'>
+            <Canvas native={native} style={{ width: !state.native ? width : 'auto' }} custom={percent}>
               <div className={classes.market}>
                 <MetaDisplay />
               </div>

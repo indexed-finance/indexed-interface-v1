@@ -64,7 +64,7 @@ const mapping = {
     height: 'calc(20em - 100px)'
   },
   [DESKTOP_MASSIVE]: {
-    height: 'calc(35em - 100px)'
+    height: 'calc(20.5em - 100px)'
   },
 }
 
