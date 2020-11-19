@@ -1,6 +1,6 @@
+import React, { Fragment, ReactElement, useReducer } from "react";
 import { BigNumber, formatBalance, PoolHelper } from "@indexed-finance/indexed.js";
 import { PoolToken } from "@indexed-finance/indexed.js/dist/types";
-import { useReducer } from "react";
 
 import {
   SetSingleAmount,
@@ -10,9 +10,10 @@ import {
   MintDispatchAction,
   SetHelper,
   MiddlewareAction,
-  SetSpecifiedSide
+  SetSpecifiedSide, SetSlippage
 } from "../actions/mint-actions";
 import { withMintMiddleware } from "../middleware";
+import { MaximumAmountToolTip, MinimumAmountToolTip } from "../../components/helper-tooltip";
 
 const BN_ZERO = new BigNumber(0);
 
@@ -20,12 +21,15 @@ export type MintState = {
   pool?: PoolHelper;
   tokens?: PoolToken[];
   poolAmountOut: BigNumber;
+  minPoolAmountOut: BigNumber;
   poolDisplayAmount: string;
   amounts: BigNumber[];
+  maxAmounts: BigNumber[];
   displayAmounts: string[];
   selected: boolean[];
   ready: boolean;
   specifiedSide?: 'output' | 'input';
+  slippage: number;
 } & ({
   isSingle: true;
   selectedIndex: number;
@@ -40,13 +44,24 @@ const initialState: MintState = {
   specifiedSide: null,
   tokens: [] as PoolToken[],
   poolAmountOut: BN_ZERO,
+  minPoolAmountOut: BN_ZERO,
   poolDisplayAmount: '0',
   amounts: [] as BigNumber[],
+  maxAmounts: [] as BigNumber[],
   displayAmounts: [] as string[],
   selected: [] as boolean[],
   isSingle: false,
-  selectedIndex: undefined
+  selectedIndex: undefined,
+  slippage: 0.01
 };
+
+function upwardSlippage(num: BigNumber, slippage: number): BigNumber {
+  return num.times(1 + slippage).integerValue();
+}
+
+function downwardSlippage(num: BigNumber, slippage: number): BigNumber {
+  return num.times(1 - slippage).integerValue();
+}
 
 function mintReducer(state: MintState = initialState, actions: MintDispatchAction | MintDispatchAction[]): MintState {
   if (!(Array.isArray(actions))) {
@@ -104,10 +119,15 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
     newState.selected = new Array(newState.tokens.length).fill(true);
     newState.displayAmounts = new Array(newState.tokens.length).fill('0');
   }
+  
+  const setSlippage = (action: SetSlippage) => {
+    newState.slippage = action.slippage;
+  }
 
   for (let action of actions) {
     switch (action.type) {
       case 'TOGGLE_SELECT_TOKEN': { toggleToken(action); break; }
+      case 'SET_SLIPPAGE': { setSlippage(action); break; }
       case 'SET_POOL_AMOUNT': { setPoolAmount(action); break; }
       case 'SET_SINGLE_AMOUNT': { setSingle(action); break; }
       case 'SET_ALL_AMOUNTS': { setAll(action); break; }
@@ -117,10 +137,26 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
     }
   }
 
-  let isReady = !newState.poolAmountOut.eq(0) && newState.amounts.filter((amount, i) => {
+  let newMaxAmounts = new Array(newState.tokens.length).fill(BN_ZERO);
+  let minPoolAmountOut = BN_ZERO;
+  if (newState.specifiedSide === 'input') {
+    minPoolAmountOut = newState.poolAmountOut.gt(0)
+      ? downwardSlippage(newState.poolAmountOut, newState.slippage)
+      : BN_ZERO;
+  } else {
+    if (newState.isSingle) {
+      const amount = newState.amounts[newState.selectedIndex];
+      newMaxAmounts[newState.selectedIndex] = amount.gt(0) ? upwardSlippage(amount, newState.slippage) : BN_ZERO;
+    } else {
+      newMaxAmounts = newState.amounts.map((amount) => upwardSlippage(amount, newState.slippage));
+    }
+  }
+  newState.maxAmounts = newMaxAmounts;
+  newState.minPoolAmountOut = minPoolAmountOut;
+  let isReady = !newState.poolAmountOut.eq(0) && newState.maxAmounts.filter((maxAmount, i) => {
     let token = newState.tokens[i].address;
     let allowance = newState.pool.userAllowances[token] || BN_ZERO;
-    return allowance.gte(amount);
+    return allowance.gte(maxAmount);
   }).length === newState.tokens.length;
   newState.ready = isReady;
   return newState;
@@ -138,10 +174,8 @@ export function useMintTokenActions(
   let amount = state.amounts[index];
   let selected = state.selected[index];
 
-  let displayAmount = state.displayAmounts[index] || '0';
+  let displayAmount = state.displayAmounts[index] || '';
   let displayBalance = balance.eq(BN_ZERO) ? '0' : formatBalance(balance, decimals, 4);
-
-  let approvalNeeded = allowance.lt(amount);
 
   let toggle = () => dispatch({ type: 'TOGGLE_SELECT_TOKEN', index });
   let updateAmount = (input: string | number) => dispatch({ type: 'SET_TOKEN_INPUT', index, amount: input });
@@ -155,6 +189,18 @@ export function useMintTokenActions(
   } else if (amount.gt(maximumInput)) {
     errorMessage = 'EXCEEDS MAX IN';
   }
+
+  let symbolAdornment: ReactElement | undefined;
+  let maximumAmountIn = state.maxAmounts[index];
+
+  if (maximumAmountIn.gt(0)) {
+    const maximumDisplayAmountIn = formatBalance(maximumAmountIn, decimals, 4);
+    symbolAdornment = <Fragment>
+      Max: {maximumDisplayAmountIn} <MaximumAmountToolTip />
+    </Fragment>
+  }
+
+  let approvalNeeded = allowance.lt(maximumAmountIn);
 
   let disableInput = !selected || !(state.isSingle);
   let disableApprove = !approvalNeeded || !selected || balance.lt(amount);
@@ -170,8 +216,10 @@ export function useMintTokenActions(
     approvalNeeded,
     displayAmount,
     displayBalance,
+    maximumAmountIn,
     amount,
     setAmountToBalance,
+    symbolAdornment,
     toggleSelect: toggle,
     bindSelectButton: {
       disabled: disableApprove,
@@ -179,7 +227,7 @@ export function useMintTokenActions(
     },
     bindApproveInput: {
       disabled: disableInput,
-      value: displayAmount || '0',
+      value: displayAmount,
       name: symbol,
       onChange: (event) => {
         event.preventDefault();
@@ -203,6 +251,9 @@ export type TokenActions = {
   approvalNeeded: boolean;
   displayAmount: string;
   displayBalance: string;
+  maximumAmountIn: BigNumber;
+  // maximumDisplayAmountIn?: string;
+  symbolAdornment?: ReactElement;
   setAmountToBalance: () => void;
   toggleSelect: () => void;
   updateDidApprove: () => void;
@@ -223,9 +274,14 @@ export type MintContextType = {
   mintState: MintState;
   setHelper: (helper: PoolHelper) => void;
   updatePool: (clearInputs?: boolean) => void;
-  bindPoolAmountInput: { value: string, onChange: (event: any) => void };
+  bindPoolAmountInput: {
+    value: string,
+    onChange: (event: any) => void,
+    helperText?: ReactElement
+  };
   displayBalance: string;
   setAmountToBalance: () => void;
+  setSlippage: (slippage: number) => void;
 }
 
 export function useMint(): MintContextType {
@@ -244,6 +300,21 @@ export function useMint(): MintContextType {
   const updatePool = (clearInputs?: boolean) => dispatch({ type: 'UPDATE_POOL', clearInputs });
   const setAmountToBalance = () => dispatch({ type: 'SET_POOL_OUTPUT', amount: displayBalance })
 
+  const bindPoolAmountInput: any = {
+    value: mintState.poolDisplayAmount || '0',
+    onChange: (event) => {
+      event.preventDefault();
+      setPoolAmount(event.target.value);
+    }
+  };
+
+  let minPoolAmountOut = mintState.minPoolAmountOut;
+  if (minPoolAmountOut.gt(0)) {
+    bindPoolAmountInput.helperText = <span>
+      Minimum: {formatBalance(minPoolAmountOut, 18, 4)} <MinimumAmountToolTip />
+    </span>
+  }
+
   return {
     useToken,
     mintState,
@@ -251,12 +322,7 @@ export function useMint(): MintContextType {
     setAmountToBalance,
     setHelper,
     updatePool,
-    bindPoolAmountInput: {
-      value: mintState.poolDisplayAmount || '0',
-      onChange: (event) => {
-        event.preventDefault();
-        setPoolAmount(event.target.value);
-      }
-    }
+    bindPoolAmountInput,
+    setSlippage: (slippage: number) => dispatch({ type: 'SET_SLIPPAGE', slippage })
   };
 }
