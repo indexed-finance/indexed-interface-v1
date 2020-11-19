@@ -87,68 +87,104 @@ const mapping = {
   [DESKTOP_SMALL]: {
     width: '64.5%',
     height: 'calc(90vh - 20px)',
-    paddingTop: '5.5%',
+    paddingTop: '6.25%',
     marginTop: '-8.5vh',
     maxWidth: '100%',
+    marginRight: 50,
     chart: {
       height: 'calc(55vh - 40px)'
     },
-    border: 'none'
+    border: {
+      borderTop: 'none',
+      borderRight: 'none',
+      borderLeft: 'none',
+      borderTop: 'none'
+    }
   },
   [DESKTOP_NORMAL]: {
     width: '64.5%',
-    height: 'calc(90vh - 20px)',
-    paddingTop: '5.5%',
+    height: 'calc(93.75vh - 32.5px)',
+    paddingTop: '6.5%',
     marginTop: '-8.5vh',
+    marginRight: 75,
     maxWidth: '100%',
     chart: {
       height: 'calc(55vh - 40px)'
     },
-    border: 'none'
+    border: {
+      borderTop: 'none',
+      borderRight: 'none',
+      borderLeft: 'none',
+      borderTop: 'none'
+    }
   },
   [DESKTOP_LARGE]: {
     width: '64.5%',
     height: '91vh',
     paddingTop: '7.75%',
     maxWidth: '100%',
-    marginTop: '-5vh',
+    marginRight: 87.5,
+    marginTop: '-6.5vh',
     chart: {
       height: 'calc(60vh - 52.5px)'
     },
-    border: 'none'
+    border: {
+      borderTop: 'none',
+      borderRight: 'none',
+      borderLeft: 'none',
+      borderTop: 'none'
+    }
   },
   [DESKTOP_WIDE]: {
-    width: '61%',
-    height: '70vh',
+    width: '62.5%',
+    height: '71.25vh',
     maxWidth: '67.5%',
-    paddingTop: '10%',
+    marginRight: 100,
+    paddingTop: '9.375%',
     marginTop: '-4.5vh',
     chart: {
       height: 'calc(55vh - 52.5px)'
     },
-    border: 'solid 3px #666666'
+    border: {
+      borderTop: 'none',
+      borderRight: 'solid 3px #666666',
+      borderLeft: 'solid 3px #666666',
+      borderBottom: 'solid 3px #666666'
+    }
   },
   [DESKTOP_HUGE]: {
     width: '59.5%',
-    height: 'calc(75vh - 100px)',
-    paddingTop: '7.5%',
+    height: 'calc(75vh - 50px)',
+    paddingTop: '7.375%',
+    marginRight: 75,
     marginTop: '-4.5vh',
     maxWidth: '48%',
     chart: {
       height: 'calc(55vh - 52.5px)'
     },
-    border: 'solid 3px #666666',
+    border: {
+      borderTop: 'none',
+      borderRight: 'solid 3px #666666',
+      borderLeft: 'solid 3px #666666',
+      borderBottom: 'solid 3px #666666'
+    }
   },
   [DESKTOP_MASSIVE]: {
     width: '59.5%',
-    height: 'calc(75vh - 100px)',
-    paddingTop: '7.5%',
-    marginTop: '-4.5vh',
+    height: 'calc(67.5vh - 75px)',
+    paddingTop: '7.675%',
+    marginRight: 125,
+    marginTop: '-3vh',
     maxWidth: '48%',
     chart: {
-      height: 'calc(55vh - 52.5px)'
+      height: 'calc(42.5vh - 52.5px)'
     },
-    border: 'solid 3px #666666',
+    border: {
+      borderTop: 'none',
+      borderRight: 'solid 3px #666666',
+      borderLeft: 'solid 3px #666666',
+      borderBottom: 'solid 3px #666666'
+    }
   },
   [NATIVE_SMALL]: {
 

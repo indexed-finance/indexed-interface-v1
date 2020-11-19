@@ -108,31 +108,40 @@ import {
 
 const mapping = {
   [DESKTOP_SMALL]: {
-    width: 'auto'
+    width: 'auto',
+    height: '37.5vh'
   },
   [DESKTOP_NORMAL]: {
-    width: 'auto'
+    width: 'auto',
+    height: '40vh'
   },
   [DESKTOP_LARGE]: {
-    width: 'auto'
+    width: 'auto',
+    height: '40vh'
   },
   [DESKTOP_WIDE]: {
-    width: 'auto'
+    width: 'auto',
+    height: '35vh'
   },
   [DESKTOP_HUGE]: {
-    width: 'auto'
+    width: 'auto',
+    height: '30vh'
   },
   [DESKTOP_MASSIVE]: {
-    width: 'auto'
+    width: 'auto',
+    height: '22.5vh'
   },
   [NATIVE_SMALL]: {
-    width: '100vw'
+    width: '100vw',
+    height: '40vh'
   },
   [NATIVE_NORMAL]: {
-    width: '100vw'
+    width: '100vw',
+    height: '40vh'
   },
   [NATIVE_WIDE]: {
-    width: '100vw'
+    width: '100vw',
+    height: '40vh'
   },
 }
 

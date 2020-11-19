@@ -19,6 +19,10 @@ const setStyle = (theme) => ({
       color: '#999999',
     }
   },
+  pie: {
+    position: 'relative',
+    float: 'left'
+  },
   options: {
     listStyle: 'none',
     color: '#999999',
@@ -44,6 +48,7 @@ const mapping = {
     paddingLeft: 25,
     pre2: 287.5,
     resolution: 200,
+    width: '40%',
     height: '43.75%'
   },
   [DESKTOP_NORMAL]: {
@@ -52,6 +57,7 @@ const mapping = {
     pre2: 325,
     paddingLeft: 25,
     resolution: 200,
+    width: '40%',
     height: '43.75%'
   },
   [DESKTOP_LARGE]: {
@@ -60,6 +66,7 @@ const mapping = {
     paddingLeft: 25,
     pre2: 387.5,
     resolution: 200,
+    width: '40%',
     height: '48.75%'
   },
   [DESKTOP_WIDE]: {
@@ -68,6 +75,7 @@ const mapping = {
     paddingLeft: 25,
     pre2: 350,
     resolution: 200,
+    width: '40%',
     height: '37.5%'
   },
   [DESKTOP_HUGE]: {
@@ -76,6 +84,7 @@ const mapping = {
     paddingLeft: 25,
     pre2: 350,
     resolution: 200,
+    width: '40%',
     height: '32.5%'
   },
   [DESKTOP_MASSIVE]: {
@@ -84,6 +93,7 @@ const mapping = {
     paddingLeft: 25,
     pre2: 390,
     resolution: 200,
+    width: '40%',
     height: '32.5%'
   },
   [NATIVE_SMALL]: {
@@ -91,6 +101,7 @@ const mapping = {
     margin: '0em 1.5em',
     paddingLeft: 12.5,
     pre2: 'calc(250px - 15vh)',
+    width: '100%',
     resolution: 200,
     height: '35%'
   },
@@ -100,6 +111,7 @@ const mapping = {
     margin: '0em 1.5em',
     pre2: 'calc(247.5px - 8.125vh)',
     resolution: 200,
+    width: '100%',
     height: '38%'
   },
   [NATIVE_WIDE]: {
@@ -107,6 +119,7 @@ const mapping = {
     paddingLeft: 12.5,
     margin: '0em 1.5em',
     pre2: 'calc(250px - 5.75vh)',
+    width: '100%',
     resolution: 200,
     height: '38%'
   }

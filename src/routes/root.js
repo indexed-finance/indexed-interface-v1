@@ -60,11 +60,13 @@ export default function Root(){
           <ButtonPrimary id='landing-button'> ENTER </ButtonPrimary>
         </Link>
       </div>
-      // <div class="mouse_wave" style={indicator.parent}>
-      	// <span class="scroll_arrows one" style={indicator.arrows}></span>
-      	// <span class="scroll_arrows two" style={indicator.arrows}></span>
-      	// <span class="scroll_arrows three" style={indicator.arrows}></span>
-      // </div>
+        {/* <-- SCROLL DOWN INDICATOR -->
+          <div class="mouse_wave" style={indicator.parent}>
+      	    <span class="scroll_arrows one" style={indicator.arrows}></span>
+      	    <span class="scroll_arrows two" style={indicator.arrows}></span>
+            <span class="scroll_arrows three" style={indicator.arrows}></span>
+          </div>
+       */}
     </div>
   )
 }

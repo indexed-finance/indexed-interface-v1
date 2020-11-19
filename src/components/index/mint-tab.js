@@ -69,7 +69,7 @@ export default function Mint({ market, metadata }) {
   }, [ state.web3.injected ])
 
 
-  let { width } = style.getFormatting(state.native)
+  let { width, height } = style.getFormatting(state.native)
 
   return (
     <Grid container direction='column' alignItems='center' justify='space-around' style={{ width }}>
@@ -88,7 +88,7 @@ export default function Mint({ market, metadata }) {
         <div className={classes.demo}>
           <TokenInputs
             width='100%'
-            height='40vh'
+            height={height}
             useToken={useToken}
             tokens={mintState.tokens}
           />

@@ -60,7 +60,7 @@ export default function BurnTab({ market, metadata }) {
     if (!burnState.pool) setPool();
   }, [ state.web3.injected ])
 
-  let { width } = style.getFormatting(state.native)
+  let { width, height } = style.getFormatting(state.native)
 
   return (
     <div>
@@ -81,7 +81,7 @@ export default function BurnTab({ market, metadata }) {
         <div style={{ borderTop: '2px solid #666666', borderBottom: '2px solid #666666'}}>
         <BurnForm
             width='100%'
-            height='40vh'
+            height={height}
             useToken={useToken}
             tokens={burnState.tokens}
           />

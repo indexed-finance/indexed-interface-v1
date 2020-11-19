@@ -119,7 +119,7 @@ export default function Markets(){
 
   let { active } = market
   let {
-    resolution, top, margin, height, pre, pre2, paddingLeft
+    resolution, top, margin, height, pre, pre2, paddingLeft, width
   } = style.getFormatting({ request, native, active })
 
   return (
@@ -164,7 +164,7 @@ export default function Markets(){
                   <Trigger onClick={exploreMarket}> EXPAND </Trigger>
                 </ul>
               )}
-              <div style={{ position: 'relative', float: 'left', width: !native ? '40%' : '100%' }}>
+              <div className={classes.pie} style={{ width }}>
                 <Pie ready={request} height={resolution} metadata={market} native={native} />
               </div>
             </Wrapper>

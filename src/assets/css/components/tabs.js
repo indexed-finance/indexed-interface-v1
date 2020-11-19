@@ -52,10 +52,10 @@ const mapping = {
     height: 'calc(20em - 100px)',
   },
   [DESKTOP_NORMAL]: {
-    height: 'calc(20em - 100px)',
+    height: 'calc(23.75em - 100px)',
   },
   [DESKTOP_LARGE]: {
-    height: '22.5em'
+    height: 'calc(27.5em - 125px)'
   },
   [DESKTOP_WIDE]: {
     height: 'calc(20em - 100px)'
@@ -64,15 +64,17 @@ const mapping = {
     height: 'calc(20em - 100px)'
   },
   [DESKTOP_MASSIVE]: {
-    height: 'calc(20em - 100px)'
+    height: 'calc(35em - 100px)'
   },
 }
 
 const getFormatting = () => {
   let { innerWidth, innerHeight } = window
-  let dimension = screenClass(innerWidth)
+  let dimension = screenClass(false, innerWidth)
 
-  return { ...mapping[dimension] }
+  return {
+    ...mapping[dimension]
+  }
 }
 
 export default { setStyle, getFormatting }

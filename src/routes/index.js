@@ -125,11 +125,10 @@ export default function Index(){
     const getMetadata = async() => {
       let { indexes, web3, account } = state
       let emptyMetadata = Object.keys(metadata).length === 0;
+
       if(Object.keys(indexes).length > 0){
-        console.log('Setting MEtadata')
         setMetadata(indexes[name])
         if (emptyMetadata && execution === 'trade') {
-          console.log('Setting metadata and updating exec')
           changeExecution('trade')
         }
       }
@@ -154,10 +153,9 @@ export default function Index(){
     if(name != null && path != null){
       let emptyMetadata = Object.keys(metadata).length === 0;
       setMetadata(state.indexes[name]);
-      console.log('Setting MEtadata')
       forceUpdate()
+
       if (emptyMetadata && execution === 'trade') {
-        console.log('Setting metadata and updating exec')
         changeExecution('trade')
       }
     }
@@ -169,7 +167,7 @@ export default function Index(){
     }
   }, [ location.pathname ])
 
-  let { border, maxWidth, width, height, marginTop, chart, paddingTop } = style.getFormatting()
+  let { border, maxWidth, width, height, marginTop, chart, paddingTop, marginRight } = style.getFormatting()
 
   if(state.native){
     return(
@@ -193,14 +191,14 @@ export default function Index(){
   }
 
   return (
-    <div className={classes.root} style={{ maxWidth, border }}>
+    <div className={classes.root} style={{ maxWidth, ...border }}>
       <div className={classes.header} style={{ width }}>
           {state.request && (
             <ul style={{ listStyle: 'none', display: 'inline-block', padding: 0 }}>
-              <li style={{ float: 'left', marginRight: 50 }}>
+              <li style={{ float: 'left', marginRight }}>
                 <h3 className={classes.title}> {metadata.name} [{metadata.symbol}]</h3>
               </li>
-              <li style={{ float: 'left', marginRight: 50 }}>
+              <li style={{ float: 'left', marginRight }}>
                 <h4 className={classes.price}> ${metadata.price} <span className={classes.delta}>({metadata.delta})</span></h4>
               </li>
               <li style={{ float: 'right'}}>
