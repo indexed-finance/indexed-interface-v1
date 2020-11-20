@@ -14,6 +14,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Checkbox from '@material-ui/core/Checkbox';
 import Avatar from '@material-ui/core/Avatar';
 import { useParams } from 'react-router-dom'
+import { BigNumber, formatBalance } from '@indexed-finance/indexed.js'
 
 import GovernorAlpha from '../assets/constants/abi/GovernorAlpha.json'
 import Ndx from '../assets/constants/abi/Ndx.json'
@@ -32,8 +33,14 @@ import getStyles from '../assets/css'
 import { store } from '../state'
 import { getProposal } from '../api/gql'
 
-const DAO = '0x5220b03Cc2F5f8f38dC647636d71582a38365E72'
-const NDX = '0xe366577a6712591c2e6f76fdcb96a99ac30a74c3'
+// TODO, add enum state values + configure subgraph
+const proposalState = {
+  0: 'active',
+  1: 'rejcted'
+}
+
+const DAO = '0x6E64317e50a38F9A06D902978E283295AF9ED6f8'
+const NDX = '0x2342084baced2081093de5729de81fcb9de77ca6'
 
 const useStyles = getStyles(style)
 
@@ -46,15 +53,16 @@ export default function Proposal(){
 
   const [ metadata, setMetadata ] = useState(dummy)
   const [ weight, setWeight ] = useState(null)
-  const [ input, setInput ] = useState(null)
+  const [ input, setInput ] = useState(1)
   const classes = useStyles()
 
   const handleInput = (event) => {
-    let weight = event.target.value == 1 ? metadata.for : metadata.against
+    let target = event.target.value == 1 ? metadata.for : metadata.against
+    let weight = formatBalance(new BigNumber(target), 18, 4)
     let { amount } = state.balances['NDX']
 
     if(weight > 0) {
-      weight = ((parseFloat(amount) / (parseInt(weight)/Math.pow(10, 18))) * 100)
+      weight = ((parseFloat(amount) / weight) * 100).toFixed(2)
     } else {
       weight = 100
     }
@@ -65,7 +73,7 @@ export default function Proposal(){
 
   const vote = async() => {
     let { web3, account } = state
-    let decision = input === 1
+    let decision = parseInt(input) === 1
 
     try {
       let contract = toContract(web3.injected, GovernorAlpha.abi, DAO)
@@ -114,9 +122,7 @@ export default function Proposal(){
       if(web3.injected) {
         let contract = toContract(web3.injected, Ndx.abi, NDX)
         let balance = await contract.methods.balanceOf(state.account).call()
-        let amount = (parseFloat(balance)/Math.pow(10, 18)).toLocaleString(
-          undefined, { minimumFractionDigits: 2 }
-        )
+        let amount = formatBalance(new BigNumber(balance), 18, 4)
 
         dispatch({ type: 'BALANCE',
           payload: {
@@ -133,6 +139,7 @@ export default function Proposal(){
   useEffect(() => {
     const retrieveProposal = async() => {
       let proposal = await getProposal(id)
+
       setMetadata(proposal)
     }
     retrieveProposal()
@@ -140,11 +147,8 @@ export default function Proposal(){
 
   let { margin, width, progress, radius, marginTop } = style.getFormatting({ native })
 
-  let forVotes = (parseFloat(metadata.for)/Math.pow(10, 18)).toLocaleString()
-  let againstVotes = (parseFloat(metadata.against)/Math.pow(10, 18)).toLocaleString()
-  let stateLabel ='active'
-
-
+  let forVotes = formatBalance(new BigNumber(metadata.for), 18, 2)
+  let againstVotes = formatBalance(new BigNumber(metadata.against), 18, 2)
   let values = { for: parseInt(metadata.for), against: parseInt(metadata.against) }
 
   return (
@@ -158,8 +162,8 @@ export default function Proposal(){
                   <Blockie border='5px' width={radius} id='blockie' address={metadata.proposer} />
                   <div className={classes.title} style={{ width }}>
                     <div className={classes.lozenge}>
-                      <div id={stateLabel}>
-                        <Lozenge isBold> {stateLabel} </Lozenge>
+                      <div id={proposalState[metadata.state]}>
+                        <Lozenge isBold> {proposalState[metadata.state]} </Lozenge>
                       </div>
                     </div>
                     <h3> {metadata.description}</h3>
@@ -180,13 +184,15 @@ export default function Proposal(){
                 <div className={classes.option}>
                   <div className={classes.vote}> AGAINST </div>
                   <span className={classes.progress}>
-                    <Progress color='#00e79a' width={progress} values={values} option='for' /> <span> {forVotes}</span>
+                    <Progress color='#00e79a' width={progress} values={values} option='for' />
+                    <span> {parseFloat(forVotes).toLocaleString()}</span>
                   </span>
                 </div>
                 <div className={classes.option}>
                   <div className={classes.vote}> FOR </div>
                   <span className={classes.progress}>
-                    <Progress color='#ff005a' width={progress} values={values} option='against' /> <span> {againstVotes}</span>
+                    <Progress color='#ff005a' width={progress} values={values} option='against' />
+                    <span> {parseFloat(againstVotes).toLocaleString()}</span>
                   </span>
                 </div>
               </div>
@@ -205,7 +211,7 @@ export default function Proposal(){
                     AGAINST <Radio value={0} checked={input == 0} onClick={handleInput} color='#ff005a' />
                   </b>
                 </label>
-                <p> WEIGHT: {state.balances['NDX'].amount} NDX </p>
+                <p> WEIGHT: {parseFloat(state.balances['NDX'].amount).toLocaleString()} NDX </p>
                 <p> IMPACT: <span> {weight}% </span> </p>
                 <ButtonPrimary variant='outlined' style={{ marginBottom: 25 }} onClick={vote}>
                   VOTE
