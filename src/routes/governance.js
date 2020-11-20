@@ -340,12 +340,14 @@ export default function Governance(){
                     <ListItemText
                       primary={
                         <div className={classes.progress}>
-                          <Progress width={200} color='#00e79a' values={values} option='for'/> <span> {forVotes} NDX </span>
+                          <Progress width={200} color='#00e79a' values={values} option='for'/>
+                          <span> {parseFloat(forVotes).toLocaleString()} NDX</span>
                         </div>
                       }
                       secondary={
                         <div className={classes.progress}>
-                          <Progress width={200} color='#ff005a' values={values} option='against' /> <span> {againstVotes} NDX</span>
+                          <Progress width={200} color='#ff005a' values={values} option='against' />
+                          <span> {parseFloat(againstVotes).toLocaleString()} NDX</span>
                         </div>
                       }
                     />

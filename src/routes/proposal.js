@@ -145,7 +145,7 @@ export default function Proposal(){
     retrieveProposal()
   }, [])
 
-  let { margin, width, progress, radius, marginTop } = style.getFormatting({ native })
+  let { margin, width, paddingLeft, progress, radius, marginTop } = style.getFormatting({ native })
 
   let forVotes = formatBalance(new BigNumber(metadata.for), 18, 2)
   let againstVotes = formatBalance(new BigNumber(metadata.against), 18, 2)
@@ -158,8 +158,8 @@ export default function Proposal(){
           <Grid item xs={12} md={8} lg={8} xl={8}>
             <Canvas native={state.native}>
               <div className={classes.proposal}>
-                <div className={classes.header}>
-                  <Blockie border='5px' width={radius} id='blockie' address={metadata.proposer} />
+                <div className={classes.header} style={{ paddingLeft }}>
+                  <Blockie border='5px' width='50px' id='blockie' address={metadata.proposer} />
                   <div className={classes.title} style={{ width }}>
                     <div className={classes.lozenge}>
                       <div id={proposalState[metadata.state]}>
@@ -174,10 +174,10 @@ export default function Proposal(){
                     )}
                   </div>
                   {state.native && (
-                    <p>{metadata.proposer.substring(0, 4)}...{metadata.proposer.substring(38, 64)} </p>
-                  )}
-                  {state.native && (
-                    <p>{metadata.expiry} </p>
+                    <div className={classes.author}>
+                      <p>{metadata.proposer.substring(0, 4)}...{metadata.proposer.substring(38, 64)} </p>
+                      <p>{metadata.expiry} </p>
+                    </div>
                   )}
               </div>
               <div className={classes.results}>
@@ -185,14 +185,14 @@ export default function Proposal(){
                   <div className={classes.vote}> AGAINST </div>
                   <span className={classes.progress}>
                     <Progress color='#00e79a' width={progress} values={values} option='for' />
-                    <span> {parseFloat(forVotes).toLocaleString()}</span>
+                    <span> {parseFloat(forVotes).toLocaleString()} NDX</span>
                   </span>
                 </div>
                 <div className={classes.option}>
                   <div className={classes.vote}> FOR </div>
                   <span className={classes.progress}>
                     <Progress color='#ff005a' width={progress} values={values} option='against' />
-                    <span> {parseFloat(againstVotes).toLocaleString()}</span>
+                    <span> {parseFloat(againstVotes).toLocaleString()} NDX</span>
                   </span>
                 </div>
               </div>

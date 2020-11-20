@@ -106,6 +106,9 @@ const setStyle = (theme) => ({
   column: {
     zIndex: 10
   },
+  author: {
+    marginTop: -25
+  },
   lozenge: {
     float: 'left'
   },
@@ -148,63 +151,72 @@ const mapping = {
     width: 'auto',
     progress: 325,
     radius: 67.5,
-    marginTop: -25
+    marginTop: -25,
+    paddingLeft: 30
   },
   [DESKTOP_NORMAL]: {
     margin:'-12.5em 3em 3em 3em',
     width: 'auto',
     progress: 325,
     radius: 67.5,
-    marginTop: -25
+    marginTop: -25,
+    paddingLeft: 30
   },
   [DESKTOP_LARGE]: {
     margin:'-12.5em 3em',
     width: 'auto',
     progress: 325,
     radius: 67.5,
-    marginTop: -25
+    marginTop: -25,
+    paddingLeft: 30
   },
   [DESKTOP_WIDE]: {
     margin:'-12.5em 3em 3em 3em',
     width: 'auto',
     progress: 325,
     radius: 67.5,
-    marginTop: -25
+    marginTop: -25,
+    paddingLeft: 30
   },
   [DESKTOP_HUGE]: {
     margin:'-12.5em 3em 3em 3em',
     width: 'auto',
     progress: 325,
     radius: 67.5,
-    marginTop: -25
+    marginTop: -25,
+    paddingLeft: 30
   },
   [DESKTOP_MASSIVE]: {
     margin:'-12.5em 3em 3em 3em',
     width: 'auto',
     progress: 325,
     radius: 67.5,
-    marginTop: -25
+    marginTop: -25,
+    paddingLeft: 30
   },
   [NATIVE_SMALL]: {
     margin: '1.5em 1.5em',
-    width: '65%',
-    progress: 275,
+    width: '55%',
+    progress: 150,
     radius: 60,
-    marginTop: 0
+    marginTop: -20,
+    paddingLeft: 22.5
   },
   [NATIVE_NORMAL]: {
     margin: '1.5em 1.5em',
     width: '65%',
-    progress: 275,
+    progress: 250,
     radius: 60,
-    marginTop: 0
+    marginTop: -15,
+    paddingLeft: 22.5
   },
   [NATIVE_WIDE]: {
     margin: '1.5em 1.5em',
     width: '65%',
-    progress: 275,
+    progress: 250,
     radius: 60,
-    marginTop: 0
+    marginTop: -15,
+    paddingLeft: 22.5
   },
 }
 
