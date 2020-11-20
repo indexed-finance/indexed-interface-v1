@@ -87,6 +87,7 @@ export default function Mint({ market, metadata }) {
       <Grid item xs={12} md={12} lg={12} xl={12} style={{ width: '100%'}}>
         <div className={classes.demo}>
           <TokenInputs
+            isInitialiser={false}
             width='100%'
             height={height}
             useToken={useToken}

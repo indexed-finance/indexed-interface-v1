@@ -122,15 +122,15 @@ const mapping = {
   },
   [NATIVE_SMALL]: {
     width: '100vw',
-    height: '40vh'
+    height: '32.5vh'
   },
   [NATIVE_NORMAL]: {
     width: '100vw',
-    height: '40vh'
+    height: '37.5vh'
   },
   [NATIVE_WIDE]: {
     width: '100vw',
-    height: '40vh'
+    height: '37.5vh'
   },
 }
 

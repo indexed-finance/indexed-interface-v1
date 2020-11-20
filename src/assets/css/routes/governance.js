@@ -114,8 +114,8 @@ const mapping = {
     width: '100%'
   },
   [DESKTOP_WIDE]: {
-    wallet: 'calc(137.5px + 5rem)',
-    paddingLeft: '22%',
+    wallet: 'calc(225px + 5rem)',
+    paddingLeft: '27.5%',
     margin: '3em 3em',
     height: 110,
     width: '100%'
@@ -128,7 +128,7 @@ const mapping = {
     width: '100%'
   },
   [DESKTOP_MASSIVE]: {
-    wallet: 'calc(225px + 5rem)',
+    wallet: 'calc(262.5px + 5rem)',
     paddingLeft: '20.5%',
     margin: '3em 3em',
     height: 110,

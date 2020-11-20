@@ -145,9 +145,6 @@ export default function Navigation({ mode }) {
         <Link className={classes.href} to='/governance' onClick={handleClose}>
           <MenuItem>GOVERNANCE</MenuItem>
         </Link>
-        <Link className={classes.href} to='/categories' onClick={handleClose}>
-          <MenuItem>CATEGORIES</MenuItem>
-        </Link>
         <Link className={classes.href} to='/markets' onClick={handleClose}>
           <MenuItem>MARKETS</MenuItem>
         </Link>
@@ -163,9 +160,6 @@ export default function Navigation({ mode }) {
 
     return(
       <Fragment>
-        <Link className={classes.href} to='/propose' onClick={handleClose}>
-          <MenuItem>CREATE PROPOSAL</MenuItem>
-        </Link>
         {state.native && (
           <Link className={classes.href} onClick={changeTheme}>
             <MenuItem>LIGHT/DARK MODE</MenuItem>
@@ -173,9 +167,6 @@ export default function Navigation({ mode }) {
         )}
         <Link className={classes.href} to='/governance' onClick={handleClose}>
           <MenuItem>GOVERNANCE</MenuItem>
-        </Link>
-        <Link className={classes.href} to='/categories' onClick={handleClose}>
-          <MenuItem>CATEGORIES</MenuItem>
         </Link>
         <Link className={classes.href} to='/markets' onClick={handleClose}>
           <MenuItem>MARKETS</MenuItem>

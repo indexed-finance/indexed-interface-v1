@@ -93,6 +93,8 @@ export default function TokenInput(props) {
 
   let { show, inputWidth } = style.getFormatting(native)
 
+  console.log(props.isInitialiser ? inputWidth : props.inputWidth)
+
   return(
     <ListItem
       className={classes[props.label]}
@@ -127,7 +129,7 @@ export default function TokenInput(props) {
           label='AMOUNT'
           type='number'
           helperText={helperText}
-          style={{ width: inputWidth }}
+          style={{ width: props.isInitialiser ? inputWidth : props.inputWidth }}
           InputLabelProps={{ shrink: true }}
           {...(token.bindApproveInput)}
           InputProps={{

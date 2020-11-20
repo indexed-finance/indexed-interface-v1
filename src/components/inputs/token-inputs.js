@@ -11,10 +11,12 @@ import TokenInput from './token-input';
 
 const useStyles = getStyles(style)
 
-export default function TokenInputs({ tokens, useToken, height, width }) {
+export default function TokenInputs({ isInitialiser, tokens, useToken, height, width }) {
   const classes = useStyles()
 
   let { state } = useContext(store)
+
+  let inputWidth = !state.native ? 200 : 175
 
   return (
     <List className={classes.list} style={{ height, width }} dense={state.native}>
@@ -22,7 +24,7 @@ export default function TokenInputs({ tokens, useToken, height, width }) {
         tokens.map((token, index) => {
           let label = index === tokens.length-1 ? 'last' : 'item'
           let secondary =  state.native ? <span id={token.symbol} /> : null
-          return <TokenInput key={index} index={index} label={label} secondary={secondary} token={token} useToken={useToken} />
+          return <TokenInput isInitialiser={isInitialiser} key={index} index={index} label={label} secondary={secondary} token={token} useToken={useToken} inputWidth={inputWidth}  />
         })
       }
     </List>

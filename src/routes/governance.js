@@ -193,16 +193,18 @@ export default function Governance(){
 
     return(
       <Fragment>
-        <p> You have not setup your wallet for voting yet, either for individual voting, or delegation. </p>
-        <label>
+        <p style={{ marginBottom: 0 }}> You have not setup your wallet for voting yet, either for individual voting, or delegation. </p>
+        <label style={{ width: '92.5%' }}>
           <b style={{ float: 'left'}}>
             INDIVIDUAL <Radio value={0} checked={selection == 0} onClick={handleSelection} color='#00e79a' />
           </b>
           <b style={{ float: 'right'}}>
             DELEGATION <Radio value={1} checked={selection == 1} onClick={handleSelection} color='orange' />
           </b>
-          <ButtonPrimary onClick={submit}> INITIALISE </ButtonPrimary>
         </label>
+        <Grid item>
+          <ButtonPrimary margin={{ marginLeft: 0 }} onClick={submit}> INITIALISE </ButtonPrimary>
+        </Grid>
       </Fragment>
     )
   }
@@ -222,17 +224,21 @@ export default function Governance(){
 
     return(
       <Fragment>
-        <p> Allocate your votes to another address:</p>
-        <AddressInput onChange={handleInput} value={input} variant="outlined" label='ADDRESS'/>
-        <ButtonPrimary onClick={submit} margin={{  marginTop: 12.5, marginLeft: 25 }}> DELEGATE </ButtonPrimary>
-        {show && (
-          <Link to='/propose'>
-            <ButtonSecondary style={{ marginTop: 12.5, marginLeft: 0, float:'left' }}> CREATE PROPOSAL </ButtonSecondary>
-          </Link>
-        )}
-        {!show && (
-          <ButtonPrimary onClick={goBack} style={{ marginTop: 12.5, marginLeft: 0, float:'left' }}> GO BACK </ButtonPrimary>
-        )}
+        <Grid item>
+          <p> Allocate your votes to another address:</p>
+          <AddressInput onChange={handleInput} value={input} variant="outlined" label='ADDRESS'/>
+        </Grid>
+        <Grid item>
+          <ButtonPrimary onClick={submit} margin={{ marginTop: 0, marginLeft: 25, float: 'right' }}> DELEGATE </ButtonPrimary>
+          {show && (
+            <Link to='/propose'>
+              <ButtonSecondary style={{ margin: 0, float:'left' }}> CREATE PROPOSAL </ButtonSecondary>
+            </Link>
+          )}
+          {!show && (
+            <ButtonPrimary onClick={goBack} style={{ margin: 0, float:'left' }}> GO BACK </ButtonPrimary>
+          )}
+        </Grid>
       </Fragment>
     )
   }
@@ -276,7 +282,9 @@ export default function Governance(){
               <div className={classes.wallet} style={{ height: wallet }}>
                 <h3> BALANCE: {state.balances['NDX'].amount} NDX </h3>
                 <h4> STATUS: {status}</h4>
-                {phase}
+                <Grid container direction='column' alignItems='flex-start' justify='space-between' style={{ height: `calc(${wallet} - 24%)` }}>
+                  {phase}
+                </Grid>
               </div>
             </Canvas>
           </Grid>

@@ -83,7 +83,7 @@ export default function InitializerForm({ metadata, classes }) {
 
   return (
     <Fragment>
-      <TokenInputs useToken={useToken} tokens={initState.tokens} width='100%' height={height} />
+      <TokenInputs isInitialiser={true} useToken={useToken} tokens={initState.tokens} width='100%' height={height} />
       <div className={classes.reciept}>
         <p>  EST TOKENS: <span>{output} {metadata.symbol}</span> </p>
         <p>  <ExplainCredit /> CREDIT: <span id='credit'>Ξ {displayTotalCredit}</span> </p>

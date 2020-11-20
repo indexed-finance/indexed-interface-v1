@@ -23,7 +23,7 @@ import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
-const DAO = '0x5220b03Cc2F5f8f38dC647636d71582a38365E72'
+const DAO = '0x6E64317e50a38F9A06D902978E283295AF9ED6f8'
 
 const sources = [ BPool, GovernorAlpha ]
 

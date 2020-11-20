@@ -119,7 +119,7 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
     newState.selected = new Array(newState.tokens.length).fill(true);
     newState.displayAmounts = new Array(newState.tokens.length).fill('0');
   }
-  
+
   const setSlippage = (action: SetSlippage) => {
     newState.slippage = action.slippage;
   }
@@ -195,9 +195,7 @@ export function useMintTokenActions(
 
   if (maximumAmountIn.gt(0)) {
     const maximumDisplayAmountIn = formatBalance(maximumAmountIn, decimals, 4);
-    symbolAdornment = <Fragment>
-      Max: {maximumDisplayAmountIn} <MaximumAmountToolTip />
-    </Fragment>
+    symbolAdornment = <Fragment>MAX: {maximumDisplayAmountIn} <MaximumAmountToolTip /></Fragment>
   }
 
   let approvalNeeded = allowance.lt(maximumAmountIn);
