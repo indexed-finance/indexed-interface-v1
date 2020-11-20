@@ -159,7 +159,7 @@ export default function Proposal(){
             <Canvas native={state.native}>
               <div className={classes.proposal}>
                 <div className={classes.header} style={{ paddingLeft }}>
-                  <Blockie border='5px' width='50px' id='blockie' address={metadata.proposer} />
+                  <Blockie border='5px' width={radius} id='blockie' address={metadata.proposer} />
                   <div className={classes.title} style={{ width }}>
                     <div className={classes.lozenge}>
                       <div id={proposalState[metadata.state]}>
@@ -221,7 +221,7 @@ export default function Proposal(){
             <Canvas native={state.native} style={{ position: 'relative', zIndex: -1, marginTop }}>
               <div className={classes.log}>
                 <List dense classes={classes.table}>
-                  {metadata.votes.map((value) => {
+                  {metadata.votes.map((value, i) => {
                      let { id, voter, option, weight } = value
                      const color = option ? '#00e79a' : '#ff005a'
                      const label = option ? 'FOR' : 'AGAINST'

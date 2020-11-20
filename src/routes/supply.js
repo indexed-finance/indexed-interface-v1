@@ -219,7 +219,7 @@ export default function Supply() {
 
         if(!isReady) {
           setExecution({
-            f: () => initialisePool(target), label: 'INITIALIZE'
+            f: () => initialisePool(stakingToken), label: 'INITIALIZE'
           })
         } else {
           setExecution({

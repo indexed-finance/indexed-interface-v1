@@ -167,7 +167,7 @@ export default function Index(){
     }
   }, [ location.pathname ])
 
-  let { border, maxWidth, width, height, marginTop, chart, paddingTop, marginRight } = style.getFormatting()
+  let { border, showVolume, maxWidth, width, height, marginTop, chart, paddingTop, marginRight, sideBar } = style.getFormatting()
 
   if(state.native){
     return(
@@ -201,16 +201,18 @@ export default function Index(){
               <li style={{ float: 'left', marginRight }}>
                 <h4 className={classes.price}> ${metadata.price} <span className={classes.delta}>({metadata.delta})</span></h4>
               </li>
-              <li style={{ float: 'right'}}>
-                <span className={classes.alternative}>24H VOLUME: ${metadata.volume}</span>
-              </li>
+              {showVolume && (
+                <li style={{ float: 'right'}}>
+                  <span className={classes.alternative}>24H VOLUME: ${metadata.volume}</span>
+                </li>
+              )}
             </ul>
           )}
           {!state.request && (
               <TitleLoader color={state.background} />
           )}
       </div>
-      <div className={classes.sidebar} style={{ height, marginTop }}>
+      <div className={classes.sidebar} style={{ height, marginTop, width: sideBar }}>
         <Grid container direction='column' alignItems='center' justify='space-around'>
           <Grid item>
             <header className={classes.selections}>

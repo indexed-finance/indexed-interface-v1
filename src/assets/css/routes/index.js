@@ -85,14 +85,17 @@ const setStyle = (theme) => ({
 
 const mapping = {
   [DESKTOP_SMALL]: {
-    width: '64.5%',
+    width: '57.75%',
     height: 'calc(90vh - 20px)',
     paddingTop: '6.25%',
     marginTop: '-8.5vh',
+    sideBar: '36.75%',
+    showVolume: false,
     maxWidth: '100%',
     marginRight: 50,
     chart: {
-      height: 'calc(55vh - 40px)'
+      height: 'calc(55vh - 40px)',
+      width: '63vw'
     },
     border: {
       borderTop: 'none',
@@ -106,6 +109,8 @@ const mapping = {
     height: 'calc(93.75vh - 32.5px)',
     paddingTop: '6.5%',
     marginTop: '-8.5vh',
+    sideBar: '30%',
+    showVolume: true,
     marginRight: 75,
     maxWidth: '100%',
     chart: {
@@ -123,6 +128,8 @@ const mapping = {
     height: '91vh',
     paddingTop: '7.75%',
     maxWidth: '100%',
+    showVolume: true,
+    sideBar: '30%',
     marginRight: 87.5,
     marginTop: '-6.5vh',
     chart: {
@@ -140,6 +147,8 @@ const mapping = {
     height: '71.25vh',
     maxWidth: '67.5%',
     marginRight: 100,
+    showVolume: true,
+    sideBar: '30%',
     paddingTop: '9.375%',
     marginTop: '-4.5vh',
     chart: {
@@ -156,6 +165,8 @@ const mapping = {
     width: '59.5%',
     height: 'calc(75vh - 50px)',
     paddingTop: '7.375%',
+    sideBar: '30%',
+    showVolume: true,
     marginRight: 75,
     marginTop: '-4.5vh',
     maxWidth: '48%',
@@ -173,6 +184,8 @@ const mapping = {
     width: '59.5%',
     height: 'calc(57.5vh - 75px)',
     paddingTop: '7.675%',
+    sideBar: '30%',
+    showVolume: true,
     marginRight: 125,
     marginTop: '-3vh',
     maxWidth: '48%',

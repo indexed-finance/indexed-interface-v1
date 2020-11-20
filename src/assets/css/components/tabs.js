@@ -50,21 +50,27 @@ const setStyle = (theme) => ({
 const mapping = {
   [DESKTOP_SMALL]: {
     height: 'calc(20em - 100px)',
+    width: '62.5vw'
   },
   [DESKTOP_NORMAL]: {
     height: 'calc(23.75em - 100px)',
+    width: 'inherit'
   },
   [DESKTOP_LARGE]: {
-    height: 'calc(27.5em - 125px)'
+    height: 'calc(27.5em - 125px)',
+    width: 'inherit'
   },
   [DESKTOP_WIDE]: {
-    height: 'calc(20em - 100px)'
+    height: 'calc(20em - 100px)',
+    width: 'inherit'
   },
   [DESKTOP_HUGE]: {
-    height: 'calc(20em - 100px)'
+    height: 'calc(20em - 100px)',
+    width: 'inherit'
   },
   [DESKTOP_MASSIVE]: {
-    height: 'calc(20.5em - 100px)'
+    height: 'calc(20.5em - 100px)',
+    width: 'inherit'
   },
 }
 
