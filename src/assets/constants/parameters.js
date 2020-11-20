@@ -163,11 +163,11 @@ export const tokenMetadata = {
 }
 
 export const marketColumns = [
-  { id: 'time', label: 'TIME', minWidth: 75 },
+  { id: 'time', label: 'TIME', minWidth: 50 },
   {
     id: 'input',
     label: 'INPUT',
-    minWidth: 125,
+    minWidth: 100,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
@@ -188,7 +188,7 @@ export const marketColumns = [
   {
     id: 'tx',
     label: 'TRANSACTION',
-    minWidth: 100,
+    minWidth: 75,
     align: 'center'
   }
 ]

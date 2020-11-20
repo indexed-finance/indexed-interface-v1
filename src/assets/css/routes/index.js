@@ -65,7 +65,6 @@ const setStyle = (theme) => ({
     color: theme.palette.secondary.main,
     '& p': {
       fontSize: 14,
-      marginLeft: 12.5
     },
     '& p span': {
       float: 'right',
@@ -95,7 +94,7 @@ const mapping = {
     marginRight: 50,
     chart: {
       height: 'calc(55vh - 40px)',
-      width: '63vw'
+      width: '62.875vw'
     },
     border: {
       borderTop: 'none',
