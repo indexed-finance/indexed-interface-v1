@@ -99,59 +99,57 @@ const options = (padding) => ({
   },
 })
 
+
+const getConfig = (canvas, metadata, color) => {
+  const ctx = canvas.getContext("2d")
+  var gradient = ctx.createLinearGradient(0,337.5,0, 25)
+  let length = metadata.history.length
+  let array = metadata.history
+  let rgb = hexToRgb(color)
+
+  gradient.addColorStop(1, `rgba(${rgb}, .5)`)
+  gradient.addColorStop(0.7, `rgba(${rgb}, 0.25)`)
+  gradient.addColorStop(0.6, `rgba(${rgb}, 0.125)`)
+  gradient.addColorStop(0.5, `rgba(${rgb}, 0.075)`)
+  gradient.addColorStop(0.25, `rgba(${rgb}, 0)`)
+
+  let data = renameKeys(
+    { close: 'y', date: 'x' }, array.slice(length-11, length)
+  )
+
+  return {
+    datasets: [
+    {
+      backgroundColor: gradient,
+      fill: true,
+      borderWidth: 3,
+      borderColor: color,
+      pointHoverBorderWidth: 15,
+      pointRadius: 4,
+      data: data
+      }
+    ]
+  }
+}
+
 export default function Spline(props){
   let { metadata, height, color, padding, ready, absolute, native } = props
   const [ component, setComponent ] = useState(null)
+  const [ config, setConfig ] = useState(null)
   const theme = useTheme()
-
-  const getConfig = (canvas) => {
-    const ctx = canvas.getContext("2d")
-    var gradient = ctx.createLinearGradient(0,337.5,0, 25)
-    let length = metadata.history.length
-    let array = metadata.history
-    let rgb = hexToRgb(color)
-
-    gradient.addColorStop(1, `rgba(${rgb}, .5)`)
-    gradient.addColorStop(0.7, `rgba(${rgb}, 0.25)`)
-    gradient.addColorStop(0.6, `rgba(${rgb}, 0.125)`)
-    gradient.addColorStop(0.5, `rgba(${rgb}, 0.075)`)
-    gradient.addColorStop(0.25, `rgba(${rgb}, 0)`)
-
-    let data = renameKeys(
-      { close: 'y', date: 'x' }, array.slice(length-11, length)
-    )
-
-    return {
-      datasets: [
-      {
-        backgroundColor: gradient,
-        fill: true,
-        borderWidth: 3,
-        borderColor: color,
-        pointHoverBorderWidth: 15,
-        pointRadius: 4,
-        data: data
-        }
-      ]
-    }
-  }
-
   let { p, h, width } = style.getFormatting(native)
 
-  if(absolute){
-    if(!ready) padding = p
 
-    return(
-      <div style={{'z-index': 1, float: 'left', width, paddingTop: padding , position: 'absolute', overflow: 'hidden'}}>
-        {ready && (<Line height={height} options={options(0)} data={getConfig} />)}
-        {!ready && (<Loader native={native} padding={p} height={h} theme={theme} />)}
-      </div>
-    )
-  } else if(!absolute) {
-    let paddingTop = 30
-    p = -20
+  useEffect(() => {
+    console.log('SPLINE: MOUNT')
+  }, [])
 
-    if(!ready) return (<div style={{ marginBottom: p, paddingTop }}> <Loader height={h} theme={theme} /> </div>)
-    else return <Line height={height} options={options(padding)} data={getConfig} />
-  }
+  if(!ready) padding = p
+
+  return(
+    <div style={{'z-index': 1, float: 'left', width, paddingTop: padding , position: 'absolute', overflow: 'hidden'}}>
+      {metadata.address == '0x0000000000000000000000000000000000000000' && (<Loader native={native} padding={p} height={h} theme={theme} />)}
+      {metadata.address != '0x0000000000000000000000000000000000000000' && (<Line height={height} options={options(0)} data={(e) => getConfig(e, metadata, color)} />)}
+    </div>
+  )
 }

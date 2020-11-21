@@ -49,6 +49,21 @@ const desktop = {
    width: '30%'
 }
 
+const Wrapper = styled(Paper)({
+  borderLeft: '5px solid #666666',
+  borderRight: '3px solid #666666',
+  borderTop: '3px solid #666666',
+  borderBottom: '3px solid #666666',
+  borderTopLeftRadius: 200,
+  borderBottomLeftRadius: 200,
+  borderTopRightRadius: 10,
+  borderBottomRightRadius: 10,
+  width: '45%',
+  boxShadow: 'none',
+  position: 'relative',
+  float: 'right',
+})
+
 export default function Markets(){
   const [ market, setMarket ] = useState(dummy)
   const [ pie, setPie ] = useState(<Fragment />)
@@ -58,22 +73,6 @@ export default function Markets(){
 
   let { state, dispatch } = useContext(store)
   let { request, native } = state
-
-  const Wrapper = styled(Paper)({
-    background: theme.palette.primary.main,
-    borderLeft: '5px solid #666666',
-    borderRight: '3px solid #666666',
-    borderTop: '3px solid #666666',
-    borderBottom: '3px solid #666666',
-    borderTopLeftRadius: 200,
-    borderBottomLeftRadius: 200,
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-    width: '45%',
-    boxShadow: 'none',
-    position: 'relative',
-    float: 'right',
-  })
 
   const changeMarket = (m) => {
     let { active, address} = state.indexes[m]
@@ -105,12 +104,18 @@ export default function Markets(){
       ){
       let keys = Object.keys(state.indexes)
 
+      console.log('SET MARKET')
+
       setMarket(state.indexes[keys[0]])
     }
   }, [ state.indexes ])
 
   useEffect(() => {
+    console.log('ROOT: MOUNT')
+
     if(!state.load){
+      console.log('REQUEST: INIT')
+
       dispatch({
         type: 'LOAD', payload: true
       })
@@ -122,13 +127,15 @@ export default function Markets(){
     resolution, top, margin, height, pre, pre2, paddingLeft, width
   } = style.getFormatting({ request, native, active })
 
+  console.log(height)
+
   return (
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item xs={12} md={12} lg={12} xl={12}>
           <div style={{ height: pre2 }}>
           <Canvas native={native}>
-            <Spline absolute ready={request} native={native} height={height} color='#66FFFF' metadata={market} padding={top} />
+            <Spline ready={request} native={native} height={height} color='#66FFFF' metadata={market} padding={top} />
             <div className={classes.market} style={{ paddingLeft }}>
               {!native && (
                  <Fragment>
@@ -145,7 +152,7 @@ export default function Markets(){
                 </Fragment>
               )}
             </div>
-            <Wrapper>
+            <Wrapper style={{ background: theme.palette.primary.main }}>
               {!native && (
                 <ul className={classes.options} style={{ width: pre }}>
                   <li>ADDRESS:

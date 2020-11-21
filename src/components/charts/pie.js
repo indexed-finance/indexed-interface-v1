@@ -60,7 +60,7 @@ const options  = padding => ({
 
 export default function PieChart({ metadata, height, ready, native }){
   const [ component, setComponent ] = useState({ element: <span/>, data: dummy })
-  const [ config, setConfig ] = useState({})
+  const [ config, setConfig ] = useState(null)
   const theme = useTheme()
 
   let colors = [ '#009999', '#00CCCC','#33FFFF', '#99FFFF', `${theme.palette.primary.main}`]
@@ -111,33 +111,16 @@ export default function PieChart({ metadata, height, ready, native }){
   	}]
   })
 
-  useEffect(() => {
-    let configuration = chartConfig(metadata, border)
-
-    if(configuration != config
-      && metadata.address != "0x0000000000000000000000000000000000000000"){
-      setConfig(configuration)
-    }
-  }, [ metadata ])
-
-  useEffect(() => {
-    let configuration = chartConfig(metadata, border)
-
-    if(ready
-      && metadata.address == "0x0000000000000000000000000000000000000000"){
-      setConfig(configuration)
-    }
-  }, [ ready ])
 
 
   let { padding, border } = style.getFormatting(native)
 
   return <>
-    {metadata.address == "0x0000000000000000000000000000000000000000" && (
-      <Loader padding={padding} theme={theme} height={height} />
-    )}
-    {metadata.address != "0x0000000000000000000000000000000000000000" && (
-      <Pie height={height} width={height} options={options(padding)} data={config} />
-    )}
-  </>
+     {metadata.address == '0x0000000000000000000000000000000000000000' && (
+       <Loader padding={padding} theme={theme} height={height} />
+     )}
+     {metadata.address != '0x0000000000000000000000000000000000000000' && (
+       <Pie height={height} width={height} options={options(padding)} data={chartConfig(metadata, border)} />
+     )}
+   </>
 }

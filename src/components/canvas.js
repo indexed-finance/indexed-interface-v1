@@ -3,6 +3,12 @@ import React, { useEffect } from 'react'
 import { styled } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 
+const Wrapper = styled(Paper)({
+  borderRadius: 10,
+  overflow: 'auto',
+
+})
+
 export default function Canvas({ native, children, color, button, style, custom }){
 
   let margin = native ? '1em 1.5em .5em 1.5em' : '3em 3em .5em 3em'
@@ -13,14 +19,5 @@ export default function Canvas({ native, children, color, button, style, custom 
   if(!color) color = '#666666'
   if(custom) style.width = `calc(${style.width}px - ${custom})`
 
-  const Wrapper = styled(Paper)({
-    border: `3px solid ${color}`,
-    borderRadius: 10,
-    overflow: 'auto',
-    margin,
-    ...hover,
-    ...style
-  })
-
-  return <Wrapper> {children} </Wrapper>
+  return <Wrapper style={{ border: `3px solid ${color}`,  margin, ...hover, ...style }}> {children} </Wrapper>
 }
