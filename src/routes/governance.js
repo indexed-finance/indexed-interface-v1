@@ -69,7 +69,6 @@ const AddressInput = styled(Input)({
 })
 
 const ListWrapper = styled(List)({
-  height: 'calc(100vh - 475px)',
   flex: '1 1 auto',
   overflowY: 'scroll'
 })
@@ -271,7 +270,7 @@ export default function Governance(){
     setPhase(<Init />)
   }, [])
 
-  let { height, margin, width, wallet, paddingLeft } = style.getFormatting({ native: state.native })
+  let { height, margin, width, wallet, paddingLeft, tableHeight } = style.getFormatting({ native: state.native })
 
   return (
     <Fragment>
@@ -310,8 +309,8 @@ export default function Governance(){
           </Grid>
         </Grid>
         <Grid item xs={12} md={12} lg={12} xl={12} className={classes.root}>
-          <Container margin={margin} padding="1em 0em" title='PROPOSALS'>
-           <div className={classes.proposals}>
+          <Container margin={margin} padding="1em 0em" title='PROPOSALS' >
+           <div className={classes.proposals} style={{ height: tableHeight }}>
             <ListWrapper dense style={{ width }}>
               {proposals.map((p, index) => {
                 let f = () => history.push(`/proposal/${p.id.toLowerCase()}`)

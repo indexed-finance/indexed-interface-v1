@@ -6,8 +6,6 @@ import {
 const setStyle = (theme) => ({
   proposals: {
    backgroundColor: theme.palette.background.paper,
-   maxHeight: 'calc(40vh - 150px)',
-   minHeight: 100,
    overflow: 'scroll'
  },
  root: {
@@ -63,10 +61,6 @@ const setStyle = (theme) => ({
     marginLeft: 10,
     marginTop: 3.75
   },
-  pie: {
-    width: 350,
-    padding: 25,
-  },
   two: {
     float: 'right',
     width: 10,
@@ -97,60 +91,69 @@ const mapping = {
     paddingLeft: '36.75%',
     margin: '3em 3em',
     height: 110,
-    width: '100%'
+    width: '100%',
+    tableHeight: 'calc(40vh - 100px)'
   },
   [DESKTOP_NORMAL]: {
     wallet: 'calc(200px + 5rem)',
     paddingLeft: '40%',
     margin: '3em 3em',
     height: 110,
-    width: '100%'
+    width: '100%',
+    tableHeight: 'calc(50vh - 167.5px)'
   },
   [DESKTOP_LARGE]: {
     wallet: 'calc(267.5px + 5rem)',
     paddingLeft: '42.5%',
     margin: '3em 3em',
     height: 110,
-    width: '100%'
+    width: '100%',
+    tableHeight: 'calc(50vh - 167.5px)'
   },
   [DESKTOP_WIDE]: {
     wallet: 'calc(225px + 5rem)',
     paddingLeft: '27.5%',
     margin: '3em 3em',
     height: 110,
-    width: '100%'
+    width: '100%',
+    tableHeight: 'calc(35vh - 167.5px)'
   },
   [DESKTOP_HUGE]: {
     wallet: 'calc(225px + 5rem)',
     paddingLeft: '20.5%',
     margin: '3em 3em',
     height: 110,
-    width: '100%'
+    width: '100%',
+    tableHeight: 'calc(35vh - 150px)'
   },
   [DESKTOP_MASSIVE]: {
     wallet: 'calc(262.5px + 5rem)',
     paddingLeft: '20.5%',
     margin: '3em 3em',
     height: 110,
-    width: '100%'
+    width: '100%',
+    tableHeight: 'calc(20vh - 150px)'
   },
   [NATIVE_SMALL]: {
     wallet: 'auto',
     margin: '3em 1.5em',
     height: 200,
-    width: 1000
+    width: 1000,
+    tableHeight: 300
   },
   [NATIVE_NORMAL]: {
     wallet: 'auto',
     margin: '3em 1.5em',
     height: 200,
-    width: 1000
+    width: 1000,
+    tableHeight: 300
   },
   [NATIVE_WIDE]: {
     wallet: 'auto',
     margin: '3em 1.5em',
     height: 200,
-    width: 1000
+    width: 1000,
+    tableHeight: 300
   }
 }
 

@@ -44,9 +44,37 @@ const NDX = '0x2342084baced2081093de5729de81fcb9de77ca6'
 
 const useStyles = getStyles(style)
 
+
+function Blockie({ address, id, width, border }) {
+  let classes = useStyles()
+
+  useEffect(() => {
+    let element = document.getElementById(id)
+    let parsed =  parseInt(address.slice(2, 10), 16)
+    let blockie = jazzicon(width, parsed)
+
+    blockie.style.float = 'left'
+    blockie.style.borderRadius = '50px'
+    blockie.style.border = `${border} solid #666666`
+
+    element.appendChild(blockie)
+  }, [])
+
+  return(
+    <div className={classes.profile}>
+      <a target='_blank' href={`https://etherscan.io/address/${address}`}>
+        <div id={id} />
+      </a>
+    </div>
+  )
+}
+
 const dummy = { title: null, description: null, votes: [], for: 0, against: 0, state: 0, action: null, expiry: 0, proposer: '0x0000000000000000000000000000000000000000', targets: [], calldatas: [], signatures: [] }
 
 export default function Proposal(){
+  const [ component, setComponent ] = useState({ blockie: null, list: null })
+  const [ isTransaction, setTransaction ] = useState(false)
+
   let { state, dispatch } = useContext(store)
   let { id } = useParams()
   let { native } = state
@@ -63,7 +91,7 @@ export default function Proposal(){
 
     if(weight > 0) {
       weight = ((parseFloat(amount) / weight) * 100).toFixed(2)
-    } else {
+    } else if (weight != 0){
       weight = 100
     }
 
@@ -83,6 +111,7 @@ export default function Proposal(){
         if(conf == 0){
           if(receipt.status == 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash))
+            setTransaction(true)
           } else {
             dispatch(TX_REVERTED(receipt.transactionHash))
           }
@@ -91,29 +120,31 @@ export default function Proposal(){
     } catch(e) {}
   }
 
-  function Blockie({ address, id, width, border }) {
-    let classes = useStyles()
-
-    useEffect(() => {
-      let element = document.getElementById(id)
-      let parsed =  parseInt(address.slice(2, 10), 16)
-      let blockie = jazzicon(width, parsed)
-
-      blockie.style.float = 'left'
-      blockie.style.borderRadius = '50px'
-      blockie.style.border = `${border} solid #666666`
-
-      element.appendChild(blockie)
-    }, [])
-
+  function Votes({ logs }) {
     return(
-      <div className={classes.profile}>
-        <a target='_blank' href={`https://etherscan.io/address/${address}`}>
-          <div id={id} />
-        </a>
-      </div>
+      <Fragment>
+        {logs.map((value, i) => {
+         let { id, voter, option, weight } = value
+         const color = option ? '#00e79a' : '#ff005a'
+         const label = option ? 'FOR' : 'AGAINST'
+
+         return (
+           <ListItem key={value.address} button style={{ zIndex: 1}}>
+             <ListItemAvatar>
+               <Blockie border='3px' width={35} id={voter} address={voter} />
+             </ListItemAvatar>
+              <ListItemText
+                primary={`${voter.substring(0, 6)}...${voter.substring(38, 64)}`}
+                secondary={<b style={{ color }}>{label}</b>}
+              />
+              <ListItemSecondaryAction />
+           </ListItem>
+          )
+        })}
+      </Fragment>
     )
   }
+
 
   useEffect(() => {
     const getAccountMetadata = async() => {
@@ -140,12 +171,17 @@ export default function Proposal(){
     const retrieveProposal = async() => {
       let proposal = await getProposal(id)
 
+      setComponent({
+        blockie: <Blockie border='5px' width={radius} id='blockie' address={proposal.proposer} />,
+        list: <Votes logs={proposal.votes} />
+      })
+
       setMetadata(proposal)
     }
     retrieveProposal()
-  }, [])
+  }, [ , isTransaction ])
 
-  let { margin, width, paddingLeft, progress, radius, marginTop } = style.getFormatting({ native })
+  let { margin, marginX, width, paddingLeft, progress, radius, marginTop } = style.getFormatting({ native })
 
   let forVotes = formatBalance(new BigNumber(metadata.for), 18, 2)
   let againstVotes = formatBalance(new BigNumber(metadata.against), 18, 2)
@@ -158,8 +194,8 @@ export default function Proposal(){
           <Grid item xs={12} md={8} lg={8} xl={8}>
             <Canvas native={state.native}>
               <div className={classes.proposal}>
-                <div className={classes.header} style={{ paddingLeft }}>
-                  <Blockie border='5px' width={radius} id='blockie' address={metadata.proposer} />
+                <div className={classes.header}>
+                  {component.blockie}
                   <div className={classes.title} style={{ width }}>
                     <div className={classes.lozenge}>
                       <div id={proposalState[metadata.state]}>
@@ -174,7 +210,7 @@ export default function Proposal(){
                     )}
                   </div>
                   {state.native && (
-                    <div className={classes.author}>
+                    <div className={classes.author} style={{ marginTop }}>
                       <p>{metadata.proposer.substring(0, 4)}...{metadata.proposer.substring(38, 64)} </p>
                       <p>{metadata.expiry} </p>
                     </div>
@@ -218,30 +254,13 @@ export default function Proposal(){
                 </ButtonPrimary>
               </div>
             </Canvas>
-            <Canvas native={state.native} style={{ position: 'relative', zIndex: -1, marginTop }}>
+            <Container margin={marginX} title='VOTES' padding='1em 0em'>
               <div className={classes.log}>
                 <List dense classes={classes.table}>
-                  {metadata.votes.map((value, i) => {
-                     let { id, voter, option, weight } = value
-                     const color = option ? '#00e79a' : '#ff005a'
-                     const label = option ? 'FOR' : 'AGAINST'
-
-                     return (
-                       <ListItem key={value.address} button style={{ zIndex: 1}}>
-                         <ListItemAvatar>
-                           <Blockie border='3px' width={35} id={voter} address={voter} />
-                         </ListItemAvatar>
-                          <ListItemText
-                            primary={`${voter.substring(0, 6)}...${voter.substring(38, 64)}`}
-                            secondary={<b style={{ color }}>{label}</b>}
-                          />
-                          <ListItemSecondaryAction />
-                       </ListItem>
-                      )
-                    })}
+                  {component.list}
                 </List>
               </div>
-            </Canvas>
+            </Container>
           </div>
         </Grid>
       </Grid>

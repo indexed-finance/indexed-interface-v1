@@ -98,6 +98,10 @@ const setStyle = (theme) => ({
       marginTop: 5
     }
   },
+  author: {
+    color: '#645eff',
+    marginTop: 5
+  },
   vote: {
     width: 150,
     float: 'left',
@@ -147,15 +151,16 @@ const setStyle = (theme) => ({
 
 const mapping = {
   [DESKTOP_SMALL]: {
-    margin:'-12.5em 3em 3em 3em',
+    margin:'-21em 3em 3em 3em',
+    marginX:'3em 3em 3em 3em',
     width: 'auto',
     progress: 325,
     radius: 67.5,
-    marginTop: -25,
     paddingLeft: 30
   },
   [DESKTOP_NORMAL]: {
-    margin:'-12.5em 3em 3em 3em',
+    margin:'-21.5em 3em 3em 3em',
+    marginX:'3em 3em 3em 3em',
     width: 'auto',
     progress: 325,
     radius: 67.5,
@@ -163,7 +168,8 @@ const mapping = {
     paddingLeft: 30
   },
   [DESKTOP_LARGE]: {
-    margin:'-12.5em 3em',
+    margin:'-21em 3em',
+    marginX:'3em 3em 3em 3em',
     width: 'auto',
     progress: 325,
     radius: 67.5,
@@ -171,7 +177,8 @@ const mapping = {
     paddingLeft: 30
   },
   [DESKTOP_WIDE]: {
-    margin:'-12.5em 3em 3em 3em',
+    margin:'-21em 3em 3em 3em',
+    marginX:'3em 3em 3em 3em',
     width: 'auto',
     progress: 325,
     radius: 67.5,
@@ -180,6 +187,7 @@ const mapping = {
   },
   [DESKTOP_HUGE]: {
     margin:'-12.5em 3em 3em 3em',
+    marginX:'3em 3em 3em 3em',
     width: 'auto',
     progress: 325,
     radius: 67.5,
@@ -187,7 +195,8 @@ const mapping = {
     paddingLeft: 30
   },
   [DESKTOP_MASSIVE]: {
-    margin:'-12.5em 3em 3em 3em',
+    margin:'-21em 3em 3em 3em',
+    marginX:'3em 3em 3em 3em',
     width: 'auto',
     progress: 325,
     radius: 67.5,
@@ -195,25 +204,28 @@ const mapping = {
     paddingLeft: 30
   },
   [NATIVE_SMALL]: {
-    margin: '1.5em 1.5em',
+    margin: '1em 1.5em',
     width: '55%',
+    marginX:'2em 1.5em 1.5em 1.5em',
     progress: 150,
     radius: 60,
-    marginTop: -20,
+    marginTop: -75,
     paddingLeft: 22.5
   },
   [NATIVE_NORMAL]: {
-    margin: '1.5em 1.5em',
+    margin: '1em 1.5em',
     width: '65%',
     progress: 250,
+    marginX:'2em 1.5em 1.5em 1.5em',
     radius: 60,
     marginTop: -15,
     paddingLeft: 22.5
   },
   [NATIVE_WIDE]: {
-    margin: '1.5em 1.5em',
+    margin: '1em 1.5em',
     width: '65%',
     progress: 250,
+    marginX:'2em 1.5em 1.5em 1.5em',
     radius: 60,
     marginTop: -15,
     paddingLeft: 22.5
