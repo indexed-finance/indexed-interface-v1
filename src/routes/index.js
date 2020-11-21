@@ -199,7 +199,11 @@ export default function Index(){
                 <h3 className={classes.title}> {metadata.name} [{metadata.symbol}]</h3>
               </li>
               <li style={{ float: 'left', marginRight }}>
-                <h4 className={classes.price}> ${metadata.price} <span className={classes.delta}>({metadata.delta})</span></h4>
+                <h4 className={classes.price}> ${metadata.price}
+                  <span style={{ color: metadata.delta > 0 ? '#00e79a': '#00e79a '}}>
+                  &nbsp;({metadata.delta > 0 ? '+' : '-'}{metadata.delta}%)
+                  </span>
+                </h4>
               </li>
               {showVolume && (
                 <li style={{ float: 'right'}}>

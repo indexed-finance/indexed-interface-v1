@@ -62,8 +62,19 @@ export default function StickyHeadTable({ width, height, action, data, columns, 
 
               return (
                 <Row key={i} hover tabIndex={-1} key={row.code} onClick={f}>
-                  {columns.map((column) => {
+                  {columns.map((column, i) => {
                     const value = row[column.id];
+                    const isMarket = value == 'BUY' || value == 'SELL'
+                    const isIndex = value == 'MINT' || value == 'BURN'
+                    let color
+
+                    if(isMarket){
+                      if(value === 'BUY') color = '#00e79a'
+                      else color = '#ff005a'
+                    } else if(isIndex) {
+                      if(value === 'MINT') color = '#00e79a'
+                      else color = '#ff005a'
+                    }
 
                     if(column.id === 'action') {
                       let Action = action
@@ -75,7 +86,7 @@ export default function StickyHeadTable({ width, height, action, data, columns, 
                       )
                     } else {
                       return (
-                        <TableCell key={column.id} align={column.align}>
+                        <TableCell style={{ color }} key={column.id} align={column.align}>
                           {column.format && typeof value === 'number' ? column.format(value) : value}
                         </TableCell>
                       )

@@ -61,7 +61,7 @@ export async function getEvents(web3, poolAddress) {
     let amount = (parseFloat(value)/Math.pow(10,18)).toLocaleString({ minimumFractionDigits:  3 })
 
     events.push(
-      { blockNumber, event: `MINT ${amount} ${symbol}`, tx: hash(shortenHash(transactionHash), transactionHash) },
+      { blockNumber, type: 'MINT', event: `${amount} ${symbol}`, tx: hash(shortenHash(transactionHash), transactionHash) },
     )
   })
   let burns = contract.events.Transfer({
@@ -76,7 +76,7 @@ export async function getEvents(web3, poolAddress) {
     let amount = (parseFloat(value)/Math.pow(10,18)).toLocaleString({ minimumFractionDigits:  3 })
 
     events.push(
-      { blockNumber, event: `BURN ${amount} ${symbol}`, tx: hash(shortenHash(transactionHash), transactionHash) },
+      { blockNumber, type: 'BURN', event: `${amount} ${symbol}`, tx: hash(shortenHash(transactionHash), transactionHash) },
     )
   })
 

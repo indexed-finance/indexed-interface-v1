@@ -104,7 +104,7 @@ const setStyle = (theme) => ({
 
 const mapping = {
   [DESKTOP_SMALL]: {
-    active: '-21.5em 0em 3em 3em',
+    active: '-22.5em 0em 3em 3em',
     inactive: '-27em 0em 3em 3em',
     margin: '3em 3em',
     percent: '6.75%',
@@ -115,7 +115,7 @@ const mapping = {
     fullChart: 87.5,
     halfChart: 43.75,
     fontSize: 'inherit',
-    balanceHeight: 'auto'
+    balanceHeight: 125
   },
   [DESKTOP_NORMAL]: {
     active: '-18.75em 0em 3em 3em',
@@ -130,7 +130,7 @@ const mapping = {
     paddingRight: 37.5,
     fontSize: 'inherit',
     targetHeight: 100,
-    balanceHeight: 'auto'
+    balanceHeight: 125
   },
   [DESKTOP_LARGE]: {
     active: '-17.875em 0em 3em 3em',
@@ -145,10 +145,10 @@ const mapping = {
     fontSize: 'inherit',
     paddingRight: 37.5,
     targetHeight: 100,
-    balanceHeight: 'auto'
+    balanceHeight: 137.5
   },
   [DESKTOP_WIDE]: {
-    active: '-19.5em 0em 3em 3em',
+    active: '-20em 0em 3em 3em',
     inactive: '-39.25em 0em 3em 3em',
     margin: '3em 3em',
     width: '100%',
@@ -160,7 +160,7 @@ const mapping = {
     paddingRight: 37.5,
     fontSize: 'inherit',
     targetHeight: 100,
-    balanceHeight: 'auto'
+    balanceHeight: 125
   },
   [DESKTOP_HUGE]: {
     active: '-20.75em 0em 3em 3em',
@@ -175,10 +175,10 @@ const mapping = {
     halfChart: 37.5,
     fontSize: 'inherit',
     targetHeight: 100,
-    balanceHeight: 'auto'
+    balanceHeight: 125
   },
   [DESKTOP_MASSIVE]: {
-    active: '-18em 0em 3em 3em',
+    active: '-18.5em 0em 3em 3em',
     inactive: '-35.75em 0em 3em 3em',
     margin: '3em 3em',
     width: '100%',
@@ -190,7 +190,7 @@ const mapping = {
     halfChart: 37.5,
     fontSize: 'inherit',
     targetHeight: 100,
-    balanceHeight: 'auto'
+    balanceHeight: 125
   },
   [NATIVE_SMALL]: {
     marginX: '.5em 1.5em',

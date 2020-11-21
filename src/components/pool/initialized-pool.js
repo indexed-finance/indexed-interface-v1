@@ -135,7 +135,7 @@ function InitializedPoolPage({ address, metadata }){
   }, [ state.web3.injected ])
 
   let {
-    marginX, margin, width, padding, chartHeight, fontSize, percent, balanceHeight
+    marginX, margin, width, padding, chartHeight, fontSize, percent, balanceHeight, paddingRight
   } = style.getFormatting({ native, request, active: true })
 
   let { name, symbol } = metadata;
@@ -180,6 +180,7 @@ function InitializedPoolPage({ address, metadata }){
                 <Spline
                   ready={state.request}
                   padding={padding}
+                  absolute={false}
                   native={native}
                   color='#ffa500'
                   metadata={{ history: metadata.liquidity }}
@@ -189,7 +190,7 @@ function InitializedPoolPage({ address, metadata }){
               <div className={classes.stats} style={{ fontSize }}>
                 <ul>
                   <Fragment>
-                    <li> MARKETCAP: ${metadata.marketcap.toLocaleString()} </li>
+                    <li style={{ paddingRight }}> MARKETCAP: ${metadata.marketcap.toLocaleString()} </li>
                     <li> VOLUME: ${metadata.volume.toLocaleString()} </li>
                   </Fragment>
                 </ul>

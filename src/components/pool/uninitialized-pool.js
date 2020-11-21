@@ -4,7 +4,7 @@ import ParentSize from '@vx/responsive/lib/components/ParentSize'
 import Alert from '@material-ui/lab/Alert';
 
 import ExplainCredit from './explain-credit';
-import Canvas from '../canvas-x'
+import Canvas from '../canvas'
 import Container from '../container'
 import Spline from '../charts/spline'
 import InitializerForm from './initializer-form';

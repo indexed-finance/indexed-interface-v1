@@ -141,7 +141,10 @@ export default function Spline(props){
   useEffect(() => {
     if(metadata.address != '0x0000000000000000000000000000000000000000'){
       setComponent(
-        <Line height={height} options={options(0)} data={(e) => getConfig(e, metadata, color)} redraw />
+        <Line
+          height={height} options={options(!absolute ? 0 : padding)}
+          data={(e) => getConfig(e, metadata, color)} redraw
+        />
       )
     }
   }, [ metadata ])
@@ -156,8 +159,8 @@ export default function Spline(props){
     )}
     {!absolute && (
       <>
-        {!ready && (<Loader native={native} padding={p} height={h} theme={theme} />)}
-        {component}
+        {!ready && (<div style={{ marginBottom: -20, paddingTop:30}}> <Loader native={native} padding={p} height={h} theme={theme} /> </div>)}
+        {ready && (<> {component} </>)}
       </>
     )}
     </>
