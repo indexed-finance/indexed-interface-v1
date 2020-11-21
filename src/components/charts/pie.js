@@ -111,8 +111,6 @@ export default function PieChart({ metadata, height, ready, native }){
   	}]
   })
 
-
-
   let { padding, border } = style.getFormatting(native)
 
   return <>

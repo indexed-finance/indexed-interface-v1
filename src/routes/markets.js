@@ -135,7 +135,7 @@ export default function Markets(){
         <Grid item xs={12} md={12} lg={12} xl={12}>
           <div style={{ height: pre2 }}>
           <Canvas native={native}>
-            <Spline ready={request} native={native} height={height} color='#66FFFF' metadata={market} padding={top} />
+            <Spline absolute={true} ready={request} native={native} height={height} color='#66FFFF' metadata={market} padding={top} />
             <div className={classes.market} style={{ paddingLeft }}>
               {!native && (
                  <Fragment>

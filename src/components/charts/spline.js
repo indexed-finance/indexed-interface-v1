@@ -135,21 +135,31 @@ const getConfig = (canvas, metadata, color) => {
 export default function Spline(props){
   let { metadata, height, color, padding, ready, absolute, native } = props
   const [ component, setComponent ] = useState(null)
-  const [ config, setConfig ] = useState(null)
   const theme = useTheme()
   let { p, h, width } = style.getFormatting(native)
 
-
   useEffect(() => {
-    console.log('SPLINE: MOUNT')
-  }, [])
-
-  if(!ready) padding = p
+    if(metadata.address != '0x0000000000000000000000000000000000000000'){
+      setComponent(
+        <Line height={height} options={options(0)} data={(e) => getConfig(e, metadata, color)} redraw />
+      )
+    }
+  }, [ metadata ])
 
   return(
-    <div style={{'z-index': 1, float: 'left', width, paddingTop: padding , position: 'absolute', overflow: 'hidden'}}>
-      {metadata.address == '0x0000000000000000000000000000000000000000' && (<Loader native={native} padding={p} height={h} theme={theme} />)}
-      {metadata.address != '0x0000000000000000000000000000000000000000' && (<Line height={height} options={options(0)} data={(e) => getConfig(e, metadata, color)} />)}
-    </div>
+    <>
+    {absolute && (
+      <div style={{'z-index': 1, float: 'left', width, paddingTop: !ready ? p : padding , position: 'absolute', overflow: 'hidden'}}>
+        {!ready && (<Loader native={native} padding={p} height={h} theme={theme} />)}
+        {component}
+      </div>
+    )}
+    {!absolute && (
+      <>
+        {!ready && (<Loader native={native} padding={p} height={h} theme={theme} />)}
+        {component}
+      </>
+    )}
+    </>
   )
 }

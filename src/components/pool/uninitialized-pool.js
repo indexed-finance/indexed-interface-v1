@@ -4,7 +4,7 @@ import ParentSize from '@vx/responsive/lib/components/ParentSize'
 import Alert from '@material-ui/lab/Alert';
 
 import ExplainCredit from './explain-credit';
-import Canvas from '../canvas'
+import Canvas from '../canvas-x'
 import Container from '../container'
 import Spline from '../charts/spline'
 import InitializerForm from './initializer-form';
@@ -107,7 +107,7 @@ function UninitializedPoolPage({ address, metadata }) {
               <MetaDisplay />
             </div>
             <div className={classes.chart}>
-              <Spline ready={true} padding={padding} native={native} color='#ffa500' metadata={metadata} height={chartHeight} />
+              <Spline absolute={false} ready={true} padding={padding} native={native} color='#ffa500' metadata={metadata} height={chartHeight} />
             </div>
             <div className={classes.stats} style={{ fontSize }}>
               <ul>
