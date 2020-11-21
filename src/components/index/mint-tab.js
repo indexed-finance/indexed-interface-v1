@@ -83,6 +83,7 @@ export default function Mint({ market, metadata }) {
           }
           InputProps={{ endAdornment: market }}
         />
+        <Slippage setSlippage={setSlippage} slippage={mintState.slippage} />
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} style={{ width: '100%'}}>
         <div className={classes.demo}>
@@ -94,9 +95,6 @@ export default function Mint({ market, metadata }) {
             tokens={mintState.tokens}
           />
         </div>
-      </Grid>
-      <Grid item xs={12} md={12} lg={12} xl={12}>
-        <Slippage setSlippage={setSlippage} slippage={mintState.slippage} />
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
         <ButtonPrimary onClick={mint} disabled={!mintState.ready} margin={{ marginTop: 7.5 }}>
