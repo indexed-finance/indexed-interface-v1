@@ -229,14 +229,14 @@ export default function Governance(){
           <AddressInput onChange={handleInput} value={input} variant="outlined" label='ADDRESS'/>
         </Grid>
         <Grid item>
-          <ButtonPrimary onClick={submit} margin={{ marginTop: 0, marginLeft: 25, float: 'right' }}> DELEGATE </ButtonPrimary>
+          <ButtonPrimary onClick={submit} margin={{ marginTop: !state.native ? 0 : 5, marginLeft: 25, float: 'right' }}> DELEGATE </ButtonPrimary>
           {show && (
             <Link to='/propose'>
-              <ButtonSecondary style={{ margin: 0, float:'left' }}> CREATE PROPOSAL </ButtonSecondary>
+              <ButtonSecondary style={{ margin: 0, marginTop: !state.native ? 0 : 12.5, float:'left' }}> CREATE PROPOSAL </ButtonSecondary>
             </Link>
           )}
           {!show && (
-            <ButtonPrimary onClick={goBack} style={{ margin: 0, float:'left' }}> GO BACK </ButtonPrimary>
+            <ButtonPrimary onClick={goBack} style={{ margin: 0, marginTop: !state.native ? 0 : 12.5,  float:'left' }}> GO BACK </ButtonPrimary>
           )}
         </Grid>
       </Fragment>

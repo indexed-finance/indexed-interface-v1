@@ -21,6 +21,9 @@ const Row = styled(TableRow)({
   '& .Mui-selected': {
     backgroundColor: 'rgba(102,	255, 255) !important',
     backgroundOpacity: 1
+  },
+  '&:hover': {
+    backgroundOpacity: '0.875 !important'
   }
 })
 

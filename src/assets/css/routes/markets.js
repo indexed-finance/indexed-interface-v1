@@ -49,7 +49,8 @@ const mapping = {
     pre2: 287.5,
     resolution: 200,
     width: '40%',
-    height: '43.75%'
+    height: '43.75%',
+    marginTop: 15
   },
   [DESKTOP_NORMAL]: {
     top: 'calc(120px - .25vh)',
@@ -58,7 +59,8 @@ const mapping = {
     paddingLeft: 25,
     resolution: 200,
     width: '40%',
-    height: '43.75%'
+    height: '43.75%',
+    marginTop: 60
   },
   [DESKTOP_LARGE]: {
     top: 'calc(125px - .2375vh)',
@@ -67,7 +69,8 @@ const mapping = {
     pre2: 387.5,
     resolution: 200,
     width: '40%',
-    height: '48.75%'
+    height: '48.75%',
+    marginTop: 120
   },
   [DESKTOP_WIDE]: {
     top: 'calc(165px - .5vh)',
@@ -76,7 +79,8 @@ const mapping = {
     pre2: 350,
     resolution: 200,
     width: '40%',
-    height: '37.5%'
+    height: '37.5%',
+    marginTop: 80
   },
   [DESKTOP_HUGE]: {
     top: 'calc(135px - .35vh)',
@@ -85,7 +89,8 @@ const mapping = {
     pre2: 350,
     resolution: 200,
     width: '40%',
-    height: '32.5%'
+    height: '32.5%',
+    marginTop: 75
   },
   [DESKTOP_MASSIVE]: {
     top: 'calc(150px - .35vh)',
@@ -94,7 +99,8 @@ const mapping = {
     pre2: 390,
     resolution: 200,
     width: '40%',
-    height: '32.5%'
+    height: '32.5%',
+    marginTop: 115
   },
   [NATIVE_SMALL]: {
     top: 'calc(100px + .05vh)',

@@ -121,7 +121,7 @@ export default function Proposal(){
 
       if(web3.injected) {
         let contract = toContract(web3.injected, Ndx.abi, NDX)
-        let balance = await contract.methods.balanceOf(state.account).call()
+        let balance = await contract.methods.getCurrentVotes(state.account).call()
         let amount = formatBalance(new BigNumber(balance), 18, 4)
 
         dispatch({ type: 'BALANCE',

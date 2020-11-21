@@ -17,8 +17,8 @@ const mapping = {
     border: 3,
     padding: {
       top: 5,
-      left: 25,
-      right: 25,
+      left: 30,
+      right: 30,
       bottom: 0
     }
   },
@@ -43,10 +43,10 @@ const mapping = {
   [DESKTOP_HUGE]: {
     border: 5,
     padding: {
-      top: 30,
-      left: 30,
-      right: 30,
-      bottom: 30
+      top: 35,
+      left: 35,
+      right: 35,
+      bottom: 35
     }
   },
   [DESKTOP_MASSIVE]: {

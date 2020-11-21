@@ -132,8 +132,8 @@ export default function VerticalTabs({ data }) {
 
   useEffect(() => {
     const getTrades = async() => {
-      if(Object.values(data).length > 0){
-        let pair = await getPair(state.web3.rinkeby, WETH, data.address)
+      if(Object.values(data).length > 0 && meta != dummy){
+        let pair = await getPair(state.web3.rinkeby, WETH, meta.address)
         let trades = await getMarketTrades(pair.options.address)
         let history = []
 
@@ -167,7 +167,7 @@ export default function VerticalTabs({ data }) {
       }
     }
     getTrades()
-  }, [ data ])
+  }, [ meta ])
 
   let { height, width } = style.getFormatting()
 

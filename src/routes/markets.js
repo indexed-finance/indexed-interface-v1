@@ -34,7 +34,7 @@ const dummy = {
 }
 
 const Trigger = styled(ButtonPrimary)({
-  marginTop: 25,
+  marginTop: 'auto',
   marginLeft: 'auto',
   float: 'right',
 })
@@ -124,7 +124,7 @@ export default function Markets(){
 
   let { active } = market
   let {
-    resolution, top, margin, height, pre, pre2, paddingLeft, width
+    resolution, top, margin, height, pre, pre2, paddingLeft, width, marginTop
   } = style.getFormatting({ request, native, active })
 
   console.log(height)
@@ -167,7 +167,7 @@ export default function Markets(){
             </div>
             <Wrapper style={{ background: theme.palette.primary.main }}>
               {!native && (
-                <ul className={classes.options} style={{ width: pre }}>
+                <ul className={classes.options} style={{ width: pre, paddingRight: 20 }}>
                   <li>ADDRESS:
                     <span>
                       <Copyable text={market.address} float='left'>
@@ -181,7 +181,9 @@ export default function Markets(){
                   <li>VOLUME: <span>${market.volume.toLocaleString()}</span></li>
                   <li>TVL: <span>${market.marketcap.toLocaleString()}</span></li>
                   <li>&nbsp;<span></span></li>
-                  <Trigger onClick={exploreMarket}> EXPAND </Trigger>
+                  <ButtonPrimary margin={{ marginTop }} onClick={exploreMarket}>
+                    EXPAND
+                  </ButtonPrimary>
                 </ul>
               )}
               <div className={classes.pie} style={{ width }}>
