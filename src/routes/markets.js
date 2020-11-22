@@ -11,6 +11,7 @@ import Container from '../components/container'
 import Spline from '../components/charts/spline'
 import Pie from '../components/charts/pie'
 import Canvas from '../components/canvas'
+import Banner from '../components/banner'
 import Table from '../components/table'
 import Loader from '../components/loader'
 import Copyable from '../components/copyable'
@@ -131,10 +132,11 @@ export default function Markets(){
 
   return (
     <Fragment>
+      <Banner />
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item xs={12} md={12} lg={12} xl={12}>
           <div style={{ height: pre2 }}>
-          <Canvas native={native}>
+          <Canvas native={native} style={{ margin: '4.25em 3em 1em 3em'}}>
             <Spline absolute={true} ready={request} native={native} height={height} color='#66FFFF' metadata={market} padding={top} />
             <div className={classes.market} style={{ paddingLeft }}>
               {!native && (

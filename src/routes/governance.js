@@ -297,8 +297,8 @@ export default function Governance(){
                 {!state.native && (
                   <div className={classes.legend} style={{ paddingLeft }}>
                     <ul>
-                      <li> {metadata.active} NDX<div className={classes.one}/> </li>
-                      <li> {metadata.inactive} NDX<div className={classes.two}/></li>
+                      <li> {metadata.inactive} NDX<div className={classes.one}/> </li>
+                      <li> {metadata.active} NDX<div className={classes.two}/></li>
                       <li> {metadata.delegated} NDX<div className={classes.three}/> </li>
                     </ul>
                   </div>
