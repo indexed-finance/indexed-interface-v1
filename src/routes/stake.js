@@ -10,7 +10,7 @@ import ParentSize from '@vx/responsive/lib/components/ParentSize'
 import IERC20 from '../assets/constants/abi/IERC20.json'
 
 import style from '../assets/css/routes/stake'
-import Canvas from '../components/canvas'
+import Card from '../components/card'
 import Container from '../components/container'
 import ButtonPrimary from '../components/buttons/primary'
 
@@ -117,7 +117,7 @@ export default function Stake() {
         return(
           <Grid item xs={10} md={6} style={{ width: '100%' }}>
             <Link className={classes.href} to={`/stake/${symbol.toLowerCase()}`}>
-              <Canvas button color={color}>
+              <Card color={color}>
                 <div className={classes.pool}>
                   <div className={classes.image}>
                     <img src={tokenMetadata[i[symbol][0]].image} style={{ width: mainWidth, marginRight }} />
@@ -149,7 +149,7 @@ export default function Stake() {
                     {label}
                   </ButtonPrimary>
                 </div>
-              </Canvas>
+              </Card>
             </Link>
           </Grid>
         )

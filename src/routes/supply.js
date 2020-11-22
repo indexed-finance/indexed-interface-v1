@@ -267,8 +267,8 @@ export default function Supply() {
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
     <Grid item xs={10} md={6}>
-      <div className={classes.top} style={{ marginTop: !state.native ? '3em' : '1em'}}>
-        <Canvas style={{ overflowX: 'hidden' }}>
+      <div className={classes.top} style={{ marginTop: !state.native ? '3em' : '0em'}}>
+        <Canvas native={state.native} style={{ overflowX: 'hidden' }}>
           <div className={classes.rewards} style={{ width: reward }}>
             <p> NDX EARNED </p>
             <div>
