@@ -177,7 +177,7 @@ export default function Index(){
             <ButtonGroup disableElevation variant='outlined'>
               <ButtonMarket style={styles.trade} className='trade' onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
               <ButtonMarket style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
-              <ButtonMarket style={styles.burn} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
+              <ButtonMarket style={styles.mint} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
             </ButtonGroup>
           </div>
         </Grid>

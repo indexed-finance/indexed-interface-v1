@@ -142,6 +142,9 @@ export default function Navigation({ mode }) {
             <MenuItem>LIGHT/DARK MODE</MenuItem>
           </Link>
         )}
+        <Link className={classes.href} to='/categories' onClick={handleClose}>
+          <MenuItem>CATEGORIES</MenuItem>
+        </Link>
         <Link className={classes.href} to='/governance' onClick={handleClose}>
           <MenuItem>GOVERNANCE</MenuItem>
         </Link>
@@ -165,6 +168,9 @@ export default function Navigation({ mode }) {
             <MenuItem>LIGHT/DARK MODE</MenuItem>
           </Link>
         )}
+        <Link className={classes.href} to='/categories' onClick={handleClose}>
+          <MenuItem>CATEGORIES</MenuItem>
+        </Link>
         <Link className={classes.href} to='/governance' onClick={handleClose}>
           <MenuItem>GOVERNANCE</MenuItem>
         </Link>
