@@ -73,3 +73,21 @@ export const screenClass = (native, width) => {
     else return NATIVE_WIDE
   }
 }
+
+export const getResolutionThresholds = () => {
+  if(window.innerWidth >= DESKTOP_HUGE) {
+    return [ -(window.innerWidth * 0.375), window.innerWidth ]
+  } else if(window.innerWidth >= DESKTOP_LARGE) {
+    return [ -(window.innerWidth * 0.875), window.innerWidth ]
+  } else if(window.innerWidth < DESKTOP_SMALL) {
+    if(window.innerWidth <= NATIVE_SMALL){
+      return [ -(window.innerWidth * 5), window.innerWidth ]
+    } else if(window.innerWidth <= NATIVE_NORMAL){
+      return [ -(window.innerWidth * 4.25), window.innerWidth ]
+    } else {
+      return [ -(window.innerWidth * 4.5), window.innerWidth ]
+    }
+  } else {
+    return [ -(window.innerWidth * 1.25), window.innerWidth ]
+  }
+}

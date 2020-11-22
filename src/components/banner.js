@@ -2,6 +2,7 @@ import React from 'react'
 
 import { motion } from 'framer-motion'
 
+import { getResolutionThresholds } from '../assets/constants/functions'
 import style from '../assets/css/components/banner'
 import getStyles from '../assets/css'
 
@@ -9,15 +10,16 @@ const useStyles = getStyles(style)
 
 export default function Banner({ metadata, native }) {
   const classes = useStyles()
+  const thresholds = getResolutionThresholds()
 
-  let { width, position, marginBlock } = style.getFormatting(native)
+  let { width, position, marginBlock, duration } = style.getFormatting(native)
 
   return(
     <div style={{ width, position }} className={classes.root} >
       <motion.div
-        initial={{ translateX: -1600 }}
-        animate={{ translateX: 1500 }}
-        transition={{ ease: 'linear', repeat: Infinity, duration: 35 }}
+        initial={{ translateX: thresholds[0] }}
+        animate={{ translateX: thresholds[1] }}
+        transition={{ ease: 'linear', repeat: Infinity, duration }}
       >
       <motion.ul className={classes.carosuel} style={{ ...marginBlock }}>
         <motion.li style={{ marginRight: 500 }}>

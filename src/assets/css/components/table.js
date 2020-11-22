@@ -36,15 +36,15 @@ const mapping = {
   },
   [NATIVE_SMALL]: {
     overflowX: 'scroll',
-    height: 'calc(100vh - 350px)'
+    height: 'calc(100vh - 367.5px)'
   },
   [NATIVE_NORMAL]: {
     overflowX: 'scroll',
-    height: 'calc(100vh - 367.5px)'
+    height: 'calc(100vh - 392.5px)'
   },
   [NATIVE_WIDE]: {
     overflowX: 'scroll',
-    height: 'calc(100vh - 387.5px)'
+    height: 'calc(100vh - 415px)'
   }
 }
 

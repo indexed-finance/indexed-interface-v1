@@ -56,7 +56,7 @@ const mapping = {
   [DESKTOP_NORMAL]: {
     top: 'calc(120px - .25vh)',
     margin: '0em 3em .25em 3em',
-    canvasMargin: '4.125em 3em 1em 3em',
+    canvasMargin: '4.5em 3em 1em 3em',
     pre2: 325,
     paddingLeft: 25,
     resolution: 200,

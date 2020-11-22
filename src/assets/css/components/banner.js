@@ -18,6 +18,7 @@ const setStyle = (theme) => ({
 const mapping = {
   [DESKTOP_SMALL]: {
     position: 'absolute',
+    duration: 35,
     width: '150vw',
     marginBlock: {
       marginBlockStart: '.5em',
@@ -26,10 +27,16 @@ const mapping = {
   },
   [DESKTOP_NORMAL]: {
     position: 'absolute',
-    width: '150vw'
+    duration: 35,
+    width: '150vw',
+    marginBlock: {
+      marginBlockStart: '.5em',
+      marginBlockEnd: '.5em'
+    }
   },
   [DESKTOP_LARGE]: {
     position: 'absolute',
+    duration: 35,
     width: '150vw',
     marginBlock: {
       marginBlockStart: '.5em',
@@ -38,6 +45,7 @@ const mapping = {
   },
   [DESKTOP_WIDE]: {
     position: 'absolute',
+    duration: 45,
     width: '150vw',
     marginBlock: {
       marginBlockStart: '.5em',
@@ -46,6 +54,7 @@ const mapping = {
   },
   [DESKTOP_HUGE]: {
     position: 'absolute',
+    duration: 45,
     width: '150vw',
     marginBlock: {
       marginBlockStart: '.5em',
@@ -54,6 +63,7 @@ const mapping = {
   },
   [DESKTOP_MASSIVE]: {
     position: 'absolute',
+    duration: 45,
     width: '150vw',
     marginBlock: {
       marginBlockStart: '.5em',
@@ -63,6 +73,7 @@ const mapping = {
   [NATIVE_SMALL]: {
     position: 'fixed',
     width: '600vw',
+    duration: 25,
     marginBlock: {
       marginBlockStart: '0em',
       marginBlockEnd: '.5em'
@@ -71,6 +82,7 @@ const mapping = {
   [NATIVE_NORMAL]: {
     position: 'fixed',
     width: '600vw',
+    duration: 30,
     marginBlock: {
       marginBlockStart: '0em',
       marginBlockEnd: '.5em'
@@ -79,6 +91,7 @@ const mapping = {
   [NATIVE_WIDE]: {
     position: 'fixed',
     width: '600vw',
+    duration: 25,
     marginBlock: {
       marginBlockStart: '0em',
       marginBlockEnd: '.5em'
