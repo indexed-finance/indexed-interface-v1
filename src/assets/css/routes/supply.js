@@ -5,16 +5,15 @@ import {
 
 const setStyle = (theme) => ({
   top: {
-    marginTop: '3em',
     overflowX: 'hidden'
   },
   modal: {
     width: '30em',
   },
   rewards: {
+    overflow: 'hidden',
     padding: '1em 2em',
     '& h2': {
-      marginLeft: 50,
       padding: 0
     },
     '& p': {
@@ -57,6 +56,7 @@ const mapping = {
     wallet: '#',
     marginLeft: '167.5px',
     inputWidth: 200,
+    claimMargin: 50,
     listPadding: 'inherit',
     height: '10em',
     reward: '34em',
@@ -71,6 +71,7 @@ const mapping = {
     padding: '0em 2em 1em',
     positioning: 'center',
     marginLeft: '167.5px',
+    claimMargin: 50,
     inputWidth: 200,
     listPadding: 'inherit',
     height: '10em',
@@ -86,6 +87,7 @@ const mapping = {
     padding: '0em 2em 1em',
     positioning: 'center',
     inputWidth: 200,
+    claimMargin: 50,
     listPadding: 'inherit',
     height: '10em',
     reward: '34em',
@@ -100,6 +102,7 @@ const mapping = {
     padding: '0em 2em 1em',
     positioning: 'center',
     inputWidth: 200,
+    claimMargin: 50,
     listPadding: 'inherit',
     height: '10em',
     reward: '34em',
@@ -115,6 +118,7 @@ const mapping = {
     positioning: 'center',
     inputWidth: 200,
     listPadding: 'inherit',
+    claimMargin: 50,
     height: '10em',
     reward: '34em',
     buttonPos: -55,
@@ -131,6 +135,7 @@ const mapping = {
     listPadding: 'inherit',
     height: '10em',
     reward: '34em',
+    claimMargin: 50,
     buttonPos: -55,
     button: {
        marginTop: -50,
@@ -143,9 +148,11 @@ const mapping = {
     positioning: 'flex-start',
     inputWidth: 125,
     listPadding: 0,
+    claimMargin: 0,
     height: '11.5em',
     reward: 'calc(22.5em - 64px)',
     buttonPos: 67.5,
+    infoWidth: 195,
     button: {
        marginTop: -37.5,
        marginRight: -12.5,
@@ -156,10 +163,12 @@ const mapping = {
     padding: '0em 0em 1em',
     positioning: 'flex-start',
     inputWidth: 125,
+    claimMargin: 0,
     listPadding: 0,
     height: '11.5em',
     reward: 'calc(22.5em - 64px)',
     buttonPos: 67.5,
+    infoWidth: 240,
     button: {
        marginTop: -37.5,
        marginRight: -12.5,
@@ -170,9 +179,11 @@ const mapping = {
     padding: '0em 0em 1em',
     positioning: 'flex-start',
     inputWidth: 125,
+    claimMargin: 0,
     listPadding: 0,
     height: '11.5em',
     reward: 'calc(22.5em - 64px)',
+    infoWidth: 250,
     buttonPos: 67.5,
     button: {
        marginTop: -37.5,

@@ -261,25 +261,27 @@ export default function Supply() {
   }, [ input ])
 
   let {
-    padding, marginBottom, marginRight, width, positioning, inputWidth, listPadding, button, height, reward, buttonPos, marginLeft
+    padding, marginBottom, marginRight, claimMargin, width, positioning, inputWidth, listPadding, button, height, reward, buttonPos, marginLeft, infoWidth
   } = style.getFormatting({ ticker, native: state.native })
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
     <Grid item xs={10} md={6}>
-      <div className={classes.top}>
+      <div className={classes.top} style={{ marginTop: !state.native ? '3em' : '1em'}}>
         <Canvas style={{ overflowX: 'hidden' }}>
           <div className={classes.rewards} style={{ width: reward }}>
             <p> NDX EARNED </p>
             <div>
-              <h2> <CountUp decimals={6} perserveValue separator="," start={stats.claim} end={stats.future} duration={86400} /> NDX </h2>
+              <h2 style={{ marginLeft: claimMargin }}>
+                <CountUp decimals={6} perserveValue separator="," start={stats.claim} end={stats.future} duration={86400} /> NDX
+              </h2>
               <ButtonPrimary disabled={!state.web3.injected} onClick={claim} variant='outlined'
                  margin={{ marginTop: buttonPos, marginBottom: 12.5, marginRight: 37.5 }}>
                 CLAIM
               </ButtonPrimary>
             </div>
             <ul className={classes.list}>
-              <li> DEPOSIT: {stats.deposit} {ticker}</li>
+              <li> DEPOSIT: {stats.deposit} {!state.native && (<>{ticker}</>)}</li>
               <li> RATE: {stats.display} NDX/DAY</li>
             </ul>
           </div>
@@ -336,10 +338,17 @@ export default function Supply() {
       </Grid>
       <Grid item xs={10} md={6}>
         <Canvas>
-          <div className={classes.rewards} style={{ width: reward }}>
+          <div className={classes.rewards} style={{ width: !state.native ? reward : infoWidth }}>
           	<ul className={classes.stats}>
-              <li> POOL DEPOSITS: <span> {metadata.supply.toLocaleString({ minimumFractionDigits: 2 })} {ticker}</span> </li>
-              <li> POOL RATE: <span> {metadata.rate.toLocaleString({ minimumFractionDigits: 2 })} NDX/DAY </span> </li>
+              <li> POOL DEPOSITS: <span>
+                  {metadata.supply.toLocaleString({ minimumFractionDigits: 2 })}
+                  {!state.native && (<>{ticker}</>)}
+                </span>
+              </li>
+              <li> POOL RATE: <span>
+                  {metadata.rate.toLocaleString({ minimumFractionDigits: 2 })} NDX/DAY
+                </span>
+              </li>
             </ul>
           </div>
         </Canvas>

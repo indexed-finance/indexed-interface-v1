@@ -13,7 +13,6 @@ const setStyle = (theme) => ({
     }
   },
   pool: {
-    width: '25em',
     padding: '1em 2em',
   },
   image: {
@@ -21,7 +20,6 @@ const setStyle = (theme) => ({
     marginRight: 25
   },
   information: {
-    width: '35em',
     '& h3': {
       marginTop: 0,
       marginBottom: 0,

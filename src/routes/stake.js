@@ -108,8 +108,6 @@ export default function Stake() {
         let supply = parseFloat(totalSupply)/Math.pow(10,18)
         supply = supply.toLocaleString({ minimumFractionDigits: 2 })
 
-        console.log(isReady)
-
         if(parseFloat(totalSupply) == 0){
           rate = (parseFloat(rewardRate)/Math.pow(10, 18))
         }
