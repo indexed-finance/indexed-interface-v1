@@ -12,6 +12,7 @@ import { useTradeState } from '../../state/trade';
 import TradeInput from './trade-input';
 import { getERC20 } from '../../lib/erc20';
 import ButtonPrimary from '../buttons/primary';
+import Input from '../inputs/input';
 import { toContract } from '../../lib/util/contracts';
 
 const routerABI = require('../../assets/constants/abi/UniswapV2Router.json')
@@ -26,6 +27,7 @@ const Trigger = styled(ButtonPrimary)({
 
 export default function TradeTab({ metadata }) {
   const { useInput, useOutput, tradeState, setHelper, updatePool, whitelistTokens, selectWhitelistToken, switchTokens } = useTradeState();
+  const [ isRendered, setRender ] = useState(false);
   const [approvalNeeded, setApprovalNeeded] = useState(false);
 
   let { state, handleTransaction } = useContext(store);
@@ -83,6 +85,8 @@ export default function TradeTab({ metadata }) {
 
     if(tradeState.input.address == WETH) setApprovalNeeded(false);
     else setApprovalNeeded(amount.gt(allowance));
+
+    setRender(true);
   }, [tradeState]);
 
   async function approveRouter() {
@@ -150,6 +154,9 @@ export default function TradeTab({ metadata }) {
         {
           tradeState.helper && <TradeInput inputWidth={250} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useInput} />
         }
+        {
+          !isRendered && <Input label='AMOUNT' variant='outlined' style={{ width: 250 }} InputProps={{ endAdornment: 'ETH' }} />
+        }
       </Grid >
       <Grid item xs={12} md={12} lg={12} xl={12} key='1'>
         <div className={classes.swap}>
@@ -160,6 +167,9 @@ export default function TradeTab({ metadata }) {
       <Grid item xs={12} md={12} lg={12} xl={12} key='2'>
         {
           tradeState.helper && <TradeInput inputWidth={250} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useOutput} />
+        }
+        {
+          !isRendered && <Input label='AMOUNT' variant='outlined' style={{ width: 250 }} InputProps={{ endAdornment: metadata.symbol }} />
         }
       </Grid>
 

@@ -29,7 +29,7 @@ const mapping = {
     height: 'calc(25vh - 75px)'
   },
   [NATIVE_SMALL]: {
-    height: 'calc(25vh - 75px)'
+    height: 'calc(35vh - 75px)'
   },
   [NATIVE_NORMAL]: {
     height: 'calc(35vh - 75px)'
