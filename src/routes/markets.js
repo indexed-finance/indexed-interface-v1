@@ -125,18 +125,16 @@ export default function Markets(){
 
   let { active } = market
   let {
-    resolution, top, margin, height, pre, pre2, paddingLeft, width, marginTop
+    resolution, top, margin, height, pre, pre2, paddingLeft, width, marginTop, canvasMargin
   } = style.getFormatting({ request, native, active })
-
-  console.log(height)
 
   return (
     <Fragment>
-      <Banner />
+      <Banner native={native} />
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item xs={12} md={12} lg={12} xl={12}>
           <div style={{ height: pre2 }}>
-          <Canvas native={native} style={{ margin: '4.25em 3em 1em 3em'}}>
+          <Canvas native={native} style={{ margin: canvasMargin }}>
             <Spline absolute={true} ready={request} native={native} height={height} color='#66FFFF' metadata={market} padding={top} />
             <div className={classes.market} style={{ paddingLeft }}>
               {!native && (

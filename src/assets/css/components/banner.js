@@ -8,46 +8,81 @@ const setStyle = (theme) => ({
     overflowX: 'hidden',
     position: 'absolute',
     borderBottom: '3px solid #666666',
-    width: '100vw'
   },
+  carosuel: {
+    listStyle: 'none',
+    display: 'inline-flex',
+  }
 })
 
 const mapping = {
   [DESKTOP_SMALL]: {
-    show: true,
-    inputWidth: 200
+    position: 'absolute',
+    width: '150vw',
+    marginBlock: {
+      marginBlockStart: '.5em',
+      marginBlockEnd: '.5em'
+    }
   },
   [DESKTOP_NORMAL]: {
-    show: true,
-    inputWidth: 200
+    position: 'absolute',
+    width: '150vw'
   },
   [DESKTOP_LARGE]: {
-    show: true,
-    inputWidth: 200
+    position: 'absolute',
+    width: '150vw',
+    marginBlock: {
+      marginBlockStart: '.5em',
+      marginBlockEnd: '.5em'
+    }
   },
   [DESKTOP_WIDE]: {
-    show: true,
-    inputWidth: 200
+    position: 'absolute',
+    width: '150vw',
+    marginBlock: {
+      marginBlockStart: '.5em',
+      marginBlockEnd: '.5em'
+    }
   },
   [DESKTOP_HUGE]: {
-    show: true,
-    inputWidth: 200
+    position: 'absolute',
+    width: '150vw',
+    marginBlock: {
+      marginBlockStart: '.5em',
+      marginBlockEnd: '.5em'
+    }
   },
   [DESKTOP_MASSIVE]: {
-    show: true,
-    inputWidth: 200
+    position: 'absolute',
+    width: '150vw',
+    marginBlock: {
+      marginBlockStart: '.5em',
+      marginBlockEnd: '.5em'
+    }
   },
   [NATIVE_SMALL]: {
-    show: false,
-    inputWidth: 137.5
+    position: 'fixed',
+    width: '600vw',
+    marginBlock: {
+      marginBlockStart: '0em',
+      marginBlockEnd: '.5em'
+    }
   },
   [NATIVE_NORMAL]: {
-    show: true,
-    inputWidth: 150
+    position: 'fixed',
+    width: '600vw',
+    marginBlock: {
+      marginBlockStart: '0em',
+      marginBlockEnd: '.5em'
+    }
   },
   [NATIVE_WIDE]: {
-    show: true,
-    inputWidth: 150
+    position: 'fixed',
+    width: '600vw',
+    marginBlock: {
+      marginBlockStart: '0em',
+      marginBlockEnd: '.5em'
+    }
   },
 }
 
