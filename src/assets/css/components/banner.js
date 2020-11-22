@@ -12,6 +12,11 @@ const setStyle = (theme) => ({
   carosuel: {
     listStyle: 'none',
     display: 'inline-flex',
+  },
+  href: {
+    color: `${theme.palette.secondary.main} !important`,
+    fontFamily: 'San Francisco',
+    textDecoration: 'none !important',
   }
 })
 
