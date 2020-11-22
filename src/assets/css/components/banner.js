@@ -17,6 +17,12 @@ const setStyle = (theme) => ({
     color: `${theme.palette.secondary.main} !important`,
     fontFamily: 'San Francisco',
     textDecoration: 'none !important',
+    '&:hover': {
+      color: '#00e79a !important',
+      '& span': {
+        color: '#00e79a !important',
+      }
+    }
   }
 })
 

@@ -26,10 +26,7 @@ export default function Banner() {
     if(Object.entries(indexes).length > 0) {
       Object.entries(indexes).map(([ key, value ]) => {
         if(value.active) indxs.push(value)
-        else {
-          init.push(value)
-          init.push(value)
-        }
+        else init.push(value)
       })
       setMessages({ indexes: indxs, init })
     }
@@ -40,11 +37,13 @@ export default function Banner() {
       <motion.div
         initial={{ translateX: thresholds[0] }}
         animate={{ translateX: thresholds[1] }}
-        transition={{ ease: 'linear', repeat: Infinity, duration }}
+        transition={{ from: -window.innerWidth, ease: 'linear', repeat: Infinity, duration }}
       >
       <motion.ul className={classes.carosuel} style={{ ...marginBlock }}>
         <motion.li style={{ marginRight: 250 }}>
-          <motion.span>PROPOSAL 0x1: CHANGE SWAP FEE TO 0.5%</motion.span>
+          <Link to={``} className={classes.href}>
+            <motion.span><span style={{ color: '#645eff' }}>PROPOSAL 0x1</span>: CHANGE SWAP FEE TO 0.5%</motion.span>
+          </Link>
         </motion.li>
         <motion.li style={{ marginRight: 250 }}>
           {messages.init.length == 1 && messages.init.map((value) => {

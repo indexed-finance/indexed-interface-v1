@@ -80,7 +80,7 @@ export const getResolutionThresholds = () => {
   } else if(window.innerWidth >= DESKTOP_LARGE) {
     return [ -(window.innerWidth * 0.875), window.innerWidth ]
   } else if(window.innerWidth > NATIVE_WIDE) {
-    return [ -(window.innerWidth * 1.25), window.innerWidth ]
+    return [ -(window.innerWidth * 1.25), window.innerWidth  ]
   } else  {
     if(window.innerWidth <= NATIVE_SMALL){
       return [ -(window.innerWidth * 5), window.innerWidth ]
