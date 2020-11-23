@@ -52,27 +52,34 @@ export default function Banner() {
         let lastTime = (currentTime.getTime() - coordinate.time)/1000
         let elapsed = coordinate.elapsed + lastTime
 
-        console.log('TIME ELAPSED', elapsed)
+        if(lastTime >= duration){
+          elapsed = ((lastTime/duration) % 1) * duration
+        }
 
-        setCoordinate({ ...coordinate, elapsed, x: parseFloat(x) })
+        console.log('STOP!')
+        console.log('TIME ELAPSED', elapsed)
+        console.log(controls)
+
+        setCoordinate({ ...coordinate, elapsed })
         controls.stop()
       }
     }
   }
 
   const resumeAnimation = (e) => {
-    let displacementRemaining = ((thresholds[1]) - coordinate.x)
     let timeRemaining = duration - coordinate.elapsed
 
     if(messages.indexes.length > 0){
       let currentTime = new Date(Date.now())
       let time = currentTime.getTime()
 
+      console.log('RESUME!')
+
       setCoordinate({ ...coordinate, time })
       controls.start({
         translateX: thresholds[1],
         transition:{
-          duration: timeRemaining + 1,
+          duration: timeRemaining,
           ease: 'linear',
           onComplete: v => startAnimation()
         }
@@ -83,7 +90,8 @@ export default function Banner() {
   useEffect(() => {
     let [ proposals, init, indxs ] = [ [], [], [] ]
 
-    if(Object.entries(indexes).length > 0) {
+    if(Object.entries(indexes).length > 0
+      && messages.indexes.length == 0) {
       Object.entries(indexes).map(([ key, value ]) => {
         if(value.active) indxs.push(value)
         else init.push(value)
