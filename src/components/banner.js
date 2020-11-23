@@ -35,9 +35,11 @@ export default function Banner() {
   }
 
   const stopAnimation = (e) => {
-    setCoordinate({ x: e.pageX , time: e.timeStamp/1000 })
+    if(messages.indexes.length > 0){
+      setCoordinate({ x: e.pageX , time: e.timeStamp/1000 })
 
-    controls.stop()
+      controls.stop()
+    }
   }
 
   const resumeAnimation = (e) => {
@@ -45,15 +47,17 @@ export default function Banner() {
     let distanceDisplaced = ((coordinate.x - thresholds[1]) + thresholds[1])
     let remainingDisplacement = thresholds[1] - distanceDisplaced
     let currentDisplacement = distanceDisplaced + thresholds[0]
-    
-    controls.start({
-      translateX: remainingDisplacement,
-      transition:{
-        duration: newDuration,
-        ease: 'linear',
-        onComplete: v => setCoordinate({ x: 0 })
-      }
-    })
+
+    if(messages.indexes.length > 0){
+      controls.start({
+        translateX: remainingDisplacement * 1.05,
+        transition:{
+          duration: newDuration,
+          ease: 'linear',
+          onComplete: v => setCoordinate({ x: 0 })
+        }
+      })
+    }
   }
 
   useEffect(() => {
@@ -76,7 +80,7 @@ export default function Banner() {
   }, [ indexes ])
 
   return(
-    <div style={{ width, position }} className={classes.root} >
+    <div style={{ width, position }} className={classes.root} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
       <motion.div
         animate={controls}
       >
@@ -89,7 +93,7 @@ export default function Banner() {
         <motion.li style={{ marginRight: 250 }}>
           {messages.init.length == 1 && messages.init.map((value) => {
             return(
-              <Link to={`/pool/${value.address}`} className={classes.href} onMouseOver={stopAnimation} onMouseOut={resumeAnimation}>
+              <Link to={`/pool/${value.address}`} className={classes.href}>
                 <motion.span>NEW FUND: <span style={{ color: 'orange'}}>{value.symbol}</span></motion.span>
              </Link>
             )
@@ -99,7 +103,7 @@ export default function Banner() {
               <span style={{ color: 'orange'}}>NEW FUNDS:</span>
                 {messages.init.map((value, i) => (
                   <Fragment>&nbsp;
-                    <Link to={`/pool/${value.address}`} className={classes.href} onMouseOver={stopAnimation} onMouseOut={resumeAnimation}>
+                    <Link to={`/pool/${value.address}`} className={classes.href} >
                       <motion.span>{value.symbol}</motion.span>
                     </Link>
                     <motion.span>{i == messages.init.length-1 ? '' : ','}</motion.span>
@@ -117,7 +121,7 @@ export default function Banner() {
 
                 return(
                   <Fragment>
-                    <Link to={`/index/${value.address}`} className={classes.href} onMouseOver={stopAnimation} onMouseOut={resumeAnimation}>
+                    <Link to={`/index/${value.symbol}`} className={classes.href}>
                       <motion.span>{value.symbol} ${value.price} <span style={{ color }}>({symbol}{value.delta}%)</span></motion.span>
                     </Link>
                     <motion.span>&nbsp;&nbsp;&nbsp;</motion.span>
