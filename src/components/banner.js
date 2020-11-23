@@ -13,7 +13,7 @@ const useStyles = getStyles(style)
 export default function Banner() {
   const thresholds = getResolutionThresholds()
   const [ messages, setMessages ] = useState({ proposals: [], init: [], indexes: [] })
-  const [ coordinate, setCoordinate ] = useState({ x: thresholds[0], time: 0 })
+  const [ coordinate, setCoordinate ] = useState({ x: thresholds[0], time: 0, elapsed: 0 })
   const controls = useAnimation()
   const classes = useStyles()
 
@@ -23,6 +23,12 @@ export default function Banner() {
   let { width, position, marginBlock, duration } = style.getFormatting(native)
 
   const startAnimation = () => {
+    console.log('START ANIMATION')
+
+    let timestamp = new Date(Date.now())
+    let unixTime = timestamp.getTime()
+
+    setCoordinate({ x: 0, elapsed: 0, time: unixTime })
     controls.start({
       translateX: thresholds[1],
       transition:{
@@ -34,27 +40,41 @@ export default function Banner() {
     })
   }
 
-  const stopAnimation = (e) => {
-    if(messages.indexes.length > 0){
-      setCoordinate({ x: e.pageX , time: e.timeStamp/1000 })
 
-      controls.stop()
+  const stopAnimation = (e) => {
+    if(messages.indexes.length > 0 )  {
+      let subscriptions = [ ...controls.subscribers ]
+      let lastSubscription = subscriptions[subscriptions.length-1]
+      let x = lastSubscription.transform.translateX.replace(/[^0-9\-\.]/g, '')
+
+      if(!isNaN(parseFloat(x))){
+        let currentTime = new Date(Date.now())
+        let lastTime = (currentTime.getTime() - coordinate.time)/1000
+        let elapsed = coordinate.elapsed + lastTime
+
+        console.log('TIME ELAPSED', elapsed)
+
+        setCoordinate({ ...coordinate, elapsed, x: parseFloat(x) })
+        controls.stop()
+      }
     }
   }
 
   const resumeAnimation = (e) => {
-    let distanceDisplaced = ((+thresholds[0]) - (coordinate.x + thresholds[0]))
-    let remainingDisplacement = thresholds[1] - (+distanceDisplaced)
-    let percentRemaining = remainingDisplacement/thresholds[1]
-    let timeRemaining = (duration * percentRemaining)
+    let displacementRemaining = ((thresholds[1]) - coordinate.x)
+    let timeRemaining = duration - coordinate.elapsed
 
     if(messages.indexes.length > 0){
+      let currentTime = new Date(Date.now())
+      let time = currentTime.getTime()
+
+      setCoordinate({ ...coordinate, time })
       controls.start({
-        translateX: remainingDisplacement,
+        translateX: thresholds[1],
         transition:{
-          duration: timeRemaining,
-          onComplete: v => startAnimation(),
+          duration: timeRemaining + 1,
           ease: 'linear',
+          onComplete: v => startAnimation()
         }
       })
     }
@@ -74,7 +94,7 @@ export default function Banner() {
   }, [ indexes ])
 
   return(
-    <div style={{ width, position }} className={classes.root}>
+    <div style={{ width, position }} id='carosuel' className={classes.root}>
       <motion.div
         animate={controls}
       >
