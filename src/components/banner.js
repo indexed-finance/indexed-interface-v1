@@ -43,28 +43,22 @@ export default function Banner() {
   }
 
   const resumeAnimation = (e) => {
-    let newDuration = duration - coordinate.time
-    let distanceDisplaced = ((coordinate.x - thresholds[1]) + thresholds[1])
-    let remainingDisplacement = thresholds[1] - distanceDisplaced
-    let currentDisplacement = distanceDisplaced + thresholds[0]
+    let distanceDisplaced = ((+thresholds[0]) - (coordinate.x + thresholds[0]))
+    let remainingDisplacement = thresholds[1] - (+distanceDisplaced)
+    let percentRemaining = remainingDisplacement/thresholds[1]
+    let timeRemaining = (duration * percentRemaining)
 
     if(messages.indexes.length > 0){
       controls.start({
         translateX: remainingDisplacement,
         transition:{
-          duration: newDuration,
+          duration: timeRemaining,
+          onComplete: v => startAnimation(),
           ease: 'linear',
-          onComplete: v => setCoordinate({ x: 0 })
         }
       })
     }
   }
-
-  useEffect(() => {
-    if(coordinate.x == 0) {
-      startAnimation()
-    }
-  }, [ coordinate ])
 
   useEffect(() => {
     let [ proposals, init, indxs ] = [ [], [], [] ]
@@ -80,17 +74,17 @@ export default function Banner() {
   }, [ indexes ])
 
   return(
-    <div style={{ width, position }} className={classes.root} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
+    <div style={{ width, position }} className={classes.root}>
       <motion.div
         animate={controls}
       >
       <motion.ul className={classes.carosuel} style={{ ...marginBlock }}>
-        <motion.li style={{ marginRight: 250 }}>
+        <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
           <Link to={``} className={classes.href}>
             <motion.span><span style={{ color: '#645eff' }}>PROPOSAL 0x1</span>: CHANGE SWAP FEE TO 0.5%</motion.span>
           </Link>
         </motion.li>
-        <motion.li style={{ marginRight: 250 }}>
+        <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
           {messages.init.length == 1 && messages.init.map((value) => {
             return(
               <Link to={`/pool/${value.address}`} className={classes.href}>
@@ -112,7 +106,7 @@ export default function Banner() {
             </Fragment>
           )}
         </motion.li>
-        <motion.li>
+        <motion.li onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
           {messages.indexes.length >= 1 && (
             <Fragment>
               {messages.indexes.map((value) => {
