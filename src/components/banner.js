@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, Fragment } from 'react'
 
-import { motion } from 'framer-motion'
+import { motion, useAnimation } from 'framer-motion'
 import { Link } from 'react-router-dom'
 
 import { getResolutionThresholds } from '../assets/constants/functions'
@@ -11,14 +11,56 @@ import { store } from '../state'
 const useStyles = getStyles(style)
 
 export default function Banner() {
-  const [ messages, setMessages ] = useState({ proposals: [], init: [], indexes: [] })
   const thresholds = getResolutionThresholds()
+  const [ messages, setMessages ] = useState({ proposals: [], init: [], indexes: [] })
+  const [ coordinate, setCoordinate ] = useState({ x: thresholds[0], time: 0 })
+  const controls = useAnimation()
   const classes = useStyles()
 
   let { state } = useContext(store)
   let { indexes, native } = state
 
   let { width, position, marginBlock, duration } = style.getFormatting(native)
+
+  const startAnimation = () => {
+    controls.start({
+      translateX: thresholds[1],
+      transition:{
+        from: thresholds[0],
+        ease: 'linear',
+        repeat: Infinity,
+        duration,
+      }
+    })
+  }
+
+  const stopAnimation = (e) => {
+    setCoordinate({ x: e.pageX , time: e.timeStamp/1000 })
+
+    controls.stop()
+  }
+
+  const resumeAnimation = (e) => {
+    let newDuration = duration - coordinate.time
+    let distanceDisplaced = ((coordinate.x - thresholds[1]) + thresholds[1])
+    let remainingDisplacement = thresholds[1] - distanceDisplaced
+    let currentDisplacement = distanceDisplaced + thresholds[0]
+    
+    controls.start({
+      translateX: remainingDisplacement,
+      transition:{
+        duration: newDuration,
+        ease: 'linear',
+        onComplete: v => setCoordinate({ x: 0 })
+      }
+    })
+  }
+
+  useEffect(() => {
+    if(coordinate.x == 0) {
+      startAnimation()
+    }
+  }, [ coordinate ])
 
   useEffect(() => {
     let [ proposals, init, indxs ] = [ [], [], [] ]
@@ -29,15 +71,14 @@ export default function Banner() {
         else init.push(value)
       })
       setMessages({ indexes: indxs, init })
+      startAnimation()
     }
   }, [ indexes ])
 
   return(
     <div style={{ width, position }} className={classes.root} >
       <motion.div
-        initial={{ translateX: thresholds[0] }}
-        animate={{ translateX: thresholds[1] }}
-        transition={{ from: -window.innerWidth, ease: 'linear', repeat: Infinity, duration }}
+        animate={controls}
       >
       <motion.ul className={classes.carosuel} style={{ ...marginBlock }}>
         <motion.li style={{ marginRight: 250 }}>
@@ -48,7 +89,7 @@ export default function Banner() {
         <motion.li style={{ marginRight: 250 }}>
           {messages.init.length == 1 && messages.init.map((value) => {
             return(
-              <Link to={`/pool/${value.address}`} className={classes.href}>
+              <Link to={`/pool/${value.address}`} className={classes.href} onMouseOver={stopAnimation} onMouseOut={resumeAnimation}>
                 <motion.span>NEW FUND: <span style={{ color: 'orange'}}>{value.symbol}</span></motion.span>
              </Link>
             )
@@ -58,7 +99,7 @@ export default function Banner() {
               <span style={{ color: 'orange'}}>NEW FUNDS:</span>
                 {messages.init.map((value, i) => (
                   <Fragment>&nbsp;
-                    <Link to={`/pool/${value.address}`} className={classes.href}>
+                    <Link to={`/pool/${value.address}`} className={classes.href} onMouseOver={stopAnimation} onMouseOut={resumeAnimation}>
                       <motion.span>{value.symbol}</motion.span>
                     </Link>
                     <motion.span>{i == messages.init.length-1 ? '' : ','}</motion.span>
@@ -76,7 +117,7 @@ export default function Banner() {
 
                 return(
                   <Fragment>
-                    <Link to={`/index/${value.address}`} className={classes.href}>
+                    <Link to={`/index/${value.address}`} className={classes.href} onMouseOver={stopAnimation} onMouseOut={resumeAnimation}>
                       <motion.span>{value.symbol} ${value.price} <span style={{ color }}>({symbol}{value.delta}%)</span></motion.span>
                     </Link>
                     <motion.span>&nbsp;&nbsp;&nbsp;</motion.span>

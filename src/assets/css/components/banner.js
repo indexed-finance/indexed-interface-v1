@@ -84,7 +84,7 @@ const mapping = {
   [NATIVE_SMALL]: {
     position: 'fixed',
     width: '600vw',
-    duration: 25,
+    duration: 30,
     marginBlock: {
       marginBlockStart: '0em',
       marginBlockEnd: '.5em'
