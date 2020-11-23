@@ -50,7 +50,7 @@ export default function Banner() {
 
     if(messages.indexes.length > 0){
       controls.start({
-        translateX: remainingDisplacement * 1.05,
+        translateX: remainingDisplacement,
         transition:{
           duration: newDuration,
           ease: 'linear',
