@@ -91,6 +91,8 @@ function Application(){
 
   useEffect(() => {
     const retrieveCategories = async() => {
+      let stats = { dailyVolume: 0, totalLocked: 0 };
+
       let categories = {};
       let indexes = {};
       // let tokenCategories = await getTokenCategories()
@@ -118,6 +120,9 @@ function Application(){
         let volume = +(snapshots[0].dailySwapVolumeUSD).toFixed(2);
         let history = snapshots.map(h => ({ close: +(h.value.toFixed(4)), date: new Date(h.date * 1000) }));
         let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(4), date: new Date(l.date * 1000) }))
+
+        stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
+        stats.dailyVolume += parseFloat(snapshots[0].dailySwapVolumeUSD)
 
         const price = parseFloat(history[0].close);
         const index = {
@@ -179,7 +184,7 @@ function Application(){
       await dispatch({
         type: 'GENERIC',
         payload: {
-          request: true , categories, indexes,
+          request: true , stats, categories, indexes,
         }
       })
     }

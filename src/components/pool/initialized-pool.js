@@ -167,12 +167,12 @@ function InitializedPoolPage({ address, metadata }){
 
   return (
     <Fragment>
-      <Grid container direction='column' alignItems='flex-start'/*  justify='stretch' */>
+      <Grid container direction='column' alignItems='flex-start'>
         <Grid item xs={12} md={12} lg={12} xl={12} container direction='row' alignItems='flex-start' justify='space-between'>
           <Grid item xs={12} md={6} lg={7} xl={7} style={{ width: '100%'}}>
           <ParentSize>
             {({ width, height }) => (
-            <Canvas native={native} style={{ width: !state.native ? width : 'auto' }} custom={percent}>
+            <Canvas native={native} style={{ width: !state.native ? width : 'auto', margin }} custom={percent}>
               <div className={classes.market}>
                 <MetaDisplay />
               </div>

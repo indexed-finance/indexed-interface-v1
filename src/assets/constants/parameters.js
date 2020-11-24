@@ -38,6 +38,10 @@ export const initialState = {
   load: false,
   dark: isNight,
   categories: {},
+  stats: {
+    totalLocked: 0,
+    dailyVolume: 0
+  },
   width: 0,
   height: 0,
   modal: {

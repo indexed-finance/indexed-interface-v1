@@ -102,7 +102,7 @@ function UninitializedPoolPage({ address, metadata }) {
         <Grid item xs={12} md={7} lg={7} xl={7} style={{ width: '100%'}}>
         <ParentSize>
           {({ width, height }) => (
-            <Canvas native={native} style={{ width: !state.native ? width : 'auto' }} custom={percent}>
+            <Canvas native={native} style={{ width: !state.native ? width : 'auto', margin }} custom={percent}>
             <div className={classes.market}>
               <MetaDisplay />
             </div>

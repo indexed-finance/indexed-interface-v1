@@ -194,7 +194,7 @@ const mapping = {
   },
   [NATIVE_SMALL]: {
     marginX: '.5em 1.5em',
-    margin: '3em 1.5em',
+    margin: '2em 1.5em 1em 1.5em',
     width: 'auto',
     percent: '0%',
     padding: 112.5,
@@ -207,7 +207,7 @@ const mapping = {
   },
   [NATIVE_NORMAL]: {
     marginX: '.5em 1.5em',
-    margin: '3em 1.5em',
+    margin: '2em 1.5em 1em 1.5em',
     width: 'auto',
     percent: '0%',
     padding: 112.5,
@@ -220,7 +220,7 @@ const mapping = {
   },
   [NATIVE_WIDE]: {
     marginX: '.5em 1.5em',
-    margin: '3em 1.5em',
+    margin: '2em 1.5em 1em 1.5em',
     width: 'auto',
     padding: 112.5,
     percent: '0%',

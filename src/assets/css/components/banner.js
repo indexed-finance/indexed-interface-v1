@@ -30,7 +30,7 @@ const mapping = {
   [DESKTOP_SMALL]: {
     position: 'absolute',
     duration: 35,
-    width: '150vw',
+    width: '175vw',
     marginBlock: {
       marginBlockStart: '.5em',
       marginBlockEnd: '.5em'
@@ -83,7 +83,7 @@ const mapping = {
   },
   [NATIVE_SMALL]: {
     position: 'fixed',
-    width: '600vw',
+    width: '750vw',
     duration: 30,
     marginBlock: {
       marginBlockStart: '0em',
@@ -92,7 +92,7 @@ const mapping = {
   },
   [NATIVE_NORMAL]: {
     position: 'fixed',
-    width: '600vw',
+    width: '700vw',
     duration: 30,
     marginBlock: {
       marginBlockStart: '0em',
@@ -101,7 +101,7 @@ const mapping = {
   },
   [NATIVE_WIDE]: {
     position: 'fixed',
-    width: '600vw',
+    width: '700vw',
     duration: 25,
     marginBlock: {
       marginBlockStart: '0em',

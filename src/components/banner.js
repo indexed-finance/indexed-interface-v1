@@ -18,7 +18,7 @@ export default function Banner() {
   const classes = useStyles()
 
   let { state } = useContext(store)
-  let { indexes, native } = state
+  let { indexes, stats, native } = state
 
   let { width, position, marginBlock, duration } = style.getFormatting(native)
 
@@ -109,14 +109,14 @@ export default function Banner() {
       <motion.ul className={classes.carosuel} style={{ ...marginBlock }}>
         <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
           <Link to={``} className={classes.href}>
-            <motion.span><span style={{ color: '#645eff' }}>PROPOSAL 0x1</span>: CHANGE SWAP FEE TO 0.5%</motion.span>
+            <motion.span><motion.span style={{ color: '#645eff' }}>PROPOSAL 0x1</motion.span>: CHANGE SWAP FEE TO 0.5%</motion.span>
           </Link>
         </motion.li>
         <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
           {messages.init.length == 1 && messages.init.map((value) => {
             return(
               <Link to={`/pool/${value.address}`} className={classes.href}>
-                <motion.span>NEW FUND: <span style={{ color: 'orange'}}>{value.symbol}</span></motion.span>
+                <motion.span>NEW FUND: <motion.span style={{ color: 'orange'}}>{value.symbol}</motion.span></motion.span>
              </Link>
             )
           })}
@@ -134,7 +134,7 @@ export default function Banner() {
             </Fragment>
           )}
         </motion.li>
-        <motion.li onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
+        <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
           {messages.indexes.length >= 1 && (
             <Fragment>
               {messages.indexes.map((value) => {
@@ -144,7 +144,7 @@ export default function Banner() {
                 return(
                   <Fragment>
                     <Link to={`/index/${value.symbol}`} className={classes.href}>
-                      <motion.span>{value.symbol} ${value.price} <span style={{ color }}>({symbol}{value.delta}%)</span></motion.span>
+                      <motion.span>{value.symbol} ${value.price} <motion.span style={{ color }}>({symbol}{value.delta}%)</motion.span></motion.span>
                     </Link>
                     <motion.span>&nbsp;&nbsp;&nbsp;</motion.span>
                   </Fragment>
@@ -152,6 +152,11 @@ export default function Banner() {
              })}
            </Fragment>
           )}
+        </motion.li>
+        <motion.li>
+          <motion.span>TOTAL VALUE LOCKED: ${parseFloat(stats.totalLocked).toLocaleString()} </motion.span>
+          <motion.span>&nbsp;&nbsp;&nbsp;</motion.span>
+          <motion.span>24H VOLUME: ${parseFloat(stats.dailyVolume).toLocaleString()} </motion.span>
         </motion.li>
       </motion.ul>
      </motion.div>
