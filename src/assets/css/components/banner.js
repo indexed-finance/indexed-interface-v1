@@ -30,7 +30,7 @@ const mapping = {
   [DESKTOP_SMALL]: {
     position: 'absolute',
     duration: 35,
-    width: '175vw',
+    width: 2500,
     marginBlock: {
       marginBlockStart: '.5em',
       marginBlockEnd: '.5em'
@@ -39,7 +39,7 @@ const mapping = {
   [DESKTOP_NORMAL]: {
     position: 'absolute',
     duration: 35,
-    width: '150vw',
+    width: 3000,
     marginBlock: {
       marginBlockStart: '.5em',
       marginBlockEnd: '.5em'
@@ -48,7 +48,7 @@ const mapping = {
   [DESKTOP_LARGE]: {
     position: 'absolute',
     duration: 35,
-    width: '150vw',
+    width: 4000,
     marginBlock: {
       marginBlockStart: '.5em',
       marginBlockEnd: '.5em'
@@ -57,7 +57,7 @@ const mapping = {
   [DESKTOP_WIDE]: {
     position: 'absolute',
     duration: 45,
-    width: '150vw',
+    width: 4000,
     marginBlock: {
       marginBlockStart: '.5em',
       marginBlockEnd: '.5em'
@@ -66,7 +66,7 @@ const mapping = {
   [DESKTOP_HUGE]: {
     position: 'absolute',
     duration: 45,
-    width: '150vw',
+    width: 4000,
     marginBlock: {
       marginBlockStart: '.5em',
       marginBlockEnd: '.5em'
@@ -75,7 +75,7 @@ const mapping = {
   [DESKTOP_MASSIVE]: {
     position: 'absolute',
     duration: 45,
-    width: '150vw',
+    width: 4000,
     marginBlock: {
       marginBlockStart: '.5em',
       marginBlockEnd: '.5em'

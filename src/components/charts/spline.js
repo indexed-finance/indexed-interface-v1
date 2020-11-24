@@ -38,7 +38,7 @@ const renameKeys = (keysMap, obj) =>
   )
 }
 
-const options = (padding) => ({
+const options = (padding, range) => ({
   bezierCurve: true,
   responsive: true,
   maintainAspectRatio: true,
@@ -75,8 +75,10 @@ const options = (padding) => ({
         },
         ticks: {
           beginAtZero: false,
+          max: range[0] * 1.000005,
+          min: range[1] * 0.9999975,
           display: false,
-          padding: 0
+          padding: 0,
         }
       }],
       xAxes: [{
@@ -132,6 +134,22 @@ const getConfig = (canvas, metadata, color) => {
   }
 }
 
+function arrayMax(arr) {
+  return arr.reduce(function (p, v) {
+    return ( p.close > v ? p.close : v );
+  });
+}
+
+function arrayMin(arr) {
+  return arr.reduce(function (p, v) {
+    return ( p.close < v ? p.close : v );
+  });
+}
+
+function getRanges(metadata) {
+  return [ arrayMax(metadata.history).close, arrayMin(metadata.history).close ]
+}
+
 export default function Spline(props){
   let { metadata, height, color, padding, ready, absolute, native } = props
   const [ component, setComponent ] = useState(null)
@@ -140,9 +158,11 @@ export default function Spline(props){
 
   useEffect(() => {
     if(metadata.address != '0x0000000000000000000000000000000000000000'){
+      let ranges = metadata.history.length > 0 ? getRanges(metadata) : [ 0, 0 ]
+
       setComponent(
         <Line
-          height={height} options={options(!absolute ? 0 : padding)}
+          height={height} options={options(!absolute ? 0 : padding, ranges)}
           data={(e) => getConfig(e, metadata, color)} redraw
         />
       )
