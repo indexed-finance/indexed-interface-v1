@@ -11,7 +11,7 @@ import Loader from './components/loader'
 import Modal from './components/modal'
 import Flag from './components/flag'
 
-import { getCategoryMetadata } from './api/gql'
+import { getCategoryMetadata, getProposals } from './api/gql'
 import { store } from './state'
 
 import './assets/css/root.css'
@@ -92,7 +92,7 @@ function Application(){
   useEffect(() => {
     const retrieveCategories = async() => {
       let stats = { dailyVolume: 0, totalLocked: 0 };
-
+      let proposals = { ...await getProposals() };
       let categories = {};
       let indexes = {};
       // let tokenCategories = await getTokenCategories()
@@ -184,7 +184,7 @@ function Application(){
       await dispatch({
         type: 'GENERIC',
         payload: {
-          request: true , stats, categories, indexes,
+          request: true , proposals, stats, categories, indexes,
         }
       })
     }

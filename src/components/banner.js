@@ -10,9 +10,14 @@ import { store } from '../state'
 
 const useStyles = getStyles(style)
 
+const proposalType = {
+  id: 0,
+  description: ''
+}
+
 export default function Banner() {
   const thresholds = getResolutionThresholds()
-  const [ messages, setMessages ] = useState({ proposals: [], init: [], indexes: [] })
+  const [ messages, setMessages ] = useState({ proposal: proposalType, init: [], indexes: [] })
   const [ coordinate, setCoordinate ] = useState({ x: thresholds[0], time: 0, elapsed: 0 })
   const controls = useAnimation()
   const classes = useStyles()
@@ -90,13 +95,18 @@ export default function Banner() {
   useEffect(() => {
     let [ proposals, init, indxs ] = [ [], [], [] ]
 
-    if(Object.entries(indexes).length > 0
-      && messages.indexes.length == 0) {
+    if(Object.entries(indexes).length > 0) {
+      let arr = state.proposals.proposals
+      let length = arr.length-1
+      let last = arr[length]
+
       Object.entries(indexes).map(([ key, value ]) => {
         if(value.active) indxs.push(value)
         else init.push(value)
       })
-      setMessages({ indexes: indxs, init })
+      setMessages({
+        proposal: last, indexes: indxs, init
+       })
       startAnimation()
     }
   }, [ indexes ])
@@ -108,8 +118,8 @@ export default function Banner() {
       >
       <motion.ul className={classes.carosuel} style={{ ...marginBlock }}>
         <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
-          <Link to={``} className={classes.href}>
-            <motion.span><motion.span style={{ color: '#645eff' }}>PROPOSAL 0x1</motion.span>: CHANGE SWAP FEE TO 0.5%</motion.span>
+          <Link to={`/proposal/${messages.proposal.id}`} className={classes.href}>
+            <motion.span><motion.span style={{ color: '#645eff' }}>PROPOSAL {messages.proposal.id}</motion.span>: {messages.proposal.description.toUpperCase()}</motion.span>
           </Link>
         </motion.li>
         <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>

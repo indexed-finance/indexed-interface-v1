@@ -38,6 +38,10 @@ export const initialState = {
   load: false,
   dark: isNight,
   categories: {},
+  proposals: {
+    dailyDistributionSnapshots: [],
+    proposals: []
+  },
   stats: {
     totalLocked: 0,
     dailyVolume: 0

@@ -248,25 +248,32 @@ export default function Governance(){
 
   useEffect(() => {
     const retrieveProposals = async() => {
-      let { proposals, dailyDistributionSnapshots } = await getProposals()
+      console.log(state.proposals)
 
-      let length = dailyDistributionSnapshots.length - 1
-      let { active, inactive, delegated, voters } = dailyDistributionSnapshots[length]
+      if(state.request && state.proposals){
+        let { proposals, dailyDistributionSnapshots } = state.proposals
 
-      setMetadata({
-        snapshots: dailyDistributionSnapshots,
-        active: parseFloat(formatBalance(new BigNumber(active), 18, 0)).toLocaleString(),
-        inactive: parseFloat(formatBalance(new BigNumber(inactive), 18, 0)).toLocaleString(),
-        delegated: parseFloat(formatBalance(new BigNumber(delegated), 18, 0)).toLocaleString(),
-        voters: parseFloat(voters).toLocaleString()
-       })
-      setProposals(proposals)
-    }
+        let length = dailyDistributionSnapshots.length - 1
+        let { active, inactive, delegated, voters } = dailyDistributionSnapshots[length]
 
-    if(state.web3.injected) {
-      getAccountMetadata()
+        setMetadata({
+          snapshots: dailyDistributionSnapshots,
+          active: parseFloat(formatBalance(new BigNumber(active), 18, 0)).toLocaleString(),
+          inactive: parseFloat(formatBalance(new BigNumber(inactive), 18, 0)).toLocaleString(),
+          delegated: parseFloat(formatBalance(new BigNumber(delegated), 18, 0)).toLocaleString(),
+          voters: parseFloat(voters).toLocaleString()
+        })
+        setProposals(proposals)
+
+        if(state.web3.injected) {
+          getAccountMetadata()
+        }
+      }
     }
     retrieveProposals()
+  }, [ state.request ])
+
+  useEffect(() => {
     setPhase(<Init />)
   }, [])
 
