@@ -37,7 +37,7 @@ const mapping = {
     }
   },
   [DESKTOP_NORMAL]: {
-    position: 'absolute',
+    position: 'fixed',
     duration: 35,
     width: 3000,
     marginBlock: {
@@ -46,7 +46,7 @@ const mapping = {
     }
   },
   [DESKTOP_LARGE]: {
-    position: 'absolute',
+    position: 'fixed',
     duration: 35,
     width: 4000,
     marginBlock: {
@@ -55,7 +55,7 @@ const mapping = {
     }
   },
   [DESKTOP_WIDE]: {
-    position: 'absolute',
+    position: 'fixed',
     duration: 45,
     width: 4000,
     marginBlock: {
@@ -64,7 +64,7 @@ const mapping = {
     }
   },
   [DESKTOP_HUGE]: {
-    position: 'absolute',
+    position: 'fixed',
     duration: 45,
     width: 4000,
     marginBlock: {
@@ -73,7 +73,7 @@ const mapping = {
     }
   },
   [DESKTOP_MASSIVE]: {
-    position: 'absolute',
+    position: 'fixed',
     duration: 45,
     width: 4000,
     marginBlock: {
