@@ -202,41 +202,35 @@ export default function VerticalTabs({ data }) {
       </TabPanel>
 
       <TabPanel className={classes.panels} value={value} index={2}>
-        <div className='item'>
-          <Grid item container direction='column' alignItems='flex-start' justify='space-around' spacing={6}>
-            <Grid item key='uniswap'>
+        <Grid item container direction='row' alignItems='flex-start' justify='start' spacing={4}>
+          <Grid item key='uniswap'>
             <Link to={`/pool/${data.address}`}>
               <ButtonSecondary variant='outlined' margin={{ float: 'left', marginLeft: 20, marginTop: 12.5 }}>
                 VIEW POOL
               </ButtonSecondary>
             </Link>
             <a target='_blank' rel="noopener noreferrer" href={`https://rinkeby.etherscan.io/token/${data.address}`}>
-              <IconButton variant='outlined' margin={{ marginLeft: 50 }}>
+              <IconButton variant='outlined' margin={{ marginLeft: 12.5 }}>
                 <img src={etherscan} style={{ width: 37.5 }} />
               </IconButton>
             </a>
             <a target='_blank' rel="noopener noreferrer" href={`https://info.uniswap.org/pool/${data.address}`}>
-              <IconButton variant='outlined' margin={{ marginLeft: 50 }}>
+              <IconButton variant='outlined' margin={{ marginLeft: 12.5 }}>
                 <img src={uni} style={{ width: 37.5 }} />
               </IconButton>
             </a>
-            </Grid>
-            <Grid item key='pool'>
-              <div className={classes.statsAlt}>
-                <ul>
-                  <li> GROSS FEES: ${parseFloat(meta.pool.feesTotalUSD).toFixed(2)}</li>
-                  <li> FEES: ${formatBalance(meta.pool.swapFee, 18, 4)}</li>
-                </ul>
-              </div>
-            </Grid>
           </Grid>
-        </div>
-        <div className={classes.stats}>
-          <ul>
-            <li> TVL: ${data.marketcap}</li>
-            <li> SUPPLY: {data.supply}</li>
-          </ul>
-        </div>
+          <Grid item>
+            <div className={classes.stats}>
+              <ul>
+                <li> GROSS FEES: ${parseFloat(meta.pool.feesTotalUSD).toFixed(2)}</li>
+                <li> FEES: ${formatBalance(meta.pool.swapFee, 18, 4)}</li>
+                <li> TVL: ${data.marketcap}</li>
+                <li> SUPPLY: {data.supply}</li>
+              </ul>
+            </div>
+          </Grid>
+        </Grid>
       </TabPanel>
     </div>
   );

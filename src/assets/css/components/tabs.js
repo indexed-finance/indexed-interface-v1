@@ -32,7 +32,6 @@ const setStyle = (theme) => ({
     height: '100%'
   },
   stats: {
-    paddingTop: '.75em',
     '& ul li': {
       marginBottom: 15
     }

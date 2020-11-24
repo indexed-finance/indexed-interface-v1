@@ -45,6 +45,7 @@ export default function Supply() {
   const [ stats, setStats ] = useState({ claim: 0, deposit: 0, balance: 0 })
   const [ metadata, setMetadata ] = useState({ supply: 0, rate: 0 })
   const [ input, setInput ] = useState(null)
+  const [ shouldQuery, setQuery ] = useState(false)
 
   let { state, dispatch } = useContext(store)
   let { asset } = useParams()
@@ -111,6 +112,8 @@ export default function Supply() {
     let { web3, account } = state
     let { id } = metadata
 
+    setQuery(false)
+
     try {
       let contract = toContract(web3.injected, IStakingRewards, id)
       let amount = decToWeiHex(web3.rinkeby, parseFloat(input))
@@ -120,7 +123,7 @@ export default function Supply() {
         if(conf == 0){
           if(receipt.status == 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash))
-            await getAccountMetadata(metadata)
+            setQuery(true)
           } else {
             dispatch(TX_REVERTED(receipt.transactionHash))
           }
@@ -141,7 +144,6 @@ export default function Supply() {
         if(conf == 0){
           if(receipt.status == 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash))
-            await getAccountMetadata(metadata)
           } else {
             dispatch(TX_REVERTED(receipt.transactionHash))
           }
@@ -157,7 +159,7 @@ export default function Supply() {
 
     let estimatedRatio = (metadata.rate * weight)
     let estimatedReward = estimatedRatio > metadata.rate ? metadata.rate : estimatedRatio
-    let displayWeight = weight > 1 ? (weight - (metadata.supply/raw))/weight * 100 : weight/2 * 100
+    let displayWeight = weight > 1 ? (weight - ((metadata.supply + raw)/raw))/weight * 100 : weight * 100
 
     document.getElementById('est').innerHTML =
     estimatedReward.toLocaleString({ minimumFractionDigits: 2 })
@@ -169,17 +171,21 @@ export default function Supply() {
 
   const getPoolWeight = (value) => {
     let currentWeight = metadata.supply == 0 ? 1 : metadata.supply
-    return (parseFloat(value)/parseFloat(currentWeight + value))
+    let depositWeight = (parseFloat(stats.deposit)/parseFloat(metadata.supply))
+    let inputWeight = parseFloat(value)/(parseFloat(currentWeight) + parseFloat(value))
+
+    return !state.web3.injected ? inputWeight :  (depositWeight - (((inputWeight - depositWeight) * -1)))/2
   }
 
   const getAccountMetadata = async(obj) => {
     let { web3, account } = state
 
     if(web3.injected && obj) {
-      let { stakingToken, totalSupply, id } = obj
+      let { stakingToken, id } = obj
       let contract = toContract(web3.rinkeby, IStakingRewards, id)
       let token = getERC20(web3.rinkeby, stakingToken)
       let claim = await contract.methods.earned(account).call()
+      let totalSupply = await contract.methods.totalSupply().call()
       let deposit = await contract.methods.balanceOf(account).call()
       let balance = await token.methods.balanceOf(account).call()
       let supply = formatBalance(new BigNumber(totalSupply), 18, 4)
@@ -190,7 +196,8 @@ export default function Supply() {
       deposit = formatBalance(new BigNumber(deposit), 18, 4)
       claim = formatBalance(new BigNumber(claim), 18, 4)
 
-      let relative = parseFloat((deposit)/parseFloat(supply + deposit))
+      let relative = parseFloat((deposit)/parseFloat(supply))
+
       let returns = obj.rate * (isNaN(relative) ? 1 : relative)
       let future = returns != obj.rate ? parseFloat(claim) + returns : claim
       let display = returns.toLocaleString({ minimumFractionDigits: 2 })
@@ -210,9 +217,10 @@ export default function Supply() {
         let isWethPair = ticker.includes('UNI')
         let data = await getStakingPool(pool.address, isWethPair)
         let {
-          id, startsAt, stakingToken, totalSupply, trewardRate, rewardRate, isReady,
+          id, startsAt, stakingToken, rewardRate, isReady,
          } = data
         let contract = toContract(web3.rinkeby, IStakingRewards, id)
+        let totalSupply = await contract.methods.totalSupply().call()
         let supply = formatBalance(new BigNumber(totalSupply), 18, 4)
         let reward = formatBalance(new BigNumber(rewardRate), 18, 4)
         let rate = reward/(supply == 0 ? 1 : supply)
@@ -238,7 +246,7 @@ export default function Supply() {
       }
     }
     getMetadata()
-  }, [ state.request ])
+  }, [ state.request, shouldQuery ])
 
   useEffect(() => {
     const checkAllowance = async() => {
