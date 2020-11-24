@@ -28,7 +28,7 @@ const setStyle = (theme) => ({
 
 const mapping = {
   [DESKTOP_SMALL]: {
-    position: 'absolute',
+    position: 'fixed',
     duration: 35,
     width: 2500,
     marginBlock: {
