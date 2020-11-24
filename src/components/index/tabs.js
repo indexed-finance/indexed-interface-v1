@@ -7,6 +7,7 @@ import ExitIcon from '@material-ui/icons/ExitToApp'
 import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
 import Tabs from '@material-ui/core/Tabs'
+import IconButton from '@material-ui/core/IconButton'
 import Tab from '@material-ui/core/Tab'
 import ContentLoader from "react-content-loader"
 import { Link } from 'react-router-dom'
@@ -19,6 +20,8 @@ import WeightedToken from './weighted-token'
 import List from '../list'
 
 import style from '../../assets/css/components/tabs'
+import etherscan from '../../assets/images/etherscan.png'
+import uni from '../../assets/images/uni.png'
 import { getPair } from '../../lib/markets'
 import { getMarketTrades } from '../../api/gql'
 import { store } from '../../state'
@@ -201,24 +204,30 @@ export default function VerticalTabs({ data }) {
       <TabPanel className={classes.panels} value={value} index={2}>
         <div className='item'>
           <Grid item container direction='column' alignItems='flex-start' justify='space-around' spacing={6}>
-            <Grid item key='pool'>
-              <a target='_blank' rel="noopener noreferrer" href={`https://rinkeby.etherscan.io/token/${data.address}`}>
-                <ButtonPrimary variant='outlined' margin={{ marginLeft: 50 }}>
-                  ETHERSCAN
-                </ButtonPrimary>
-              </a>
-              <Link to={`/pool/${data.address}`}>
-                <ButtonSecondary variant='outlined' margin={{ margin: 0 }}>
-                  VIEW POOL
-                </ButtonSecondary>
-              </Link>
-            </Grid>
             <Grid item key='uniswap'>
-              <a target='_blank' rel="noopener noreferrer" href={`https://info.uniswap.org/pool/${data.address}`}>
-                <ButtonPrimary variant='outlined' margin={{ marginRight: 25 }}>
-                  🦄 UNISWAP
-                </ButtonPrimary>
-              </a>
+            <Link to={`/pool/${data.address}`}>
+              <ButtonSecondary variant='outlined' margin={{ float: 'left', marginLeft: 20, marginTop: 12.5 }}>
+                VIEW POOL
+              </ButtonSecondary>
+            </Link>
+            <a target='_blank' rel="noopener noreferrer" href={`https://rinkeby.etherscan.io/token/${data.address}`}>
+              <IconButton variant='outlined' margin={{ marginLeft: 50 }}>
+                <img src={etherscan} style={{ width: 37.5 }} />
+              </IconButton>
+            </a>
+            <a target='_blank' rel="noopener noreferrer" href={`https://info.uniswap.org/pool/${data.address}`}>
+              <IconButton variant='outlined' margin={{ marginLeft: 50 }}>
+                <img src={uni} style={{ width: 37.5 }} />
+              </IconButton>
+            </a>
+            </Grid>
+            <Grid item key='pool'>
+              <div className={classes.statsAlt}>
+                <ul>
+                  <li> GROSS FEES: ${parseFloat(meta.pool.feesTotalUSD).toFixed(2)}</li>
+                  <li> FEES: ${formatBalance(meta.pool.swapFee, 18, 4)}</li>
+                </ul>
+              </div>
             </Grid>
           </Grid>
         </div>
@@ -226,8 +235,6 @@ export default function VerticalTabs({ data }) {
           <ul>
             <li> TVL: ${data.marketcap}</li>
             <li> SUPPLY: {data.supply}</li>
-            <li> GROSS FEES: ${parseFloat(meta.pool.feesTotalUSD).toFixed(2)}</li>
-            <li> FEES: ${formatBalance(meta.pool.swapFee, 18, 4)}</li>
           </ul>
         </div>
       </TabPanel>

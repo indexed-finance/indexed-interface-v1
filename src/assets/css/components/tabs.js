@@ -37,6 +37,12 @@ const setStyle = (theme) => ({
       marginBottom: 15
     }
   },
+  statsAlt: {
+    marginTop: '-2.75em',
+    '& ul li': {
+      marginBottom: 15
+    }
+  },
   box: {
     '& .MuiGrid-container': {
       width: '100% !important',

@@ -50,7 +50,7 @@ const setStyle = (theme) => ({
 
 const mapping = {
   [DESKTOP_SMALL]: {
-    margin: '3em 3em',
+    margin: '3em 0em 1.5em 0em',
     padding: '0em 2em 1em',
     positioning: 'center',
     wallet: '#',
@@ -67,7 +67,7 @@ const mapping = {
     }
   },
   [DESKTOP_NORMAL]: {
-    margin: '3em 3em',
+    margin: '3em 0em 1.5em 0em',
     padding: '0em 2em 1em',
     positioning: 'center',
     marginLeft: '167.5px',
@@ -83,7 +83,7 @@ const mapping = {
     }
   },
   [DESKTOP_LARGE]: {
-    margin: '3em 3em',
+    margin: '3em 0em 1.5em 0em',
     padding: '0em 2em 1em',
     positioning: 'center',
     inputWidth: 200,
@@ -98,7 +98,7 @@ const mapping = {
     }
   },
   [DESKTOP_WIDE]: {
-    margin: '3em 3em',
+    margin: '3em 0em 1.5em 0em',
     padding: '0em 2em 1em',
     positioning: 'center',
     inputWidth: 200,
@@ -113,7 +113,7 @@ const mapping = {
     }
   },
   [DESKTOP_HUGE]: {
-    margin: '3em 3em',
+    margin: '3em 0em 1.5em 0em',
     padding: '0em 2em 1em',
     positioning: 'center',
     inputWidth: 200,
@@ -128,7 +128,7 @@ const mapping = {
     }
   },
   [DESKTOP_MASSIVE]: {
-    margin: '3em 3em',
+    margin: '3em 0em 1.5em 0em',
     padding: '0em 2em 1em',
     positioning: 'center',
     inputWidth: 200,
@@ -143,7 +143,7 @@ const mapping = {
     }
   },
   [NATIVE_SMALL]: {
-    margin: '2em 1.5em',
+    margin: '2em 0em 1.5em 0em',
     padding: '0em 0em 1em',
     positioning: 'flex-start',
     inputWidth: 125,
@@ -159,7 +159,7 @@ const mapping = {
     }
   },
   [NATIVE_NORMAL]: {
-    margin: '2em 1.5em',
+    margin: '2em 0em 1.5em 0em',
     padding: '0em 0em 1em',
     positioning: 'flex-start',
     inputWidth: 125,
@@ -175,7 +175,7 @@ const mapping = {
     }
   },
   [NATIVE_WIDE]: {
-    margin: '2em 1.5em',
+    margin: '2em 0em 1.5em 0em',
     padding: '0em 0em 1em',
     positioning: 'flex-start',
     inputWidth: 125,

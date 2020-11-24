@@ -261,20 +261,27 @@ export default function Supply() {
   }, [ input ])
 
   let {
-    padding, marginBottom, marginRight, claimMargin, width, positioning, inputWidth, listPadding, button, height, reward, buttonPos, marginLeft, infoWidth
+    padding, marginBottom, margin, marginRight, claimMargin, width, positioning, inputWidth, listPadding, button, height, reward, buttonPos, marginLeft, infoWidth
   } = style.getFormatting({ ticker, native: state.native })
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
     <Grid item xs={10} md={6}>
-      <div className={classes.top} style={{ marginTop: !state.native ? '3em' : '0em'}}>
-        <Canvas native={state.native} style={{ overflowX: 'hidden' }}>
+      <div className={classes.top}>
+        <Canvas native={state.native} style={{ overflowX: 'hidden', margin }}>
           <div className={classes.rewards} style={{ width: reward }}>
             <p> NDX EARNED </p>
             <div>
-              <h2 style={{ marginLeft: claimMargin }}>
-                <CountUp decimals={6} perserveValue separator="," start={stats.claim} end={stats.future} duration={86400} /> NDX
-              </h2>
+              {!state.native && (
+                <h2 style={{ marginLeft: claimMargin }}>
+                  <CountUp decimals={6} perserveValue separator="," start={stats.claim} end={stats.future} duration={86400} /> NDX
+                </h2>
+              )}
+              {state.native && (
+                <h3 style={{ marginLeft: claimMargin }}>
+                  <CountUp decimals={6} perserveValue separator="," start={stats.claim} end={stats.future} duration={86400} /> NDX
+                </h3>
+              )}
               <ButtonPrimary disabled={!state.web3.injected} onClick={claim} variant='outlined'
                  margin={{ marginTop: buttonPos, marginBottom: 12.5, marginRight: 37.5 }}>
                 CLAIM
