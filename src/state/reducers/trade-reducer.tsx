@@ -85,7 +85,7 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
 
   const getBalance = (tokenAddress: string): BigNumber => {
      if(tokenAddress == WETH){
-       return newState.helper.ethBalance
+       return newState.helper.ethBalance || BN_ZERO;
     } else if (compareAddresses(newState.helper.tokenA.address, tokenAddress)) {
       return newState.helper.tokenABalance || BN_ZERO;
     }
