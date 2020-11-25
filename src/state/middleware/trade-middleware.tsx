@@ -1,4 +1,4 @@
-import { BigNumber, formatBalance, toBN, toTokenAmount, toWei } from "@indexed-finance/indexed.js";
+import { BigNumber, formatBalance, toBN, toTokenAmount, toWei } from "ndx-dummy";
 import { withMiddleware } from ".";
 import {
   TradeDispatch,
@@ -197,8 +197,6 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
         decimals: wlToken.decimals,
         isPoolToken: false
       }
-
-      console.log(wlToken)
 
       if (state.input.isPoolToken) {
         const { amount, address } = state.input;

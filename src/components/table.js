@@ -62,7 +62,7 @@ const columns = [
   },
   {
     id: 'delta',
-    label: '\u0394',
+    label: '\u0394 [%]',
     minWidth: 25,
     align: 'center',
     format: (value) => `%${value.toLocaleString('en-US')}`,

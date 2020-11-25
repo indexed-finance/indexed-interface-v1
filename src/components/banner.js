@@ -114,7 +114,7 @@ export default function Banner() {
   return(
     <div style={{ width, position }} id='carosuel' className={classes.root}>
       <motion.div
-        initial={{ translateX: thresholds[0] }}	
+        initial={{ translateX: thresholds[0] }}
         animate={controls}
       >
       <motion.ul className={classes.carosuel} style={{ ...marginBlock }}>

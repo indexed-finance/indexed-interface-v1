@@ -16,9 +16,9 @@ const setStyle = (theme) => ({
       borderWidth: 3
     },
     '& .MuiAlert-outlinedInfo': {
-      borderColor: '#99ffff !important',
+      borderColor: '#66b3ff !important',
       '& .MuiAlert-icon': {
-        color: '#99ffff !important'
+        color: '#66b3ff !important'
       }
     },
     '& .MuiAlert-outlinedSuccess': {
