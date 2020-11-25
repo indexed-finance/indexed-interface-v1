@@ -34,11 +34,8 @@ const setStyle = (theme) => ({
   appBar: {
     borderBottom: 'solid 3px #666666',
     boxShadow: 'none',
-    padding: theme.spacing(2,0),
     background: theme.palette.primary.main,
     color: theme.palette.secondary.main,
-    paddingTop: 12.5,
-    paddingBottom: 12.5,
     paddingRight: '0px !important'
   },
   menuButton: {
@@ -91,55 +88,91 @@ const mapping = {
     paddingTop: '.75vh',
     display: 'INDEXED',
     marginLeft: 15,
-    width: 40
+    width: 40,
+    padding: {
+      paddingTop: 12.5,
+      paddingBottom: 12.5,
+    }
   },
   [DESKTOP_NORMAL]: {
     paddingTop: '.75vh',
     display: 'INDEXED',
     marginLeft: 15,
-    width: 40
+    width: 40,
+    padding: {
+      paddingTop: 12.5,
+      paddingBottom: 12.5,
+    }
   },
   [DESKTOP_LARGE]: {
     paddingTop: '.75vh',
     display: 'INDEXED',
     marginLeft: 15,
-    width: 40
+    width: 40,
+    padding: {
+      paddingTop: 12.5,
+      paddingBottom: 12.5,
+    }
   },
   [DESKTOP_WIDE]: {
     paddingTop: '.75vh',
     display: 'INDEXED',
     marginLeft: 15,
-    width: 40
+    width: 40,
+    padding: {
+      paddingTop: 12.5,
+      paddingBottom: 12.5,
+    }
   },
   [DESKTOP_HUGE]: {
     paddingTop: '.75vh',
     display: 'INDEXED',
     marginLeft: 15,
-    width: 40
+    width: 40,
+    padding: {
+      paddingTop: 12.5,
+      paddingBottom: 12.5,
+    }
   },
   [DESKTOP_MASSIVE]: {
     paddingTop: '.75vh',
     display: 'INDEXED',
     marginLeft: 15,
-    width: 40
+    width: 40,
+    padding: {
+      paddingTop: 12.5,
+      paddingBottom: 12.5,
+    }
   },
   [NATIVE_SMALL]: {
     paddingTop: '1.5vh',
     display: 'NDX',
     marginLeft: 0,
-    width: 30
+    width: 30,
+    padding: {
+      paddingTop: 5,
+      paddingBottom: 10,
+    }
   },
   [NATIVE_NORMAL]: {
     paddingTop: '1.5vh',
     display: 'INDEXED',
     marginLeft: 0,
-    width: 30
+    width: 30,
+    padding: {
+      paddingTop: 5,
+      paddingBottom: 10,
+    }
   },
   [NATIVE_WIDE]: {
     paddingTop: '1.5vh',
     display: 'INDEXED',
     marginLeft: 0,
-    width: 30
+    width: 30,
+    padding: {
+      paddingTop: 5,
+      paddingBottom: 10,
+    }
   },
 }
 

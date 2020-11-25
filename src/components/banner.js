@@ -25,7 +25,7 @@ export default function Banner() {
   let { state } = useContext(store)
   let { indexes, stats, native } = state
 
-  let { width, position, marginBlock, duration } = style.getFormatting(native)
+  let { width, position, marginBlock, duration, marginTop } = style.getFormatting(native)
 
   const startAnimation = () => {
     console.log('START ANIMATION')
@@ -112,7 +112,7 @@ export default function Banner() {
   }, [ indexes ])
 
   return(
-    <div style={{ width, position }} id='carosuel' className={classes.root}>
+    <div style={{ width, position, marginTop }} id='carosuel' className={classes.root}>
       <motion.div
         initial={{ translateX: thresholds[0] }}
         animate={controls}

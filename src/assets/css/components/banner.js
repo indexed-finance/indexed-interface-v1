@@ -32,6 +32,7 @@ const mapping = {
     position: 'fixed',
     duration: 35,
     width: 2500,
+    marginTop: 'auto',
     marginBlock: {
       marginBlockStart: '.5em',
       marginBlockEnd: '.5em'
@@ -41,6 +42,7 @@ const mapping = {
     position: 'fixed',
     duration: 35,
     width: 3000,
+    marginTop: 'auto',
     marginBlock: {
       marginBlockStart: '.5em',
       marginBlockEnd: '.5em'
@@ -50,6 +52,7 @@ const mapping = {
     position: 'fixed',
     duration: 35,
     width: 4000,
+    marginTop: 'auto',
     marginBlock: {
       marginBlockStart: '.5em',
       marginBlockEnd: '.5em'
@@ -59,6 +62,7 @@ const mapping = {
     position: 'fixed',
     duration: 45,
     width: 4000,
+    marginTop: 'auto',
     marginBlock: {
       marginBlockStart: '.5em',
       marginBlockEnd: '.5em'
@@ -68,6 +72,7 @@ const mapping = {
     position: 'fixed',
     duration: 45,
     width: 4000,
+    marginTop: 'auto',
     marginBlock: {
       marginBlockStart: '.5em',
       marginBlockEnd: '.5em'
@@ -76,6 +81,7 @@ const mapping = {
   [DESKTOP_MASSIVE]: {
     position: 'fixed',
     duration: 45,
+    marginTop: 'auto',
     width: 4000,
     marginBlock: {
       marginBlockStart: '.5em',
@@ -85,28 +91,31 @@ const mapping = {
   [NATIVE_SMALL]: {
     position: 'fixed',
     width: '750vw',
+    marginTop: '-0.975em',
     duration: 30,
     marginBlock: {
-      marginBlockStart: '0em',
-      marginBlockEnd: '.5em'
+      marginBlockStart: '.05em',
+      marginBlockEnd: '.25em',
     }
   },
   [NATIVE_NORMAL]: {
     position: 'fixed',
     width: '700vw',
+    marginTop: '-1.10em',
     duration: 30,
     marginBlock: {
-      marginBlockStart: '0em',
-      marginBlockEnd: '.5em'
+      marginBlockStart: '.15em',
+      marginBlockEnd: '.3em',
     }
   },
   [NATIVE_WIDE]: {
     position: 'fixed',
     width: '700vw',
+    marginTop: '-0.975em',
     duration: 25,
     marginBlock: {
-      marginBlockStart: '0em',
-      marginBlockEnd: '.5em'
+      marginBlockStart: '.15em',
+      marginBlockEnd: '.4em',
     }
   },
 }
