@@ -12,7 +12,20 @@ const setStyle = (theme) => ({
     },
     '& .MuiAlert-root': {
       background: theme.palette.primary.main,
+      color: theme.palette.secondary.main,
       borderWidth: 3
+    },
+    '& .MuiAlert-outlinedInfo': {
+      borderColor: '#99ffff !important',
+      '& .MuiAlert-icon': {
+        color: '#99ffff !important'
+      }
+    },
+    '& .MuiAlert-outlinedSuccess': {
+      borderColor: '#00e79a !important',
+      '& .MuiAlert-icon': {
+        color: '#00e79a !important'
+      }
     }
   },
 })

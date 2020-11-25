@@ -22,7 +22,10 @@ import { getERC20 } from '../../lib/erc20';
 
 const ApproveButton = styled(ButtonTransaction)({
   fontSize: 10,
-  paddingRight: 5
+  paddingRight: 5,
+  '&:hover': {
+    color: '#00e79a !important'
+  }
 })
 
 const Tick = styled(ListItemIcon)({

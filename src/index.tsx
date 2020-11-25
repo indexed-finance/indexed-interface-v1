@@ -122,19 +122,15 @@ function Application(){
         if (typeof supply !== 'number' && typeof supply != 'string') {
           supply = formatBalance(supply, 18, 4);
         }
-        let volume = +(snapshots[0].dailySwapVolumeUSD).toFixed(2);
         let history = snapshots.map(h => ({ close: +(h.value.toFixed(4)), date: new Date(h.date * 1000) }));
         let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(4), date: new Date(l.date * 1000) }))
         let targetDate = new Date(timestamp.getTime() - 86400000 )
-        let past24h = history.find(i => i.date.getTime() == targetDate.getTime())
-
-        const delta24hr = snapshots.length === 1 ? 0 : (Math.abs(history[history.length-1].close - past24h.close)/ past24h.close).toFixed(4);
-
-        console.log(history[history.length-1].close, past24h.close)
-
+        let past24h = snapshots.find(i => (i.date * 1000) == targetDate.getTime())
+        let delta24hr = snapshots.length === 1 ? 0 : (Math.abs(history[history.length-1].close - past24h.value)/ past24h.value).toFixed(4);
+        let volume = +(past24h.dailySwapVolumeUSD).toFixed(2);
 
         stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
-        stats.dailyVolume += parseFloat(snapshots[0].dailySwapVolumeUSD)
+        stats.dailyVolume += parseFloat(past24h.dailySwapVolumeUSD)
 
         const price = parseFloat(history[history.length-1].close);
         const index = {

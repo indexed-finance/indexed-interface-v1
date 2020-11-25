@@ -143,7 +143,7 @@ export default function Markets(){
                   {state.request && !market.active && (<h3 style={{ color: 'orange' }}> UNINITIALISED </h3>)}
                   {market.active && (
                     <h3 style={{ color: '#999999' }}> ${market.price}
-                      <span style={{ color: market.delta > 0 ? '#00e79a': '#00e79a '}}>
+                      <span style={{ color: market.delta > 0 ? '#00e79a': '#ff005a'}}>
                         &nbsp;({market.delta > 0 ? '+' : '-'}{market.delta}%)
                       </span>
                     </h3>
@@ -157,7 +157,7 @@ export default function Markets(){
                   {market.active && (
                     <Fragment>
                       <h4 style={{ color: '#999999' }}> ${market.price} </h4>
-                      <span style={{ color: market.delta > 0 ? '#00e79a': '#00e79a '}}>
+                      <span style={{ color: market.delta > 0 ? '#00e79a': '#ff005a'}}>
                       ({market.delta > 0 ? '+' : '-'}{market.delta}%)
                       </span>
                     </Fragment>

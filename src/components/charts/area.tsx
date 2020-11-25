@@ -4,7 +4,7 @@ import React, { useMemo, useCallback } from 'react';
 
 import { AreaClosed, Line, Bar } from '@vx/shape';
 import appleStock, { AppleStock } from '@vx/mock-data/lib/mocks/appleStock';
-import { curveMonotoneX } from '@vx/curve';
+import { curveBasis } from '@vx/curve';
 import { GridRows, GridColumns } from '@vx/grid';
 import { scaleTime, scaleLinear } from '@vx/scale';
 import { withTooltip, Tooltip, defaultStyles } from '@vx/tooltip';
@@ -75,8 +75,8 @@ export default withTooltip<AreaProps, TooltipData>(
     const stockValueScale = useMemo(
       () =>
         scaleLinear({
-          range: [yMax, 0],
-          domain: [(max(data, getStockValue))*.9, (max(data, getStockValue)*0.975 || 0) + (yMax/ 200)],
+          range: [yMax, (max(data, getStockValue))*.9],
+          domain: [(max(data, getStockValue))*.75, (max(data, getStockValue)*0.975 || 0) + (yMax/ 200)],
           nice: true,
         }),
       [yMax],
@@ -133,6 +133,7 @@ export default withTooltip<AreaProps, TooltipData>(
             pointerEvents="none"
           />
           <AreaClosed<AppleStock>
+            curve={curveBasis}
             data={data}
             x={d => dateScale(getDate(d))}
             y={d => stockValueScale(getStockValue(d))}
@@ -140,7 +141,6 @@ export default withTooltip<AreaProps, TooltipData>(
             strokeWidth={1}
             stroke="url(#area-gradient)"
             fill="url(#area-gradient)"
-            curve={curveMonotoneX}
           />
           <Bar
             x={0}

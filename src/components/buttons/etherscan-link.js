@@ -19,11 +19,12 @@ export default function EtherScanLink(props) {
     case 'token':
       relPath = `token/${entity}`;
       break;
-    default: break 
+    default: break
   }
 
   const etherscanUrl = `https://${subdomain}etherscan.io/${relPath}`;
   return <IconButton
+    style={{ padding: 0, margin: 0, marginLeft: 10 }}
     component={(props) =>
       <Link target="_blank" href={etherscanUrl} rel='noreferrer' {...props} />
     }

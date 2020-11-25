@@ -70,10 +70,10 @@ export default function StickyHeadTable({ width, height, action, data, columns, 
 
                     if(isMarket){
                       if(value === 'BUY') color = '#00e79a'
-                      else color = '#ff005a'
+                      else color = '#f44336'
                     } else if(isIndex) {
                       if(value === 'MINT') color = '#00e79a'
-                      else color = '#ff005a'
+                      else color = '#f44336'
                     }
 
                     if(column.id === 'action') {

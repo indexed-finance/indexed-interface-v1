@@ -125,7 +125,7 @@ export default function Proposal(){
       <Fragment>
         {logs.map((value, i) => {
          let { id, voter, option, weight } = value
-         const color = option ? '#00e79a' : '#ff005a'
+         const color = option ? '#00e79a' : '#f44336'
          const label = option ? 'FOR' : 'AGAINST'
 
          return (
@@ -227,7 +227,7 @@ export default function Proposal(){
                 <div className={classes.option}>
                   <div className={classes.vote}> FOR </div>
                   <span className={classes.progress}>
-                    <Progress color='#ff005a' width={progress} values={values} option='against' />
+                    <Progress color='#f44336' width={progress} values={values} option='against' />
                     <span> {parseFloat(againstVotes).toLocaleString()} NDX</span>
                   </span>
                 </div>
@@ -244,7 +244,7 @@ export default function Proposal(){
                     FOR <Radio value={1} checked={input == 1} onClick={handleInput} color='#00e79a' />
                   </b>
                   <b style={{ float: 'right'}}>
-                    AGAINST <Radio value={0} checked={input == 0} onClick={handleInput} color='#ff005a' />
+                    AGAINST <Radio value={0} checked={input == 0} onClick={handleInput} color='#f44336' />
                   </b>
                 </label>
                 <p> WEIGHT: {parseFloat(state.balances['NDX'].amount).toLocaleString()} NDX </p>

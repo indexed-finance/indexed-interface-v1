@@ -352,7 +352,7 @@ export default function Governance(){
                       }
                       secondary={
                         <div className={classes.progress}>
-                          <Progress width={200} color='#ff005a' values={values} option='against' />
+                          <Progress width={200} color='#f44336' values={values} option='against' />
                           <span> {parseFloat(againstVotes).toLocaleString()} NDX</span>
                         </div>
                       }
