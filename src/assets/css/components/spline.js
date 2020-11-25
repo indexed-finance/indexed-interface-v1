@@ -6,46 +6,55 @@ import { screenClass } from '../../constants/functions'
 const mapping = {
   [DESKTOP_SMALL]: {
     width: 'calc(100% - 30vw)',
+    margin: 70,
     h: 'auto',
     p: 8.75
   },
   [DESKTOP_NORMAL]: {
     width: 'calc(100% - 30vw)',
+    margin: 65,
     h: 'auto',
     p: 11.75
   },
   [DESKTOP_LARGE]: {
     width: 'calc(100% - 30vw)',
+    margin: 60,
     h: 'auto',
     p: 13.75
   },
   [DESKTOP_WIDE]: {
     width: 'calc(100% - 55vw)',
+    margin: 7.5,
     h: 'auto',
     p: 16.75
   },
   [DESKTOP_HUGE]: {
     width: 'calc(100% - 55vw)',
+    margin: 400,
     h: 'auto',
     p: -40
   },
   [DESKTOP_MASSIVE]: {
     width: 'calc(100% - 55vw)',
+    margin: 450,
     h: 'auto',
     p: -42.5
   },
   [NATIVE_SMALL]: {
     width: 'calc(100% - 30vw)',
+    margin: 30,
     h: 117.5,
     p: 12.5
   },
   [NATIVE_NORMAL]: {
     width: 'calc(100% - 30vw)',
+    margin: 30,
     h: 142.5,
     p: 12.5
   },
   [NATIVE_WIDE]: {
     width: 'calc(100% - 30vw)',
+    margin: 30,
     h: 162.5,
     p: 12.5
   }

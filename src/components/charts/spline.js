@@ -38,11 +38,14 @@ const renameKeys = (keysMap, obj) =>
   )
 }
 
-const options = (padding, range) => ({
+const options = (padding, range, margin) => ({
   bezierCurve: true,
   responsive: true,
   maintainAspectRatio: true,
   aspectRatio: 6,
+   tooltips: {
+      yAlign: 'right',
+  },
   plugins: {
      datalabels: false
  },
@@ -55,7 +58,7 @@ const options = (padding, range) => ({
     padding: {
       top: padding,
       left: -12.5,
-      right: 0,
+      right: margin,
       bottom: 0
     }
   },
@@ -75,7 +78,7 @@ const options = (padding, range) => ({
         },
         ticks: {
           beginAtZero: false,
-          max: range[0],
+          max: range[0] * 1.015,
           display: false,
           padding: 0,
         }
@@ -118,6 +121,15 @@ const getConfig = (canvas, metadata, color) => {
     { close: 'y', date: 'x' }, array.slice(length-11, length)
   )
 
+  if(data.length > 0) {
+    let newDate = new Date(data[data.length-1].x)
+    let day = i => 3600000 * i
+
+    data.push({ ...data[data.length-1], x: new Date(newDate.getTime() + day(1)) })
+    data.push({ ...data[data.length-1], x: new Date(newDate.getTime() + day(2)) })
+    data.push({ ...data[data.length-1], x: new Date(newDate.getTime() + day(3)) })
+  }
+
   return {
     datasets: [
     {
@@ -153,7 +165,7 @@ export default function Spline(props){
   let { metadata, height, color, padding, ready, absolute, native } = props
   const [ component, setComponent ] = useState(null)
   const theme = useTheme()
-  let { p, h, width } = style.getFormatting(native)
+  let { p, h, width, margin } = style.getFormatting(native)
 
   useEffect(() => {
     if(metadata.address != '0x0000000000000000000000000000000000000000'){
@@ -161,7 +173,7 @@ export default function Spline(props){
 
       setComponent(
         <Line
-          height={height} options={options(!absolute ? 0 : padding, ranges)}
+          height={height} options={options(!absolute ? 0 : padding, ranges, margin)}
           data={(e) => getConfig(e, metadata, color)} redraw
         />
       )

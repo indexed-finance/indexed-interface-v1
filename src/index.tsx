@@ -111,8 +111,13 @@ function Application(){
         const categoryID = `0x${category.toString(16)}`;
         await addCategory(categoryID);
         let snapshots = await pool.getSnapshots(90);
+        let timestamp = new Date(Date.now())
 
-        const delta24hr = snapshots.length === 1 ? 1 : (Math.abs(snapshots[0].value - snapshots[1].value) / snapshots[1].value).toFixed(4);
+        timestamp.setHours(0);
+        timestamp.setMinutes(0);
+        timestamp.setSeconds(0);
+        timestamp.setMilliseconds(0);
+
         let supply = pool.pool.totalSupply;
         if (typeof supply !== 'number' && typeof supply != 'string') {
           supply = formatBalance(supply, 18, 4);
@@ -120,11 +125,18 @@ function Application(){
         let volume = +(snapshots[0].dailySwapVolumeUSD).toFixed(2);
         let history = snapshots.map(h => ({ close: +(h.value.toFixed(4)), date: new Date(h.date * 1000) }));
         let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(4), date: new Date(l.date * 1000) }))
+        let targetDate = new Date(timestamp.getTime() - 86400000 )
+        let past24h = history.find(i => i.date.getTime() == targetDate.getTime())
+
+        const delta24hr = snapshots.length === 1 ? 0 : (Math.abs(history[history.length-1].close - past24h.close)/ past24h.close).toFixed(4);
+
+        console.log(history[history.length-1].close, past24h.close)
+
 
         stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
         stats.dailyVolume += parseFloat(snapshots[0].dailySwapVolumeUSD)
 
-        const price = parseFloat(history[0].close);
+        const price = parseFloat(history[history.length-1].close);
         const index = {
           marketcap: parseFloat((+pool.pool.totalValueLockedUSD).toFixed(2)),
           price,
