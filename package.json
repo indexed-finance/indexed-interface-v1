@@ -44,7 +44,7 @@
     "js-sha3": "^0.8.0",
     "loaders.css": "^0.1.2",
     "multihashing": "^0.3.3",
-    "ndx-dummy": "^1.0.0",
+    "ndx-dummy": "^1.1.0",
     "ramda": "^0.27.1",
     "randomcolor": "^0.6.2",
     "react": "16.11.0",

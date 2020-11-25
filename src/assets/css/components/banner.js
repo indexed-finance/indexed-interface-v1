@@ -6,8 +6,9 @@ import {
 const setStyle = (theme) => ({
   root: {
     overflowX: 'hidden',
-    position: 'absolute',
+    position: 'fixed',
     borderBottom: '3px solid #666666',
+    background: theme.palette.primary.main,
   },
   carosuel: {
     listStyle: 'none',
