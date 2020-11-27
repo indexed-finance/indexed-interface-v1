@@ -32,6 +32,18 @@ const tooltipStyles = {
 // util
 const formatDate = timeFormat("%b %d, '%y");
 
+function arrayMax(arr) {
+  return arr.reduce(function (p, v) {
+    return ( p.close > v ? p.close : v );
+  });
+}
+
+function arrayMin(arr) {
+  return arr.reduce(function (p, v) {
+    return ( p.close < v ? p.close : v );
+  });
+}
+
 // accessors
 const getDate = (d: AppleStock) => new Date(d.date);
 const getStockValue = (d: AppleStock) => d.close;

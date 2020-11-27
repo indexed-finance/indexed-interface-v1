@@ -60,11 +60,6 @@ input[type=number] {
   top: 2px !important;
 }
 
-.market-area {
-  position: absolute;
-  clear:both;
-}
-
 .web3modal-modal-card {
   min-width: 0px !important;
 }

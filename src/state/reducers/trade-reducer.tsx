@@ -1,5 +1,5 @@
-import { BigNumber, toWei, formatBalance } from "ndx-dummy";
-import { UniswapHelper } from 'ndx-dummy/dist/uniswap-helper';
+import { BigNumber, toWei, formatBalance } from "@indexed-finance/indexed.js";
+import { UniswapHelper } from '@indexed-finance/indexed.js';
 import { useReducer } from "react";
 import { TradeMiddlewareAction, TradeDispatchAction, SetInputToken, SetOutputToken, SetUniswapHelper } from "../actions/trade-actions";
 import { withTradeMiddleware } from "../middleware/trade-middleware";
@@ -28,6 +28,7 @@ export type TradeState = {
   helper?: UniswapHelper;
   input: TradeToken;
   output: TradeToken;
+  ethBalance: BigNumber;
   getBalance?: (address: string) => BigNumber;
   getAllowanceForPair?: (address: string) => BigNumber;
   ready: boolean;
@@ -37,6 +38,7 @@ export type TradeState = {
 
 const initialState: TradeState = {
   helper: undefined,
+  ethBalance: BN_ZERO,
   input: {
     address: '',
     decimals: 18,
@@ -85,7 +87,9 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
 
   const getBalance = (tokenAddress: string): BigNumber => {
      if(tokenAddress == WETH){
-       return newState.helper.ethBalance || BN_ZERO;
+       console.log(newState.helper.ethBalance)
+
+      return newState.helper.ethBalance || BN_ZERO;
     } else if (compareAddresses(newState.helper.tokenA.address, tokenAddress)) {
       return newState.helper.tokenABalance || BN_ZERO;
     }

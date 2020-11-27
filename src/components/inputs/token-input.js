@@ -96,8 +96,6 @@ export default function TokenInput(props) {
 
   let { show, inputWidth } = style.getFormatting(native)
 
-  console.log(props.isInitialiser ? inputWidth : props.inputWidth)
-
   return(
     <ListItem
       className={classes[props.label]}

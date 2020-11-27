@@ -1,4 +1,4 @@
-import { BigNumber, UniswapHelper } from "ndx-dummy";
+import { BigNumber, UniswapHelper } from "@indexed-finance/indexed.js";
 import { TradeToken } from "../reducers/trade-reducer";
 
 // Reducer only

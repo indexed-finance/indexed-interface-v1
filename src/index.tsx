@@ -124,8 +124,15 @@ function Application(){
         }
         let history = snapshots.map(h => ({ close: +(h.value.toFixed(4)), date: new Date(h.date * 1000) }));
         let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(4), date: new Date(l.date * 1000) }))
-        let targetDate = new Date(timestamp.getTime() - 86400000 )
-        let past24h = snapshots.find(i => (i.date * 1000) == targetDate.getTime())
+        var dayMulitplier = 1
+        let past24h = undefined
+
+        while(!past24h) {
+          var targetDate = new Date(timestamp.getTime() - (86400000 * dayMulitplier));
+          past24h = snapshots.find(i => (i.date * 1000) == targetDate.getTime());
+          dayMulitplier++;
+        }
+
         let delta24hr = snapshots.length === 1 ? 0 : (Math.abs(history[history.length-1].close - past24h.value)/ past24h.value).toFixed(4);
         let volume = +(past24h.dailySwapVolumeUSD).toFixed(2);
 

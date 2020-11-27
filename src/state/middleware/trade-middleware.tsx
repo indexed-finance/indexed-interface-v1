@@ -1,4 +1,4 @@
-import { BigNumber, formatBalance, toBN, toTokenAmount, toWei } from "ndx-dummy";
+import { BigNumber, formatBalance, toBN, toTokenAmount, toWei } from "@indexed-finance/indexed.js";
 import { withMiddleware } from ".";
 import {
   TradeDispatch,
@@ -164,6 +164,9 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
 
     async function setHelper(action: SetUniswapHelper): Promise<void> {
       await action.helper.waitForUpdate;
+
+      console.log(action.helper)
+
       const { address, decimals } = action.helper.tokenA;
       const input = {
         amount: BN_ZERO,
