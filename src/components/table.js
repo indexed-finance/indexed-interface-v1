@@ -62,7 +62,7 @@ const columns = [
   },
   {
     id: 'delta',
-    label: '\u0394 [%]',
+    label: '\u0394',
     minWidth: 25,
     align: 'center',
     format: (value) => `%${value.toLocaleString('en-US')}`,
@@ -116,11 +116,19 @@ export default function StickyHeadTable(props) {
                     const value = row[column.id];
                     if(!row.active && (column.id !== 'name' && column.id !== 'symbol')) {
                       return <TableCell key={column.id + row.symbol} align={column.align} />
+                    } else if(column.id === 'delta') {
+                      return (
+                        <TableCell key={column.id + row.symbol} align={column.align}>
+                          <span style={{ color: value > 0 ? '#00e79a': '#ff005a'}}>
+                            ({value > 0 ? '+' : '-'}{value}%)
+                          </span>
+                        </TableCell>
+                       )
                     } else {
                       return (
-                      <TableCell key={column.id + row.symbol} align={column.align}>
-                        {(column.format && typeof value === 'number') ? column.format(value) : value}
-                      </TableCell>
+                        <TableCell key={column.id + row.symbol} align={column.align}>
+                          {(column.format && typeof value === 'number') ? column.format(value) : value}
+                        </TableCell>
                       )
                     }
                   })}
