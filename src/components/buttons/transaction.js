@@ -13,7 +13,7 @@ export default function TransactionButton(props){
     padding: 0,
     margin: 0,
     '&:hover': {
-      color: '#009966',
+      color: '#00e79a',
       fontWeight: 'bold',
       background: 'inherit',
       '& o': {

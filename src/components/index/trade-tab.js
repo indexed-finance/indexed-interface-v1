@@ -135,7 +135,6 @@ export default function TradeTab({ metadata }) {
     updatePool(true);
   }
 
-
   let priceString = tradeState.helper ? `1 ${inputSymbol} = ${tradeState.price} ${outputSymbol}` : '';
 
   let feeString;

@@ -11,7 +11,7 @@ import { withTooltip, Tooltip, defaultStyles } from '@vx/tooltip';
 import { WithTooltipProvidedProps } from '@vx/tooltip/lib/enhancers/withTooltip';
 import { localPoint } from '@vx/event';
 import { LinearGradient } from '@vx/gradient';
-import { max, extent, bisector } from 'd3-array';
+import { max, min, extent, bisector } from 'd3-array';
 import { timeFormat } from 'd3-time-format';
 
 type TooltipData = AppleStock;
@@ -31,18 +31,6 @@ const tooltipStyles = {
 
 // util
 const formatDate = timeFormat("%b %d, '%y");
-
-function arrayMax(arr) {
-  return arr.reduce(function (p, v) {
-    return ( p.close > v ? p.close : v );
-  });
-}
-
-function arrayMin(arr) {
-  return arr.reduce(function (p, v) {
-    return ( p.close < v ? p.close : v );
-  });
-}
 
 // accessors
 const getDate = (d: AppleStock) => new Date(d.date);
@@ -74,6 +62,10 @@ export default withTooltip<AreaProps, TooltipData>(
     // bounds
     const xMax = width - margin.left - margin.right;
     const yMax = height - margin.top - margin.bottom;
+    const maximum = max(data, getStockValue)
+    const minimum = min(data, getStockValue)
+    const lowerBound =  minimum * 0.875
+    const upperBound =  maximum * 1.05
 
     // scales
     const dateScale = useMemo(
@@ -87,8 +79,8 @@ export default withTooltip<AreaProps, TooltipData>(
     const stockValueScale = useMemo(
       () =>
         scaleLinear({
-          range: [yMax, (max(data, getStockValue))*.9],
-          domain: [(max(data, getStockValue))*.75, (max(data, getStockValue)*0.975 || 0) + (yMax/ 200)],
+          range: [yMax, lowerBound],
+          domain: [lowerBound, upperBound],
           nice: true,
         }),
       [yMax],
@@ -212,6 +204,7 @@ export default withTooltip<AreaProps, TooltipData>(
                 minWidth: 72,
                 textAlign: 'center',
                 transform: 'translateX(-50%)',
+                zIndex: 1
               }}
             >
               {formatDate(getDate(tooltipData))}

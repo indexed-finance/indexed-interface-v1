@@ -3,6 +3,7 @@ import React, { Fragment, useState, useEffect } from 'react'
 import { Line } from 'react-chartjs-2'
 import { useTheme } from '@material-ui/core/styles'
 import style from '../../assets/css/components/spline'
+import { max, min } from 'd3-array';
 
 import ContentLoader from "react-content-loader"
 
@@ -79,6 +80,7 @@ const options = (padding, range, margin) => ({
         ticks: {
           beginAtZero: false,
           max: range[0] * 1.015,
+          min: range[1] * 0.90,
           display: false,
           padding: 0,
         }
@@ -145,21 +147,17 @@ const getConfig = (canvas, metadata, color) => {
   }
 }
 
-function arrayMax(arr) {
-  return arr.reduce(function (p, v) {
-    return ( p.close > v ? p.close : v );
-  });
-}
-
-function arrayMin(arr) {
-  return arr.reduce(function (p, v) {
-    return ( p.close < v ? p.close : v );
-  });
-}
-
 function getRanges(metadata) {
-  return [ arrayMax(metadata.history).close, arrayMin(metadata.history).close ]
+  let length = metadata.length
+  let subsitute = metadata.slice(length-11, length);
+
+  console.log(max(subsitute, getStockValue), min(subsitute, getStockValue))
+  console.log(subsitute)
+
+  return [ max(subsitute, getStockValue), min(subsitute, getStockValue) ]
 }
+
+const getStockValue = (v) => v.close;
 
 export default function Spline(props){
   let { metadata, height, color, padding, ready, absolute, native } = props
@@ -169,7 +167,7 @@ export default function Spline(props){
 
   useEffect(() => {
     if(metadata.address != '0x0000000000000000000000000000000000000000'){
-      let ranges = metadata.history.length > 0 ? getRanges(metadata) : [ 0, 0 ]
+      let ranges = metadata.history.length > 0 ? getRanges(metadata.history) : [ 0, 0 ]
 
       setComponent(
         <Line
