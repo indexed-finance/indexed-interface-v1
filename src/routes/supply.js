@@ -21,7 +21,7 @@ import NumberFormat from '../utils/format'
 import { tokenMetadata } from '../assets/constants/parameters'
 import { getStakingPool } from '../api/gql'
 import { balanceOf, allowance, getERC20 } from '../lib/erc20'
-import { decToWeiHex, getBalances } from '../lib/markets'
+import { decToWeiHex, getPair, getBalances } from '../lib/markets'
 import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
@@ -208,7 +208,7 @@ export default function Supply() {
 
       let relative = parseFloat((deposit)/parseFloat(supply))
 
-      let returns = obj.rate * (isNaN(relative) ? 1 : relative)
+      let returns = obj.rate * (isNaN(relative) ? 0 : relative)
       let future = returns != obj.rate ? parseFloat(claim) + returns : claim
       let display = returns.toLocaleString({ minimumFractionDigits: 2 })
 
@@ -227,15 +227,23 @@ export default function Supply() {
         let isWethPair = ticker.includes('UNI')
         let data = await getStakingPool(pool.address, isWethPair)
         let {
-          id, startsAt, stakingToken, rewardRate, isReady,
+          id, startsAt, stakingToken, rewardRate, isReady
          } = data
+
+        if(isWethPair) {
+          let pair = await getPair(web3.rinkeby, WETH, pool.address)
+
+          data.stakingToken = pair.options.address
+          stakingToken = pair.options.address
+        }
+
         let contract = toContract(web3.rinkeby, IStakingRewards, id)
         let totalSupply = await contract.methods.totalSupply().call()
         let supply = formatBalance(new BigNumber(totalSupply), 18, 4)
         let reward = formatBalance(new BigNumber(rewardRate), 18, 4)
         let rate = reward/(supply == 0 ? 1 : supply)
 
-        if(!isReady) {
+        if(isReady) {
           setExecution({
             f: () => initialisePool(stakingToken), label: 'INITIALIZE'
           })

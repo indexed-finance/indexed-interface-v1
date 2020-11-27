@@ -197,14 +197,14 @@ export default withTooltip<AreaProps, TooltipData>(
               {`$${getStockValue(tooltipData)}`}
             </Tooltip>
             <Tooltip
-              top={yMax - 14}
+              top={yMax - 25}
               left={tooltipLeft}
               style={{
                 ...defaultStyles,
                 minWidth: 72,
                 textAlign: 'center',
                 transform: 'translateX(-50%)',
-                zIndex: 1
+                zIndex: 2
               }}
             >
               {formatDate(getDate(tooltipData))}
