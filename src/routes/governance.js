@@ -27,7 +27,7 @@ import Canvas from '../components/canvas'
 import Progress from '../components/progress'
 import Stacked from '../components/charts/stacked'
 
-import { TX_CONFIRMED, TX_REVERTED } from '../assets/constants/parameters'
+import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../assets/constants/parameters'
 import { balanceOf } from '../lib/erc20'
 import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
@@ -135,7 +135,9 @@ export default function Governance(){
 
     try{
       await contract.methods.delegate(address).send({ from: account })
-      .on('confirmaton', async(conf, receipt) => {
+      .on('transactionHash', (transactionHash) =>
+        dispatch(TX_PENDING(transactionHash))
+      ).on('confirmation', async(conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
             let isDelegated = await contract.methods.delegates(state.account).call()

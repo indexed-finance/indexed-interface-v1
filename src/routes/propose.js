@@ -17,7 +17,7 @@ import Select from '../components/inputs/select'
 import Input from '../components/inputs/input'
 import Container from '../components/container'
 
-import { TX_CONFIRMED, TX_REVERTED } from '../assets/constants/parameters'
+import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../assets/constants/parameters'
 import style from '../assets/css/routes/propose'
 import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
@@ -196,7 +196,9 @@ export default function Propose(){
         calldata,
         description
       ).send({ from: account })
-      .on('confirmation', (conf, receipt) => {
+      .on('transactionHash', (transactionHash) =>
+        dispatch(TX_PENDING(transactionHash))
+      ).on('confirmation', (conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash))

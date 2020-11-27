@@ -25,7 +25,7 @@ import Radio from '../components/inputs/radio'
 import Progress from '../components/progress'
 import Canvas from '../components/canvas'
 
-import { TX_CONFIRMED, TX_REVERTED } from '../assets/constants/parameters'
+import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../assets/constants/parameters'
 import { toContract } from '../lib/util/contracts'
 import { balanceOf } from '../lib/erc20'
 import style from '../assets/css/routes/proposal'
@@ -85,7 +85,7 @@ export default function Proposal(){
   const classes = useStyles()
 
   const handleInput = (event) => {
-    let target = event.target.value == 1 ? metadata.for : metadata.against
+    let target = event.target.value == 1 ? metadata.against : metadata.for
     let weight = formatBalance(new BigNumber(target), 18, 4)
     let { amount } = state.balances['NDX']
 
@@ -107,7 +107,9 @@ export default function Proposal(){
       let contract = toContract(web3.injected, GovernorAlpha.abi, DAO)
 
       await contract.methods.castVote(id, decision).send({ from: account })
-      .on('confirmaton', async(conf, receipt) => {
+      .on('transactionHash', (transactionHash) =>
+        dispatch(TX_PENDING(transactionHash))
+      ).on('confirmation', (conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash))

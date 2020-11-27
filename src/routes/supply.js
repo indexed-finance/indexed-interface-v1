@@ -10,7 +10,7 @@ import Countdown from "react-countdown";
 import CountUp from 'react-countup';
 import { toWei, fromWei, formatBalance, BigNumber } from '@indexed-finance/indexed.js'
 
-import { TX_CONFIRMED, TX_REVERTED } from '../assets/constants/parameters'
+import { TX_CONFIRMED, TX_PENDING, TX_REVERTED } from '../assets/constants/parameters'
 import style from '../assets/css/routes/supply'
 import Canvas from '../components/canvas'
 import Container from '../components/container'
@@ -65,7 +65,9 @@ export default function Supply() {
       let contract = toContract(web3.injected, StakingRewardsFactory, FACTORY)
 
       await contract.methods.notifyRewardAmount(addr).send({ from: account })
-      .on('confirmation', (conf, receipt) => {
+      .on('transactionHash', (transactionHash) =>
+        dispatch(TX_PENDING(transactionHash))
+      ).on('confirmation', (conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash))
@@ -95,7 +97,9 @@ export default function Supply() {
       let contract = getERC20(web3.injected, stakingToken)
 
       await contract.methods.approve(id, toWei(input)).send({ from: account })
-      .on('confirmation', (conf, receipt) => {
+      .on('transactionHash', (transactionHash) =>
+        dispatch(TX_PENDING(transactionHash))
+      ).on('confirmation', (conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash))
@@ -119,7 +123,9 @@ export default function Supply() {
       let amount = decToWeiHex(web3.rinkeby, parseFloat(input))
 
       await contract.methods.stake(amount).send({ from: account })
-      .on('confirmation', async(conf, receipt) => {
+      .on('transactionHash', (transactionHash) =>
+        dispatch(TX_PENDING(transactionHash))
+      ).on('confirmation', (conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash))
@@ -136,14 +142,19 @@ export default function Supply() {
     let { web3, account } = state
     let { id } = metadata
 
+    setQuery(false)
+
     try {
       let contract = toContract(web3.injected, IStakingRewards, id)
 
       await contract.methods.exit().send({ from: account })
-      .on('confirmation', async(conf, receipt) => {
+      .on('transactionHash', (transactionHash) =>
+        dispatch(TX_PENDING(transactionHash))
+      ).on('confirmation', (conf, receipt) => {
         if(conf == 0){
           if(receipt.status == 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash))
+            setQuery(true)
           } else {
             dispatch(TX_REVERTED(receipt.transactionHash))
           }
@@ -159,7 +170,7 @@ export default function Supply() {
 
     let estimatedRatio = (metadata.rate * weight)
     let estimatedReward = estimatedRatio > metadata.rate ? metadata.rate : estimatedRatio
-    let displayWeight = weight > 1 ? (weight - ((metadata.supply + raw)/raw))/weight * 100 : weight * 100
+    let displayWeight = weight > 1 ? (weight - ((metadata.supply + raw)/raw))/weight * 100 : weight/2 * 100
 
     document.getElementById('est').innerHTML =
     estimatedReward.toLocaleString({ minimumFractionDigits: 2 })
@@ -171,10 +182,9 @@ export default function Supply() {
 
   const getPoolWeight = (value) => {
     let currentWeight = metadata.supply == 0 ? 1 : metadata.supply
-    let depositWeight = (parseFloat(stats.deposit)/parseFloat(metadata.supply))
     let inputWeight = parseFloat(value)/(parseFloat(currentWeight) + parseFloat(value))
 
-    return !state.web3.injected ? inputWeight :  (depositWeight - (((inputWeight - depositWeight) * -1)))/2
+    return inputWeight
   }
 
   const getAccountMetadata = async(obj) => {
@@ -235,7 +245,7 @@ export default function Supply() {
           })
         }
 
-        data.rate = rate * (60^2) * 24
+        data.rate = rate * 60 * 60 * 24
         data.supply = supply
 
         setMetadata(data)
@@ -357,7 +367,7 @@ export default function Supply() {
           	<ul className={classes.stats}>
               <li> POOL DEPOSITS: <span>
                   {metadata.supply.toLocaleString({ minimumFractionDigits: 2 })}
-                  {!state.native && (<>{ticker}</>)}
+                  {!state.native && (<> {ticker}</>)}
                 </span>
               </li>
               <li> POOL RATE: <span>

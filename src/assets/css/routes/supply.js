@@ -58,7 +58,7 @@ const mapping = {
     inputWidth: 200,
     claimMargin: 50,
     listPadding: 'inherit',
-    height: '10em',
+    height: '12.5em',
     reward: '34em',
     buttonPos: -55,
     button: {

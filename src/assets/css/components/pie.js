@@ -34,10 +34,10 @@ const mapping = {
   [DESKTOP_WIDE]: {
     border: 4,
     padding: {
-      top: 32.5,
-      left: 32.5,
-      right: 32.5,
-      bottom: 32.5
+      top: 40,
+      left: 40,
+      right: 40,
+      bottom: 40
     }
   },
   [DESKTOP_HUGE]: {
