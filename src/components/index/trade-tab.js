@@ -139,7 +139,7 @@ export default function TradeTab({ metadata }) {
 
   let feeString;
   if (tradeState.helper) {
-    const { amount, decimals, address } = tradeState.output;
+    const { amount, decimals, address } = tradeState.input;
     const { symbol } = tradeState.helper.getTokenInfo(address);
     const fee = formatBalance(amount.times(3).div(1000), decimals, 4);
     feeString = `${fee} ${symbol}`;

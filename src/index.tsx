@@ -133,11 +133,11 @@ function Application(){
           dayMulitplier++;
         }
 
-        let delta24hr = snapshots.length === 1 ? 0 : (Math.abs(history[history.length-1].close - past24h.value)/ past24h.value).toFixed(4);
-        let volume = +(past24h.dailySwapVolumeUSD).toFixed(2);
+        let delta24hr = snapshots.length === 1 ? 0 : ((Math.abs(history[history.length-1].close - past24h.value)/ past24h.value) * 100).toFixed(4);
+        let volume = +(past24h.totalVolumeUSD).toFixed(2);
 
         stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
-        stats.dailyVolume += parseFloat(past24h.dailySwapVolumeUSD)
+        stats.dailyVolume += parseFloat(past24h.totalVolumeUSD)
 
         const price = parseFloat(history[history.length-1].close);
         const index = {

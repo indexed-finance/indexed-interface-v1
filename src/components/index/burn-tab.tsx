@@ -42,7 +42,12 @@ export default function BurnTab({ market, metadata }) {
         fn = pool.methods.exitswapPoolAmountIn(token, poolAmountIn, tokenAmountOut);
       }
     } else {
-      const minAmounts = burnState.amounts.map(a => toHex(a));
+      const currentTokens = await pool.methods.getCurrentTokens().call();
+      const minAmounts = new Array(currentTokens.length).fill(null);
+      currentTokens.forEach((address, realIndex) => {
+        const localIndex = burnState.tokens.map(t => t.address.toLowerCase()).indexOf(address.toLowerCase());
+        minAmounts[realIndex] = toHex(burnState.amounts[localIndex]);
+      });
       const poolAmountIn = toHex((burnState.poolAmountIn));
       fn = pool.methods.exitPool(poolAmountIn, minAmounts);
     }

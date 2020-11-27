@@ -128,9 +128,9 @@ function burnReducer(state: BurnState = initialState, actions: BurnDispatchActio
     newState.pool &&
     newState.pool.userPoolBalance &&
     newState.pool.userPoolBalance.gte(newState.poolAmountIn);
-  newState.ready = isReady;
+    newState.ready = isReady;
 
-  return newState;
+    return newState;
 }
 
 export function useBurnTokenActions(
@@ -183,7 +183,7 @@ export function useBurnTokenActions(
         let value = event.target.value;
 
         if (value === displayAmount) return;
-        
+
         updateAmount(value);
       }
     }

@@ -206,8 +206,6 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
         const outputAmount = await state.helper.getAmountOut(address, wlToken.address, amount);
         const { displayAmount: price } = await state.helper.getAmountOut(state.input.address, address, toWei(1));
 
-        console.log(amount, address, outputAmount)
-
         dispatch([
           { type: 'SET_OUTPUT_TOKEN', token: { ...newToken, ...outputAmount } },
           { type: 'SET_PRICE', price }
@@ -216,8 +214,6 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
         const { amount, address } = state.output;
         const inputAmount = await state.helper.getAmountIn(wlToken.address, address, amount);
         const { displayAmount: price } = await state.helper.getAmountOut(address, state.output.address, toWei(1));
-
-        console.log(amount, address, inputAmount)
 
         dispatch([
           { type: 'SET_INPUT_TOKEN', token: { ...newToken, ...inputAmount } },
