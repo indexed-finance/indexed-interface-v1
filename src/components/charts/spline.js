@@ -106,7 +106,7 @@ const options = (padding, range, margin) => ({
 })
 
 
-const getConfig = (canvas, metadata, color) => {
+const getConfig = (canvas, metadata, color, absolute) => {
   const ctx = canvas.getContext("2d")
   var gradient = ctx.createLinearGradient(0,337.5,0, 25)
   let length = metadata.history.length
@@ -123,7 +123,7 @@ const getConfig = (canvas, metadata, color) => {
     { close: 'y', date: 'x' }, array.slice(length-11, length)
   )
 
-  if(data.length > 0) {
+  if(data.length > 0 && absolute) {
     let newDate = new Date(data[data.length-1].x)
     let day = i => 3600000 * i
 
@@ -151,9 +151,6 @@ function getRanges(metadata) {
   let length = metadata.length
   let subsitute = metadata.slice(length-11, length);
 
-  console.log(max(subsitute, getStockValue), min(subsitute, getStockValue))
-  console.log(subsitute)
-
   return [ max(subsitute, getStockValue), min(subsitute, getStockValue) ]
 }
 
@@ -171,8 +168,8 @@ export default function Spline(props){
 
       setComponent(
         <Line
-          height={height} options={options(!absolute ? 0 : padding, ranges, margin)}
-          data={(e) => getConfig(e, metadata, color)} redraw
+          height={height} options={options(!absolute ? 100 : padding, ranges, !absolute ? 0 : margin)}
+          data={(e) => getConfig(e, metadata, color, absolute)} redraw
         />
       )
     }

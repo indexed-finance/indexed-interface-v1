@@ -71,31 +71,18 @@ export default function InitializerForm({ metadata, classes }) {
       .catch(() => {});
   }
 
-    const getUnderlyingAssets = async() => {
-    let { web3, account, helper } = state
-    let pool = findHelper(helper)
-
-    for(let x in pool.tokens) {
-      let { symbol, address } = pool.tokens[x]
-      let amount = toWei(Math.floor(Math.random() * 10000))
-      const token = new web3.injected.eth.Contract(MockERC20ABI, address)
-
-      await token.methods.getFreeTokens(account, amount)
-      .send({ from: account })
-      }
-    }
-
   useEffect(() => {
     const setPool = async() => {
       let poolHelper = findHelper(state.helper)
-
       if(poolHelper) setHelper(poolHelper);
     }
     if (!initState.pool && state.helper) setPool();
   }, [ state.web3.injected, state.helper ])
 
   useEffect(() => {
-    setOutput(calcEstimatedTokenOutput())
+    if(initState.pool.tokens.length > 0){
+      setOutput(calcEstimatedTokenOutput())
+    }
   }, [ displayTotalCredit ])
 
   let { height } = style.getFormatting(state.native)

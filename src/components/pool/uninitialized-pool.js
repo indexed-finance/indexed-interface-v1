@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useEffect } from 'react';
+import React, { Fragment, useContext, useEffect, useState } from 'react';
 import { Grid } from '@material-ui/core';
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
 import Alert from '@material-ui/lab/Alert';
@@ -42,6 +42,7 @@ function Target({ label, asset, i, height, r }){
 
 function UninitializedPoolPage({ address, metadata }) {
   const { initState, setHelper, displayPoolTotalCredit, displayUserCredit } = useInitializerState();
+  const [ hasRendered, setRender ] = useState(false);
   let { state } = useContext(store);
   const classes = useStyles()
 
@@ -51,6 +52,25 @@ function UninitializedPoolPage({ address, metadata }) {
     const helper = state.helper.uninitialized.find(i => i.pool.initializer.address === address);
     return helper;
   };
+
+  useEffect(() => {
+    const checkTargets = () => {
+      if(initState.pool.tokens.length > 0) {
+        for(let x = 0; x < initState.pool.tokens.length; x++ ) {
+          let asset = initState.pool.tokens[x]
+          if(!asset.amountRemaining.eq(0)) return false
+        }
+        return true
+      } else return false
+    }
+    const shouldUpdate = () => {
+      if(initState.pool && checkTargets()){
+        console.log('update')
+        setRender(true)
+      }
+    }
+    if(!hasRendered) shouldUpdate()
+  }, [ initState ] )
 
   useEffect(() => {
     if (initState.pool || !state.helper) return;
