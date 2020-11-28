@@ -9,7 +9,8 @@ import ButtonPrimary from '../buttons/primary'
 import { useInitializerState } from '../../state/initializer';
 import { toContract } from '../../lib/util/contracts';
 import PoolInitializer from '../../assets/constants/abi/PoolInitializer.json'
-import { fromWei } from '@indexed-finance/indexed.js'
+import { fromWei, toWei } from '@indexed-finance/indexed.js'
+import MockERC20ABI from '../../assets/constants/abi/MockERC20.json'
 
 import ExplainCredit from './explain-credit';
 
@@ -31,8 +32,12 @@ export default function InitializerForm({ metadata, classes }) {
     let culmativeQueryToTargetsRatio = culmativeQuerySum/culmativeTargetsSum
     let ratioUSDPoolToInputs = displayPoolTotalCredit/culmativeQueryToTargetsRatio
     let estimatedTokenOutput = (displayTotalCredit/ratioUSDPoolToInputs) * 100
+    let poolTokenOutput = (displayPoolTotalCredit/ratioUSDPoolToInputs) * 100
 
-    return parseFloat(estimatedTokenOutput).toFixed(2)
+    return parseFloat(
+      estimatedTokenOutput > poolTokenOutput ? estimatedTokenOutput - poolTokenOutput :
+      poolTokenOutput - estimatedTokenOutput
+    ).toFixed(2);
   }
 
   const findHelper = (i) => {
@@ -66,6 +71,20 @@ export default function InitializerForm({ metadata, classes }) {
       .catch(() => {});
   }
 
+    const getUnderlyingAssets = async() => {
+    let { web3, account, helper } = state
+    let pool = findHelper(helper)
+
+    for(let x in pool.tokens) {
+      let { symbol, address } = pool.tokens[x]
+      let amount = toWei(Math.floor(Math.random() * 10000))
+      const token = new web3.injected.eth.Contract(MockERC20ABI, address)
+
+      await token.methods.getFreeTokens(account, amount)
+      .send({ from: account })
+      }
+    }
+
   useEffect(() => {
     const setPool = async() => {
       let poolHelper = findHelper(state.helper)
@@ -89,7 +108,7 @@ export default function InitializerForm({ metadata, classes }) {
         <p>  <ExplainCredit /> CREDIT: <span id='credit'>Ξ {displayTotalCredit}</span> </p>
       </div>
       <div className={classes.submit}>
-        <ButtonPrimary variant='outlined' onClick={calcEstimatedTokenOutput} style={{ marginRight: 0 }}>
+        <ButtonPrimary variant='outlined' onClick={contributeTokens} style={{ marginRight: 0 }}>
           JOIN
         </ButtonPrimary>
       </div>

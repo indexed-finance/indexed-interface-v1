@@ -42,7 +42,7 @@ function initDispatchMiddleware(dispatch: InitDispatch, state: InitializerState)
 
       });
       // const prices = newTokens.map(t => pool.tokenPrices[t.address]);
-      // const currentValues = 
+      // const currentValues =
       dispatch({
         type: 'SET_ALL',
         tokens: newTokens,

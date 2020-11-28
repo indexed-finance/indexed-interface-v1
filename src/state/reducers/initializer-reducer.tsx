@@ -48,7 +48,7 @@ function initializerReducer(state: InitializerState = initialState, actions: Ini
   }
   let newState: InitializerState = { ...state };
   const cleanInputAmount = (amt: string) => amt.replace(/^(0{1,})(?=(0\.|\d))+/, '').replace(/^\./, '0.');
-  
+
   const updateCreditTotal = () => {
     newState.creditEthTotal = newState.creditEthPerToken.reduce(
       (total, credit) => total.plus(credit),
@@ -82,8 +82,7 @@ function initializerReducer(state: InitializerState = initialState, actions: Ini
 
   const setHelper = (action: SetHelper) => {
     newState.pool = action.pool;
-    let tokens = action.pool.tokens.filter(t => t.amountRemaining.gt(0));
-    newState.tokens = [...tokens.map(t => Object.assign({}, t))];
+    newState.tokens = action.pool.tokens;
     let size = newState.tokens.length;
     newState.amounts = new Array(size).fill(BN_ZERO);
     newState.displayAmounts = new Array(size).fill('0');
