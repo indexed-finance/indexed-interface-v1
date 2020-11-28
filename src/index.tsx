@@ -134,10 +134,10 @@ function Application(){
         }
 
         let delta24hr = snapshots.length === 1 ? 0 : ((Math.abs(history[history.length-1].close - past24h.value)/ past24h.value) * 100).toFixed(4);
-        let volume = +(past24h.totalVolumeUSD).toFixed(2);
+        let volume = +(snapshots[snapshots.length-1].totalVolumeUSD).toFixed(2);
 
         stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
-        stats.dailyVolume += parseFloat(past24h.totalVolumeUSD)
+        stats.dailyVolume += volume
 
         const price = parseFloat(history[history.length-1].close);
         const index = {
