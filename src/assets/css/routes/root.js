@@ -5,9 +5,9 @@ import {
 
 const mapping = {
   [DESKTOP_SMALL]: {
-    fontSize: '6em',
+    fontSize: '6.375em',
     left: '40%',
-    width:'6.5em',
+    width:'8em',
     marginRight: '2.5em',
     textWidth: '75%',
     secondary: '1em',

@@ -20,12 +20,16 @@ export default function Root(){
   let { state } = useContext(store)
 
   useEffect(() => {
+    let isDark = state.background == '#111111'
+    let targetId = isDark ? 'dark' : 'light'
+
     renderCanvas()
   }, [ ])
 
   let {
     fontSize, left, width, nav, marginRight, textWidth, secondary, float, indicator
   } = style.getFormatting(state)
+
 
   return (
     <div id="canvas">
@@ -49,9 +53,9 @@ export default function Root(){
       </nav>
       <div style={{ fontSize: secondary, position: 'absolute', top: '35%', left }}>
         <div>
-          <div style={{ float: 'left', marginTop: '-.75em', marginRight }}>
-            <img src={ndxDark} id='dark' style={{ display: 'none', width }} />
-            <img src={ndxLight} id='light' style={{ display: 'block', width }} />
+          <div style={{ float: 'left', marginTop: '-.25em', marginRight }}>
+            <img src={ndxDark} id='dark' style={{ display: 'block', width }} />
+            <img src={ndxLight} id='light' style={{ display: 'none', width }} />
           </div>
           <span style={{ float, fontSize }}> INDEXED </span>
         </div>

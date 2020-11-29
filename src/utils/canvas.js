@@ -159,20 +159,32 @@ function render() {
   var targetButton = document.getElementById('landing-button')
   var lightImage = document.getElementById('dark')
   var darkImage = document.getElementById('light')
+  let primary = document.body.style.background
+  let secondary = document.body.style.color
 
-  if(normTime > .225) {
-    targetElement.style.color = '#333333'
-    targetButton.style.color = '#333333'
-  } if(normTime > .25) {
-    lightImage.style.display = 'none'
-    darkImage.style.display = 'block'
-  } if(normTime > .6) {
-    targetElement.style.color = 'white'
-    targetButton.style.color = 'white'
-  }if(normTime > .7) {
-     lightImage.style.display = 'block'
-     darkImage.style.display = 'none'
-   }
+  console.log(primary == 'rgb(17, 17, 17)')
+
+  if(normTime < .7 && normTime > .225) {
+    targetElement.style.color = primary
+    targetButton.style.color = primary
+    if(primary == 'rgb(17, 17, 17)') {
+      lightImage.style.display = 'none'
+      darkImage.style.display = 'block'
+    } else {
+      lightImage.style.display = 'block'
+      darkImage.style.display = 'none'
+    }
+  } else if(normTime > .7) {
+    targetElement.style.color = secondary
+    targetButton.style.color = secondary
+    if(primary == 'rgb(17, 17, 17)') {
+      lightImage.style.display = 'block'
+      darkImage.style.display = 'none'
+    } else {
+      lightImage.style.display = 'none'
+      darkImage.style.display = 'block'
+    }
+  }
 
 	uniforms.time.value = normTime;
 	uniforms.count.value = boucle;

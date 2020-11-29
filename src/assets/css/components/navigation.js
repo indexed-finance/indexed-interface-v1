@@ -53,6 +53,7 @@ const setStyle = (theme) => ({
   },
   logo: {
     marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(.75)
   },
   search: {
     '&:hover fieldset': {

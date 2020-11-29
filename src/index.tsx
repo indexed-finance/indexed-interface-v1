@@ -134,9 +134,6 @@ function Application(){
         }
 
         let delta24hr = snapshots.length === 1 ? 0 : ((Math.abs(history[history.length-1].close - past24h.value)/ past24h.value) * 100).toFixed(4);
-
-        console.log(delta24hr, history[history.length-1].close, past24h.value)
-
         let volume = +(snapshots[snapshots.length-1].totalVolumeUSD).toFixed(2);
 
         stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
