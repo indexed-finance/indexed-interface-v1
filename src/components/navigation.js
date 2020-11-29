@@ -184,7 +184,7 @@ export default function Navigation({ mode }) {
     )
   }
 
-  let { marginLeft, display, width, paddingTop, padding, logoMargin } = style.getFormatting(state.native)
+  let { marginLeft, display, width, paddingTop, padding, logoMargin, titleMargin } = style.getFormatting(state.native)
 
   return (
     <div>
@@ -197,7 +197,7 @@ export default function Navigation({ mode }) {
               <Link to='/'>
                 {mode && (<img className={classes.logo} style={{ marginTop: logoMargin, width, paddingTop }} src={ndxDark} />)}
                 {!mode && (<img className={classes.logo} style={{ marginTop: logoMargin, width, paddingTop }} src={ndxLight} />)}
-                <Typography variant={!state.native ? 'h4' : 'h5' } className={classes.title}> {display} </Typography>
+                <Typography variant={!state.native ? 'h4' : 'h5' } className={classes.title} style={{ marginLeft: titleMargin }}> {display} </Typography>
               </Link>
             </Grid>
               {!state.native && (

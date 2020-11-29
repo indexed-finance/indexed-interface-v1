@@ -157,31 +157,17 @@ function render() {
 	var normTime = (elaspedSeconds % maxTime) / maxTime;
   var targetElement = document.getElementById('canvas')
   var targetButton = document.getElementById('landing-button')
-  var lightImage = document.getElementById('dark')
-  var darkImage = document.getElementById('light')
   let primary = document.body.style.background
   let secondary = document.body.style.color
 
   if(normTime < .7 && normTime > .225) {
     targetElement.style.color = primary
     targetButton.style.color = primary
-    if(primary == 'rgb(17, 17, 17)') {
-      lightImage.style.display = 'none'
-      darkImage.style.display = 'block'
-    } else {
-      lightImage.style.display = 'block'
-      darkImage.style.display = 'none'
-    }
+    setOppositeStyles();
   } else if(normTime > .7) {
     targetElement.style.color = secondary
     targetButton.style.color = secondary
-    if(primary == 'rgb(17, 17, 17)') {
-      lightImage.style.display = 'block'
-      darkImage.style.display = 'none'
-    } else {
-      lightImage.style.display = 'none'
-      darkImage.style.display = 'block'
-    }
+    setInitialStyles();
   }
 
 	uniforms.time.value = normTime;
@@ -191,6 +177,17 @@ function render() {
 }
 
 export function renderCanvas(){
+  setInitialStyles();
+  shouldRender = true;
+	init();
+  animate();
+}
+
+export function stopRender() {
+  shouldRender = false
+}
+
+function setInitialStyles() {
   var lightImage = document.getElementById('dark')
   var darkImage = document.getElementById('light')
   let primary = document.body.style.background
@@ -203,11 +200,19 @@ export function renderCanvas(){
     lightImage.style.display = 'none'
     darkImage.style.display = 'block'
   }
-  shouldRender = true;
-	init();
-  animate();
 }
 
-export function stopRender() {
-  shouldRender = false
+function setOppositeStyles() {
+  var lightImage = document.getElementById('dark')
+  var darkImage = document.getElementById('light')
+  let primary = document.body.style.background
+  let secondary = document.body.style.color
+
+  if(primary == 'rgb(17, 17, 17)') {
+    lightImage.style.display = 'none'
+    darkImage.style.display = 'block'
+  } else {
+    lightImage.style.display = 'block'
+    darkImage.style.display = 'none'
+  }
 }

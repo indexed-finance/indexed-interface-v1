@@ -27,7 +27,7 @@ export default function Root(){
   }, [ ])
 
   let {
-    fontSize, left, width, nav, marginRight, textWidth, secondary, float, indicator
+    fontSize, left, width, nav, marginRight, textWidth, secondary, float, indicator, marginTop, letterSpacing
   } = style.getFormatting(state)
 
 
@@ -53,11 +53,11 @@ export default function Root(){
       </nav>
       <div style={{ fontSize: secondary, position: 'absolute', top: '35%', left }}>
         <div>
-          <div style={{ float: 'left', marginTop: '-.25em', marginRight }}>
+          <div style={{ float: 'left', marginTop, marginRight }}>
             <img src={ndxDark} id='dark' style={{ display: 'none', width }} />
             <img src={ndxLight} id='light' style={{ display: 'none', width }} />
           </div>
-          <span style={{ float, fontSize }}> INDEXED </span>
+          <span style={{ letterSpacing, float, fontSize }}> INDEXED </span>
         </div>
         <p style={{ float: 'right', paddingRight: 25, width: textWidth }}> A FINANCIAL MANAGEMENT PROTOCOL. </p>
         <Link onClick={stopRender} style={{ float: 'right' }} to='/markets'>

@@ -46,7 +46,7 @@ const setStyle = (theme) => ({
     fontFamily: 'San Francisco Bold',
     marginLeft: theme.spacing(2),
     marginTop: theme.spacing(1.5),
-    letterSpacing: 5,
+    letterSpacing: 7.5,
     flexGrow: 1,
     float: 'right',
     color: theme.palette.secondary.main
@@ -88,6 +88,7 @@ const mapping = {
     paddingTop: '.75vh',
     display: 'INDEXED',
     marginLeft: 15,
+    titleMargin: 20,
     logoMargin: 6.75,
     width: 40,
     padding: {
@@ -99,7 +100,8 @@ const mapping = {
     paddingTop: '.75vh',
     display: 'INDEXED',
     marginLeft: 15,
-    logoMargin: 6.75,
+    logoMargin: 4.5,
+    titleMargin: 20,
     width: 40,
     padding: {
       paddingTop: 12.5,
@@ -110,8 +112,9 @@ const mapping = {
     paddingTop: '.75vh',
     display: 'INDEXED',
     marginLeft: 15,
-    logoMargin: 6.75,
+    logoMargin: 3,
     width: 40,
+    titleMargin: 20,
     padding: {
       paddingTop: 12.5,
       paddingBottom: 12.5,
@@ -122,6 +125,7 @@ const mapping = {
     display: 'INDEXED',
     marginLeft: 15,
     logoMargin: 6.75,
+    titleMargin: 20,
     width: 40,
     padding: {
       paddingTop: 12.5,
@@ -131,7 +135,8 @@ const mapping = {
   [DESKTOP_HUGE]: {
     paddingTop: '.75vh',
     display: 'INDEXED',
-    logoMargin: 6.75,
+    logoMargin: 2.5,
+    titleMargin: 20,
     marginLeft: 15,
     width: 40,
     padding: {
@@ -142,8 +147,9 @@ const mapping = {
   [DESKTOP_MASSIVE]: {
     paddingTop: '.75vh',
     display: 'INDEXED',
+    titleMargin: 20,
     marginLeft: 15,
-    logoMargin: 6.75,
+    logoMargin: -3.75,
     width: 40,
     padding: {
       paddingTop: 12.5,
@@ -154,6 +160,7 @@ const mapping = {
     paddingTop: '1.5vh',
     display: 'NDX',
     marginLeft: 0,
+    titleMargin: 15,
     logoMargin: 4.5,
     width: 30,
     padding: {
@@ -164,7 +171,8 @@ const mapping = {
   [NATIVE_NORMAL]: {
     paddingTop: '1.5vh',
     display: 'INDEXED',
-    logoMargin: 1.5,
+    logoMargin: 2.5,
+    titleMargin: 15,
     marginLeft: 0,
     width: 30,
     padding: {
@@ -176,7 +184,8 @@ const mapping = {
     paddingTop: '1.5vh',
     display: 'INDEXED',
     marginLeft: 0,
-    logoMargin: 1.5,
+    logoMargin: 2,
+    titleMargin: 15,
     width: 30,
     padding: {
       paddingTop: 5,
