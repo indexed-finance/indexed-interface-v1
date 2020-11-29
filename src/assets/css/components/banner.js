@@ -8,11 +8,11 @@ const setStyle = (theme) => ({
     overflowX: 'hidden',
     position: 'fixed',
     borderBottom: '3px solid #666666',
-    background: theme.palette.primary.main,
   },
   carosuel: {
     listStyle: 'none',
     display: 'inline-flex',
+    background: theme.palette.primary.main,
   },
   href: {
     color: `${theme.palette.secondary.main} !important`,

@@ -7,15 +7,19 @@ import ExplainCredit from './explain-credit';
 import Canvas from '../canvas'
 import Container from '../container'
 import Spline from '../charts/spline'
+import ButtonPrimary from '../buttons/primary'
 import InitializerForm from './initializer-form';
 import Weights from '../weights';
 import { toWei } from '@indexed-finance/indexed.js'
 
 import { InitializerStateProvider, useInitializerState } from "../../state/initializer";
+import PoolInitializer from '../../assets/constants/abi/PoolInitializer.json'
 import { store } from '../../state'
 
+import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../../assets/constants/parameters'
 import style from '../../assets/css/routes/pool'
 import getStyles from '../../assets/css'
+import { toContract } from '../../lib/util/contracts'
 import copyToClipboard from '../../lib/copyToClipboard';
 import Copyable from '../copyable';
 
@@ -42,8 +46,8 @@ function Target({ label, asset, i, height, r }){
 
 function UninitializedPoolPage({ address, metadata }) {
   const { initState, setHelper, displayPoolTotalCredit, displayUserCredit } = useInitializerState();
-  const [ hasRendered, setRender ] = useState(false);
-  let { state } = useContext(store);
+  const [ shouldUpdate, setUpdate ] = useState(false);
+  let { state, dispatch } = useContext(store);
   const classes = useStyles()
 
   let { native, request } = state
@@ -52,6 +56,26 @@ function UninitializedPoolPage({ address, metadata }) {
     const helper = state.helper.uninitialized.find(i => i.pool.initializer.address === address);
     return helper;
   };
+
+  const finalisePool = async() => {
+    try {
+      let { web3, account } = state
+      let contract = toContract(web3.injected, PoolInitializer.abi, address)
+
+      await contract.methods.finish().send({ from: state.account })
+      .on('transactionHash', (transactionHash) =>
+        dispatch(TX_PENDING(transactionHash))
+      ).on('confirmation', async(conf, receipt) => {
+        if(conf == 0){
+          if(receipt.status == 1) {
+            dispatch(TX_CONFIRMED(receipt.transactionHash))
+          } else {
+            dispatch(TX_REVERTED(receipt.transactionHash))
+          }
+        }
+      })
+    } catch(e) { }
+  }
 
   useEffect(() => {
     const checkTargets = () => {
@@ -65,11 +89,10 @@ function UninitializedPoolPage({ address, metadata }) {
     }
     const shouldUpdate = () => {
       if(initState.pool && checkTargets()){
-        console.log('update')
-        setRender(true)
+        setUpdate(true)
       }
     }
-    if(!hasRendered) shouldUpdate()
+    shouldUpdate()
   }, [ initState ] )
 
   useEffect(() => {
@@ -86,6 +109,16 @@ function UninitializedPoolPage({ address, metadata }) {
   }
 
   let { name, symbol } = initState.pool;
+
+  function Overlay () {
+    const background = state.dark ? 'rgba(0,0,0, .5)' : 'rgba(17, 17, 17, .5)'
+
+    return(
+      <div style={{ zIndex: 5, textAlign: 'center', background, height: '20em', width: '28.75em', position: 'absolute', clear: 'both' }}>
+        <ButtonPrimary onClick={finalisePool} margin={{ margin: '7.5em 8.75em' }}> DEPLOY INDEX </ButtonPrimary>
+       </div>
+    )
+  }
 
   function MetaDisplay() {
     if (!native) {
@@ -145,11 +178,12 @@ function UninitializedPoolPage({ address, metadata }) {
         <Grid item xs={12} md={5} lg={5} xl={5}>
           <Container margin={margin} padding="1em 0em" title='ASSETS'>
             <div className={classes.alert}>
-              <Alert variant="outlined" severity="warning" style={{  borderWidth: 2 }}>
-                THIS POOL IS UNINITIALIZED
+              <Alert variant="outlined" severity={shouldUpdate ? 'info' : 'warning'} style={{  borderWidth: 2 }}>
+                {shouldUpdate ? 'THIS POOL IS READY FOR DEPLOYMENT' : 'THIS POOL IS UNINITIALIZED'}
               </Alert>
               </div>
-            <div className={classes.container} style={{ width }}>
+            <div className={classes.container}>
+              {shouldUpdate && (<Overlay />)}
               <InitializerForm metadata={{ address, symbol: metadata.symbol }} classes={classes} />
             </div>
           </Container>
