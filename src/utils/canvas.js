@@ -162,8 +162,6 @@ function render() {
   let primary = document.body.style.background
   let secondary = document.body.style.color
 
-  console.log(primary == 'rgb(17, 17, 17)')
-
   if(normTime < .7 && normTime > .225) {
     targetElement.style.color = primary
     targetButton.style.color = primary
@@ -193,6 +191,18 @@ function render() {
 }
 
 export function renderCanvas(){
+  var lightImage = document.getElementById('dark')
+  var darkImage = document.getElementById('light')
+  let primary = document.body.style.background
+  let secondary = document.body.style.color
+
+  if(primary == 'rgb(17, 17, 17)') {
+    lightImage.style.display = 'block'
+    darkImage.style.display = 'none'
+  } else {
+    lightImage.style.display = 'none'
+    darkImage.style.display = 'block'
+  }
   shouldRender = true;
 	init();
   animate();

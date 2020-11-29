@@ -54,7 +54,7 @@ export default function Root(){
       <div style={{ fontSize: secondary, position: 'absolute', top: '35%', left }}>
         <div>
           <div style={{ float: 'left', marginTop: '-.25em', marginRight }}>
-            <img src={ndxDark} id='dark' style={{ display: 'block', width }} />
+            <img src={ndxDark} id='dark' style={{ display: 'none', width }} />
             <img src={ndxLight} id='light' style={{ display: 'none', width }} />
           </div>
           <span style={{ float, fontSize }}> INDEXED </span>

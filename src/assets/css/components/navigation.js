@@ -53,7 +53,6 @@ const setStyle = (theme) => ({
   },
   logo: {
     marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(.75)
   },
   search: {
     '&:hover fieldset': {
@@ -89,6 +88,7 @@ const mapping = {
     paddingTop: '.75vh',
     display: 'INDEXED',
     marginLeft: 15,
+    logoMargin: 6.75,
     width: 40,
     padding: {
       paddingTop: 12.5,
@@ -99,6 +99,7 @@ const mapping = {
     paddingTop: '.75vh',
     display: 'INDEXED',
     marginLeft: 15,
+    logoMargin: 6.75,
     width: 40,
     padding: {
       paddingTop: 12.5,
@@ -109,6 +110,7 @@ const mapping = {
     paddingTop: '.75vh',
     display: 'INDEXED',
     marginLeft: 15,
+    logoMargin: 6.75,
     width: 40,
     padding: {
       paddingTop: 12.5,
@@ -119,6 +121,7 @@ const mapping = {
     paddingTop: '.75vh',
     display: 'INDEXED',
     marginLeft: 15,
+    logoMargin: 6.75,
     width: 40,
     padding: {
       paddingTop: 12.5,
@@ -128,6 +131,7 @@ const mapping = {
   [DESKTOP_HUGE]: {
     paddingTop: '.75vh',
     display: 'INDEXED',
+    logoMargin: 6.75,
     marginLeft: 15,
     width: 40,
     padding: {
@@ -139,6 +143,7 @@ const mapping = {
     paddingTop: '.75vh',
     display: 'INDEXED',
     marginLeft: 15,
+    logoMargin: 6.75,
     width: 40,
     padding: {
       paddingTop: 12.5,
@@ -149,6 +154,7 @@ const mapping = {
     paddingTop: '1.5vh',
     display: 'NDX',
     marginLeft: 0,
+    logoMargin: 2.5,
     width: 30,
     padding: {
       paddingTop: 5,
@@ -158,6 +164,7 @@ const mapping = {
   [NATIVE_NORMAL]: {
     paddingTop: '1.5vh',
     display: 'INDEXED',
+    logoMargin: 2.5,
     marginLeft: 0,
     width: 30,
     padding: {
@@ -169,6 +176,7 @@ const mapping = {
     paddingTop: '1.5vh',
     display: 'INDEXED',
     marginLeft: 0,
+    logoMargin: 2.5,
     width: 30,
     padding: {
       paddingTop: 5,
