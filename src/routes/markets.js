@@ -1,7 +1,6 @@
 import React, { Fragment, useState, useEffect, useContext } from "react";
 
-import { styled, useTheme, makeStyles } from '@material-ui/core/styles'
-import Paper from '@material-ui/core/Paper'
+import { useTheme } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import { Link, useHistory } from 'react-router-dom'
 import BN from 'bn.js'
@@ -12,6 +11,7 @@ import Spline from '../components/charts/spline'
 import Pie from '../components/charts/pie'
 import Canvas from '../components/canvas'
 import Banner from '../components/banner'
+import Wrapper from '../components/wrapper'
 import Table from '../components/table'
 import Loader from '../components/loader'
 import Copyable from '../components/copyable'
@@ -22,12 +22,6 @@ import indexed from '../assets/images/indexed.png'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
-const Trigger = styled(ButtonPrimary)({
-  marginTop: 'auto',
-  marginLeft: 'auto',
-  float: 'right',
-})
-
 const useStyles = getStyles(style)
 
 const native = {
@@ -37,21 +31,6 @@ const native = {
 const desktop = {
    width: '30%'
 }
-
-const Wrapper = styled(Paper)({
-  borderLeft: '5px solid #666666',
-  borderRight: '3px solid #666666',
-  borderTop: '3px solid #666666',
-  borderBottom: '3px solid #666666',
-  borderTopLeftRadius: 200,
-  borderBottomLeftRadius: 200,
-  borderTopRightRadius: 10,
-  borderBottomRightRadius: 10,
-  width: '45%',
-  boxShadow: 'none',
-  position: 'relative',
-  float: 'right',
-})
 
 export default function Markets(){
   const [ market, setMarket ] = useState(initialPoolState)
