@@ -8,6 +8,7 @@ const setStyle = (theme) => ({
     overflowX: 'hidden',
     position: 'fixed',
     borderBottom: '3px solid #666666',
+    zIndex: 10
   },
   carosuel: {
     listStyle: 'none',

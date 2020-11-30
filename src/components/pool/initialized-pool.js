@@ -66,7 +66,7 @@ function InitializedPoolPage({ address, metadata }){
       let credit = await instance.methods.getCreditOf(account).call()
       credit = (parseFloat(credit)/Math.pow(10, 18))
 
-      if(credit == 0) {
+      if(credit > 0) {
         dispatch({
           type: 'FLAG',
           payload: UNCLAIMED_CREDITS

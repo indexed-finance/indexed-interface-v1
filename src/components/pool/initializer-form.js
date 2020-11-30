@@ -76,19 +76,21 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
     let { tokens, amounts } = initState
 
     let totalPoolCredits = parseFloat(displayPoolTotalCredit)
+
+    if(totalPoolCredits == 0) return totalPoolCredits
+
     let culmativeTargetsUSD = tokens.map((v, i) => v.priceUSD * fromWei(v.targetBalance))
     let culmativeQueryUSD = tokens.map((v, i) => v.priceUSD * fromWei(amounts[i]))
+    let culmativePoolUSD = tokens.map((v, i) => v.priceUSD * fromWei(v.balance))
     let culmativeTargetsSum = culmativeTargetsUSD.reduce((a, b) => a + b)
+    let culmativePoolSum = culmativePoolUSD.reduce((a, b) => a + b)
     let culmativeQuerySum = culmativeQueryUSD.reduce((a, b) => a + b)
     let culmativeQueryToTargetsRatio = culmativeQuerySum/culmativeTargetsSum
-    let ratioUSDPoolToInputs = totalPoolCredits/culmativeQueryToTargetsRatio
+    let ratioUSDPoolToInputs = culmativePoolSum / culmativeQueryToTargetsRatio
     let estimatedTokenOutput = (displayTotalCredit/ratioUSDPoolToInputs) * 100
-    let poolTokenOutput = (totalPoolCredits/ratioUSDPoolToInputs) * 100
+    let displayTokenOutput = estimatedTokenOutput > 1 ? 1 : estimatedTokenOutput
 
-    return parseFloat(
-      estimatedTokenOutput > poolTokenOutput ? estimatedTokenOutput - poolTokenOutput :
-      poolTokenOutput - estimatedTokenOutput
-    ).toFixed(2);
+    return parseFloat(displayTokenOutput * 100).toFixed(2);
   }
 
   const findHelper = (i) => {
