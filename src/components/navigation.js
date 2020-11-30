@@ -194,7 +194,7 @@ export default function Navigation({ mode }) {
         <Toolbar>
           <Grid container direction='row' alignItems='center' justify='space-between'>
             <Grid item style={{ marginTop: -3.75 }}>
-              <Link to='/'>
+              <Link to='/markets'>
                 {mode && (<img className={classes.logo} style={{ marginTop: logoMargin, width, paddingTop }} src={ndxDark} />)}
                 {!mode && (<img className={classes.logo} style={{ marginTop: logoMargin, width, paddingTop }} src={ndxLight} />)}
                 <Typography variant={!state.native ? 'h4' : 'h5' } className={classes.title} style={{ marginLeft: titleMargin }}> {display} </Typography>
