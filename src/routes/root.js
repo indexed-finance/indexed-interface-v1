@@ -6,11 +6,13 @@ import { styled } from '@material-ui/core/styles'
 import { store } from '../state'
 import Grid from '@material-ui/core/Grid'
 
+import ButtonPrimary from '../components/buttons/primary'
 import ndxDark from '../assets/images/indexed-dark.png'
 import ndxLight from '../assets/images/indexed-light.png'
 import style from '../assets/css/routes/root'
+import getStyles from '../assets/css'
 
-import ButtonPrimary from '../components/buttons/primary'
+const useStyles = getStyles(style)
 
 const Button = styled(ButtonPrimary)({
   background: 'inherit',
@@ -18,11 +20,9 @@ const Button = styled(ButtonPrimary)({
 
 export default function Root(){
   let { state } = useContext(store)
+  const classes = useStyles()
 
   useEffect(() => {
-    let isDark = state.background == '#111111'
-    let targetId = isDark ? 'dark' : 'light'
-
     renderCanvas()
   }, [ ])
 
@@ -36,22 +36,22 @@ export default function Root(){
       <nav style={{ position: 'absolute' }}>
         <ul style={{ display: 'inline-block', listStyleType: 'none', margin: 0, padding: 25, fontSize: nav }}>
           <Link onClick={stopRender} to='/markets'>
-            <li style={{ float: 'left',  marginRight: 37.5 }}> MARKETS </li>
+            <li className={classes.item}> MARKETS </li>
           </Link>
           {!state.native && (
             <Link onClick={stopRender} to='/governance'>
-              <li style={{ float: 'left', marginRight: 37.5}}> GOVERNANCE </li>
+              <li className={classes.item}> GOVERNANCE </li>
             </Link >
           )}
           <Link onClick={stopRender}>
-            <li style={{ float: 'left', marginRight: 37.5}}> DOCS </li>
+            <li className={classes.item}> DOCS </li>
           </Link >
           <Link onClick={stopRender} to='/stake'>
             <li style={{ float: 'left' }}> STAKE </li>
           </Link>
         </ul>
       </nav>
-      <div style={{ fontSize: secondary, position: 'absolute', top: '35%', left }}>
+      <div className={classes.title} style={{ fontSize: secondary, left }}>
         <div>
           <div style={{ float: 'left', marginTop, marginRight }}>
             <img src={ndxDark} id='dark' style={{ display: 'none', width }} />
@@ -59,7 +59,9 @@ export default function Root(){
           </div>
           <span style={{ letterSpacing, float, fontSize }}> INDEXED </span>
         </div>
-        <p style={{ float: 'right', paddingRight: 25, width: textWidth }}> A FINANCIAL MANAGEMENT PROTOCOL. </p>
+        <p className={classes.subtext} style={{ width: textWidth }}>
+          A FINANCIAL MANAGEMENT PROTOCOL.
+        </p>
         <Link onClick={stopRender} style={{ float: 'right' }} to='/markets'>
           <ButtonPrimary id='landing-button'> ENTER </ButtonPrimary>
         </Link>

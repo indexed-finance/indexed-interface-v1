@@ -27,7 +27,7 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
   let { dispatch, state, handleTransaction } = useContext(store);
 
   function Overlay ({ height, width }) {
-    const background = state.dark ? 'rgba(0,0,0, .5)' : 'rgba(17, 17, 17, .5)'
+    const background = state.dark ? 'rgba(0,0,0, .5)' : 'rgba(17, 17, 17, .25)'
 
     return(
       <div style={{ zIndex: 5, textAlign: 'center', height, background, width, position: 'absolute', clear: 'both' }}>
@@ -119,7 +119,7 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
     }
   }, [ displayTotalCredit ])
 
-  let { height, width } = style.getFormatting(state.native)
+  let { height } = style.getFormatting(state.native)
 
   return (
     <Fragment>

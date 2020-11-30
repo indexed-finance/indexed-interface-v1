@@ -3,6 +3,22 @@ import {
  } from '../../constants/parameters'
  import { screenClass } from '../../constants/functions'
 
+ const setStyle = (theme) => ({
+   item: {
+     float: 'left',
+     marginRight: 37.5
+   },
+   title: {
+     position: 'absolute',
+     top: '35%',
+   },
+   subtext: {
+     float: 'right',
+     paddingRight: 25,
+   }
+ })
+
+
 const mapping = {
   [DESKTOP_SMALL]: {
     fontSize: '6.375em',
@@ -214,4 +230,4 @@ const getFormatting = ({ native }) => {
 }
 
 
-export default { getFormatting }
+export default { setStyle, getFormatting }
