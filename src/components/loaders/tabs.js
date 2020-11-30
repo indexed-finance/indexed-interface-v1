@@ -1,7 +1,8 @@
 import React from 'react'
 
+import ContentLoader from "react-content-loader"
 
-export default function Loader({ color, height, width }) {
+export default function Tabs({ color, height, width }) {
   return(
     <ContentLoader
       speed={1}
@@ -20,4 +21,4 @@ export default function Loader({ color, height, width }) {
       <circle cx="440" cy="140" r="30" />
     </ContentLoader>
   )
-)
+}
