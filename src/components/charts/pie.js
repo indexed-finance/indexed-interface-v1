@@ -8,21 +8,9 @@ import { store } from '../../state'
 import ContentLoader from "react-content-loader"
 import style from '../../assets/css/components/pie'
 import { formatBalance } from '@indexed-finance/indexed.js'
+import { initialPoolState } from '../../assets/constants/parameters'
 
 defaults.global.defaultFontFamily = 'San Francisco Bold';
-
-const dummy = {
-    address: '0x0000000000000000000000000000000000000000',
-    assets: [ ],
-    name: '',
-    symbol: '',
-    price: '',
-    supply: '',
-    marketcap: 0,
-    active: null,
-    volume: 0,
-    history: []
-}
 
 const Loader = ({ height, theme, padding }) => (
     <div style={{ padding: padding.left }}>
@@ -58,12 +46,21 @@ const options  = padding => ({
   }
 })
 
+const SIZE_TEN = [ '#143333', '#286666', '#3d9999','#51cccc', '#66ffff', '#84ffff', '#a3ffff', '#c1ffff' ]
+const SIZE_FIVE = [ '#009999', '#00CCCC','#33FFFF', '#99FFFF' ]
+
+
+const getPieColors = (size) => {
+  if(size > 5) return SIZE_TEN
+  else return SIZE_FIVE
+}
+
 export default function PieChart({ metadata, height, ready, native }){
-  const [ component, setComponent ] = useState({ element: <span/>, data: dummy })
+  const [ component, setComponent ] = useState({ element: <span/>, data: initialPoolState })
   const [ config, setConfig ] = useState(null)
   const theme = useTheme()
 
-  let colors = [ '#009999', '#00CCCC','#33FFFF', '#99FFFF', `${theme.palette.primary.main}`]
+  let colors = [ ...getPieColors(metadata.assets.length), `${theme.palette.primary.main}`]
   let labels = [];
   let data = [];
 
@@ -91,8 +88,12 @@ export default function PieChart({ metadata, height, ready, native }){
           var index = ctx.dataIndex
           var label = ctx.chart.data.labels[index]
 
-          if(index == ctx.chart.data.labels.length -1) return theme.palette.secondary.main
-          else return 'white'
+          if(index > ctx.chart.data.labels.length - 1
+            || index >= 8 || ctx.chart.data.labels.length == 2) {
+            return theme.palette.secondary.main
+          } else {
+            return 'white'
+          }
         },
         labels: {
              title: {
