@@ -15,6 +15,7 @@ import Tabs from '../components/index/tabs'
 
 import style from '../assets/css/routes/index'
 import getStyles from '../assets/css'
+import { getBalances } from '../lib/markets'
 import { store } from '../state'
 import { MintStateProvider } from '../state/mint'
 import { BurnStateProvider } from '../state/burn';
