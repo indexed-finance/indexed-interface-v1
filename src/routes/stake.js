@@ -5,7 +5,7 @@ import { Link } from  'react-router-dom'
 import Countdown from 'react-countdown'
 import { useTheme } from '@material-ui/core/styles'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
-
+import { formatBalance, BigNumber } from '@indexed-finance/indexed.js'
 import IERC20 from '../assets/constants/abi/IERC20.json'
 
 import style from '../assets/css/routes/stake'
@@ -83,19 +83,19 @@ export default function Stake() {
       </Grid>
       {pools.length > 0 && pools.map(p => {
         let { symbol, name, rewardRate, isReady, totalSupply } = p
+        let rate = (parseFloat(rewardRate)/parseFloat(totalSupply))
+        let supply = formatBalance(new BigNumber(totalSupply), 18, 4)
         let color  = symbol.includes('UNIV2') ? '#fc1c84' : ''
-        let width = symbol.includes('UNIV2') ? 25 : 30
         let mainWidth = symbol.includes('UNIV2') ? 50 : 30
         let marginRight = symbol.includes('UNIV2') ? 5 : 0
-        let rate = (parseFloat(rewardRate)/parseFloat(totalSupply))
-        let supply = parseFloat(totalSupply)/Math.pow(10,18)
-        supply = supply.toLocaleString({ minimumFractionDigits: 2 })
+        let width = symbol.includes('UNIV2') ? 25 : 30
         let label = isReady ? 'STAKE' : 'INITIALIZE'
 
         if(parseFloat(totalSupply) == 0){
-          rate = (parseFloat(rewardRate)/Math.pow(10, 18))
+          rate = formatBalance(new BigNumber(rewardRate), 18, 4)
         }
 
+        supply = supply.toLocaleString({ minimumFractionDigits: 2 })
         rate = parseFloat(rate * 60 * 24).toLocaleString()
 
         return(

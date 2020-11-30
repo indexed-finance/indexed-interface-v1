@@ -26,6 +26,7 @@ import Progress from '../components/progress'
 import Canvas from '../components/canvas'
 
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../assets/constants/parameters'
+import { NDX, DAO } from '../assets/constants/addresses'
 import { toContract } from '../lib/util/contracts'
 import { balanceOf } from '../lib/erc20'
 import style from '../assets/css/routes/proposal'
@@ -39,11 +40,7 @@ const proposalState = {
   1: 'rejcted'
 }
 
-const DAO = '0x6E64317e50a38F9A06D902978E283295AF9ED6f8'
-const NDX = '0x2342084baced2081093de5729de81fcb9de77ca6'
-
 const useStyles = getStyles(style)
-
 
 function Blockie({ address, id, width, border }) {
   let classes = useStyles()

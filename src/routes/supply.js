@@ -11,6 +11,8 @@ import CountUp from 'react-countup';
 import { toWei, fromWei, formatBalance, BigNumber } from '@indexed-finance/indexed.js'
 
 import { TX_CONFIRMED, TX_PENDING, TX_REVERTED } from '../assets/constants/parameters'
+import { STAKING_FACTORY, WETH } from '../assets/constants/addresses'
+
 import style from '../assets/css/routes/supply'
 import Canvas from '../components/canvas'
 import Container from '../components/container'
@@ -27,9 +29,6 @@ import getStyles from '../assets/css'
 import { store } from '../state'
 
 const useStyles = getStyles(style)
-
-const FACTORY = '0xF53FF1A3962Ea1CCA3F3D90Cb5C22EF3484858b0'
-const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
 
 const i = {
   'GOV5r': [ 'BAL', 'YFI', 'CRV', 'UNI'],
@@ -62,7 +61,7 @@ export default function Supply() {
     let { web3, account } = state
 
     try{
-      let contract = toContract(web3.injected, StakingRewardsFactory, FACTORY)
+      let contract = toContract(web3.injected, StakingRewardsFactory, STAKING_FACTORY)
 
       await contract.methods.notifyRewardAmount(addr).send({ from: account })
       .on('transactionHash', (transactionHash) =>

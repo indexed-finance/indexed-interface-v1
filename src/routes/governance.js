@@ -28,6 +28,7 @@ import Progress from '../components/progress'
 import Stacked from '../components/charts/stacked'
 
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../assets/constants/parameters'
+import { NDX, ZERO_ADDRESS } from '../assets/constants/addresses'
 import { balanceOf } from '../lib/erc20'
 import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
@@ -36,8 +37,6 @@ import { getProposals } from '../api/gql'
 import style from '../assets/css/routes/governance'
 import getStyles from '../assets/css'
 
-const NDX = '0x2342084baced2081093de5729de81fcb9de77ca6'
-const NA = '0x0000000000000000000000000000000000000000'
 const INACTIVE = () => <span id='inactive'>INACTIVE</span>
 const DELEGATED = () => <span id='delegated'>DELEGATED</span>
 const ACTIVE = () => <span id='registered'>ACTIVE</span>
@@ -115,7 +114,7 @@ export default function Governance(){
       let amount = (parseFloat(balance)/Math.pow(10, 18))
       .toLocaleString({ minimumFractionDigits: 2 })
 
-      if(isDelegated != NA) setPhase(<Delegate show={true}/>)
+      if(isDelegated != ZERO_ADDRESS) setPhase(<Delegate show={true}/>)
       else setPhase(<Activate trigger={renderDelegation}/>)
 
       getStatus(isDelegated)
@@ -163,7 +162,7 @@ export default function Governance(){
   const getStatus = (delegate) => {
     if(delegate == state.account) {
       setStatus(ACTIVE)
-    } else if(delegate != NA){
+    } else if(delegate != ZERO_ADDRESS){
       setStatus(DELEGATED)
     } else {
       setStatus(INACTIVE)

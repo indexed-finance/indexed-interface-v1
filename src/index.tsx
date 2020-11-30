@@ -91,10 +91,14 @@ function Application(){
 
   useEffect(() => {
     const retrieveCategories = async() => {
+      console.log('FIRED')
       let stats = { dailyVolume: 0, totalLocked: 0 };
       let proposals = { ...await getProposals() };
       let categories = {};
       let indexes = {};
+
+      console.log(state.helper)
+
       // let tokenCategories = await getTokenCategories()
       if (!state.helper) return;
       const addCategory = async (categoryID) => {
@@ -108,10 +112,16 @@ function Application(){
 
       for (let pool of state.helper.initialized) {
         const { category, name, symbol, address, tokens } = pool;
+
+        console.log(category, name, symbol, address, tokens)
+
+
         const categoryID = `0x${category.toString(16)}`;
         await addCategory(categoryID);
         let snapshots = await pool.getSnapshots(90);
         let timestamp = new Date(Date.now())
+
+        console.log(snapshots)
 
         timestamp.setHours(0);
         timestamp.setMinutes(0);
@@ -126,11 +136,13 @@ function Application(){
         let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(4), date: new Date(l.date * 1000) }))
         var dayMulitplier = 1
         let past24h = undefined
+        var targetDate = new Date(timestamp.getTime() - (86400000 * dayMulitplier));
+        past24h = snapshots.find(i => (i.date * 1000) == targetDate.getTime());
 
-        while(!past24h) {
-          var targetDate = new Date(timestamp.getTime() - (86400000 * dayMulitplier));
+        if(!past24h) {
+          dayMulitplier = dayMulitplier + 2
+          targetDate = new Date(timestamp.getTime() - (86400000 * dayMulitplier));
           past24h = snapshots.find(i => (i.date * 1000) == targetDate.getTime());
-          dayMulitplier++;
         }
 
         let delta24hr = snapshots.length === 1 ? 0 : ((Math.abs(history[history.length-1].close - past24h.value)/ past24h.value) * 100).toFixed(4);
@@ -162,9 +174,11 @@ function Application(){
         indexes[symbol] = index;
       }
       for (let pool of state.helper.uninitialized) {
+        console.log('READY')
         await pool.update();
         const { category, name, symbol, address, tokens } = pool;
         const categoryID = `0x${category.toString(16)}`;
+        console.log('GET CATEGORY', categoryID)
         await addCategory(categoryID);
         let finalValueEstimate = new BigNumber(0);
         let currentValue = new BigNumber(0);
@@ -204,7 +218,7 @@ function Application(){
       })
     }
     retrieveCategories()
-  }, [ state.load, state.helper, dispatch ])
+  }, [ state.helper ])
 
   useEffect(() => {
     const initialise = async() => {
@@ -215,6 +229,7 @@ function Application(){
       window.addEventListener("resize", onResize)
       let account = state.account;
       let helper = state.helper ? state.helper : await getAllHelpers(web3.rinkeby, account);
+
       dispatch({ type: 'GENERIC', payload: { changeTheme, helper } })
     }
     initialise()

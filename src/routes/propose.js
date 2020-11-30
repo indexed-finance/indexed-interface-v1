@@ -18,12 +18,11 @@ import Input from '../components/inputs/input'
 import Container from '../components/container'
 
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../assets/constants/parameters'
+import { DAO } from '../assets/constants/addresses'
 import style from '../assets/css/routes/propose'
 import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
-
-const DAO = '0x6E64317e50a38F9A06D902978E283295AF9ED6f8'
 
 const sources = [ BPool, GovernorAlpha ]
 

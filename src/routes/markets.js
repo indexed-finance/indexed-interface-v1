@@ -16,23 +16,11 @@ import Table from '../components/table'
 import Loader from '../components/loader'
 import Copyable from '../components/copyable'
 
+import { initialPoolState } from '../assets/constants/parameters'
 import style from '../assets/css/routes/markets'
 import indexed from '../assets/images/indexed.png'
 import getStyles from '../assets/css'
 import { store } from '../state'
-
-const dummy = {
-    address: '0x0000000000000000000000000000000000000000',
-    assets: [ ],
-    name: '',
-    symbol: '',
-    price: '',
-    supply: '',
-    marketcap: 0,
-    active: null,
-    volume: 0,
-    history: []
-}
 
 const Trigger = styled(ButtonPrimary)({
   marginTop: 'auto',
@@ -66,7 +54,7 @@ const Wrapper = styled(Paper)({
 })
 
 export default function Markets(){
-  const [ market, setMarket ] = useState(dummy)
+  const [ market, setMarket ] = useState(initialPoolState)
   const [ pie, setPie ] = useState(<Fragment />)
   const classes = useStyles()
   const theme = useTheme()
@@ -101,7 +89,7 @@ export default function Markets(){
 
   useEffect(() => {
     if(Object.keys(state.indexes).length > 0
-        && market == dummy
+        && market == initialPoolState
       ){
       let keys = Object.keys(state.indexes)
 

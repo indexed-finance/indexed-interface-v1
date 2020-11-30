@@ -85,6 +85,22 @@ export const initialState = {
   proposals: {}
 }
 
+export const initialPoolState = {
+    address: '0x0000000000000000000000000000000000000000',
+    assets: [ ],
+    name: '',
+    symbol: '',
+    price: '',
+    supply: '',
+    marketcap: '',
+    liquidity: [],
+    volume: '',
+    active: null,
+    credit: 0,
+    history: [],
+    type: <span> &nbsp;&nbsp;&nbsp;&nbsp;</span>
+};
+
 export const tokenMetadata = {
   "BAT": {
     address: "0x0d8775f648430679a709e98d2b0cb6250d2887ef",
