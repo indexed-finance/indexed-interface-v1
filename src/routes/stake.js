@@ -3,7 +3,6 @@ import React, { useState, useEffect, useContext, Fragment } from 'react'
 import Grid from '@material-ui/core/Grid'
 import { Link } from  'react-router-dom'
 import Countdown from 'react-countdown'
-import ContentLoader from "react-content-loader"
 import { useTheme } from '@material-ui/core/styles'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
 
@@ -13,6 +12,7 @@ import style from '../assets/css/routes/stake'
 import Card from '../components/card'
 import Container from '../components/container'
 import ButtonPrimary from '../components/buttons/primary'
+import Loader from '../components/loaders/stake'
 
 import { tokenMetadata } from '../assets/constants/parameters'
 import { toContract } from '../lib/util/contracts'
@@ -28,22 +28,6 @@ const i = {
   'GOV5r': [ 'BAL', 'YFI', 'CRV', 'UNI'],
   'UNIV2:ETH-GOV5r': [ 'UNI', 'YFI', 'CRV', 'BAL']
 }
-
-const MyLoader = ({theme, width}) => (
-  <ContentLoader
-    speed={2}
-    width={width}
-    height={875}
-    viewBox={`0 0 ${width} 875`}
-    backgroundColor={theme.palette.primary.main}
-    foregroundColor='rgba(153, 153, 153, 0.5)'
-  >
-    <rect x="0" y="0" rx="5" ry="5" width={width} height="200" />
-    <rect x="0" y="225" rx="5" ry="5" width={width} height="200" />
-    <rect x="0" y="450" rx="5" ry="5" width={width} height="200" />
-    <rect x="0" y="675" rx="5" ry="5" width={width} height="200" />
-  </ContentLoader>
-)
 
 export default function Stake() {
   const [ pools, setPools ] = useState([])
@@ -104,9 +88,9 @@ export default function Stake() {
         let mainWidth = symbol.includes('UNIV2') ? 50 : 30
         let marginRight = symbol.includes('UNIV2') ? 5 : 0
         let rate = (parseFloat(rewardRate)/parseFloat(totalSupply))
-        let label = isReady ? 'STAKE' : 'INITIALIZE'
         let supply = parseFloat(totalSupply)/Math.pow(10,18)
         supply = supply.toLocaleString({ minimumFractionDigits: 2 })
+        let label = isReady ? 'STAKE' : 'INITIALIZE'
 
         if(parseFloat(totalSupply) == 0){
           rate = (parseFloat(rewardRate)/Math.pow(10, 18))
@@ -145,7 +129,8 @@ export default function Stake() {
                   </ul>
                 </div>
                 <div className={classes.button}>
-                  <ButtonPrimary variant='outlined' margin={{ marginBottom: 25, marginRight: 25 }}>
+                  <ButtonPrimary variant='outlined'
+                   margin={{ marginBottom: 25, marginRight: 25 }}>
                     {label}
                   </ButtonPrimary>
                 </div>
@@ -158,7 +143,7 @@ export default function Stake() {
         <Grid item xs={10} md={6} style={{ width: '100%' }}>
           <ParentSize>
             {({ width, height }) => (
-              <MyLoader width={width} theme={theme} />
+              <Loader width={width} theme={theme} />
             )}
           </ParentSize>
         </Grid>
