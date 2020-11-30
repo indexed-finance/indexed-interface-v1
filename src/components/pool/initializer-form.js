@@ -9,14 +9,16 @@ import ButtonPrimary from '../buttons/primary'
 import { useInitializerState } from '../../state/initializer';
 import { toContract } from '../../lib/util/contracts';
 import PoolInitializer from '../../assets/constants/abi/PoolInitializer.json'
-import { fromWei, toWei } from '@indexed-finance/indexed.js'
+import MarketCapSqrtController from '../../assets/constants/abi/MarketCapSqrtController.json'
+
+import { fromWei, toWei, toHex } from '@indexed-finance/indexed.js'
 import MockERC20ABI from '../../assets/constants/abi/MockERC20.json'
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../../assets/constants/parameters'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
 
 import ExplainCredit from './explain-credit';
 
-const FACTORY = "0x0"
+const FACTORY = "0x68cf58dd7d90bbcfac51d52bf5005c202b17974c"
 
 // const useStyles = getStyles(style)
 
@@ -26,22 +28,37 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
   const { useToken, initState, setHelper, updatePool, displayPoolTotalCredit, displayTotalCredit } = useInitializerState();
   let { dispatch, state, handleTransaction } = useContext(store);
 
-  function Overlay ({ height, width }) {
+  function Overlay ({ height, width, f }) {
     const background = state.dark ? 'rgba(0,0,0, .5)' : 'rgba(17, 17, 17, .25)'
 
     return(
       <div style={{ zIndex: 5, textAlign: 'center', height, background, width, position: 'absolute', clear: 'both' }}>
-        <ButtonPrimary onClick={finalisePool} margin={{ margin: '25% 27.5%' }}> DEPLOY INDEX </ButtonPrimary>
+        <ButtonPrimary onClick={f} margin={{ margin: '25% 27.5%' }}> DEPLOY INDEX </ButtonPrimary>
       </div>
     )
   }
 
   const finalisePool = async() => {
-    try {
+      let { address } = metadata
       let { web3, account } = state
-      let contract = toContract(web3.injected, PoolInitializer.abi, FACTORY)
+      let { tokens, amounts } = initState
 
-      await contract.methods.finish().send({ from: state.account })
+      let initializer = toContract(web3.injected, PoolInitializer.abi, address)
+      // let controllerAddress = await initializer.methods.controller().call()
+      let ordering = await initializer.methods.getDesiredTokens().call()
+      let contract = toContract(web3.injected, MarketCapSqrtController.abi, FACTORY)
+      const addresses = new Array(tokens.length).fill(null);
+      const targets = new Array(tokens.length).fill(null);
+
+      ordering.forEach((address, realIndex) => {
+        const localIndex = tokens.map(t => t.address.toLowerCase()).indexOf(address.toLowerCase());
+
+        targets[realIndex] = toHex(amounts[localIndex]);
+        addresses[realIndex] = address
+      });
+
+      await initializer.methods.finish()
+      .send({ from: state.account })
       .on('transactionHash', (transactionHash) =>
         dispatch(TX_PENDING(transactionHash))
       ).on('confirmation', async(conf, receipt) => {
@@ -53,7 +70,6 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
           }
         }
       })
-    } catch(e) { }
   }
 
   const calcEstimatedTokenOutput = () => {
@@ -126,7 +142,7 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
       {shouldUpdate && (
         <ParentSize>
           {({ width }) => (
-            <Overlay height={height} width={width} />
+            <Overlay f={finalisePool} height={height} width={width} />
           )}
         </ParentSize>
       )}
