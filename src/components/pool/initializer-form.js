@@ -75,14 +75,15 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
   const calcEstimatedTokenOutput = () => {
     let { tokens, amounts } = initState
 
+    let totalPoolCredits = parseFloat(displayPoolTotalCredit)
     let culmativeTargetsUSD = tokens.map((v, i) => v.priceUSD * fromWei(v.targetBalance))
     let culmativeQueryUSD = tokens.map((v, i) => v.priceUSD * fromWei(amounts[i]))
     let culmativeTargetsSum = culmativeTargetsUSD.reduce((a, b) => a + b)
     let culmativeQuerySum = culmativeQueryUSD.reduce((a, b) => a + b)
     let culmativeQueryToTargetsRatio = culmativeQuerySum/culmativeTargetsSum
-    let ratioUSDPoolToInputs = displayPoolTotalCredit/culmativeQueryToTargetsRatio
+    let ratioUSDPoolToInputs = totalPoolCredits/culmativeQueryToTargetsRatio
     let estimatedTokenOutput = (displayTotalCredit/ratioUSDPoolToInputs) * 100
-    let poolTokenOutput = (displayPoolTotalCredit/ratioUSDPoolToInputs) * 100
+    let poolTokenOutput = (totalPoolCredits/ratioUSDPoolToInputs) * 100
 
     return parseFloat(
       estimatedTokenOutput > poolTokenOutput ? estimatedTokenOutput - poolTokenOutput :

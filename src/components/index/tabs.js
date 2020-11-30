@@ -172,7 +172,7 @@ export default function VerticalTabs({ data }) {
     getTrades()
   }, [ meta ])
 
-  let { height, width } = style.getFormatting()
+  let { height, width, spacing } = style.getFormatting()
 
   return (
     <div className={classes.root} style={{ height, width }}>
@@ -190,7 +190,7 @@ export default function VerticalTabs({ data }) {
       </div>
 
       <TabPanel className={classes.assets} value={value} index={0}>
-        <Grid item container direction='row' alignItems='flex-start' justify='space-around' spacing={4}>
+        <Grid item container direction='row' alignItems='flex-start' justify='space-around' spacing={spacing}>
           {state.request && data.active && helper &&
             helper.tokens.map((token, i) => (<Grid item key={i}> <WeightedToken token={token} /> </Grid> ))}
           {!state.request && (<Loader color={state.background} />)}
