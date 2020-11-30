@@ -105,7 +105,7 @@ export default function Banner() {
         else init.push(value)
       })
       setMessages({
-        proposal: last, indexes: indxs, init
+        proposal: last || proposalType, indexes: indxs, init
        })
       startAnimation()
     }

@@ -111,7 +111,7 @@ export default function Index(){
 
       if(web3.injected && indexes && indexes[name]){
         let { assets } = indexes[name]
-        let balances =  await getBalances(web3.rinkeby, account, assets, {})
+        let balances =  await getBalances(web3[process.env.REACT_APP_ETH_NETWORK], account, assets, {})
 
         await dispatch({ type: 'BALANCE',
           payload: { balances }
