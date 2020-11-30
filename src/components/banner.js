@@ -28,8 +28,6 @@ export default function Banner() {
   let { width, position, marginBlock, duration, marginTop } = style.getFormatting(native)
 
   const startAnimation = () => {
-    console.log('START ANIMATION')
-
     let timestamp = new Date(Date.now())
     let unixTime = timestamp.getTime()
 
@@ -61,10 +59,6 @@ export default function Banner() {
           elapsed = ((lastTime/duration) % 1) * duration
         }
 
-        console.log('STOP!')
-        console.log('TIME ELAPSED', elapsed)
-        console.log(controls)
-
         setCoordinate({ ...coordinate, elapsed })
         controls.stop()
       }
@@ -77,8 +71,6 @@ export default function Banner() {
     if(messages.indexes.length > 0){
       let currentTime = new Date(Date.now())
       let time = currentTime.getTime()
-
-      console.log('RESUME!')
 
       setCoordinate({ ...coordinate, time })
       controls.start({

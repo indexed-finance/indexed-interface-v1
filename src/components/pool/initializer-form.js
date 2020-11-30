@@ -133,7 +133,7 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
   }, [ state.web3.injected, state.helper ])
 
   useEffect(() => {
-    if(initState.pool.tokens.length > 0){
+    if(initState.tokens.length > 0){
       setOutput(calcEstimatedTokenOutput())
     }
   }, [ displayTotalCredit ])

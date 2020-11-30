@@ -8,12 +8,12 @@ const setStyle = (theme) => ({
     overflowX: 'hidden',
     position: 'fixed',
     borderBottom: '3px solid #666666',
+    background: theme.palette.primary.main,
     zIndex: 10
   },
   carosuel: {
     listStyle: 'none',
     display: 'inline-flex',
-    background: theme.palette.primary.main,
   },
   href: {
     color: `${theme.palette.secondary.main} !important`,
@@ -91,7 +91,7 @@ const mapping = {
   },
   [NATIVE_SMALL]: {
     position: 'fixed',
-    width: '750vw',
+    width: 4000,
     marginTop: '-0.975em',
     duration: 30,
     marginBlock: {
@@ -101,7 +101,7 @@ const mapping = {
   },
   [NATIVE_NORMAL]: {
     position: 'fixed',
-    width: '700vw',
+    width: 4000,
     marginTop: '-1.10em',
     duration: 30,
     marginBlock: {
@@ -111,7 +111,7 @@ const mapping = {
   },
   [NATIVE_WIDE]: {
     position: 'fixed',
-    width: '700vw',
+    width: 4000,
     marginTop: '-0.975em',
     duration: 25,
     marginBlock: {

@@ -24,20 +24,12 @@ import { store } from '../state'
 
 const useStyles = getStyles(style)
 
-const native = {
-  width: '100%'
-}
-
-const desktop = {
-   width: '30%'
-}
-
 export default function Markets(){
   const [ market, setMarket ] = useState(initialPoolState)
   const [ pie, setPie ] = useState(<Fragment />)
+  const history = useHistory()
   const classes = useStyles()
   const theme = useTheme()
-  const history = useHistory()
 
   let { state, dispatch } = useContext(store)
   let { request, native } = state
@@ -72,18 +64,12 @@ export default function Markets(){
       ){
       let keys = Object.keys(state.indexes)
 
-      console.log('SET MARKET')
-
       setMarket(state.indexes[keys[0]])
     }
   }, [ state.indexes ])
 
   useEffect(() => {
-    console.log('ROOT: MOUNT')
-
     if(!state.load){
-      console.log('REQUEST: INIT')
-
       dispatch({
         type: 'LOAD', payload: true
       })

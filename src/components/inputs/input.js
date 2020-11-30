@@ -12,6 +12,9 @@ const Input = styled(TextField)({
   '& label': {
     top: -5,
   },
+  '& label': {
+    top: -5,
+  },
   '& label:placeholder-shown': {
     color: '#666666',
     top: -5,
@@ -27,8 +30,8 @@ const Input = styled(TextField)({
   '&:hover fieldset': {
    borderColor: '#666666',
  },
- '& label.Mui-focused': {
-   color: '#666666',
+ '& .MuiFormLabel-root.Mui-focused': {
+   color: '#666666 !important',
    top: 2.5,
  },
  '& input:valid + fieldset': {

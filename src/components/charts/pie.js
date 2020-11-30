@@ -88,7 +88,7 @@ export default function PieChart({ metadata, height, ready, native }){
           var index = ctx.dataIndex
           var label = ctx.chart.data.labels[index]
 
-          if(index > ctx.chart.data.labels.length - 1
+          if(index == ctx.chart.data.labels.length - 1
             || index >= 8 || ctx.chart.data.labels.length == 2) {
             return theme.palette.secondary.main
           } else {

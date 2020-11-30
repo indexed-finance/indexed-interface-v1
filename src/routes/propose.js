@@ -185,7 +185,6 @@ export default function Propose(){
     })
 
     try {
-
       let contract = toContract(web3.injected, GovernorAlpha.abi, DAO)
 
       await contract.methods.propose(

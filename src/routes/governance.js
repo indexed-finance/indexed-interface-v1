@@ -43,17 +43,6 @@ const ACTIVE = () => <span id='registered'>ACTIVE</span>
 
 const selections = [[{ value: 0, label: null }]];
 
-const Liquidity = styled(Button)({
-  border: '2px solid #009966',
-  color: '#999999',
-  borderRadius: 5,
-  padding: '.5em 2.5em',
-  '&:hover': {
-    color: '#009966',
-    fontWeight: 'bold'
-  }
-})
-
 const getPhase = phase => {
   if(phase == 'passed') return 'positive'
   else if(phase == 'rejected') return 'removed'
@@ -249,8 +238,6 @@ export default function Governance(){
 
   useEffect(() => {
     const retrieveProposals = async() => {
-      console.log(state.proposals)
-
       if(state.request && state.proposals){
         let { proposals, dailyDistributionSnapshots } = state.proposals
 

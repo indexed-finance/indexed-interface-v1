@@ -3,7 +3,7 @@ import React, { Fragment, useState, useContext, useEffect, useReducer } from 're
 import { useTheme } from '@material-ui/core/styles'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
-import { useParams, useLocation, Link } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import Grid from '@material-ui/core/Grid'
 
 import ButtonMarket from '../components/buttons/market'
@@ -15,20 +15,15 @@ import Tabs from '../components/index/tabs'
 
 import style from '../assets/css/routes/index'
 import getStyles from '../assets/css'
-import { getBalances } from '../lib/markets'
 import { store } from '../state'
 import { MintStateProvider } from '../state/mint'
 import { BurnStateProvider } from '../state/burn';
 import { TradeStateProvider } from '../state/trade'
-import Loader from '../components/loaders/area'
 import TitleLoader from '../components/loaders/title'
+import Loader from '../components/loaders/area'
 
 function uncapitalizeNth(text, n) {
     return (n > 0 ? text.slice(0, n) : '') + text.charAt(n).toLowerCase() + (n < text.length - 1 ? text.slice(n+1) : '')
-}
-
-const dummy = {
-  symbol: ''
 }
 
 const selected = {
@@ -45,20 +40,17 @@ export default function Index(){
   name = uncapitalizeNth(name.toUpperCase(), name.length-1)
 
   const [ styles, setStyles ] = useState({ trade: selected, mint: {}, burn: {}})
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const [ metadata, setMetadata ] = useState({})
   const [ execution, setExecution ] = useState('trade')
-  const [ path, setPath ] = useState(null)
-  const location = useLocation()
   const classes = useStyles()
   const theme = useTheme()
 
   const changeExecution = (option) => {
     let newStyle = clearSelections()
 
-    if(option === 'burn') {
+    if(option == 'burn') {
       newStyle.burn = selected;
-    } else if(option === 'mint'){
+    } else if(option == 'mint'){
       newStyle.mint = selected
     } else {
       newStyle.trade = selected
@@ -73,22 +65,6 @@ export default function Index(){
       trade: {}, mint: {}, burn: {}
     }
   }
-
-  useEffect(() => {
-    const retrieveBalances = async() => {
-      let { account, indexes, web3 } = state
-
-      if(web3.injected && indexes && indexes[name]){
-        let { assets } = indexes[name]
-        let balances =  await getBalances(web3.rinkeby, account, assets, {})
-
-        await dispatch({ type: 'BALANCE',
-          payload: { balances }
-        })
-      }
-    }
-    retrieveBalances()
-  }, [ state.web3.injected ])
 
   useEffect(() => {
     const getMetadata = async() => {
@@ -113,28 +89,9 @@ export default function Index(){
 
   useEffect(() => {
     if(!state.load){
-      setPath(name)
       dispatch({ type: 'LOAD', payload: true })
     }
   }, [ ])
-
-  useEffect(() => {
-    if(name != null && path != null){
-      let emptyMetadata = Object.keys(metadata).length === 0;
-      setMetadata(state.indexes[name]);
-      forceUpdate()
-
-      if (emptyMetadata && execution === 'trade') {
-        changeExecution('trade')
-      }
-    }
-  }, [ name ])
-
-  useEffect(() => {
-    if(path === name){
-      setPath(name)
-    }
-  }, [ location.pathname ])
 
   let { border, showVolume, maxWidth, width, height, marginTop, chart, paddingTop, marginRight, sideBar } = style.getFormatting()
 
@@ -144,7 +101,7 @@ export default function Index(){
         <Grid item>
           <div className={classes.nav}>
             <ButtonGroup disableElevation variant='outlined'>
-              <ButtonMarket style={styles.trade} className='trade' onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
+              <ButtonMarket style={styles.trade} onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
               <ButtonMarket style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
               <ButtonMarket style={styles.mint} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
             </ButtonGroup>
@@ -190,7 +147,7 @@ export default function Index(){
           <Grid item>
             <header className={classes.selections}>
               <ButtonGroup disableElevation variant='outlined'>
-                <ButtonMarket style={styles.trade} className='trade' onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
+                <ButtonMarket style={styles.trade} onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
                 <ButtonMarket style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
                 <ButtonMarket style={styles.burn} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
               </ButtonGroup>
