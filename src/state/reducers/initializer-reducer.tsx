@@ -27,6 +27,7 @@ export type InitializerState = {
   selectedIndex?: number;
   currentValue: BigNumber;
   finalValueEstimate: BigNumber;
+  ready: boolean;
 };
 
 const initialState: InitializerState = {
@@ -39,7 +40,8 @@ const initialState: InitializerState = {
   selected: [] as boolean[],
   isSingle: false,
   currentValue: BN_ZERO,
-  finalValueEstimate: BN_ZERO
+  finalValueEstimate: BN_ZERO,
+  ready: false
 };
 
 function initializerReducer(state: InitializerState = initialState, actions: InitDispatchAction | InitDispatchAction[]): InitializerState {
@@ -58,8 +60,10 @@ function initializerReducer(state: InitializerState = initialState, actions: Ini
 
   const toggleToken = (action: ToggleToken) => {
     const { index } = action;
+    console.log(`TOGGLE TOKEN:: ${index}`);
     let wasSelected = newState.selected[index];
     newState.selected[index] = !wasSelected;
+    console.log(`NUM SELECTED:: ${newState.selected.filter(x => x).length}`);
     newState.isSingle = newState.selected.filter(x => x).length === 1;
     if (wasSelected) {
       newState.amounts[index] = BN_ZERO;
@@ -108,6 +112,14 @@ function initializerReducer(state: InitializerState = initialState, actions: Ini
       case 'SET_ALL': { setAll(action); break; }
     }
   }
+
+  let isReady = /* (!newState.finalValueEstimate.eq(0)) && */ newState.amounts.filter((amount, i) => {
+    let token = newState.tokens[i].address;
+    let allowance = newState.pool.userAllowances[token] || BN_ZERO;
+    let x = allowance.gte(amount);
+    return x;
+  }).length === newState.tokens.length;
+  newState.ready = isReady;
   return newState;
 }
 
@@ -136,7 +148,10 @@ export function useInitializerToken(
   let disableApprove = !approvalNeeded || !selected || balance.lt(amount);
   let updateAmount = (input: string | number) => dispatch({ type: 'SET_TOKEN_INPUT', index, amount: input });
   let setAmountToBalance = () => dispatch({ type: 'SET_TOKEN_EXACT', index, amount: balance });
-  let setAmountToRemainder = () => dispatch({ type: 'SET_TOKEN_EXACT', index, amount: amountRemaining });
+  let setAmountToRemainder = (event) => {
+    event.preventDefault();
+    dispatch({ type: 'SET_TOKEN_EXACT', index, amount: amountRemaining });
+  }
 
   let displayAmountRemaining = formatBalance(amountRemaining, decimals, 4);
   let bindSetRemainderButton = {
@@ -145,7 +160,7 @@ export function useInitializerToken(
     onClick: setAmountToRemainder
   }
 
-  let updateDidApprove = () => dispatch({ type: 'UPDATE_POOL' });
+  let updateDidApprove = () => dispatch({ type: 'UPDATE_POOL', clearInputs: false });
 
   let symbolAdornment = amount.eq(0) ? null : `Ξ${displayCredit}`;
   let { balance: currentBalance, targetBalance } = state.pool.getTokenByAddress(address);
@@ -216,7 +231,7 @@ export type TokenActions = {
   bindSetRemainderButton: {
     disabled: boolean;
     value: string;
-    onClick: () => void;
+    onClick: (event: any) => void;
   }
   bindSelectButton: {
     disabled: boolean;

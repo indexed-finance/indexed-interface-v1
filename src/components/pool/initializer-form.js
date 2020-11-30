@@ -18,8 +18,6 @@ import ParentSize from '@vx/responsive/lib/components/ParentSize'
 
 import ExplainCredit from './explain-credit';
 
-const FACTORY = "0x68cf58dd7d90bbcfac51d52bf5005c202b17974c"
-
 // const useStyles = getStyles(style)
 
 export default function InitializerForm({ shouldUpdate, component, metadata, classes }) {
@@ -46,7 +44,6 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
       let initializer = toContract(web3.injected, PoolInitializer.abi, address)
       // let controllerAddress = await initializer.methods.controller().call()
       let ordering = await initializer.methods.getDesiredTokens().call()
-      let contract = toContract(web3.injected, MarketCapSqrtController.abi, FACTORY)
       const addresses = new Array(tokens.length).fill(null);
       const targets = new Array(tokens.length).fill(null);
 
@@ -98,9 +95,8 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
   async function contributeTokens() {
     const abi = require('../../assets/constants/abi/PoolInitializer.json').abi;
     const initializer = toContract(state.web3.injected, abi, initState.pool.address);
-    const minimumCredit = initState.creditEthTotal;
+    const minimumCredit = toHex(initState.creditEthTotal.times(0.98));
     let fn;
-
     if (initState.isSingle) {
       let i = initState.selectedIndex;
       let token = initState.tokens[i].address;
@@ -112,7 +108,7 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
       initState.tokens.forEach((token, i) => {
         if (!initState.selected[i]) return;
         tokens.push(token.address);
-        amounts.push(initState.amounts[i]);
+        amounts.push(toHex(initState.amounts[i]));
       });
       fn = initializer.methods['contributeTokens(address[],uint256[],uint256)'](tokens, amounts, minimumCredit);
     }
@@ -152,7 +148,7 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
         <p>  <ExplainCredit /> CREDIT: <span id='credit'>Ξ {displayTotalCredit}</span> </p>
       </div>
       <div className={classes.submit}>
-        <ButtonPrimary variant='outlined' onClick={contributeTokens} style={{ marginRight: 0 }}>
+        <ButtonPrimary variant='outlined' onClick={contributeTokens} disabled={!initState.ready} style={{ marginRight: 0 }}>
           JOIN
         </ButtonPrimary>
       </div>
