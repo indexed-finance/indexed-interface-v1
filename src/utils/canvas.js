@@ -194,8 +194,6 @@ function setInitialStyles() {
   let primary = document.body.style.background
   let secondary = document.body.style.color
 
-  console.log(primary == 'rgb(17, 17, 17)')
-
   if(primary == 'rgb(17, 17, 17)') {
     lightImage.style.display = 'none'
     darkImage.style.display = 'block'

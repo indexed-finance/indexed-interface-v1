@@ -11,16 +11,50 @@ import { toContract } from '../../lib/util/contracts';
 import PoolInitializer from '../../assets/constants/abi/PoolInitializer.json'
 import { fromWei, toWei } from '@indexed-finance/indexed.js'
 import MockERC20ABI from '../../assets/constants/abi/MockERC20.json'
+import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../../assets/constants/parameters'
+import ParentSize from '@vx/responsive/lib/components/ParentSize'
 
 import ExplainCredit from './explain-credit';
 
+const FACTORY = "0x0"
+
 // const useStyles = getStyles(style)
 
-export default function InitializerForm({ metadata, classes }) {
+export default function InitializerForm({ shouldUpdate, component, metadata, classes }) {
   const [ output, setOutput ] = useState(0)
 
   const { useToken, initState, setHelper, updatePool, displayPoolTotalCredit, displayTotalCredit } = useInitializerState();
-  let { state, handleTransaction } = useContext(store);
+  let { dispatch, state, handleTransaction } = useContext(store);
+
+  function Overlay ({ height, width }) {
+    const background = state.dark ? 'rgba(0,0,0, .5)' : 'rgba(17, 17, 17, .5)'
+
+    return(
+      <div style={{ zIndex: 5, textAlign: 'center', height, background, width, position: 'absolute', clear: 'both' }}>
+        <ButtonPrimary onClick={finalisePool} margin={{ margin: '25% 27.5%' }}> DEPLOY INDEX </ButtonPrimary>
+      </div>
+    )
+  }
+
+  const finalisePool = async() => {
+    try {
+      let { web3, account } = state
+      let contract = toContract(web3.injected, PoolInitializer.abi, FACTORY)
+
+      await contract.methods.finish().send({ from: state.account })
+      .on('transactionHash', (transactionHash) =>
+        dispatch(TX_PENDING(transactionHash))
+      ).on('confirmation', async(conf, receipt) => {
+        if(conf == 0){
+          if(receipt.status == 1) {
+            dispatch(TX_CONFIRMED(receipt.transactionHash))
+          } else {
+            dispatch(TX_REVERTED(receipt.transactionHash))
+          }
+        }
+      })
+    } catch(e) { }
+  }
 
   const calcEstimatedTokenOutput = () => {
     let { tokens, amounts } = initState
@@ -85,10 +119,17 @@ export default function InitializerForm({ metadata, classes }) {
     }
   }, [ displayTotalCredit ])
 
-  let { height } = style.getFormatting(state.native)
+  let { height, width } = style.getFormatting(state.native)
 
   return (
     <Fragment>
+      {shouldUpdate && (
+        <ParentSize>
+          {({ width }) => (
+            <Overlay height={height} width={width} />
+          )}
+        </ParentSize>
+      )}
       <TokenInputs isInitialiser={true} useToken={useToken} tokens={initState.tokens} width='100%' height={height} />
       <div className={classes.reciept}>
         <p>  EST TOKENS: <span>{output} {metadata.symbol}</span> </p>

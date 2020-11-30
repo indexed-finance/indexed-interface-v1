@@ -7,16 +7,13 @@ import ExplainCredit from './explain-credit';
 import Canvas from '../canvas'
 import Container from '../container'
 import Spline from '../charts/spline'
-import ButtonPrimary from '../buttons/primary'
 import InitializerForm from './initializer-form';
 import Weights from '../weights';
 import { toWei } from '@indexed-finance/indexed.js'
 
 import { InitializerStateProvider, useInitializerState } from "../../state/initializer";
-import PoolInitializer from '../../assets/constants/abi/PoolInitializer.json'
 import { store } from '../../state'
 
-import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../../assets/constants/parameters'
 import style from '../../assets/css/routes/pool'
 import getStyles from '../../assets/css'
 import { toContract } from '../../lib/util/contracts'
@@ -57,26 +54,6 @@ function UninitializedPoolPage({ address, metadata }) {
     return helper;
   };
 
-  const finalisePool = async() => {
-    try {
-      let { web3, account } = state
-      let contract = toContract(web3.injected, PoolInitializer.abi, address)
-
-      await contract.methods.finish().send({ from: state.account })
-      .on('transactionHash', (transactionHash) =>
-        dispatch(TX_PENDING(transactionHash))
-      ).on('confirmation', async(conf, receipt) => {
-        if(conf == 0){
-          if(receipt.status == 1) {
-            dispatch(TX_CONFIRMED(receipt.transactionHash))
-          } else {
-            dispatch(TX_REVERTED(receipt.transactionHash))
-          }
-        }
-      })
-    } catch(e) { }
-  }
-
   useEffect(() => {
     const checkTargets = () => {
       if(initState.pool.tokens.length > 0) {
@@ -109,16 +86,6 @@ function UninitializedPoolPage({ address, metadata }) {
   }
 
   let { name, symbol } = initState.pool;
-
-  function Overlay () {
-    const background = state.dark ? 'rgba(0,0,0, .5)' : 'rgba(17, 17, 17, .5)'
-
-    return(
-      <div style={{ zIndex: 5, textAlign: 'center', background, height: '20em', width: '28.75em', position: 'absolute', clear: 'both' }}>
-        <ButtonPrimary onClick={finalisePool} margin={{ margin: '7.5em 8.75em' }}> DEPLOY INDEX </ButtonPrimary>
-       </div>
-    )
-  }
 
   function MetaDisplay() {
     if (!native) {
@@ -183,8 +150,7 @@ function UninitializedPoolPage({ address, metadata }) {
               </Alert>
               </div>
             <div className={classes.container}>
-              {shouldUpdate && (<Overlay />)}
-              <InitializerForm metadata={{ address, symbol: metadata.symbol }} classes={classes} />
+              <InitializerForm shouldUpdate={shouldUpdate} metadata={{ address, symbol: metadata.symbol }} classes={classes} />
             </div>
           </Container>
         </Grid>
