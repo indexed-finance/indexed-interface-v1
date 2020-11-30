@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button'
 
 export default function ButtonPrimary(props){
   const theme = useTheme()
-  let { secondary } = theme.palette
+  let { secondary, primary } = theme.palette
   let margin = {}
 
   if(props.margin){

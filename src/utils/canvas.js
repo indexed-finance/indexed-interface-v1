@@ -161,12 +161,12 @@ function render() {
   let secondary = document.body.style.color
 
   if(normTime < .7 && normTime > .225) {
-    targetElement.style.color = secondary
-    targetButton.style.color = secondary
-    setOppositeStyles();
-  } else if(normTime > .7) {
     targetElement.style.color = primary
     targetButton.style.color = primary
+    setOppositeStyles();
+  } else if(normTime > .7) {
+    targetElement.style.color = secondary
+    targetButton.style.color = secondary
     setInitialStyles();
   }
 
@@ -194,8 +194,15 @@ function setInitialStyles() {
   let primary = document.body.style.background
   let secondary = document.body.style.color
 
-  lightImage.style.display = 'none'
-  darkImage.style.display = 'block'
+  console.log(primary == 'rgb(17, 17, 17)')
+
+  if(primary == 'rgb(17, 17, 17)') {
+    lightImage.style.display = 'none'
+    darkImage.style.display = 'block'
+  } else {
+    lightImage.style.display = 'block'
+    darkImage.style.display = 'none'
+  }
 }
 
 function setOppositeStyles() {
@@ -205,6 +212,12 @@ function setOppositeStyles() {
   let primary = document.body.style.background
   let secondary = document.body.style.color
 
-  lightImage.style.display = 'block'
-  darkImage.style.display = 'none'
+
+  if(primary == 'rgb(17, 17, 17)') {
+    lightImage.style.display = 'block'
+    darkImage.style.display = 'none'
+  } else {
+    lightImage.style.display = 'none'
+    darkImage.style.display = 'block'
+  }
 }

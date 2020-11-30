@@ -20,7 +20,5 @@ export default function Canvas({ native, children, color, button, style, custom 
   if(!color) color = '#666666'
   if(custom) style.width = `calc(${style.width}px - ${custom})`
 
-  console.log(margin)
-
   return <Wrapper style={{ margin, ...style }}> {children} </Wrapper>
 }
