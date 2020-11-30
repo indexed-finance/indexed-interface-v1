@@ -25,7 +25,7 @@ function initDispatchMiddleware(dispatch: InitDispatch, state: InitializerState)
       let finalValueEstimate = new BigNumber(0);
       let currentValue = new BigNumber(0);
       pool.tokens.forEach((token, i) => {
-        const price = pool.tokenPrices[token.address];
+        const price = pool.tokenPrices[token.address.toLowerCase()];
         currentValue = currentValue.plus(price.times(token.balance));
         finalValueEstimate = finalValueEstimate.plus(price.times(token.targetBalance));
         if (token.amountRemaining.eq(0)) return;
