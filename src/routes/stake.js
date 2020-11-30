@@ -42,8 +42,8 @@ export default function Stake() {
 
       for(let value in data){
         let { id, stakingToken, indexPool } = data[value]
-        let staking = toContract(web3.rinkeby, IERC20.abi, stakingToken)
-        let index = toContract(web3.rinkeby, IERC20.abi, indexPool)
+        let staking = toContract(web3[process.env.REACT_APP_ETH_NETWORK], IERC20.abi, stakingToken)
+        let index = toContract(web3[process.env.REACT_APP_ETH_NETWORK], IERC20.abi, indexPool)
         let stakingSymbol = await staking.methods.symbol().call()
         let stakingName = await staking.methods.name().call()
         let indexSymbol = await index.methods.symbol().call()

@@ -83,7 +83,7 @@ export default function Supply() {
     let { web3, account } = state
     let { id, stakingToken } = metadata
 
-    let budget = await allowance(web3.rinkeby, stakingToken, account, id)
+    let budget = await allowance(web3[process.env.REACT_APP_ETH_NETWORK], stakingToken, account, id)
 
     return formatBalance(new BigNumber(budget), 18, 4)
   }
@@ -119,7 +119,7 @@ export default function Supply() {
 
     try {
       let contract = toContract(web3.injected, IStakingRewards, id)
-      let amount = decToWeiHex(web3.rinkeby, parseFloat(input))
+      let amount = decToWeiHex(web3[process.env.REACT_APP_ETH_NETWORK], parseFloat(input))
 
       await contract.methods.stake(amount).send({ from: account })
       .on('transactionHash', (transactionHash) =>

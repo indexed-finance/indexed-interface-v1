@@ -52,8 +52,9 @@ export default function Navigation({ mode }) {
     let accounts = await web3.eth.getAccounts();
     let account = toChecksumAddress(accounts[0]);
     let network = await web3.eth.net.getId();
-    let helper = await getAllHelpers(web3, account)
-    if((+network) !== 4){
+    let helper = await getAllHelpers(web3, account);
+    const expectedID = process.env.REACT_APP_ETH_NETWORK === 'mainnet' ? 1 : 4
+    if((+network) !== expectedID){
       dispatch({ type: 'MODAL', payload: INCORRECT_NETWORK })
     } else {
       setComponent(<Blockie address={account} />)

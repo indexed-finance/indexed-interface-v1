@@ -227,7 +227,7 @@ function Application(){
       onResize()
       window.addEventListener("resize", onResize)
       let account = state.account;
-      let helper = state.helper ? state.helper : await getAllHelpers(web3.rinkeby, account);
+      let helper = state.helper ? state.helper : await getAllHelpers(web3[process.env.REACT_APP_ETH_NETWORK], account);
 
       dispatch({ type: 'GENERIC', payload: { changeTheme, helper } })
     }

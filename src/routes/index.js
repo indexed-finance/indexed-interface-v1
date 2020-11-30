@@ -67,6 +67,22 @@ export default function Index(){
   }
 
   useEffect(() => {
+    const retrieveBalances = async() => {
+      let { account, indexes, web3 } = state
+
+      if(web3.injected && indexes && indexes[name]){
+        let { assets } = indexes[name]
+        let balances =  await getBalances(web3[process.env.REACT_APP_ETH_NETWORK], account, assets, {})
+
+        await dispatch({ type: 'BALANCE',
+          payload: { balances }
+        })
+      }
+    }
+    retrieveBalances()
+  }, [ state.web3.injected ])
+
+  useEffect(() => {
     const getMetadata = async() => {
       let { indexes, web3, account } = state
       let emptyMetadata = Object.keys(metadata).length === 0;

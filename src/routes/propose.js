@@ -157,7 +157,6 @@ export default function Propose(){
 
   const submitProposal = async() => {
     let { web3, account } = state
-    let { encodeParameters } = web3.rinkeby.eth.abi
     let [ signatures, calldata, values ] = [ [], [], [] ]
     let addresses = Object.keys(executions)
     let description = getDescription()

@@ -118,7 +118,7 @@ export default function VerticalTabs({ data }) {
   useEffect(() => {
     const getTrades = async() => {
       if(Object.values(data).length > 0 && meta != dummy){
-        let pair = await getPair(state.web3.rinkeby, WETH, meta.address)
+        let pair = await getPair(state.web3[process.env.REACT_APP_ETH_NETWORK], WETH, meta.address)
         let trades = await getMarketTrades(pair.options.address)
         let history = []
 
@@ -191,7 +191,7 @@ export default function VerticalTabs({ data }) {
                 VIEW POOL
               </ButtonSecondary>
             </Link>
-            <a target='_blank' rel="noopener noreferrer" href={`https://rinkeby.etherscan.io/token/${data.address}`}>
+            <a target='_blank' rel="noopener noreferrer" href={`https://${process.env.REACT_APP_ETH_NETWORK}.etherscan.io/token/${data.address}`}>
               <IconButton variant='outlined' margin={{ marginLeft: 12.5 }}>
                 <img src={etherscan} style={{ width: 37.5 }} />
               </IconButton>

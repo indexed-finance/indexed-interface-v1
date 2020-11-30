@@ -18,6 +18,10 @@ import usdt from '../images/usdt.png'
 import crv from '../images/crv.png'
 import usdc from '../images/usdc.png'
 import uni from '../images/uni.png'
+import aave from '../images/aave.png'
+import uma from '../images/uma.png'
+import omg from '../images/omg.png'
+import ren from '../images/ren.png'
 
 import { isNative } from './functions'
 
@@ -183,6 +187,26 @@ export const tokenMetadata = {
     address: '0xdd974d5c2e2928dea5f71b9825b8b646686bd200',
     name: 'Kyber Network',
     image: knc
+  },
+  "AAVE": {
+    address: '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9',
+    name: 'AaveToken',
+    image: aave
+  },
+  "OMG": {
+    address: '0xd26114cd6ee289accf82350c8d8487fedb8a0c07',
+    name: 'OmiseGO',
+    image: omg
+  },
+  "UMA": {
+    address: "0x04fa0d235c4abf4bcf4787af4cf447de572ef828",
+    name: "UMAVotingTokenv1",
+    image: uma
+  },
+  "REN": {
+    address: "0x408e41876cccdc0f92210600ef50372656052a38",
+    name: "Republic",
+    image: ren
   }
 }
 
@@ -265,17 +289,19 @@ export const TX_CONFIRM = { show: true, message: 'TRANSACTION CONFIRMED', opcode
 export const TX_REVERT = { show: true, message: 'TRANSACTION REVERTED', opcode: 'error' }
 export const WEB3_PROVIDER = { show: true, message: 'NO WEB3 PROVIDER DETECTED', opcode: 'info' }
 
-const toFlagDispatch = (payload) => ({ type: 'FLAG', payload });
-const txEtherscanProps = (txHash, network = 'rinkeby') => ({ type: 'tx', entity: txHash, network });
+const envNetwork = process.env.REACT_APP_ETH_NETWORK;
 
-export const TX_PENDING = (txHash, network = 'rinkeby') => toFlagDispatch({
+const toFlagDispatch = (payload) => ({ type: 'FLAG', payload });
+const txEtherscanProps = (txHash, network = envNetwork) => ({ type: 'tx', entity: txHash, network });
+
+export const TX_PENDING = (txHash, network = envNetwork) => toFlagDispatch({
   show: true,
   message: 'TRANSACTION PENDING',
   opcode: 'info',
   etherscan: txEtherscanProps(txHash, network)
 });
-export const TX_CONFIRMED = (txHash, network = 'rinkeby') => toFlagDispatch({ ...TX_CONFIRM, etherscan: txEtherscanProps(txHash, network) });
-export const TX_REVERTED = (txHash, network = 'rinkeby') => toFlagDispatch({ ...TX_REVERT, etherscan: txEtherscanProps(txHash, network) });
+export const TX_CONFIRMED = (txHash, network = envNetwork) => toFlagDispatch({ ...TX_CONFIRM, etherscan: txEtherscanProps(txHash, network) });
+export const TX_REVERTED = (txHash, network = envNetwork) => toFlagDispatch({ ...TX_REVERT, etherscan: txEtherscanProps(txHash, network) });
 export const NO_PROVIDER = toFlagDispatch(WEB3_PROVIDER);
 
 export const MARKET_ORDER = (input, output, f) => ({
@@ -290,4 +316,4 @@ export const UNCLAIMED_CREDITS = (f) => ({
   message: `You have unclaimed compensation for this pool, would you like to redeem your share?`,
   actions: [{ label: 'CONFIRM', f: f }, { label: 'REJECT', f: null }]
 })
-export const INCORRECT_NETWORK = { show: true, title: 'INCORRECT NETWORK', message: 'The current network is not supported please change to Rinkeby testnet.', actions: [ ] }
+export const INCORRECT_NETWORK = { show: true, title: 'INCORRECT NETWORK', message: `The current network is not supported please change to ${envNetwork}`, actions: [ ] }

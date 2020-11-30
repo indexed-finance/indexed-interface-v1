@@ -1,9 +1,18 @@
 import { getIPFSFile } from './ipfs';
 
-const subgraph_url = 'https://api.thegraph.com/subgraphs/name/indexed-finance/indexed-v1';
 const uniswap_url = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2';
-const market_url = 'https://api.thegraph.com/subgraphs/name/samgos/uniswap-v2-rinkeby'
-const price_url = 'https://api.thegraph.com/subgraphs/name/graphprotocol/uniswap'
+
+let market_url, subgraph_url;
+if (process.env.REACT_APP_ETH_NETWORK === 'rinkeby') {
+  subgraph_url = 'https://api.thegraph.com/subgraphs/name/indexed-finance/indexed-v1';
+  market_url = 'https://api.thegraph.com/subgraphs/name/samgos/uniswap-v2-rinkeby';
+} else {
+  subgraph_url = 'https://api.thegraph.com/subgraphs/name/indexed-finance/indexed';
+  market_url = uniswap_url;
+}
+
+// const market_url = 'https://api.thegraph.com/subgraphs/name/samgos/uniswap-v2-rinkeby';
+const price_url = 'https://api.thegraph.com/subgraphs/name/graphprotocol/uniswap';
 
 const execRequest = (query, url = subgraph_url) => fetch(
   url,

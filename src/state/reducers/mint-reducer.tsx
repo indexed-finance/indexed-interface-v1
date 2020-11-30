@@ -143,6 +143,7 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
     minPoolAmountOut = newState.poolAmountOut.gt(0)
       ? downwardSlippage(newState.poolAmountOut, newState.slippage)
       : BN_ZERO;
+    newMaxAmounts[newState.selectedIndex] = newState.amounts[newState.selectedIndex];
   } else {
     if (newState.isSingle) {
       const amount = newState.amounts[newState.selectedIndex];

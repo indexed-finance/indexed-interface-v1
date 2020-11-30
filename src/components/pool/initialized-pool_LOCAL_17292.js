@@ -38,7 +38,7 @@ function InitializedPoolPage({ address, metadata }){
   const [ showAlert, setAlert ] = useState(false)
   const [ events, setEvents ] = useState([])
   const classes = useStyles()
-
+  
   let { state, dispatch } = useContext(store)
   let { native, request } = state
 
@@ -48,12 +48,12 @@ function InitializedPoolPage({ address, metadata }){
 
   const getNativeBalances = async() => {
     let { web3, account } = state
-    let pair = await getPair(web3[process.env.REACT_APP_ETH_NETWORK], WETH, address)
+    let pair = await getPair(web3.rinkeby, WETH, address)
     let target = web3.injected !== false ? account : '0x0000000000000000000000000000000000000001'
 
     let lp = pair.options.address !== '0x0000000000000000000000000000000000000000' ?
-      fromWei(await balanceOf(web3[process.env.REACT_APP_ETH_NETWORK], pair.options.address, target)): 0
-      let native = fromWei(await balanceOf(web3[process.env.REACT_APP_ETH_NETWORK], address, target))
+      fromWei(await balanceOf(web3.rinkeby, pair.options.address, target)): 0
+      let native = fromWei(await balanceOf(web3.rinkeby, address, target))
 
     lp = parseFloat(lp).toFixed(2)
     native = parseFloat(native).toFixed(2)
@@ -96,7 +96,7 @@ function InitializedPoolPage({ address, metadata }){
         let pool = findHelper(helper)
 
         let contract = toContract(
-          web3[process.env.REACT_APP_ETH_NETWORK], PoolInitializer.abi, pool.initializer
+          web3.rinkeby, PoolInitializer.abi, pool.initializer
         )
 
         let tokenEvents = await getEvents(web3.websocket, address)
@@ -114,25 +114,6 @@ function InitializedPoolPage({ address, metadata }){
     }
     retrievePool()
   }, [ state.indexes ])
-
-  useEffect(() => {
-    const retrieveBalances = async() => {
-      let { account, web3 } = state
-      let { assets } = metadata
-
-      if(web3.injected){
-        let balances =  await getBalances(
-          web3[process.env.REACT_APP_ETH_NETWORK], account, assets, {}
-        )
-        await dispatch({ type: 'BALANCE',
-          payload: { balances }
-        })
-        await getNativeBalances()
-        await getActiveCredit()
-      }
-     }
-    retrieveBalances()
-  }, [ state.web3.injected ])
 
   let {
     marginX, margin, width, padding, chartHeight, fontSize, percent, balanceHeight, paddingRight

@@ -38,7 +38,7 @@ function InitializedPoolPage({ address, metadata }){
   const [ showAlert, setAlert ] = useState(false)
   const [ events, setEvents ] = useState([])
   const classes = useStyles()
-
+  
   let { state, dispatch } = useContext(store)
   let { native, request } = state
 
@@ -96,7 +96,11 @@ function InitializedPoolPage({ address, metadata }){
         let pool = findHelper(helper)
 
         let contract = toContract(
-          web3[process.env.REACT_APP_ETH_NETWORK], PoolInitializer.abi, pool.initializer
+<<<<<<< HEAD
+          web3.rinkeby, PoolInitializer.abi, pool.initializer
+=======
+          web3[process.env.REACT_APP_ETH_NETWORK], PoolInitializer.abi, initializerAddress
+>>>>>>> 5b0b36331ffdf1c83630302c99cd982a68d950a5
         )
 
         let tokenEvents = await getEvents(web3.websocket, address)
@@ -115,6 +119,8 @@ function InitializedPoolPage({ address, metadata }){
     retrievePool()
   }, [ state.indexes ])
 
+<<<<<<< HEAD
+=======
   useEffect(() => {
     const retrieveBalances = async() => {
       let { account, web3 } = state
@@ -134,6 +140,7 @@ function InitializedPoolPage({ address, metadata }){
     retrieveBalances()
   }, [ state.web3.injected ])
 
+>>>>>>> 5b0b36331ffdf1c83630302c99cd982a68d950a5
   let {
     marginX, margin, width, padding, chartHeight, fontSize, percent, balanceHeight, paddingRight
   } = style.getFormatting({ native, request, active: true })

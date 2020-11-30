@@ -35,10 +35,8 @@ const useStyles = getStyles(style)
 function InitializedPoolPage({ address, metadata }){
   const [ balances, setBalances ] = useState({ native: 0, lp: 0, credit: 0 })
   const [ instance, setInstance ] = useState(null)
-  const [ showAlert, setAlert ] = useState(false)
   const [ events, setEvents ] = useState([])
   const classes = useStyles()
-
   let { state, dispatch } = useContext(store)
   let { native, request } = state
 
@@ -48,12 +46,12 @@ function InitializedPoolPage({ address, metadata }){
 
   const getNativeBalances = async() => {
     let { web3, account } = state
-    let pair = await getPair(web3[process.env.REACT_APP_ETH_NETWORK], WETH, address)
+    let pair = await getPair(web3.rinkeby, WETH, address)
     let target = web3.injected !== false ? account : '0x0000000000000000000000000000000000000001'
 
     let lp = pair.options.address !== '0x0000000000000000000000000000000000000000' ?
-      fromWei(await balanceOf(web3[process.env.REACT_APP_ETH_NETWORK], pair.options.address, target)): 0
-      let native = fromWei(await balanceOf(web3[process.env.REACT_APP_ETH_NETWORK], address, target))
+      fromWei(await balanceOf(web3.rinkeby, pair.options.address, target)): 0
+      let native = fromWei(await balanceOf(web3.rinkeby, address, target))
 
     lp = parseFloat(lp).toFixed(2)
     native = parseFloat(native).toFixed(2)
@@ -61,14 +59,20 @@ function InitializedPoolPage({ address, metadata }){
     setBalances({ ...balances, native, lp })
   }
 
-  const getActiveCredit = async(contract) => {
+  const getActiveCredit = async() => {
     let { account, web3 } = state
 
-    if(web3.injected){
-      let credit = await contract.methods.getCreditOf(account).call()
+    if(web3.injected && instance){
+      let credit = await instance.methods.getCreditOf(account).call()
       credit = (parseFloat(credit)/Math.pow(10, 18))
 
-      if(credit > 0) setAlert(true)
+      if(credit > 0) {
+        dispatch({
+          type: 'FLAG',
+          payload: UNCLAIMED_CREDITS
+        })
+      }
+      setBalances({ ...balances, credit })
     }
   }
 
@@ -94,9 +98,10 @@ function InitializedPoolPage({ address, metadata }){
       && metadata.address !== '0x0000000000000000000000000000000000000000'){
         let target = Object.entries(indexes).find(x => x[1].address === address)
         let pool = findHelper(helper)
+        let initializerAddress = pool.address;
 
         let contract = toContract(
-          web3[process.env.REACT_APP_ETH_NETWORK], PoolInitializer.abi, pool.initializer
+          web3.rinkeby, PoolInitializer.abi, initializerAddress
         )
 
         let tokenEvents = await getEvents(web3.websocket, address)
@@ -105,11 +110,6 @@ function InitializedPoolPage({ address, metadata }){
 
         setEvents(tokenEvents)
         setInstance(contract)
-
-        if(web3.injected){
-          await getActiveCredit(contract)
-          await getNativeBalances()
-        }
       }
     }
     retrievePool()
@@ -122,7 +122,7 @@ function InitializedPoolPage({ address, metadata }){
 
       if(web3.injected){
         let balances =  await getBalances(
-          web3[process.env.REACT_APP_ETH_NETWORK], account, assets, {}
+          web3.rinkeby, account, assets, {}
         )
         await dispatch({ type: 'BALANCE',
           payload: { balances }
@@ -207,8 +207,8 @@ function InitializedPoolPage({ address, metadata }){
                 <a href={`https://app.uniswap.org/#/add/ETH/${address}`} style={{ float: 'left' }} target='_blank'>
                   <ButtonPrimary margin={{ marginBottom: 15, padding: '.5em 1.25em' }}  variant='outlined'> ADD LIQUIDITY </ButtonPrimary>
                 </a>
-                <a href={`https://app.uniswap.org/#/remove/${address}/ETH`} style={{ float: 'right' }} target='_blank'>
-                  <ButtonPrimary margin={{ margin: 0, padding: '.5em 1.25em' }}  variant='outlined'> REMOVE LIQUIDITY </ButtonPrimary>
+                <a href={`https://app.uniswap.org/#/add/ETH/${address}`} style={{ float: 'right' }} target='_blank'>
+                  <ButtonPrimary margin={{ margin: 0, padding: '.5em 1.25em' }}  variant='outlined'> ADD LIQUIDITY </ButtonPrimary>
                 </a>
               </div>
             </Container>
