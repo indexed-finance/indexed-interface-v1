@@ -107,8 +107,6 @@ export default function Governance(){
   const getAccountMetadata = async() => {
     let { web3, account } = state
 
-    console.log(process.env)
-
     if(web3.injected) {
       let contract = toContract(web3.injected, Ndx.abi, NDX)
       let isDelegated = await contract.methods.delegates(account).call()

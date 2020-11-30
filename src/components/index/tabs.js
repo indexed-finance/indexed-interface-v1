@@ -9,13 +9,13 @@ import Box from '@material-ui/core/Box'
 import Tabs from '@material-ui/core/Tabs'
 import IconButton from '@material-ui/core/IconButton'
 import Tab from '@material-ui/core/Tab'
-import ContentLoader from "react-content-loader"
 import { Link } from 'react-router-dom'
 
 import { formatBalance, BigNumber } from '@indexed-finance/indexed.js/dist/utils/bignumber'
 import ButtonPrimary from '../buttons/primary'
 import ButtonSecondary from '../buttons/secondary'
 import TransactionButton from '../buttons/transaction'
+import Loader from '../loaders/tabs'
 import WeightedToken from './weighted-token'
 import List from '../list'
 
@@ -36,24 +36,6 @@ const Exit = styled(ExitIcon)({
   fontSize: '1rem'
 })
 
-const Loader = ({ color, height, width }) => (
-    <ContentLoader
-      speed={1}
-      height={500}
-      width={1000}
-      backgroundColor={color}
-      foregroundColor='rgba(153, 153, 153, 0.5)'
-    >
-      <rect x="115" y="40" rx="3" ry="3" width="200" height="25" />
-      <circle cx="65" cy="50" r="30" />
-      <rect x="490" y="40" rx="3" ry="3" width="200" height="25" />
-      <circle cx="440" cy="50" r="30" />
-      <rect x="115" y="130" rx="3" ry="3" width="200" height="25" />
-      <circle cx="65" cy="140" r="30" />
-      <rect x="490" y="130" rx="3" ry="3" width="200" height="25" />
-      <circle cx="440" cy="140" r="30" />
-  </ContentLoader>
-)
 
 function hash(value, og) {
   return (
