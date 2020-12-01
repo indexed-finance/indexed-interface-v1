@@ -222,6 +222,9 @@ export default function Supply() {
       if(request && helper) {
         let match = ticker.split('-')
         let target = match[match.length-1]
+
+        console.log(target)
+
         let { pool } = findHelper(target)
         let isWethPair = ticker.includes('UNI')
         let data = await getStakingPool(pool.address, isWethPair)

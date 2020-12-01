@@ -81,8 +81,13 @@ input[type=number] {
 
 }
 
-#favicon-dark {
-  display: none;
+@media (prefers-color-scheme: light) {
+  #favicon-light {
+    display: block;
+  }
+  #favicon-dark {
+    display: none;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
