@@ -81,6 +81,19 @@ input[type=number] {
 
 }
 
+#favicon-dark {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  #favicon-light {
+    display: none;
+  }
+  #favicon-dark {
+    display: block;
+  }
+}
+
 .MuiInput-underline:before, .MuiInput-underline:active:before {
   border: none !important;
 }
