@@ -4,13 +4,11 @@
       #72x72-dark {
         display: block;
       }
-    }
-    @media (prefers-color-scheme: light) {
-      #72x72-light {
-        display: block;
+      #72x72-dark {
+        display: none;
       }
     }
   </style>
-  <image  style="display:none" id="72x72-light" xlink:href='./72x72-light.png' />
+  <image id="72x72-light" xlink:href='./72x72-light.png' />
   <image  style="display:none" id="72x72-dark" xlink:href='./72x72-dark.png'/>
 </svg>
