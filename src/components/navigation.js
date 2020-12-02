@@ -149,7 +149,7 @@ export default function Navigation({ mode }) {
         <Link className={classes.href} to='/governance' onClick={handleClose}>
           <MenuItem>GOVERNANCE</MenuItem>
         </Link>
-        <Link className={classes.href} to='/markets' onClick={handleClose}>
+        <Link className={classes.href} to='/' onClick={handleClose}>
           <MenuItem>MARKETS</MenuItem>
         </Link>
         <Link className={classes.href} to='/stake' onClick={handleClose}>
@@ -175,7 +175,7 @@ export default function Navigation({ mode }) {
         <Link className={classes.href} to='/governance' onClick={handleClose}>
           <MenuItem>GOVERNANCE</MenuItem>
         </Link>
-        <Link className={classes.href} to='/markets' onClick={handleClose}>
+        <Link className={classes.href} to='/' onClick={handleClose}>
           <MenuItem>MARKETS</MenuItem>
         </Link>
         <Link className={classes.href} to='/stake' onClick={handleClose}>
@@ -189,13 +189,13 @@ export default function Navigation({ mode }) {
 
   return (
     <div>
-    { location.pathname !== '/' && (
+    {(
       <div className={classes.root}>
       <AppBar className={classes.appBar} position="fixed" style={{ ...padding }}>
         <Toolbar>
           <Grid container direction='row' alignItems='center' justify='space-between'>
             <Grid item style={{ marginTop: -3.75 }}>
-              <Link to='/markets'>
+              <Link to='/'>
                 {mode && (<img className={classes.logo} style={{ marginTop: logoMargin, width, paddingTop }} src={ndxDark} />)}
                 {!mode && (<img className={classes.logo} style={{ marginTop: logoMargin, width, paddingTop }} src={ndxLight} />)}
                 <Typography variant={!state.native ? 'h4' : 'h5' } className={classes.title} style={{ marginLeft: titleMargin }}> {display} </Typography>
