@@ -11,6 +11,7 @@ import Loader from './components/loader'
 import Modal from './components/modal'
 import Flag from './components/flag'
 
+import { DISCLAIMER } from './assets/constants/parameters'
 import { getCategoryMetadata, getProposals } from './api/gql'
 import { store } from './state'
 
@@ -25,7 +26,7 @@ const Index = lazy(() => import('./routes/index'))
 const Pool = lazy(() => import('./routes/pool'))
 const Stake = lazy(() => import('./routes/stake'))
 const Supply = lazy(() => import('./routes/supply'))
-const Root = lazy(() => import('./routes/root'))
+// const Root = lazy(() => import('./routes/root'))
 const Error404 = lazy(() => import('./routes/404'))
 
 
@@ -226,6 +227,18 @@ function Application(){
     initialise()
   }, [])
 
+  useEffect(() => {
+    let isFirstVisit = localStorage.getItem('isFirstVisit')
+
+    if(isFirstVisit == null && state.request) {
+      localStorage.setItem('isFirstVisit', '1')
+      dispatch({
+        type: 'MODAL',
+        payload: DISCLAIMER
+      })
+    }
+  }, [ state.request ])
+
     return(
     <ThemeProvider theme={theme}>
       <Router>
@@ -254,11 +267,8 @@ function Application(){
                 <Route path='/stake/:asset'>
                   <Supply />
                 </Route>
-                <Route path='/markets'>
-                  <Markets />
-                </Route>
                 <Route exact path='/'>
-                  <Root />
+                  <Markets />
                 </Route>
                 <Route path='/governance'>
                   <Governance />
