@@ -15,9 +15,6 @@ const setStyle = (theme) => ({
   item: {
     marginBottom: 50
   },
-  '& MuiFormControl-root .MuiInputLabel-animated, .MuiFormLabel-root .Mui-focused ': {
-    color: `${document.body.style.color} !important`
-  }
 })
 
 const getFormatting = (state) => {
