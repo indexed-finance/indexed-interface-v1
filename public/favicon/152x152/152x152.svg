@@ -1,0 +1,22 @@
+<svg width="152" height="152" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <style>
+    @media (prefers-color-scheme: dark) {
+      #152x152-dark {
+        display: block;
+      }
+      #152x152-light {
+        display: none;
+      }
+    }
+    @media (prefers-color-scheme: light) {
+      #152x152-light {
+        display: block;
+      }
+      #152x152-dark {
+        display: none;
+      }
+    }
+  </style>
+  <image id="152x152-light" xlink:href='./152x152-light.png' />
+  <image id="152x152-dark" xlink:href='./152x152-dark.png'/>
+</svg>
