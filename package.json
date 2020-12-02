@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@atlaskit/lozenge": "^10.0.4",
-    "@indexed-finance/indexed.js": "^1.0.23",
+    "@indexed-finance/indexed.js": "^1.0.25",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
@@ -38,6 +38,7 @@
     "d3-array": "^2.7.1",
     "d3-time-format": "^3.0.0",
     "decimal.js": "^10.2.0",
+    "env-cmd": "^10.1.0",
     "ethers": "^5.0.14",
     "fortmatic": "^2.2.1",
     "framer-motion": "^2.9.4",
@@ -67,8 +68,10 @@
     "web3modal": "^1.9.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts --max_old_space_size=4096 build",
+    "start": "env-cmd -f .env.rinkeby react-scripts start",
+    "start:mainnet": "env-cmd -f .env.mainnet react-scripts start",
+    "build": "env-cmd -f .env.rinkeby react-scripts --max_old_space_size=4096 build",
+    "build:mainnet": "env-cmd -f .env.mainnet react-scripts --max_old_space_size=4096 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
