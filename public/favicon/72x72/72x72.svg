@@ -1,5 +1,19 @@
 <svg width="72" height="72" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <style>
+    #dark-favicon {
+      display: none;
+    }
+    #light-favicon {
+      display: none;
+    }
+    @media (prefers-color-scheme: light) {
+      #dark-favicon {
+        display: none;
+      }
+      #light-favicon {
+        display: block;
+      }
+    }
     @media (prefers-color-scheme: dark) {
       #dark-favicon {
         display: block;
@@ -10,5 +24,5 @@
     }
   </style>
   <image id="light-favicon" xlink:href='./72x72-light.png' />
-  <image  style="display:none" id="dark-favicon" xlink:href='./72x72-dark.png'/>
+  <image id="dark-favicon" xlink:href='./72x72-dark.png'/>
 </svg>
