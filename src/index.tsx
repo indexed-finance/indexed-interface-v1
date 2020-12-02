@@ -78,13 +78,13 @@ function Application(){
   }
 
   const onResize = () => {
-    let { innerHeight, innerWidth } = window
+    let { outerWidth , outerHeight } = window
 
     dispatch({
       type: 'RESIZE',
       payload: {
-          height: innerHeight,
-          width: innerWidth
+          height: outerHeight,
+          width: outerWidth
        }
     })
   }
@@ -223,8 +223,8 @@ function Application(){
     const initialise = async() => {
       let { background, color, web3 } = state
 
-      setBackground(background, color)
       onResize()
+      setBackground(background, color)
       window.addEventListener("resize", onResize)
       let account = state.account;
       let helper = state.helper ? state.helper : await getAllHelpers(web3[process.env.REACT_APP_ETH_NETWORK], account);
