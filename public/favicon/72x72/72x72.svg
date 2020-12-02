@@ -4,14 +4,8 @@
       #72x72-dark {
         display: block;
       }
-      #72x72-light {
-        display: none;
-      }
     }
     @media (prefers-color-scheme: light) {
-      #72x72-dark {
-        display: none;
-      }
       #72x72-light {
         display: block;
       }
