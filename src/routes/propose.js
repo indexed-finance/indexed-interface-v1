@@ -30,12 +30,7 @@ const encoder = ethers.utils.defaultAbiCoder
 
 const Entry = styled(Input)({
   marginBottom: 25,
-  width: '100%',
-  root: {
-    '& .MuiInputLabel-animated, .Mui-focused': {
-        color: '#999999 !important'
-    }
-  }
+  width: '100%'
 })
 
 const useStyles = getStyles(style)
