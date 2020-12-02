@@ -1,18 +1,16 @@
 <svg width="72" height="72" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <style>
+    #72x72-light {
+        display: block;
+    }
+    #72x72-dark {
+      display: none;
+    }
     @media (prefers-color-scheme: dark) {
       #72x72-dark {
         display: block;
       }
       #72x72-light {
-        display: none;
-      }
-    }
-    @media (prefers-color-scheme: light) {
-      #72x72-light {
-        display: block;
-      }
-      #72x72-dark {
         display: none;
       }
     }
