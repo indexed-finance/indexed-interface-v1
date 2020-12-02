@@ -32,6 +32,7 @@ const i = {
 export default function Stake() {
   const [ pools, setPools ] = useState([])
   let { state, dispatch } = useContext(store)
+  let { startTime, setStartTime } = useState(1605586873688);
   let theme =  useTheme()
   let classes = useStyles()
 
@@ -40,32 +41,24 @@ export default function Stake() {
       let { web3 } = state
       let data = await getStakingPools()
 
-      for(let value in data){
-        let { id, stakingToken, indexPool } = data[value]
-        let staking = toContract(web3[process.env.REACT_APP_ETH_NETWORK], IERC20.abi, stakingToken)
+      for(let key in data){
+        let { id, indexPool, isWethPair, startsAt } = data[key]
         let index = toContract(web3[process.env.REACT_APP_ETH_NETWORK], IERC20.abi, indexPool)
-        let stakingSymbol = await staking.methods.symbol().call()
-        let stakingName = await staking.methods.name().call()
         let indexSymbol = await index.methods.symbol().call()
         let indexName = await index.methods.name().call()
-        let symbol = ''
-        let name = ''
-
-        if(indexSymbol == stakingSymbol){
-          symbol = indexSymbol
-          name = indexName
-        } else {
-          symbol = `UNIV2:ETH-${indexSymbol}`
-          name = stakingName
+        let symbol = isWethPair ? `UNIV2:ETH-${indexSymbol}` : indexSymbol;
+        let name = isWethPair ? 'Uniswap V2' : indexName;
+        if (startTime === DATE_END) {
+          setStartTime(startsAt);
         }
 
-        data[value] = { ...data[value], symbol, name }
+        data[key] = { ...data[key], symbol, name }
       }
 
       setPools(data)
     }
     getPools()
-  }, [])
+  }, []);
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
@@ -73,11 +66,16 @@ export default function Stake() {
         <Container margin='3em 0em' padding="1em 2em" title='LIQUIDITY MINING'>
           <div className={classes.header}>
             <p>
-              Stake the index tokens <a> GOVI7a </a> & <a> DFI5r </a> or their associated Uniswap liquidity tokens
-              <a> UNIV2:ETH-GOVI7a </a> and <a> UNIV2:ETH-DFI5r </a> to avail of NDX, the offical governance token of Indexed.
-              </p>
-              <p> TIME REMAINING: </p>
-              <h3> <Countdown date={DATE_END} /> </h3>
+              Stake index tokens or their associated Uniswap liquidity tokens to earn NDX, the governance token for Indexed Finance.
+            </p>
+            {
+              process.env.REACT_APP_ETH_NETWORK === 'rinkeby' ?
+              <React.Fragment>
+                <p> TIME REMAINING: </p>
+                <h3> <Countdown date={startTime} /> </h3>
+              </React.Fragment>
+              : <p>STAKING HAS NOT BEGUN</p>
+            }
           </div>
         </Container>
       </Grid>
