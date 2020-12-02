@@ -194,7 +194,7 @@ export function useMintTokenActions(
   let symbolAdornment: ReactElement | undefined;
   let maximumAmountIn = state.maxAmounts[index];
 
-  if (state.isSingle && state.specifiedSide === 'input' && maximumAmountIn.gt(0)) {
+  if (state.isSingle && maximumAmountIn.gt(0)) {
     const maximumDisplayAmountIn = formatBalance(maximumAmountIn, decimals, 4);
     symbolAdornment = <Fragment>MAX: {maximumDisplayAmountIn} <MaximumAmountToolTip /></Fragment>
   }

@@ -1,6 +1,5 @@
 import React, { Fragment, useState, useContext, useEffect } from 'react'
 
-
 import style from '../../assets/css/components/form'
 import { store } from '../../state'
 
@@ -9,16 +8,12 @@ import ButtonPrimary from '../buttons/primary'
 import { useInitializerState } from '../../state/initializer';
 import { toContract } from '../../lib/util/contracts';
 import PoolInitializer from '../../assets/constants/abi/PoolInitializer.json'
-import MarketCapSqrtController from '../../assets/constants/abi/MarketCapSqrtController.json'
 
-import { fromWei, toWei, toHex } from '@indexed-finance/indexed.js'
-import MockERC20ABI from '../../assets/constants/abi/MockERC20.json'
+import { fromWei, toHex } from '@indexed-finance/indexed.js'
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../../assets/constants/parameters'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
 
 import ExplainCredit from './explain-credit';
-
-// const useStyles = getStyles(style)
 
 export default function InitializerForm({ shouldUpdate, component, metadata, classes }) {
   const [ output, setOutput ] = useState(0)
@@ -38,21 +33,9 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
 
   const finalisePool = async() => {
       let { address } = metadata
-      let { web3, account } = state
-      let { tokens, amounts } = initState
+      let { web3 } = state
 
       let initializer = toContract(web3.injected, PoolInitializer.abi, address)
-      // let controllerAddress = await initializer.methods.controller().call()
-      let ordering = await initializer.methods.getDesiredTokens().call()
-      const addresses = new Array(tokens.length).fill(null);
-      const targets = new Array(tokens.length).fill(null);
-
-      ordering.forEach((address, realIndex) => {
-        const localIndex = tokens.map(t => t.address.toLowerCase()).indexOf(address.toLowerCase());
-
-        targets[realIndex] = toHex(amounts[localIndex]);
-        addresses[realIndex] = address
-      });
 
       await initializer.methods.finish()
       .send({ from: state.account })
@@ -74,7 +57,7 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
 
     let totalPoolCredits = parseFloat(displayPoolTotalCredit)
 
-    if(totalPoolCredits == 0) return totalPoolCredits
+    if(totalPoolCredits === 0) return totalPoolCredits
 
     let culmativeTargetsUSD = tokens.map((v, i) => v.priceUSD * fromWei(v.targetBalance))
     let culmativeQueryUSD = tokens.map((v, i) => v.priceUSD * fromWei(amounts[i]))
