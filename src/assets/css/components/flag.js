@@ -34,22 +34,27 @@ const mapping = {
   [DESKTOP_SMALL]: {
     bottom: '2.5%',
     left: '2%',
+    right: ''
   },
   [DESKTOP_NORMAL]: {
     bottom: '2.5%',
     left: '2%',
+    right: ''
   },
   [DESKTOP_LARGE]: {
     bottom: '2.5%',
     left: '2%',
+    right: ''
   },
   [DESKTOP_WIDE]: {
     bottom: '2.5%',
     left: '20%',
+    right: ''
   },
   [DESKTOP_HUGE]: {
     bottom: '2.5%',
     left: '25%',
+    right: ''
   },
   [DESKTOP_MASSIVE]: {
     bottom: '2.5%',
@@ -57,15 +62,18 @@ const mapping = {
   },
   [NATIVE_SMALL]: {
     bottom: '2.5%',
-    left: '7.5%'
+    left: '7.5%',
+    right: '7.5%'
   },
   [NATIVE_NORMAL]: {
     bottom: '2.5%',
-    left: '7.5%'
+    left: '7.5%',
+    right: '7.5%'
   },
   [NATIVE_WIDE]: {
     bottom: '2.5%',
-    left: '7.5%'
+    left: '7.5%',
+    right: '7.5%'
   }
 }
 

@@ -22,7 +22,7 @@ export default function TransitionAlerts() {
   const handleClose = () => dispatch({ type: 'CLOSE' });
 
   let { message, show, opcode, etherscan } = state.flag;
-  let { left, bottom } = style.getFormatting(state.native)
+  let { left, bottom, right } = style.getFormatting(state.native)
 
   useEffect(() => {
    const dismiss = setTimeout(() => { handleClose() }, 10000)
@@ -33,7 +33,7 @@ export default function TransitionAlerts() {
   let etherscanLink = etherscan ? EtherScanLink(etherscan) : null;
 
   return (
-    <div className={classes.root} style={{ left, bottom }}>
+    <div className={classes.root} style={{ left, bottom, right }}>
       <Slide direction="up" in={open}>
         <Alert variant='outlined' severity={opcode}
           action={

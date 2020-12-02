@@ -78,26 +78,23 @@ function Application(){
   }
 
   const onResize = () => {
-    let { outerWidth , outerHeight } = window
+    let { innerHeight, innerWidth } = window
 
     dispatch({
       type: 'RESIZE',
       payload: {
-          height: outerHeight,
-          width: outerWidth
+          height: innerHeight,
+          width: innerWidth
        }
     })
   }
 
   useEffect(() => {
     const retrieveCategories = async() => {
-      console.log('FIRED')
       let stats = { dailyVolume: 0, totalLocked: 0 };
       let proposals = { ...await getProposals() };
       let categories = {};
       let indexes = {};
-
-      console.log(state.helper)
 
       // let tokenCategories = await getTokenCategories()
       if (!state.helper) return;
@@ -112,9 +109,6 @@ function Application(){
 
       for (let pool of state.helper.initialized) {
         const { category, name, symbol, address, tokens } = pool;
-
-        console.log(category, name, symbol, address, tokens)
-
 
         const categoryID = `0x${category.toString(16)}`;
         await addCategory(categoryID);
@@ -173,11 +167,9 @@ function Application(){
         indexes[symbol] = index;
       }
       for (let pool of state.helper.uninitialized) {
-        console.log('READY')
         await pool.update();
         const { category, name, symbol, address, tokens } = pool;
         const categoryID = `0x${category.toString(16)}`;
-        console.log('GET CATEGORY', categoryID)
         await addCategory(categoryID);
         let finalValueEstimate = new BigNumber(0);
         let currentValue = new BigNumber(0);
@@ -216,7 +208,7 @@ function Application(){
         }
       })
     }
-    retrieveCategories()
+    if(!state.request) retrieveCategories()
   }, [ state.helper ])
 
   useEffect(() => {
