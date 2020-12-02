@@ -206,7 +206,7 @@ export default function Navigation({ mode }) {
                   <Link to='/governance' className={classes.href}>
                     <h3> GOVERNANCE </h3>
                   </Link>
-                  <Link to='/markets' className={classes.href}>
+                  <Link to='/' className={classes.href}>
                     <h3> MARKETS </h3>
                   </Link>
                   <Link to='/stake' className={classes.href}>

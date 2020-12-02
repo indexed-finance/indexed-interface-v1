@@ -11,6 +11,7 @@ import Loader from './components/loader'
 import Modal from './components/modal'
 import Flag from './components/flag'
 
+import { DISCLAIMER } from './assets/constants/parameters'
 import { getCategoryMetadata, getProposals } from './api/gql'
 import { store } from './state'
 
@@ -225,6 +226,18 @@ function Application(){
     }
     initialise()
   }, [])
+
+  useEffect(() => {
+    let isFirstVisit = localStorage.getItem('isFirstVisit')
+
+    if(isFirstVisit == null && state.request) {
+      localStorage.setItem('isFirstVisit', '1')
+      dispatch({
+        type: 'MODAL',
+        payload: DISCLAIMER
+      })
+    }
+  }, [ state.request ])
 
     return(
     <ThemeProvider theme={theme}>
