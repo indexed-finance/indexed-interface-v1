@@ -2,12 +2,12 @@
   <style>
     @media (prefers-color-scheme: dark) {
       path {
-        fill: #ffffff;
+        fill: #ffffff !important;
       }
     }
     @media (prefers-color-scheme: light) {
       path {
-        fill: #111111;
+        fill: #111111 !important;
       }
     }
   </style>
