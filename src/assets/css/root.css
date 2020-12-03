@@ -81,17 +81,8 @@ input[type=number] {
 
 }
 
-#favicon-dark {
-  display: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  #favicon-light {
-    display: none;
-  }
-  #favicon-dark {
-    display: block;
-  }
+.MuiFormLabel-root.Mui-focused {
+    color: #999999 !important;
 }
 
 .MuiInput-underline:before, .MuiInput-underline:active:before {

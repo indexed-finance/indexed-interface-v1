@@ -28,9 +28,15 @@ function mintDispatchMiddleware(dispatch: MintDispatch, state: MintState) {
     };
 
     const poolOutGivenSingleIn = async (address: string, amount: BigNumber, displayAmount: string, index: number): Promise<MintDispatchAction[]> => {
-      const result = await pool.calcPoolOutGivenSingleIn(address, amount);
-      const { amount: poolAmount } = result;
-      const poolAmountOut = toBN(poolAmount)
+      const { usedBalance: poolBalance } = state.tokens[index];
+      let poolAmountOut; 
+      if (amount.gt(poolBalance.div(2))) {
+        poolAmountOut = state.poolAmountOut;
+      } else {
+        const result = await pool.calcPoolOutGivenSingleIn(address, amount);
+        const { amount: poolAmount } = result;
+        poolAmountOut = toBN(poolAmount);
+      }
       const poolDisplayAmount = formatBalance(poolAmountOut, 18, 4);
       
       return [

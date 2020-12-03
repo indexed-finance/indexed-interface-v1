@@ -14,7 +14,7 @@ const setStyle = (theme) => ({
   },
   item: {
     marginBottom: 50
-  }
+  },
 })
 
 const getFormatting = (state) => {

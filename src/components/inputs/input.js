@@ -10,9 +10,7 @@ const Input = styled(TextField)({
     padding: '.75em 1em',
   },
   '& label': {
-    top: -5,
-  },
-  '& label': {
+    color: 'secondary !important',
     top: -5,
   },
   '& label:placeholder-shown': {

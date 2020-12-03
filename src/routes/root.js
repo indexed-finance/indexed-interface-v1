@@ -43,9 +43,9 @@ export default function Root(){
               <li className={classes.item}> GOVERNANCE </li>
             </Link >
           )}
-          <Link onClick={stopRender}>
+          <a onClick={stopRender} href="https://docs.indexed.finance/" target="_blank">
             <li className={classes.item}> DOCS </li>
-          </Link >
+          </a >
           <Link onClick={stopRender} to='/stake'>
             <li style={{ float: 'left' }}> STAKE </li>
           </Link>

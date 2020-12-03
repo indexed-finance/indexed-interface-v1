@@ -89,8 +89,8 @@ const mapping = {
     display: 'INDEXED',
     marginLeft: 15,
     titleMargin: 20,
-    logoMargin: 6.75,
-    width: 40,
+    logoMargin: 7.5,
+    width: 37.5,
     padding: {
       paddingTop: 12.5,
       paddingBottom: 12.5,
@@ -102,7 +102,7 @@ const mapping = {
     marginLeft: 15,
     logoMargin: 4.5,
     titleMargin: 20,
-    width: 40,
+    width: 37.5,
     padding: {
       paddingTop: 12.5,
       paddingBottom: 12.5,
@@ -113,7 +113,7 @@ const mapping = {
     display: 'INDEXED',
     marginLeft: 15,
     logoMargin: 3,
-    width: 40,
+    width: 37.5,
     titleMargin: 20,
     padding: {
       paddingTop: 12.5,
@@ -126,7 +126,7 @@ const mapping = {
     marginLeft: 15,
     logoMargin: 6.75,
     titleMargin: 20,
-    width: 40,
+    width: 37.5,
     padding: {
       paddingTop: 12.5,
       paddingBottom: 12.5,
@@ -138,7 +138,7 @@ const mapping = {
     logoMargin: 2.5,
     titleMargin: 20,
     marginLeft: 15,
-    width: 40,
+    width: 37.5,
     padding: {
       paddingTop: 12.5,
       paddingBottom: 12.5,
@@ -150,7 +150,7 @@ const mapping = {
     titleMargin: 20,
     marginLeft: 15,
     logoMargin: -3.75,
-    width: 40,
+    width: 37.5,
     padding: {
       paddingTop: 12.5,
       paddingBottom: 12.5,
