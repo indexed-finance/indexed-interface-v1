@@ -105,6 +105,22 @@ export const initialPoolState = {
     type: <span> &nbsp;&nbsp;&nbsp;&nbsp;</span>
 };
 
+export const initialProposalState = {
+   title: null,
+   description: null,
+   votes: [],
+   for: 0,
+   against: 0,
+   state: 0,
+   action: null,
+   expiry: 0,
+   proposer: '0x0000000000000000000000000000000000000000',
+   targets: [],
+   calldatas: [],
+   signatures: []
+ }
+
+
 export const tokenMetadata = {
   "BAT": {
     address: "0x0d8775f648430679a709e98d2b0cb6250d2887ef",

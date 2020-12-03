@@ -25,7 +25,7 @@ import Radio from '../components/inputs/radio'
 import Progress from '../components/progress'
 import Canvas from '../components/canvas'
 
-import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../assets/constants/parameters'
+import { TX_CONFIRMED, TX_REVERTED, TX_PENDING, initialProposalState } from '../assets/constants/parameters'
 import { NDX, DAO } from '../assets/constants/addresses'
 import { toContract } from '../lib/util/contracts'
 import { balanceOf } from '../lib/erc20'
@@ -66,8 +66,6 @@ function Blockie({ address, id, width, border }) {
   )
 }
 
-const dummy = { title: null, description: null, votes: [], for: 0, against: 0, state: 0, action: null, expiry: 0, proposer: '0x0000000000000000000000000000000000000000', targets: [], calldatas: [], signatures: [] }
-
 export default function Proposal(){
   const [ component, setComponent ] = useState({ blockie: null, list: null })
   const [ isTransaction, setTransaction ] = useState(false)
@@ -76,7 +74,7 @@ export default function Proposal(){
   let { id } = useParams()
   let { native } = state
 
-  const [ metadata, setMetadata ] = useState(dummy)
+  const [ metadata, setMetadata ] = useState(initialProposalState)
   const [ weight, setWeight ] = useState(null)
   const [ input, setInput ] = useState(1)
   const classes = useStyles()
@@ -85,7 +83,6 @@ export default function Proposal(){
     if(proposal.block >= proposal.expiry) return 'expired'
     else return proposalState[proposal.state]
   }
-
 
   const handleInput = (event) => {
     let target = event.target.value == 1 ? metadata.against : metadata.for

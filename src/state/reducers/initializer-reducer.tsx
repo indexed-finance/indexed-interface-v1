@@ -49,7 +49,7 @@ function initializerReducer(state: InitializerState = initialState, actions: Ini
     actions = [actions];
   }
   let newState: InitializerState = { ...state };
-  const cleanInputAmount = (amt: string) => amt.replace(/^(0{1,})(?=(0\.|\d))+/, '').replace(/^\./, '0.');
+  const cleanInputAmount = (amt: string) => amt ? amt.replace(/^(0{1,})(?=(0\.|\d))+/, '').replace(/^\./, '0.') : '0.00';
 
   const updateCreditTotal = () => {
     newState.creditEthTotal = newState.creditEthPerToken.reduce(

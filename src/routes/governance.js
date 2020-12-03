@@ -108,6 +108,8 @@ export default function Governance(){
       let amount = (parseFloat(balance)/Math.pow(10, 18))
       .toLocaleString({ minimumFractionDigits: 2 })
 
+      console.log(isDelegated)
+
       if(isDelegated != ZERO_ADDRESS) setPhase(<Delegate show={true}/>)
       else setPhase(<Activate trigger={renderDelegation}/>)
 
