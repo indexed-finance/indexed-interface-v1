@@ -66,8 +66,8 @@ const options = (padding, range, margin) => ({
         },
         ticks: {
           beginAtZero: false,
-          max: range[0] * 1.125,
-          min: range[1] * 0.95,
+          max: range[0] * 1.025,
+          min: range[1] * 0.9875,
           display: false,
           padding: 0,
         }

@@ -82,16 +82,13 @@ export const getResolutionThresholds = () => {
   } else if(window.innerWidth >= DESKTOP_LARGE) {
     return [ -(window.innerWidth * 0.875), window.innerWidth ]
   } else if(window.innerWidth > NATIVE_WIDE) {
-    return [ -window.innerWidth*1.675, window.innerWidth  ]
+    return [ -window.innerWidth*2, window.innerWidth  ]
   } else  {
     if(window.innerWidth <= NATIVE_SMALL){
-      console.log('small')
       return [ -(window.innerWidth * 5), window.innerWidth ]
     } else if(window.innerWidth <= NATIVE_NORMAL){
-      console.log('normal')
       return [ -(window.innerWidth * 4.25), window.innerWidth ]
     } else {
-      console.log('wide')
       return [ -(window.innerWidth * 4.5), window.innerWidth ]
     }
   }
