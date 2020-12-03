@@ -81,6 +81,12 @@ export default function Proposal(){
   const [ input, setInput ] = useState(1)
   const classes = useStyles()
 
+  const getProposalState = (proposal) => {
+    if(proposal.block >= proposal.expiry) return 'expired'
+    else return proposalState[proposal.state]
+  }
+
+
   const handleInput = (event) => {
     let target = event.target.value == 1 ? metadata.against : metadata.for
     let weight = formatBalance(new BigNumber(target), 18, 4)
@@ -169,11 +175,14 @@ export default function Proposal(){
   useEffect(() => {
     const retrieveProposal = async() => {
       let proposal = await getProposal(id)
+      let recentBlock = await state.web3.rinkeby.eth.getBlock('latest')
 
       setComponent({
         blockie: <Blockie border='5px' width={radius} id='blockie' address={proposal.proposer} />,
         list: <Votes logs={proposal.votes} />
       })
+
+      proposal.block = recentBlock.number
 
       setMetadata(proposal)
     }
@@ -197,8 +206,8 @@ export default function Proposal(){
                   {component.blockie}
                   <div className={classes.title} style={{ width }}>
                     <div className={classes.lozenge}>
-                      <div id={proposalState[metadata.state]}>
-                        <Lozenge isBold> {proposalState[metadata.state]} </Lozenge>
+                      <div id={getProposalState(metadata)}>
+                        <Lozenge isBold> {getProposalState(metadata)} </Lozenge>
                       </div>
                     </div>
                     <h3> {metadata.description}</h3>

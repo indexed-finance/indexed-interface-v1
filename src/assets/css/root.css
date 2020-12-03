@@ -129,15 +129,27 @@ input[type=number] {
   text-align: center;
 }
 
+#expired span {
+  font-family: 'San Francisco Bold' !important;
+  background: #666666 !important;
+  padding: 3.75px 7.5px !important;
+  font-size: .875em;
+  text-align: center;
+}
+
 #executed span span {
   width: 100px;
 }
 
-#rejected, #passed, #executed, #active {
+#expired span span {
+  width: 100px;
+}
+
+#rejected, #passed, #executed, #active, #expired {
   margin-top: 7.5px;
 }
 
-#rejected o, #passed o, #executed o, #active o {
+#rejected o, #passed o, #executed o, #active o, #expired o {
   margin-left: 5px;
   padding-top: 10px;
   float: 'right';

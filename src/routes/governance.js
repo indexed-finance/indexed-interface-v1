@@ -37,6 +37,11 @@ import { getProposals } from '../api/gql'
 import style from '../assets/css/routes/governance'
 import getStyles from '../assets/css'
 
+const proposalState = {
+  0: 'active',
+  1: 'rejcted'
+}
+
 const INACTIVE = () => <span id='inactive'>INACTIVE</span>
 const DELEGATED = () => <span id='delegated'>DELEGATED</span>
 const ACTIVE = () => <span id='registered'>ACTIVE</span>
@@ -137,6 +142,11 @@ export default function Governance(){
         }
       })
     } catch(e) {}
+  }
+
+  const getProposalState = (proposal) => {
+    if(metadata.block >= proposal.expiry) return 'expired'
+    else return proposalState[proposal.state]
   }
 
 
@@ -243,13 +253,15 @@ export default function Governance(){
 
         let length = dailyDistributionSnapshots.length - 1
         let { active, inactive, delegated, voters } = dailyDistributionSnapshots[length]
+        let recentBlock = await state.web3.rinkeby.eth.getBlock('latest')
 
         setMetadata({
           snapshots: dailyDistributionSnapshots,
           active: parseFloat(formatBalance(new BigNumber(active), 18, 0)).toLocaleString(),
           inactive: parseFloat(formatBalance(new BigNumber(inactive), 18, 0)).toLocaleString(),
           delegated: parseFloat(formatBalance(new BigNumber(delegated), 18, 0)).toLocaleString(),
-          voters: parseFloat(voters).toLocaleString()
+          voters: parseFloat(voters).toLocaleString(),
+          block: recentBlock.number
         })
         setProposals(proposals)
 
@@ -311,6 +323,7 @@ export default function Governance(){
                 let f = () => history.push(`/proposal/${p.id.toLowerCase()}`)
                 let againstVotes = formatBalance(new BigNumber(p.against), 18, 4)
                 let forVotes = formatBalance(new BigNumber(p.for), 18, 4)
+                let proposalState = getProposalState(p)
                 let stateLabel ='active'
 
                 if(parseInt(p.state) > 0) {
@@ -323,9 +336,9 @@ export default function Governance(){
                   <Item key={p.id} button onClick={f}>
                     <ListItemText primary={<label>{p.description}</label>}
                       secondary={
-                        <div id='active'>
+                        <div id={proposalState}>
                           <Lozenge isBold>
-                            {stateLabel}
+                            {proposalState}
                             </Lozenge>
                           <o> {proposals.length - (parseInt(index) + 1)} • {p.expiry}</o>
                         </div>
