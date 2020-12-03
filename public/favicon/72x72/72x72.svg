@@ -4,14 +4,6 @@
     #dark-favicon {
       display: none;
     }
-    @media (prefers-color-scheme: light) {
-      #dark-favicon {
-        display: none;
-      }
-      #light-favicon {
-        display: block;
-      }
-    }
     @media (prefers-color-scheme: dark) {
       #dark-favicon {
         display: block;
