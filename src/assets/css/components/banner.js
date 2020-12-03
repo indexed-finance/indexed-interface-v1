@@ -7,7 +7,6 @@ const setStyle = (theme) => ({
   root: {
     overflowX: 'hidden',
     position: 'fixed',
-    borderBottom: '3px solid #666666',
     background: theme.palette.primary.main,
     zIndex: 10
   },
@@ -33,9 +32,8 @@ const mapping = {
     position: 'fixed',
     duration: 35,
     width: 4500,
-    marginTop: 'auto',
     marginBlock: {
-      marginBlockStart: '.5em',
+      marginBlockStart: '1.25em',
       marginBlockEnd: '.5em'
     }
   },
@@ -43,9 +41,8 @@ const mapping = {
     position: 'fixed',
     duration: 35,
     width: 4500,
-    marginTop: 'auto',
     marginBlock: {
-      marginBlockStart: '.5em',
+      marginBlockStart: '1.25em',
       marginBlockEnd: '.5em'
     }
   },
@@ -53,70 +50,63 @@ const mapping = {
     position: 'fixed',
     duration: 35,
     width: 4500,
-    marginTop: 'auto',
     marginBlock: {
-      marginBlockStart: '.5em',
+      marginBlockStart: '1.25em',
       marginBlockEnd: '.5em'
     }
   },
   [DESKTOP_WIDE]: {
     position: 'fixed',
     duration: 45,
-    width: 4500,
-    marginTop: 'auto',
+    width: 10000,
     marginBlock: {
-      marginBlockStart: '.5em',
+      marginBlockStart: '1.25em',
       marginBlockEnd: '.5em'
     }
   },
   [DESKTOP_HUGE]: {
     position: 'fixed',
     duration: 45,
-    width: 4500,
-    marginTop: 'auto',
+    width: 10000,
     marginBlock: {
-      marginBlockStart: '.5em',
+      marginBlockStart: '1.25em',
       marginBlockEnd: '.5em'
     }
   },
   [DESKTOP_MASSIVE]: {
     position: 'fixed',
     duration: 45,
-    marginTop: 'auto',
-    width: 4500,
+    width: 10000,
     marginBlock: {
-      marginBlockStart: '.5em',
+      marginBlockStart: '1.25em',
       marginBlockEnd: '.5em'
     }
   },
   [NATIVE_SMALL]: {
     position: 'fixed',
     width: 4500,
-    marginTop: '-0.975em',
     duration: 30,
     marginBlock: {
-      marginBlockStart: '.05em',
+      marginBlockStart: '.5em',
       marginBlockEnd: '.25em',
     }
   },
   [NATIVE_NORMAL]: {
     position: 'fixed',
     width: 4500,
-    marginTop: '-1.10em',
     duration: 30,
     marginBlock: {
-      marginBlockStart: '.15em',
+      marginBlockStart: '.5em',
       marginBlockEnd: '.3em',
     }
   },
   [NATIVE_WIDE]: {
     position: 'fixed',
     width: 4500,
-    marginTop: '-0.975em',
     duration: 25,
     marginBlock: {
-      marginBlockStart: '.15em',
-      marginBlockEnd: '.4em',
+      marginBlockStart: '.55em',
+      marginBlockEnd: '.35em',
     }
   },
 }

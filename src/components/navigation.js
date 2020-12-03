@@ -185,12 +185,12 @@ export default function Navigation({ mode }) {
     )
   }
 
-  let { marginLeft, display, width, paddingTop, padding, logoMargin, titleMargin } = style.getFormatting(state.native)
+  let { marginLeft, display, width, paddingTop, padding, logoMargin, titleMargin, marginBottom } = style.getFormatting(state.native)
 
   return (
     <div>
     {(
-      <div className={classes.root}>
+      <div className={classes.root} style={{ marginBottom }}>
       <AppBar className={classes.appBar} position="fixed" style={{ ...padding }}>
         <Toolbar>
           <Grid container direction='row' alignItems='center' justify='space-between'>

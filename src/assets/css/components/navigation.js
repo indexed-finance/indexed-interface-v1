@@ -7,7 +7,6 @@ const setStyle = (theme) => ({
   root: {
     flexGrow: 1,
     fontFamily: 'San Francisco',
-    marginBottom: '6em',
   },
   href: {
     color: `${theme.palette.secondary.main} !important`,
@@ -90,6 +89,7 @@ const mapping = {
     marginLeft: 15,
     titleMargin: 20,
     logoMargin: 7.5,
+    marginBottom: '5em',
     width: 37.5,
     padding: {
       paddingTop: 12.5,
@@ -102,6 +102,7 @@ const mapping = {
     marginLeft: 15,
     logoMargin: 4.5,
     titleMargin: 20,
+    marginBottom: '5em',
     width: 37.5,
     padding: {
       paddingTop: 12.5,
@@ -112,6 +113,7 @@ const mapping = {
     paddingTop: '.75vh',
     display: 'INDEXED',
     marginLeft: 15,
+    marginBottom: '5em',
     logoMargin: 3,
     width: 37.5,
     titleMargin: 20,
@@ -124,6 +126,7 @@ const mapping = {
     paddingTop: '.75vh',
     display: 'INDEXED',
     marginLeft: 15,
+    marginBottom: '5em',
     logoMargin: 6.75,
     titleMargin: 20,
     width: 37.5,
@@ -137,6 +140,7 @@ const mapping = {
     display: 'INDEXED',
     logoMargin: 2.5,
     titleMargin: 20,
+    marginBottom: '5em',
     marginLeft: 15,
     width: 37.5,
     padding: {
@@ -149,6 +153,7 @@ const mapping = {
     display: 'INDEXED',
     titleMargin: 20,
     marginLeft: 15,
+    marginBottom: '5em',
     logoMargin: -3.75,
     width: 37.5,
     padding: {
@@ -160,6 +165,7 @@ const mapping = {
     paddingTop: '1.5vh',
     display: 'NDX',
     marginLeft: 0,
+    marginBottom: '4.5em',
     titleMargin: 15,
     logoMargin: 4.5,
     width: 30,
@@ -172,6 +178,7 @@ const mapping = {
     paddingTop: '1.5vh',
     display: 'INDEXED',
     logoMargin: 2.5,
+    marginBottom: '4.5em',
     titleMargin: 15,
     marginLeft: 0,
     width: 30,
@@ -184,6 +191,7 @@ const mapping = {
     paddingTop: '1.5vh',
     display: 'INDEXED',
     marginLeft: 0,
+    marginBottom: '4.5em',
     logoMargin: 2,
     titleMargin: 15,
     width: 30,

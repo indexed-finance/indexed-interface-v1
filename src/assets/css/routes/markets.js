@@ -45,7 +45,7 @@ const mapping = {
   [DESKTOP_SMALL]: {
     top: 'calc(100px - .375vh)',
     margin: '0em 3em .25em 3em',
-    canvasMargin: '4.125em 3em 1em 3em',
+    canvasMargin: '5em 3em 1em 3em',
     paddingLeft: 25,
     pre2: 280,
     resolution: 200,
@@ -56,7 +56,7 @@ const mapping = {
   [DESKTOP_NORMAL]: {
     top: 'calc(120px - .25vh)',
     margin: '0em 3em .25em 3em',
-    canvasMargin: '4.5em 3em 1em 3em',
+    canvasMargin: '5em 3em 1em 3em',
     pre2: 320,
     paddingLeft: 25,
     resolution: 200,
@@ -67,7 +67,7 @@ const mapping = {
   [DESKTOP_LARGE]: {
     top: 'calc(125px - .2375vh)',
     margin: '0em 3em .25em 3em',
-    canvasMargin: '4.125em 3em 1em 3em',
+    canvasMargin: '5em 3em 1em 3em',
     paddingLeft: 25,
     pre2: 387.5,
     resolution: 200,
@@ -78,7 +78,7 @@ const mapping = {
   [DESKTOP_WIDE]: {
     top: 'calc(165px - .5vh)',
     margin: '0em 3em .25em 3em',
-    canvasMargin: '4.125em 3em 1em 3em',
+    canvasMargin: '5em 3em 1em 3em',
     paddingLeft: 25,
     pre2: 350,
     resolution: 200,
@@ -89,7 +89,7 @@ const mapping = {
   [DESKTOP_HUGE]: {
     top: 'calc(135px - .35vh)',
     margin: '0em 3em .25em 3em',
-    canvasMargin: '4.125em 3em 1em 3em',
+    canvasMargin: '5em 3em 1em 3em',
     paddingLeft: 25,
     pre2: 350,
     resolution: 200,
@@ -100,8 +100,7 @@ const mapping = {
   [DESKTOP_MASSIVE]: {
     top: 'calc(150px - .35vh)',
     margin: '0em 3em .25em 3em',
-    canvasMargin: '4.125em 1.5em 1em 1.5em',
-    canvasMargin: '4.125em 3em 1em 3em',
+    canvasMargin: '5em 3em 1em 3em',
     paddingLeft: 25,
     pre2: 390,
     resolution: 200,
@@ -111,7 +110,7 @@ const mapping = {
   },
   [NATIVE_SMALL]: {
     top: 'calc(100px + .05vh)',
-    canvasMargin: '2em 1.5em 1em 1.5em',
+    canvasMargin: '3em 1.5em 1em 1.5em',
     margin: '-.5em 1.5em 1em 1.5em',
     paddingLeft: 12.5,
     pre2: 'calc(250px - 15vh)',
@@ -121,7 +120,7 @@ const mapping = {
   },
   [NATIVE_NORMAL]: {
     top: 'calc(100px + 2.5vh)',
-    canvasMargin: '2em 1.5em 1em 1.5em',
+    canvasMargin: '3em 1.5em 1em 1.5em',
     paddingLeft: 12.5,
     margin: '-.5em 1.5em 1em 1.5em',
     pre2: 'calc(247.5px - 8.125vh)',
@@ -131,7 +130,7 @@ const mapping = {
   },
   [NATIVE_WIDE]: {
     top: 'calc(100px + 4.375vh)',
-    canvasMargin: '2em 1.5em 1em 1.5em',
+    canvasMargin: '3em 1.5em 1em 1.5em',
     paddingLeft: 12.5,
     margin: '-.5em 1.5em 1em 1.5em',
     pre2: 'calc(250px - 5.75vh)',

@@ -16,7 +16,7 @@ export default function Error404() {
     <Grid container direction='column' alignItems='center' justify='center'>
       <Grid item>
         <div className={classes.container}>
-          <h2> 404, NO PAGE FOUND.</h2>
+          <h2> 404, NO PAGE FOUND</h2>
         </div>
       </Grid>
     </Grid>
