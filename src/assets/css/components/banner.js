@@ -33,7 +33,7 @@ const mapping = {
     duration: 35,
     width: 4500,
     marginBlock: {
-      marginBlockStart: '1.25em',
+      marginBlockStart: '1.3em',
       marginBlockEnd: '.5em'
     }
   },
@@ -42,7 +42,7 @@ const mapping = {
     duration: 35,
     width: 4500,
     marginBlock: {
-      marginBlockStart: '1.25em',
+      marginBlockStart: '1.375em',
       marginBlockEnd: '.5em'
     }
   },
@@ -51,7 +51,7 @@ const mapping = {
     duration: 35,
     width: 4500,
     marginBlock: {
-      marginBlockStart: '1.25em',
+      marginBlockStart: '1.375em',
       marginBlockEnd: '.5em'
     }
   },
@@ -60,7 +60,7 @@ const mapping = {
     duration: 45,
     width: 10000,
     marginBlock: {
-      marginBlockStart: '1.25em',
+      marginBlockStart: '1.375em',
       marginBlockEnd: '.5em'
     }
   },
@@ -69,7 +69,7 @@ const mapping = {
     duration: 45,
     width: 10000,
     marginBlock: {
-      marginBlockStart: '1.25em',
+      marginBlockStart: '1.375em',
       marginBlockEnd: '.5em'
     }
   },
@@ -78,7 +78,7 @@ const mapping = {
     duration: 45,
     width: 10000,
     marginBlock: {
-      marginBlockStart: '1.25em',
+      marginBlockStart: '1.375em',
       marginBlockEnd: '.5em'
     }
   },

@@ -186,7 +186,7 @@ const mapping = {
     paddingLeft: 30
   },
   [DESKTOP_HUGE]: {
-    margin:'-12.5em 3em 3em 3em',
+    margin:'-20em 3em 3em 3em',
     marginX:'3em 3em 3em 3em',
     width: 'auto',
     progress: 325,

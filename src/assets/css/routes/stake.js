@@ -42,7 +42,7 @@ const setStyle = (theme) => ({
 
 const getFormatting = (state) => {
   return {
-    margin: !state.native ? '3em 3em' : '2em 1.5em',
+    margin: !state.native ? '4em 0em' : '3em 0em',
   }
 }
 

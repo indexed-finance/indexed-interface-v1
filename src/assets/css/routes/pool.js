@@ -24,8 +24,6 @@ const setStyle = (theme) => ({
       },
     },
   },
-  container: {
-  },
   events: {
     width: '100%'
   },
@@ -150,7 +148,7 @@ const mapping = {
   [DESKTOP_WIDE]: {
     active: '-20em 0em 3em 3em',
     inactive: '-39.25em 0em 3em 3em',
-    margin: '3em 3em',
+    margin: '4em 3em',
     width: '100%',
     padding: 100,
     percent: '5.5%',
@@ -165,7 +163,7 @@ const mapping = {
   [DESKTOP_HUGE]: {
     active: '-20.75em 0em 3em 3em',
     inactive: '-39.5em 0em 3em 3em',
-    margin: '3em 3em',
+    margin: '4em 3em',
     width: '100%',
     percent: '6%',
     padding: 100,
@@ -180,7 +178,7 @@ const mapping = {
   [DESKTOP_MASSIVE]: {
     active: '-18.5em 0em 3em 3em',
     inactive: '-35.75em 0em 3em 3em',
-    margin: '3em 3em',
+    margin: '4em 3em',
     width: '100%',
     padding: 100,
     paddingRight: 37.5,
@@ -193,7 +191,7 @@ const mapping = {
     balanceHeight: 125
   },
   [NATIVE_SMALL]: {
-    marginX: '.5em 1.5em',
+    marginX: '1.5em',
     margin: '2em 1.5em 1em 1.5em',
     width: 'auto',
     percent: '0%',
@@ -206,7 +204,7 @@ const mapping = {
     balanceHeight: 187.5
   },
   [NATIVE_NORMAL]: {
-    marginX: '.5em 1.5em',
+    marginX: '1.5em',
     margin: '2em 1.5em 1em 1.5em',
     width: 'auto',
     percent: '0%',
@@ -219,7 +217,7 @@ const mapping = {
     balanceHeight: 175
   },
   [NATIVE_WIDE]: {
-    marginX: '.5em 1.5em',
+    marginX: '1.5em',
     margin: '2em 1.5em 1em 1.5em',
     width: 'auto',
     padding: 112.5,

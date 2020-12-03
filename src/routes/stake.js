@@ -60,10 +60,12 @@ export default function Stake() {
     getPools()
   }, []);
 
+  let { margin } = style.getFormatting(state)
+
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
-      <Grid item xs={10} md={6}>
-        <Container margin='3em 0em' padding="1em 2em" title='LIQUIDITY MINING'>
+      <Grid item xs={10} md={6} lg={6} xl={6} >
+        <Container margin={margin} padding="1em 2em" title='LIQUIDITY MINING'>
           <div className={classes.header}>
             <p>
               Stake index tokens or their associated Uniswap liquidity tokens to earn NDX, the governance token for Indexed Finance.
@@ -97,7 +99,7 @@ export default function Stake() {
         rate = parseFloat(rate * 60 * 24).toLocaleString()
 
         return(
-          <Grid item xs={10} md={6} style={{ width: '100%' }}>
+          <Grid item xs={10} md={6} lg={6} xl={6} style={{ width: '100%' }}>
             <Link className={classes.href} to={`/stake/${symbol.toLowerCase()}`}>
               <Card color={color}>
                 <div className={classes.pool}>

@@ -11,8 +11,11 @@ const setStyle = (theme) => ({
   },
   header: {
     borderBottom: 'solid 3px #666666',
-    padding: '.25vw 2.5vw',
-    display: 'flex'
+    padding: '5px 2.5vw 0px 2.5vw',
+    display: 'flex',
+    '& ul li': {
+      paddingTop: 10
+    }
   },
   alert: {
     textAlign: 'center',
@@ -147,7 +150,7 @@ const mapping = {
     width: '62.5%',
     height: '71.25vh',
     maxWidth: '67.5%',
-    marginRight: 100,
+    marginRight: 75,
     showVolume: true,
     sideBar: '30%',
     paddingTop: '9.375%',
@@ -169,7 +172,7 @@ const mapping = {
     paddingTop: '7.375%',
     sideBar: '30%',
     showVolume: true,
-    marginRight: 75,
+    marginRight: 50,
     marginTop: '-4.5vh',
     maxWidth: '48%',
     chart: {
@@ -189,7 +192,7 @@ const mapping = {
     paddingTop: '7.675%',
     sideBar: '30%',
     showVolume: true,
-    marginRight: 125,
+    marginRight: 50,
     marginTop: '-3vh',
     maxWidth: '48%',
     chart: {

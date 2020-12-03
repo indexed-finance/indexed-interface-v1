@@ -1,6 +1,7 @@
 const setStyle = (theme) => ({
   form: {
     width: '45vw',
+    maxWidth: 800,
     height: 'auto',
     padding: 50,
     paddingBottom: 75
@@ -19,7 +20,7 @@ const setStyle = (theme) => ({
 
 const getFormatting = (state) => {
   return {
-    margin: !state.native ? '3em 3em' : '2em 1.5em'
+    margin: !state.native ? '4em 3em' : '2em 1.5em'
   }
 }
 

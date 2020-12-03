@@ -114,7 +114,7 @@ const mapping = {
     display: 'INDEXED',
     marginLeft: 15,
     marginBottom: '5em',
-    logoMargin: 3,
+    logoMargin: 5,
     width: 37.5,
     titleMargin: 20,
     padding: {
@@ -127,7 +127,7 @@ const mapping = {
     display: 'INDEXED',
     marginLeft: 15,
     marginBottom: '5em',
-    logoMargin: 6.75,
+    logoMargin: 2,
     titleMargin: 20,
     width: 37.5,
     padding: {

@@ -66,8 +66,8 @@ const options = (padding, range, margin) => ({
         },
         ticks: {
           beginAtZero: false,
-          max: range[0] * 1.015,
-          min: range[1] * 0.90,
+          max: range[0] * 1.125,
+          min: range[1] * 0.95,
           display: false,
           padding: 0,
         }
@@ -144,10 +144,10 @@ function getRanges(metadata) {
 const getStockValue = (v) => v.close;
 
 export default function Spline(props){
-  let { metadata, height, color, padding, ready, absolute, native } = props
+  let { metadata, height, color, ready, absolute, native, padding } = props
   const [ component, setComponent ] = useState(null)
   const theme = useTheme()
-  let { p, h, width, margin } = style.getFormatting(native)
+  let { p, h, width, margin, paddingTop } = style.getFormatting(native)
 
   useEffect(() => {
     if(metadata.address != '0x0000000000000000000000000000000000000000'){
@@ -155,7 +155,7 @@ export default function Spline(props){
 
       setComponent(
         <Line
-          height={height} options={options(!absolute ? 100 : padding, ranges, !absolute ? 0 : margin)}
+          height={height} options={options(!absolute ? 100 : paddingTop, ranges, !absolute ? 0 : margin)}
           data={(e) => getConfig(e, metadata, color, absolute)} redraw
         />
       )

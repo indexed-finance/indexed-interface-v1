@@ -23,7 +23,7 @@ const mapping = {
     }
   },
   [DESKTOP_LARGE]: {
-    border: 4,
+    border: 3,
     padding: {
       top: 40,
       left: 40,
@@ -32,7 +32,7 @@ const mapping = {
     }
   },
   [DESKTOP_WIDE]: {
-    border: 4,
+    border: 3,
     padding: {
       top: 40,
       left: 40,
@@ -41,7 +41,7 @@ const mapping = {
     }
   },
   [DESKTOP_HUGE]: {
-    border: 5,
+    border: 3,
     padding: {
       top: 35,
       left: 35,
@@ -50,7 +50,7 @@ const mapping = {
     }
   },
   [DESKTOP_MASSIVE]: {
-    border: 5,
+    border: 3,
     padding: {
       top: 40,
       left: 40,

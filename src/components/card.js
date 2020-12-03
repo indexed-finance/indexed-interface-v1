@@ -16,7 +16,7 @@ const Wrapper = styled(Paper)({
 
 export default function Canvas({ native, children, color, button, style, custom }){
 
-  let margin = native ? '1em 1.5em .5em 1.5em' : '3em 3em .5em 3em'
+  let margin = native ? '1em 1.5em .5em 1.5em' : '3em z\z .5em 3em'
   let hover = {}
 
   if(native == undefined) margin = '1.5em 0em'
