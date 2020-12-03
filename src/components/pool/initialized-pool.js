@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect, useContext } from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
-import { fromWei, toWei } from '@indexed-finance/indexed.js/dist/utils/bignumber';
+import { fromWei, toWei, BigNumber, formatBalance } from '@indexed-finance/indexed.js';
 
 import Container from '../container'
 import Spline from '../charts/spline'
@@ -11,7 +11,7 @@ import Weights from '../weights'
 import List from '../list'
 import ButtonPrimary from '../buttons/primary'
 
-import { UNCLAIMED_CREDITS } from '../../assets/constants/parameters'
+import { UNCLAIMED_CREDITS, TX_PENDING, TX_REVERTED, TX_CONFIRMED } from '../../assets/constants/parameters'
 
 import MockERC20ABI from '../../assets/constants/abi/MockERC20.json'
 import PoolInitializer from '../../assets/constants/abi/PoolInitializer.json'
@@ -61,14 +61,43 @@ function InitializedPoolPage({ address, metadata }){
     setBalances({ ...balances, native, lp })
   }
 
-  const getActiveCredit = async(contract) => {
-    let { account, web3 } = state
+  const claimTokens = async() => {
+    let { helper, web3, account } = state
+    let pool = findHelper(helper)
+    let contract = toContract(web3.injected, PoolInitializer.abi, pool.initializer)
 
-    if(web3.injected){
+    return await contract.methods.claimTokens().send({ from: account })
+    .on('transactionHash', (transactionHash) => {
+      dispatch({ type: 'MODAL', payload: { show: false }})
+      dispatch(TX_PENDING(transactionHash))
+    }).on('confirmation', async(conf, receipt) => {
+      if(conf == 0){
+        if(receipt.status == 1) {
+          dispatch(TX_CONFIRMED(receipt.transactionHash))
+          await getNativeBalances()
+        } else {
+          dispatch(TX_REVERTED(receipt.transactionHash))
+        }
+      }
+    })
+  }
+
+  const getActiveCredit = async() => {
+    let { account, web3, helper } = state
+    let pool = findHelper(helper)
+
+    if(web3.injected && pool){
+      let contract = toContract(web3.injected, PoolInitializer.abi, pool.initializer)
       let credit = await contract.methods.getCreditOf(account).call()
-      credit = (parseFloat(credit)/Math.pow(10, 18))
+      credit = formatBalance(new BigNumber(credit), 18, 4)
 
-      if(credit > 0) setAlert(true)
+      if(credit > 0 && !showAlert) {
+        setAlert(true)
+        dispatch({
+          type: 'MODAL',
+          payload: UNCLAIMED_CREDITS(claimTokens, credit)
+        })
+      }
     }
   }
 
@@ -90,24 +119,19 @@ function InitializedPoolPage({ address, metadata }){
     const retrievePool = async() => {
       let { indexes, web3, helper } = state
 
-      if(Object.keys(indexes).length > 0 && !instance
+      if(Object.keys(indexes).length > 0 && events.length == 0
       && metadata.address !== '0x0000000000000000000000000000000000000000'){
         let target = Object.entries(indexes).find(x => x[1].address === address)
         let pool = findHelper(helper)
-
-        let contract = toContract(
-          web3[process.env.REACT_APP_ETH_NETWORK], PoolInitializer.abi, pool.initializer
-        )
 
         let tokenEvents = await getEvents(web3.websocket, address)
         target[1].assets = pool.tokens
         target[1].type = 'EVENTS'
 
         setEvents(tokenEvents)
-        setInstance(contract)
 
         if(web3.injected){
-          await getActiveCredit(contract)
+          await getActiveCredit()
           await getNativeBalances()
         }
       }
@@ -117,18 +141,20 @@ function InitializedPoolPage({ address, metadata }){
 
   useEffect(() => {
     const retrieveBalances = async() => {
-      let { account, web3 } = state
+      let { account, web3, helper } = state
       let { assets } = metadata
 
-      if(web3.injected){
+      if(web3.injected && helper){
+        let pool = findHelper(helper)
         let balances =  await getBalances(
           web3[process.env.REACT_APP_ETH_NETWORK], account, assets, {}
         )
+
         await dispatch({ type: 'BALANCE',
           payload: { balances }
         })
-        await getNativeBalances()
         await getActiveCredit()
+        await getNativeBalances()
       }
      }
     retrieveBalances()

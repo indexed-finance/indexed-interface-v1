@@ -133,14 +133,17 @@ function Application(){
         past24h = snapshots.find(i => (i.date * 1000) == targetDate.getTime());
 
         if(!past24h) {
-          dayMulitplier = dayMulitplier + 2
+          dayMulitplier = 2
           targetDate = new Date(timestamp.getTime() - (86400000 * dayMulitplier));
-          past24h = snapshots.find(i => (i.date * 1000) == targetDate.getTime());
-        }
-        if(!past24h) past24h = snapshots[snapshots.length-2]
+          past24h = snapshots.find(i => (i.date * 1000) <= targetDate.getTime());
 
-        let delta24hr = snapshots.length === 1 ? 0 : ((Math.abs(history[history.length-1].close - past24h.value)/ past24h.value) * 100).toFixed(4);
+          if(!past24h) past24h = snapshots[snapshots.length-2]
+        }
+
+
+        let delta24hr = snapshots.length === 1 ? 0 : ((Math.abs(snapshots[snapshots.length-1].value - past24h.value)/ past24h.value) * 100).toFixed(4);
         let volume = +(snapshots[snapshots.length-1].totalVolumeUSD).toFixed(2);
+
 
         stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
         stats.dailyVolume += volume
