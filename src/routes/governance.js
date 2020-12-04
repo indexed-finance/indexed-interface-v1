@@ -342,7 +342,7 @@ export default function Governance(){
                           <Lozenge isBold>
                             {proposalState}
                             </Lozenge>
-                          <o> {proposals.length - (parseInt(index) + 1)} • {p.expiry}</o>
+                          <o> {p.id} • {p.expiry}</o>
                         </div>
                       }
                     />
