@@ -20,7 +20,8 @@ const setStyle = (theme) => ({
     },
     '& span': {
       float: 'right',
-      display: 'inline-block'
+      display: 'inline-block',
+      marginLeft: 5,
     }
   },
   percentage: {
@@ -29,9 +30,6 @@ const setStyle = (theme) => ({
   asset: {
     marginTop: 10,
     width: 50
-  },
-  symbol: {
-    marginLeft: 5,
   },
   alternative: {
     color: '#999999'
