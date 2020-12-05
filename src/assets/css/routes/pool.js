@@ -34,6 +34,12 @@ const setStyle = (theme) => ({
   alert: {
     padding: '1em 2em',
     borderBottom: '2px solid #666666',
+    '& .MuiAlert-outlinedInfo': {
+      borderColor: '#66b3ff !important',
+      '& .MuiAlert-icon': {
+        color: '#66b3ff !important'
+      }
+    },
     '& label': {
       fontSize: '.9em',
     },
