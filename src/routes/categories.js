@@ -96,6 +96,23 @@ const Trigger = styled(Button)({
   }
 })
 
+function getCategoryImages(category, state) {
+  let isSelected = {};
+  let categoryImages = [];
+
+  category.indexes.map((index) =>
+    state.indexes[index].assets.map((token) => {
+      if(isSelected[token.symbol]) return;
+      else isSelected[token.symbol] = true;
+      return categoryImages.push(
+        tokenMetadata[token.symbol].image
+      );
+    })
+  )
+
+  return categoryImages
+}
+
 export default function Categories(){
   let { dispatch, state } = useContext(store)
 
@@ -128,10 +145,9 @@ export default function Categories(){
                 <div className={classes.category}>
                   <h3> {value.name} [{value.symbol}]</h3>
                   <p>
-                    {value.indexes.map((index) =>
-                      state.indexes[index].assets.map((token) => (
-                        <img src={tokenMetadata[token.symbol].image} className={classes.asset} />
-                    )))}
+                      {state.request && getCategoryImages(value, state).map(i => (
+                        <img src={i} className={classes.asset} />
+                      ))}
                   </p>
                   <div className={classes.divider} />
                   <List data={Object.values(filtered(state.indexes, value.indexes))}
