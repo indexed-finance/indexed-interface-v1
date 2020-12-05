@@ -7,7 +7,7 @@ import { usePalette } from 'react-palette'
 import { tokenMetadata } from '../../assets/constants/parameters'
 import style from '../../assets/css/components/weights'
 import getStyles from '../../assets/css'
-import { BigNumber, formatBalance } from '@indexed-finance/indexed.js/dist/utils/bignumber'
+import { BigNumber, formatBalance } from '@indexed-finance/indexed.js'
 
 const useStyles = getStyles(style)
 
@@ -42,7 +42,12 @@ export default function WeightedToken({ token }) {
         <img src={image} className={classes.asset} />
       </div>
       <div className={classes.percentage}>
-        <span className={classes.title}> {token.name} [{token.symbol}] </span>
+        <span className={classes.title}>
+          <div className={classes.name}>
+            {token.name}
+          </div>
+          <span>[{token.symbol}] </span>
+        </span>
         <BorderLinearProgress variant="determinate" value={weight * 100} />
         <span className={classes.alternative}>
           {

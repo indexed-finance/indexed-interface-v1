@@ -66,7 +66,7 @@ const mapping = {
   [DESKTOP_LARGE]: {
     height: 'calc(27.5em - 125px)',
     width: 'inherit',
-    spacing: 5
+    spacing: 4
   },
   [DESKTOP_WIDE]: {
     height: 'calc(20em - 100px)',

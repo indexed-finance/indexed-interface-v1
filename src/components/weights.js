@@ -72,7 +72,7 @@ export default function Weight({ asset, native, show }) {
         <img src={image} className={classes.asset} />
       </div>
       <div className={classes.precentage} style={{ float: window.innerWidth > 321 ? metadata.float : 'inherit' }}>
-        <span className={classes.title}> {metadata.name} [{metadata.symbol}] </span>
+        <span className={classes.altTitle}> {metadata.name} [{metadata.symbol}] </span>
         <BorderLinearProgress variant="determinate" value={metadata.percent} />
         <span className={classes.alternative}>
           {metadata.balance.toLocaleString()} {metadata.symbol} {metadata.title}

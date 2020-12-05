@@ -49,6 +49,8 @@ export default function Index(){
   const changeExecution = (option) => {
     let newStyle = clearSelections()
 
+    console.log(option)
+
     if(option == 'burn') {
       newStyle.burn = selected;
     } else if(option == 'mint'){
@@ -120,7 +122,7 @@ export default function Index(){
             <ButtonGroup disableElevation variant='outlined'>
               <ButtonMarket style={styles.trade} onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
               <ButtonMarket style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
-              <ButtonMarket style={styles.mint} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
+              <ButtonMarket style={styles.burn} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
             </ButtonGroup>
           </div>
         </Grid>
