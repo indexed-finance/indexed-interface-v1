@@ -120,7 +120,7 @@ export default function StickyHeadTable(props) {
                       return (
                         <TableCell key={column.id + row.symbol} align={column.align}>
                           <span style={{ color: value > 0 ? '#00e79a': '#ff005a'}}>
-                            ({value > 0 ? '+' : '-'}{value}%)
+                            ({value > 0 ? '+' : ''}{value}%)
                           </span>
                         </TableCell>
                        )

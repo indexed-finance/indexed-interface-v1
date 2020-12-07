@@ -49,8 +49,6 @@ export default function Index(){
   const changeExecution = (option) => {
     let newStyle = clearSelections()
 
-    console.log(option)
-
     if(option == 'burn') {
       newStyle.burn = selected;
     } else if(option == 'mint'){
@@ -146,7 +144,7 @@ export default function Index(){
               <li style={{ float: 'left', marginRight }}>
                 <h4 className={classes.price}> ${metadata.price}
                   <span style={{ color: metadata.delta > 0 ? '#00e79a': '#00e79a '}}>
-                  &nbsp;({metadata.delta > 0 ? '+' : '-'}{metadata.delta}%)
+                  &nbsp;({metadata.delta > 0 ? '+' : ''}{metadata.delta}%)
                   </span>
                 </h4>
               </li>

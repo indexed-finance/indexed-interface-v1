@@ -12,6 +12,8 @@ import Modal from './components/modal'
 import Flag from './components/flag'
 
 import { DISCLAIMER } from './assets/constants/parameters'
+import { ZERO_ADDRESS } from './assets/constants/addresses'
+
 import { getCategoryMetadata, getProposals } from './api/gql'
 import { store } from './state'
 
@@ -98,7 +100,12 @@ function Application(){
       let indexes = {};
 
       // let tokenCategories = await getTokenCategories()
-      if (!state.helper) return;
+
+      console.log('HELPER', state.helper)
+      console.log('REQUEST', state.request)
+
+
+      if (!state.helper || state.request) return;
       const addCategory = async (categoryID) => {
         if (categories[categoryID]) {
           return;
@@ -116,6 +123,8 @@ function Application(){
         let snapshots = await pool.getSnapshots(90);
         let timestamp = new Date(Date.now())
 
+        console.log('SNAPSHOTS', snapshots);
+
         timestamp.setHours(0);
         timestamp.setMinutes(0);
         timestamp.setSeconds(0);
@@ -130,16 +139,17 @@ function Application(){
         var dayMulitplier = 1
         let past24h = undefined
         var targetDate = new Date(timestamp.getTime() - (86400000 * dayMulitplier));
-        past24h = snapshots.find(i => (i.date * 1000) == targetDate.getTime());
+        past24h = snapshots.find(i => (i.date * 1000) <= targetDate.getTime());
 
         if(!past24h) {
           dayMulitplier = 2
           targetDate = new Date(timestamp.getTime() - (86400000 * dayMulitplier));
           past24h = snapshots.find(i => (i.date * 1000) <= targetDate.getTime());
 
-          if(!past24h) past24h = snapshots[snapshots.length-2]
+          if(!past24h) {
+            past24h = snapshots[snapshots.length-2]
+          }
         }
-
 
         let delta24hr = snapshots.length === 1 ? 0 : ((Math.abs(snapshots[snapshots.length-1].value - past24h.value)/ past24h.value) * 100).toFixed(4);
         let volume = +(snapshots[snapshots.length-1].totalVolumeUSD).toFixed(2);
@@ -176,6 +186,7 @@ function Application(){
         await addCategory(categoryID);
         let finalValueEstimate = new BigNumber(0);
         let currentValue = new BigNumber(0);
+
         tokens.forEach((token) => {
           const price = pool.tokenPrices[token.address];
           currentValue = currentValue.plus(price.times(token.balance));
@@ -204,6 +215,7 @@ function Application(){
         categories[categoryID].indexes.push(symbol);
         indexes[symbol] = index;
       }
+
       await dispatch({
         type: 'GENERIC',
         payload: {
@@ -221,7 +233,7 @@ function Application(){
       onResize()
       setBackground(background, color)
       window.addEventListener("resize", onResize)
-      let account = state.account;
+      let account = web3.injected ? state.account : ZERO_ADDRESS
       let helper = state.helper ? state.helper : await getAllHelpers(web3[process.env.REACT_APP_ETH_NETWORK], account);
 
       dispatch({ type: 'GENERIC', payload: { changeTheme, helper } })

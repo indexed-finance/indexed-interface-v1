@@ -27,8 +27,6 @@ export const isNative = (instance) => {
       else check = true
     }
 
-    console.log(check)
-
     return check;
 }
 
