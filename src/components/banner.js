@@ -11,7 +11,7 @@ import { store } from '../state'
 const useStyles = getStyles(style)
 
 const proposalType = {
-  id: 0,
+  id: null,
   description: ''
 }
 
@@ -111,11 +111,13 @@ export default function Banner() {
         animate={controls}
       >
       <motion.ul className={classes.carosuel} style={{ ...marginBlock }}>
-        <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
-          <Link to={`/proposal/${messages.proposal.id}`} className={classes.href}>
-            <motion.span><motion.span style={{ color: '#645eff' }}>PROPOSAL {messages.proposal.id}</motion.span>: {messages.proposal.description.toUpperCase()}</motion.span>
-          </Link>
-        </motion.li>
+        {messages.proposal.id && (
+          <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
+            <Link to={`/proposal/${messages.proposal.id}`} className={classes.href}>
+              <motion.span><motion.span style={{ color: '#645eff' }}>PROPOSAL {messages.proposal.id}</motion.span>: {messages.proposal.description.toUpperCase()}</motion.span>
+            </Link>
+          </motion.li>
+        )}
         <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
           {messages.init.length == 1 && messages.init.map((value) => {
             return(

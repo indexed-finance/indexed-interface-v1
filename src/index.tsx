@@ -101,10 +101,6 @@ function Application(){
 
       // let tokenCategories = await getTokenCategories()
 
-      console.log('HELPER', state.helper)
-      console.log('REQUEST', state.request)
-
-
       if (!state.helper || state.request) return;
       const addCategory = async (categoryID) => {
         if (categories[categoryID]) {
@@ -122,8 +118,6 @@ function Application(){
         await addCategory(categoryID);
         let snapshots = await pool.getSnapshots(90);
         let timestamp = new Date(Date.now())
-
-        console.log('SNAPSHOTS', snapshots);
 
         timestamp.setHours(0);
         timestamp.setMinutes(0);
