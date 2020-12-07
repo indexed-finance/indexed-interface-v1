@@ -1,4 +1,4 @@
-import { BigNumber, formatBalance, toBN, toTokenAmount } from "@indexed-finance/indexed.js";
+import { BigNumber, formatBalance, toBN, toTokenAmount, toWei } from "@indexed-finance/indexed.js";
 import { withMiddleware } from ".";
 import { MiddlewareAction, MintDispatch, MintDispatchAction, SetPoolOutput, SetTokenExact, SetTokenInput, ToggleToken, UpdatePool } from "../actions/mint-actions";
 import { MintState } from "../reducers/mint-reducer";
@@ -29,7 +29,7 @@ function mintDispatchMiddleware(dispatch: MintDispatch, state: MintState) {
 
     const poolOutGivenSingleIn = async (address: string, amount: BigNumber, displayAmount: string, index: number): Promise<MintDispatchAction[]> => {
       const { usedBalance: poolBalance } = state.tokens[index];
-      let poolAmountOut; 
+      let poolAmountOut;
       if (amount.gt(poolBalance.div(2))) {
         poolAmountOut = state.poolAmountOut;
       } else {
@@ -38,7 +38,7 @@ function mintDispatchMiddleware(dispatch: MintDispatch, state: MintState) {
         poolAmountOut = toBN(poolAmount);
       }
       const poolDisplayAmount = formatBalance(poolAmountOut, 18, 4);
-      
+
       return [
         { type: 'SET_SPECIFIED_SIDE', side: 'input' },
         { type: 'CLEAR_ALL_AMOUNTS' },
@@ -66,7 +66,7 @@ function mintDispatchMiddleware(dispatch: MintDispatch, state: MintState) {
       return dispatch(await poolOutGivenSingleIn(address, exactAmount, amount.toString(), index));
     };
 
-    const setTokenExact = async ({ index, amount }: SetTokenExact): Promise<void> => {      
+    const setTokenExact = async ({ index, amount }: SetTokenExact): Promise<void> => {
       const token = state.tokens[index];
       const displayAmount = formatBalance(amount, token.decimals, 4);
       return dispatch(await poolOutGivenSingleIn(token.address, amount, displayAmount, index));
@@ -91,7 +91,13 @@ function mintDispatchMiddleware(dispatch: MintDispatch, state: MintState) {
           { type: 'TOGGLE_SELECT_TOKEN', index: action.index }
         ]);
       } else {
-        const actions = await singleInGivenPoolOut(state.poolAmountOut, state.poolDisplayAmount, action.index);
+        const { usedBalance } = state.tokens[action.index];
+        const maximumInput = usedBalance.div(2);
+        const exceedsMaximum = state.poolAmountOut.gt(maximumInput);
+        const poolOut = exceedsMaximum ? maximumInput : state.poolAmountOut;
+        const displayAmount = formatBalance(poolOut, 18, 4);
+
+        const actions = await singleInGivenPoolOut(poolOut, displayAmount, action.index);
         return dispatch([
           ...actions,
           { type: 'TOGGLE_SELECT_TOKEN', index: action.index }

@@ -29,6 +29,8 @@ export default function Mint({ market, metadata }) {
 
   let { state, handleTransaction } = useContext(store);
 
+  console.log(mintState)
+
   const mint = async () => {
     const abi = require('../../assets/constants/abi/BPool.json').abi;
     const pool = toContract(state.web3.injected, abi, mintState.pool.address);

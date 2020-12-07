@@ -145,7 +145,7 @@ export default function Banner() {
             <Fragment>
               {messages.indexes.map((value) => {
                 let color = value.delta > 0 ? '#00e79a': '#00e79a'
-                let symbol = value.delta > 0 ? '+' : '-'
+                let symbol = value.delta > 0 ? '+' : ''
 
                 return(
                   <Fragment>
