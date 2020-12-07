@@ -222,8 +222,7 @@ function Application(){
       onResize()
       setBackground(background, color)
       window.addEventListener("resize", onResize)
-      let account = web3.injected ? state.account : ZERO_ADDRESS
-      let helper = state.helper ? state.helper : await getAllHelpers(web3[process.env.REACT_APP_ETH_NETWORK], account);
+      let helper = await getAllHelpers(web3[process.env.REACT_APP_ETH_NETWORK]);
 
       dispatch({ type: 'GENERIC', payload: { changeTheme, helper } })
     }

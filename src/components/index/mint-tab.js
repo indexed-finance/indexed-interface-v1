@@ -4,6 +4,7 @@ import { toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 import { styled } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 
+import { ZERO_ADDRESS } from '../../assets/constants/addresses'
 import { toContract } from '../../lib/util/contracts'
 
 import style from '../../assets/css/components/mint'
@@ -28,8 +29,6 @@ export default function Mint({ market, metadata }) {
   const { useToken, mintState, bindPoolAmountInput, setHelper, updatePool, setSlippage } = useMintState();
 
   let { state, handleTransaction } = useContext(store);
-
-  console.log(mintState)
 
   const mint = async () => {
     const abi = require('../../assets/constants/abi/BPool.json').abi;
@@ -68,7 +67,7 @@ export default function Mint({ market, metadata }) {
       setHelper(poolHelper);
     }
     if (!mintState.pool) setPool();
-  }, [ state.web3.injected ])
+  }, [ state.web3.injected, state.helper ])
 
 
   let { width, height } = style.getFormatting(state.native)

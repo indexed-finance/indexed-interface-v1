@@ -11,6 +11,7 @@ import PoolInitializer from '../../assets/constants/abi/PoolInitializer.json'
 
 import { fromWei, toHex } from '@indexed-finance/indexed.js'
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../../assets/constants/parameters'
+import { ZERO_ADDRESS } from '../../assets/constants/addresses'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
 
 import ExplainCredit from './explain-credit';
@@ -106,10 +107,14 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
   useEffect(() => {
     const setPool = async() => {
       let poolHelper = findHelper(state.helper)
+
       if(poolHelper) setHelper(poolHelper);
     }
+
     if (!initState.pool && state.helper) setPool();
-  }, [ state.web3.injected, state.helper ])
+
+  }, [ state.web3.injected, state.helper,  ])
+
 
   useEffect(() => {
     if(initState.tokens.length > 0){
