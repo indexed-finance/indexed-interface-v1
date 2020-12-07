@@ -91,13 +91,17 @@ function mintDispatchMiddleware(dispatch: MintDispatch, state: MintState) {
           { type: 'TOGGLE_SELECT_TOKEN', index: action.index }
         ]);
       } else {
-        const { usedBalance } = state.tokens[action.index];
+        const { usedBalance, address } = state.tokens[action.index];
+        const amount = state.amounts[action.index];
         const maximumInput = usedBalance.div(2);
-        const exceedsMaximum = state.poolAmountOut.gt(maximumInput);
-        const poolOut = exceedsMaximum ? maximumInput : state.poolAmountOut;
+        const exceedsMaximum = amount.gt(maximumInput);
+        const poolOut = exceedsMaximum ? maximumInput : amount;
         const displayAmount = formatBalance(poolOut, 18, 4);
 
-        const actions = await singleInGivenPoolOut(poolOut, displayAmount, action.index);
+        const actions = !exceedsMaximum ?
+          await singleInGivenPoolOut(state.poolAmountOut, state.poolDisplayAmount, action.index) :
+          await poolOutGivenSingleIn(address, poolOut, displayAmount, action.index)
+        ;
         return dispatch([
           ...actions,
           { type: 'TOGGLE_SELECT_TOKEN', index: action.index }

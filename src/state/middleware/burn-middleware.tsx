@@ -102,7 +102,19 @@ function burnDispatchMiddleware(dispatch: BurnDispatch, state: BurnState) {
           { type: 'TOGGLE_SELECT_TOKEN', index: action.index }
         ]);
       } else {
-        const actions = await singleOutGivenPoolIn(state.poolAmountIn, action.index, state.poolDisplayAmount);
+        const { usedBalance, address } = state.tokens[action.index];
+        const amount = state.amounts[action.index];
+        const maximumInput = usedBalance.div(3);
+        const exceedsMaximum = amount.gt(maximumInput);
+        const poolOut = exceedsMaximum ? maximumInput : amount;
+        const displayAmount = formatBalance(poolOut, 18, 4);
+
+        console.log('USED BALANCE', usedBalance)
+
+        const actions = !exceedsMaximum ?
+          await singleOutGivenPoolIn(state.poolAmountIn, action.index, state.poolDisplayAmount) :
+          await poolInGivenSingleOut(address, poolOut, action.index, displayAmount)
+        ;
         return dispatch([
           ...actions,
           { type: 'TOGGLE_SELECT_TOKEN', index: action.index }
