@@ -71,6 +71,7 @@ export default function BurnTab({ market, metadata }) {
     const verifyConnectivity = async() => {
       if(isInit && state.web3.injected && !burnState.pool.userAddress) {
         await burnState.pool.setUserAddress(state.account)
+        await updatePool()
       }
     }
     verifyConnectivity()

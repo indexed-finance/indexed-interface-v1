@@ -152,11 +152,19 @@ export function useInitializerToken(
     event.preventDefault();
     dispatch({ type: 'SET_TOKEN_EXACT', index, amount: amountRemaining });
   }
+  let isInactive = amountRemaining.eq(0)
+  let shouldDisable = isInactive ? balance.lt(amountRemaining) : isInactive
+
+  if(isInactive) {
+    disableInput = true;
+    disableApprove = true;
+    selected = false;
+  }
 
   let displayAmountRemaining = formatBalance(amountRemaining, decimals, 4);
   let bindSetRemainderButton = {
     value: `DESIRED: ${displayAmountRemaining}`,
-    disabled: balance.lt(amountRemaining),
+    disabled: shouldDisable,
     onClick: setAmountToRemainder
   }
 

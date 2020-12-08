@@ -137,7 +137,7 @@ export default function Index(){
     <div className={classes.root} style={{ maxWidth, ...border }}>
       <div className={classes.header} style={{ width }}>
           {state.request && (
-            <ul style={{ listStyle: 'none', display: 'inline-block' }}>
+            <ul style={{ padding: 0, listStyle: 'none', display: 'inline-block' }}>
               <li style={{ float: 'left', marginRight }}>
                 <h3 className={classes.title}> {metadata.name} [{metadata.symbol}]</h3>
               </li>

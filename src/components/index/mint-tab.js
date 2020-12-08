@@ -76,6 +76,7 @@ export default function Mint({ market, metadata }) {
     const verifyConnectivity = async() => {
       if(isInit && state.web3.injected && !mintState.pool.userAddress) {
         await mintState.pool.setUserAddress(state.account)
+        await updatePool()
       }
     }
     verifyConnectivity()

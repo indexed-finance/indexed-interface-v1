@@ -108,7 +108,6 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
   useEffect(() => {
     const setPool = () => {
       let poolHelper = findHelper(state.helper)
-
       setHelper(poolHelper);
       setInit(true);
     }
@@ -120,6 +119,7 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
       if(state.web3.injected && !initState.pool.userAddress) {
         await initState.pool.setUserAddress(state.account)
         await initState.pool.updateUserData()
+        await updatePool()
       }
     }
     verifyConnectivity()
@@ -130,6 +130,7 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
       setOutput(calcEstimatedTokenOutput())
     }
   }, [ displayTotalCredit ])
+
 
   let { height } = style.getFormatting(state.native)
 
