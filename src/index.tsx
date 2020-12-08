@@ -137,7 +137,7 @@ function Application(){
 
         if(past24h == undefined) past24h = snapshots[snapshots.length-2]
 
-        let delta24hr = snapshots.length === 1 ? 0 : ((Math.abs(snapshots[snapshots.length-1].value - past24h.value)/ past24h.value) * 100).toFixed(4);
+        let delta24hr = snapshots.length === 1 ? 0 : (((snapshots[snapshots.length-1].value - past24h.value)/ past24h.value) * 100).toFixed(4);
         let volume = +(snapshots[snapshots.length-1].totalVolumeUSD).toFixed(2);
 
         stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
