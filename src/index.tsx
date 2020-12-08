@@ -32,7 +32,6 @@ const Supply = lazy(() => import('./routes/supply'))
 const Error404 = lazy(() => import('./routes/404'))
 
 const clearTimeDiscrepancies = date => {
-  date.setHours(0);
   date.setMinutes(0);
   date.setSeconds(0);
   date.setMilliseconds(0);
@@ -121,7 +120,6 @@ function Application(){
       for (let pool of state.helper.initialized) {
         const { category, name, symbol, address, tokens } = pool;
 
-        let timestamp = clearTimeDiscrepancies(new Date(Date.now()));
         let snapshots = await pool.getSnapshots(90);
         let categoryID = `0x${category.toString(16)}`;
 
@@ -131,18 +129,15 @@ function Application(){
         if (typeof supply !== 'number' && typeof supply != 'string') {
           supply = formatBalance(supply, 18, 4);
         }
-        // var targetDate = new Date(Date.now() - 86400000);
+        let timestamp = clearTimeDiscrepancies(new Date(Date.now() - 86400000));
         let history = snapshots.map(h => ({ close: +(h.value.toFixed(4)), date: new Date(h.date * 1000) }));
         let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(4), date: new Date(l.date * 1000) }))
-        let past24h = snapshots.find((i) => (i.date * 1000) <= (Date.now() - 86400000))
-        // snapshots[snapshots.length - 2];
+        let past24h = snapshots.find((i) => (i.date * 1000) == timestamp.getTime())
 
         if(!past24h) past24h = snapshots[snapshots.length-2]
 
         let delta24hr = snapshots.length === 1 ? 0 : ((Math.abs(snapshots[snapshots.length-1].value - past24h.value)/ past24h.value) * 100).toFixed(4);
         let volume = +(snapshots[snapshots.length-1].totalVolumeUSD).toFixed(2);
-
-        // console.log(snapshots[snapshots.length-1].value , past24h.value)
 
         stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
         stats.dailyVolume += volume
