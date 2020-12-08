@@ -57,6 +57,7 @@ function initDispatchMiddleware(dispatch: InitDispatch, state: InitializerState)
     const setTokenExact = async ({ index, amount, displayAmount }: { index: number, amount: BigNumber, displayAmount?: string }): Promise<void> => {
       const credit = await pool.getExpectedCredit(tokens[index].address, amount);
       if (!displayAmount) displayAmount = formatBalance(amount, tokens[index].decimals, 4) || '0';
+      
       dispatch({
         type: 'SET_TOKEN_AMOUNT',
         index,

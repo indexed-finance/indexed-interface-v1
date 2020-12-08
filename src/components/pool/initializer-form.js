@@ -76,7 +76,7 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
 
   const findHelper = (i) => {
     let { address } = metadata
-    return i.uninitialized.find(i => i.pool.initializer.address === address);
+    return i.uninitialized.find(i => i.pool.initializer.address == address);
   }
 
   async function contributeTokens() {
@@ -108,12 +108,11 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
     const setPool = async() => {
       let poolHelper = findHelper(state.helper)
 
-      if(poolHelper) setHelper(poolHelper);
+      setHelper(poolHelper);
     }
 
     if (!initState.pool && state.helper) setPool();
-
-  }, [ state.web3.injected, state.helper,  ])
+  }, [ state.web3.injected, state.helper  ])
 
 
   useEffect(() => {
@@ -123,6 +122,8 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
   }, [ displayTotalCredit ])
 
   let { height } = style.getFormatting(state.native)
+
+  console.log(displayTotalCredit)
 
   return (
     <Fragment>
