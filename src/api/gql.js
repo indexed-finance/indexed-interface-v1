@@ -1,18 +1,13 @@
 import { getIPFSFile } from './ipfs';
 
-const uniswap_url = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2';
-
-let market_url, subgraph_url;
+let uniswap_url, subgraph_url;
 if (process.env.REACT_APP_ETH_NETWORK === 'rinkeby') {
   subgraph_url = 'https://api.thegraph.com/subgraphs/name/indexed-finance/indexed-v1';
-  market_url = 'https://api.thegraph.com/subgraphs/name/samgos/uniswap-v2-rinkeby';
+  uniswap_url = 'https://api.thegraph.com/subgraphs/name/samgos/uniswap-v2-rinkeby';
 } else {
   subgraph_url = 'https://api.thegraph.com/subgraphs/name/indexed-finance/indexed';
-  market_url = uniswap_url;
+  uniswap_url = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2';
 }
-
-// const market_url = 'https://api.thegraph.com/subgraphs/name/samgos/uniswap-v2-rinkeby';
-const price_url = 'https://api.thegraph.com/subgraphs/name/graphprotocol/uniswap';
 
 const execRequest = (query, url = subgraph_url) => fetch(
   url,
@@ -266,7 +261,7 @@ export async function getTokenPriceHistory(tokenAddress, days) {
 export async function getMarketMetadata(pairAddress) {
   const { data: { pairs } } = await execRequest(
     marketMetadataQuery(pairAddress.toLowerCase()),
-    market_url
+    uniswap_url
   );
   return pairs[0];
 }
@@ -274,7 +269,7 @@ export async function getMarketMetadata(pairAddress) {
 export async function getMarketTrades(pairAddress) {
   const { data: { swaps } } = await execRequest(
     pairQuery(pairAddress.toLowerCase()),
-    market_url
+    uniswap_url
   );
   return swaps;
 }
@@ -294,7 +289,7 @@ export async function getProposals() {
 export async function getETHPrice() {
   const { data: { exchanges } } = await execRequest(
     priceQuery(),
-    price_url
+    uniswap_url
   );
 return exchanges[0];
 }
