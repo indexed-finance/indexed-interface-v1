@@ -131,17 +131,18 @@ function Application(){
         if (typeof supply !== 'number' && typeof supply != 'string') {
           supply = formatBalance(supply, 18, 4);
         }
-        var targetDate = clearTimeDiscrepancies(new Date(timestamp.getTime() - 86400000));
+        // var targetDate = new Date(Date.now() - 86400000);
         let history = snapshots.map(h => ({ close: +(h.value.toFixed(4)), date: new Date(h.date * 1000) }));
         let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(4), date: new Date(l.date * 1000) }))
-        let past24h = snapshots.find((i) => clearTimeDiscrepancies(new Date(i.date * 1000)).getTime() == targetDate.getTime())
+        let past24h = snapshots.find((i) => (i.date * 1000) <= (Date.now() - 86400000))
+        // snapshots[snapshots.length - 2];
 
         if(!past24h) past24h = snapshots[snapshots.length-2]
 
         let delta24hr = snapshots.length === 1 ? 0 : ((Math.abs(snapshots[snapshots.length-1].value - past24h.value)/ past24h.value) * 100).toFixed(4);
         let volume = +(snapshots[snapshots.length-1].totalVolumeUSD).toFixed(2);
 
-        console.log(snapshots[snapshots.length-1].value , past24h.value)
+        // console.log(snapshots[snapshots.length-1].value , past24h.value)
 
         stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
         stats.dailyVolume += volume
