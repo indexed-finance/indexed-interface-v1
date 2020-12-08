@@ -18,6 +18,7 @@ import ExplainCredit from './explain-credit';
 
 export default function InitializerForm({ shouldUpdate, component, metadata, classes }) {
   const [ output, setOutput ] = useState(0)
+  const [ isInit, setInit ] = useState(false)
 
   const { useToken, initState, setHelper, updatePool, displayPoolTotalCredit, displayTotalCredit } = useInitializerState();
   let { dispatch, state, handleTransaction } = useContext(store);
@@ -105,15 +106,26 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
   }
 
   useEffect(() => {
-    const setPool = async() => {
+    const setPool = () => {
       let poolHelper = findHelper(state.helper)
 
       setHelper(poolHelper);
+      setInit(true);
     }
-
     if (!initState.pool && state.helper) setPool();
   }, [ state.web3.injected, state.helper  ])
 
+  useEffect(() => {
+    const verifyConnectivity = async() => {
+      console.log('FIRED', !initState.pool.userAddress && isInit)
+      if(state.web3.injected && !initState.pool.userAddress) {
+        console.log('UPDATED')
+        await initState.pool.setUserAddress(state.account)
+        await initState.pool.updateUserData()
+      }
+    }
+    verifyConnectivity()
+  }, [ state.helper, isInit ])
 
   useEffect(() => {
     if(initState.tokens.length > 0){
@@ -122,8 +134,6 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
   }, [ displayTotalCredit ])
 
   let { height } = style.getFormatting(state.native)
-
-  console.log(displayTotalCredit)
 
   return (
     <Fragment>

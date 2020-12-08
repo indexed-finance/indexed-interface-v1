@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 
 import { toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 import { styled } from '@material-ui/core/styles'
@@ -25,6 +25,7 @@ const RecieveInput = styled(Input)({
 const useStyles = getStyles(style)
 
 export default function Mint({ market, metadata }) {
+  const [ isInit, setInit ] = useState(false)
   const classes = useStyles()
   const { useToken, mintState, bindPoolAmountInput, setHelper, updatePool, setSlippage } = useMintState();
 
@@ -64,11 +65,21 @@ export default function Mint({ market, metadata }) {
   useEffect(() => {
     const setPool = async() => {
       let poolHelper = state.helper.initialized.find(i => i.pool.address === metadata.address);
+
       setHelper(poolHelper);
+      setInit(true)
     }
-    if (!mintState.pool) setPool();
+    if (!mintState.pool && !isInit) setPool();
   }, [ state.web3.injected, state.helper ])
 
+  useEffect(() => {
+    const verifyConnectivity = async() => {
+      if(isInit && state.web3.injected && !mintState.pool.userAddress) {
+        await mintState.pool.setUserAddress(state.account)
+      }
+    }
+    verifyConnectivity()
+  }, [ state.helper, isInit ])
 
   let { width, height } = style.getFormatting(state.native)
 

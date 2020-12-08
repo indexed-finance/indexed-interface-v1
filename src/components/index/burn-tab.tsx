@@ -1,11 +1,11 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 
 import { toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 import { styled } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 
 import { toContract } from '../../lib/util/contracts'
-
+import { ZERO_ADDRESS } from '../../assets/constants/addresses'
 import NumberFormat from '../../utils/format'
 import ButtonPrimary from '../buttons/primary'
 import Input from '../inputs/input'
@@ -25,7 +25,8 @@ const Trigger = styled(ButtonPrimary)({
 
 export default function BurnTab({ market, metadata }) {
   const { useToken, burnState, bindPoolAmountInput, setHelper, updatePool, displayBalance, setAmountToBalance } = useBurnState();
-
+  const [ isInit, setInit ] = useState(false)
+  
   let { state, handleTransaction } = useContext(store);
 
   const burn = async () => {
@@ -61,9 +62,19 @@ export default function BurnTab({ market, metadata }) {
     const setPool = async() => {
       let poolHelper = state.helper.initialized.find(i => i.pool.address === metadata.address);
       setHelper(poolHelper);
+      setInit(true);
     }
     if (!burnState.pool) setPool();
-  }, [ state.web3.injected ])
+  }, [ state.web3.injected, state.helper ])
+
+  useEffect(() => {
+    const verifyConnectivity = async() => {
+      if(isInit && state.web3.injected && !burnState.pool.userAddress) {
+        await burnState.pool.setUserAddress(state.account)
+      }
+    }
+    verifyConnectivity()
+  }, [ state.helper, isInit ])
 
   let { width, height } = style.getFormatting(state.native)
 
