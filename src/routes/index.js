@@ -107,7 +107,6 @@ export default function Index(){
   useEffect(() => {
     if(!state.load){
       dispatch({ type: 'LOAD', payload: true })
-      document.body.style.overflowY = "hidden"
     }
   }, [ ])
 
