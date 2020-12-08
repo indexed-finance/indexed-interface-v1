@@ -26,7 +26,7 @@ const Trigger = styled(ButtonPrimary)({
 export default function BurnTab({ market, metadata }) {
   const { useToken, burnState, bindPoolAmountInput, setHelper, updatePool, displayBalance, setAmountToBalance } = useBurnState();
   const [ isInit, setInit ] = useState(false)
-  
+
   let { state, handleTransaction } = useContext(store);
 
   const burn = async () => {
@@ -64,8 +64,8 @@ export default function BurnTab({ market, metadata }) {
       setHelper(poolHelper);
       setInit(true);
     }
-    if (!burnState.pool) setPool();
-  }, [ state.web3.injected, state.helper ])
+    if (!burnState.pool && !isInit) setPool();
+  }, [ state.helper ])
 
   useEffect(() => {
     const verifyConnectivity = async() => {
@@ -74,7 +74,7 @@ export default function BurnTab({ market, metadata }) {
       }
     }
     verifyConnectivity()
-  }, [ state.helper, isInit ])
+  }, [  state.web3.injected, isInit ])
 
   let { width, height } = style.getFormatting(state.native)
 

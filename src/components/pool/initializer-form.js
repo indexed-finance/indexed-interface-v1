@@ -113,19 +113,17 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
       setInit(true);
     }
     if (!initState.pool && state.helper) setPool();
-  }, [ state.web3.injected, state.helper  ])
+  }, [ state.helper  ])
 
   useEffect(() => {
     const verifyConnectivity = async() => {
-      console.log('FIRED', !initState.pool.userAddress && isInit)
       if(state.web3.injected && !initState.pool.userAddress) {
-        console.log('UPDATED')
         await initState.pool.setUserAddress(state.account)
         await initState.pool.updateUserData()
       }
     }
     verifyConnectivity()
-  }, [ state.helper, isInit ])
+  }, [ state.web3.injected, isInit ])
 
   useEffect(() => {
     if(initState.tokens.length > 0){

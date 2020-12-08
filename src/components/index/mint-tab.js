@@ -69,8 +69,8 @@ export default function Mint({ market, metadata }) {
       setHelper(poolHelper);
       setInit(true)
     }
-    if (!mintState.pool && !isInit) setPool();
-  }, [ state.web3.injected, state.helper ])
+    if (!mintState.pool) setPool();
+  }, [ state.helper ])
 
   useEffect(() => {
     const verifyConnectivity = async() => {
@@ -79,7 +79,7 @@ export default function Mint({ market, metadata }) {
       }
     }
     verifyConnectivity()
-  }, [ state.helper, isInit ])
+  }, [  state.web3.injected, isInit ])
 
   let { width, height } = style.getFormatting(state.native)
 
