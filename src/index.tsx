@@ -121,6 +121,7 @@ function Application(){
         const { category, name, symbol, address, tokens } = pool;
 
         let snapshots = await pool.getSnapshots(90);
+        let timestamp = new Date(Date.now())
         let categoryID = `0x${category.toString(16)}`;
 
         await addCategory(categoryID);
@@ -129,12 +130,12 @@ function Application(){
         if (typeof supply !== 'number' && typeof supply != 'string') {
           supply = formatBalance(supply, 18, 4);
         }
-        let timestamp = clearTimeDiscrepancies(new Date(Date.now() - 86400000));
+        let target = clearTimeDiscrepancies(new Date(timestamp.getTime() - 86400000));
         let history = snapshots.map(h => ({ close: +(h.value.toFixed(4)), date: new Date(h.date * 1000) }));
         let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(4), date: new Date(l.date * 1000) }))
-        let past24h = snapshots.find((i) => (i.date * 1000) == timestamp.getTime())
+        let past24h = snapshots.find((i) => (i.date * 1000) == target.getTime())
 
-        if(!past24h) past24h = snapshots[snapshots.length-2]
+        if(past24h == undefined) past24h = snapshots[snapshots.length-2]
 
         let delta24hr = snapshots.length === 1 ? 0 : ((Math.abs(snapshots[snapshots.length-1].value - past24h.value)/ past24h.value) * 100).toFixed(4);
         let volume = +(snapshots[snapshots.length-1].totalVolumeUSD).toFixed(2);
