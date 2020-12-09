@@ -93,7 +93,7 @@ const options = (padding, range, margin) => ({
 
 const getConfig = (canvas, metadata, color, absolute) => {
   const ctx = canvas.getContext("2d")
-  var gradient = ctx.createLinearGradient(0,337.5,0, 25)
+  var gradient = ctx.createLinearGradient(0, 337.5, 0, 25)
   let length = metadata.history.length
   let array = metadata.history
   let rgb = hexToRgb(color)
@@ -153,7 +153,7 @@ export default function Spline(props){
 
       setComponent(
         <Line
-          height={height} options={options(!absolute ? 100 : paddingTop, ranges, !absolute ? 0 : margin)}
+          height={parseFloat(height)} options={options(!absolute ? 100 : paddingTop, ranges, !absolute ? 0 : margin)}
           data={(e) => getConfig(e, metadata, color, absolute)} redraw
         />
       )
@@ -163,7 +163,7 @@ export default function Spline(props){
   return(
     <>
     {absolute && (
-      <div style={{'z-index': 1, float: 'left', width, paddingTop: !ready ? p : padding , position: 'absolute', overflow: 'hidden'}}>
+      <div style={{ float: 'left', width, paddingTop: !ready ? p : padding , position: 'absolute', overflow: 'hidden'}}>
         {!ready && (<Loader native={native} padding={p} height={h} theme={theme} />)}
         {component}
       </div>

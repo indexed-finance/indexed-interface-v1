@@ -84,7 +84,7 @@ export default function Markets(){
   return (
     <Fragment>
       <Banner native={native} />
-      <Grid container direction='column' alignItems='space-between' justify='center'>
+      <Grid container direction='column' justify='center'>
         <Grid item xs={12} md={12} lg={12} xl={12}>
           <div style={{ height: pre2 }}>
           <Canvas native={native} style={{ margin: canvasMargin }}>

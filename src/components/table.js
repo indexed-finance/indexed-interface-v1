@@ -91,8 +91,8 @@ export default function StickyHeadTable(props) {
   const theme = useTheme()
 
   return (
-    <Fragment className={classes.root}>
-    <TableContainer style={{ overflowX, height }} >
+    <div className={classes.root}>
+      <TableContainer style={{ overflowX, height }} >
         <Table stickyHeader className={classes.table}>
           <TableHead>
             <Row>
@@ -111,14 +111,14 @@ export default function StickyHeadTable(props) {
             {request && Object.values(indexes).map((row, index) => {
 
               return (
-                <Row selected={market === row.symbol} onClick={() => triggerMarket(row.symbol)} hover tabIndex={-1} key={row.code}>
-                  {columns.map((column) => {
+                <Row selected={market === row.symbol} onClick={() => triggerMarket(row.symbol)} hover tabIndex={-1} key={index}>
+                  {columns.map((column, i) => {
                     const value = row[column.id];
                     if(!row.active && (column.id !== 'name' && column.id !== 'symbol')) {
-                      return <TableCell key={column.id + row.symbol} align={column.align} />
+                      return <TableCell key={column.id + row.symbol + i} align={column.align} />
                     } else if(column.id === 'delta') {
                       return (
-                        <TableCell key={column.id + row.symbol} align={column.align}>
+                        <TableCell key={column.id + row.symbol + i} align={column.align}>
                           <span style={{ color: value > 0 ? '#00e79a': '#ff005a'}}>
                             ({value > 0 ? '+' : ''}{value}%)
                           </span>
@@ -126,7 +126,7 @@ export default function StickyHeadTable(props) {
                        )
                     } else {
                       return (
-                        <TableCell key={column.id + row.symbol} align={column.align}>
+                        <TableCell key={column.id + row.symbol + i} align={column.align}>
                           {(column.format && typeof value === 'number') ? column.format(value) : value}
                         </TableCell>
                       )
@@ -141,6 +141,6 @@ export default function StickyHeadTable(props) {
           </TableBody>
         </Table>
       </TableContainer>
-    </Fragment>
+    </div>
   );
 }

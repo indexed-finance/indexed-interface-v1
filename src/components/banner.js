@@ -119,9 +119,9 @@ export default function Banner() {
           </motion.li>
         )}
         <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
-          {messages.init.length == 1 && messages.init.map((value) => {
+          {messages.init.length == 1 && messages.init.map((value, i) => {
             return(
-              <Link to={`/pool/${value.address}`} className={classes.href}>
+              <Link key={i} to={`/pool/${value.address}`} className={classes.href}>
                 <motion.span>NEW FUND: <motion.span style={{ color: 'orange'}}>{value.symbol}</motion.span></motion.span>
              </Link>
             )
@@ -130,7 +130,7 @@ export default function Banner() {
             <Fragment>
               <span style={{ color: 'orange'}}>NEW FUNDS:</span>
                 {messages.init.map((value, i) => (
-                  <Fragment>&nbsp;
+                  <Fragment key={i}>&nbsp;
                     <Link to={`/pool/${value.address}`} className={classes.href} >
                       <motion.span>{value.symbol}</motion.span>
                     </Link>
@@ -143,12 +143,12 @@ export default function Banner() {
         <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
           {messages.indexes.length >= 1 && (
             <Fragment>
-              {messages.indexes.map((value) => {
+              {messages.indexes.map((value, i) => {
                 let color = value.delta > 0 ? '#00e79a': '#ff005a'
                 let symbol = value.delta > 0 ? '+' : ''
 
                 return(
-                  <Fragment>
+                  <Fragment key={i}>
                     <Link to={`/index/${value.symbol}`} className={classes.href}>
                       <motion.span>{value.symbol} ${value.price} <motion.span style={{ color }}>({symbol}{value.delta}%)</motion.span></motion.span>
                     </Link>

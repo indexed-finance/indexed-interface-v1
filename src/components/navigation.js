@@ -95,8 +95,7 @@ export default function Navigation({ mode }) {
   }
 
   function Blockie({ address }) {
-    let classes = useStyles()
-
+    
     useEffect(() => {
       let element = document.getElementById('profile-blockie')
       let parsed =  parseInt(address.slice(2, 10), 16)
@@ -128,8 +127,6 @@ export default function Navigation({ mode }) {
   }
 
   function LoggedOut() {
-    const classes = useStyles()
-
     return(
       <Fragment>
         <Link className={classes.href} onClick={connectWeb3}>
@@ -157,8 +154,6 @@ export default function Navigation({ mode }) {
   }
 
   function LoggedIn() {
-    const classes = useStyles()
-
     return(
       <Fragment>
         {state.native && (

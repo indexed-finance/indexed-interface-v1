@@ -62,7 +62,7 @@ export const initialState = {
   flag: {
     show: false,
     message: null,
-    opcode: ''
+    opcode: 'info'
   },
   account: null,
   network: null,
