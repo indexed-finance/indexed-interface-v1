@@ -143,7 +143,6 @@ function InitializedPoolPage({ address, metadata }){
       let { assets } = metadata
 
       if(web3.injected && helper){
-        let pool = findHelper(helper)
         let balances =  await getBalances(
           web3[process.env.REACT_APP_ETH_NETWORK], account, assets, {}
         )
@@ -156,7 +155,7 @@ function InitializedPoolPage({ address, metadata }){
       }
      }
     retrieveBalances()
-  }, [ state.web3.injected ])
+  }, [ state.helper ])
 
   let {
     marginX, margin, width, padding, chartHeight, fontSize, percent, balanceHeight, paddingRight

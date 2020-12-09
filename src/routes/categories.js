@@ -1,22 +1,16 @@
 import React, { Fragment, useState, useEffect, useContext } from "react"
 
-import { styled, makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
-import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
 
 import Container from '../components/container'
-import Select from '../components/inputs/select'
-import Input from '../components/inputs/input'
 import List from '../components/list'
 
 import { tokenMetadata } from '../assets/constants/parameters'
 import style from '../assets/css/routes/categories'
 import getStyles from '../assets/css'
 import { store } from '../state'
-
-const selections = [[{ value: 0, label: null }]]
 
 const useStyles = getStyles(style)
 
@@ -64,37 +58,6 @@ const filtered = (raw, targets) =>
     obj[key] = raw[key];
     return obj;
   }, {})
-
-const Liquidity = styled(Button)({
-  border: '2px solid #009966',
-  color: '#999999',
-  borderRadius: 5,
-  padding: '.5em 2.5em',
-  '&:hover': {
-    color: '#009966',
-    fontWeight: 'bold'
-  }
-})
-
-const Canvas = styled(Paper)({
-  border: '3px solid #666666',
-  borderRadius: 10,
-  margin: '1.5em 3em',
-  padding: '1.5em',
-})
-
-const Trigger = styled(Button)({
-  border: '2px solid #999999',
-  color: '#999999',
-  borderRadius: 5,
-  padding: '.2em 2em',
-  marginTop: '7.5px',
-  marginLeft: 'auto',
-  '&:hover': {
-    fontWeight: 'bold',
-    color: '#333333'
-  }
-})
 
 function getCategoryImages(category, state) {
   let isSelected = {};

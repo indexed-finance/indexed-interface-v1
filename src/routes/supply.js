@@ -327,10 +327,10 @@ export default function Supply() {
               {metadata.isReady && (
                 <Fragment>
                   <Grid item>
-                    <img src={tokenMetadata[i[ticker][0]].image} style={{ marginRight, width, marginBottom }} />
-                    <img src={tokenMetadata[i[ticker][1]].image} style={{marginBottom: 25, width: 30 }} />
-                    <img src={tokenMetadata[i[ticker][2]].image} style={{ marginLeft: -25, width: 30 }} />
-                    <img src={tokenMetadata[i[ticker][3]].image} style={{ marginBottom: 10, width: 30 }} />
+                    <img alt='asset-1' src={tokenMetadata[i[ticker][0]].image} style={{ marginRight, width, marginBottom }} />
+                    <img alt='asset-2' src={tokenMetadata[i[ticker][1]].image} style={{marginBottom: 25, width: 30 }} />
+                    <img alt='asset-3' src={tokenMetadata[i[ticker][2]].image} style={{ marginLeft: -25, width: 30 }} />
+                    <img alt='asset-4' src={tokenMetadata[i[ticker][3]].image} style={{ marginBottom: 10, width: 30 }} />
                   </Grid>
                   <Grid item>
                     <Input label="AMOUNT" variant='outlined'

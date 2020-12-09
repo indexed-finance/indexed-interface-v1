@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-import { Tooltip } from "@material-ui/core";
 import copyToClipboard from "../lib/copyToClipboard";
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 
@@ -45,9 +44,9 @@ export default function Copyable({ float, component, text, children, ...props })
 
   return (
     <CopyButton {...newProps}>
-      {hover && float == 'left' && (<CopyIcon />)}
+      {hover && float === 'left' && (<CopyIcon />)}
         {children}
-      {hover && float == 'right' && (<CopyIcon />)}
+      {hover && float === 'right' && (<CopyIcon />)}
     </CopyButton>
   )
 }

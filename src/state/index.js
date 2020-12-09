@@ -1,6 +1,6 @@
 import React, { createContext, useReducer } from 'react';
 
-import { initialState, TX_CONFIRMED, TX_PENDING, TX_REJECTED, TX_REVERTED } from '../assets/constants/parameters'
+import { initialState, TX_CONFIRMED, TX_PENDING, TX_REVERTED } from '../assets/constants/parameters'
 import { isNative } from '../assets/constants/functions'
 
 const store = createContext(initialState)
@@ -61,7 +61,7 @@ const StateProvider = ( { children } ) => {
       })
       .on('confirmation', async (conf, receipt) => {
         if(conf === 0){
-          if(receipt.status == 1) {
+          if(receipt.status === 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash));
             resolve();
           } else {

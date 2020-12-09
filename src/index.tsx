@@ -235,7 +235,7 @@ function Application(){
         payload: DISCLAIMER
       })
     }
-  }, [ state.request, dispatch ])
+  }, [ state.request ])
 
     return(
     <ThemeProvider theme={theme}>

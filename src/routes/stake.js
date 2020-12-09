@@ -42,7 +42,7 @@ export default function Stake() {
       let data = await getStakingPools()
 
       for(let key in data){
-        let { id, indexPool, isWethPair, startsAt } = data[key]
+        let { indexPool, isWethPair, startsAt } = data[key]
         let index = toContract(web3[process.env.REACT_APP_ETH_NETWORK], IERC20.abi, indexPool)
         let indexSymbol = await index.methods.symbol().call()
         let indexName = await index.methods.name().call()
@@ -81,7 +81,7 @@ export default function Stake() {
           </div>
         </Container>
       </Grid>
-      {pools.length > 0 && pools.map(p => {
+      {pools.length > 0 && pools.map((p, i) => {
         let { symbol, name, rewardRate, isReady, totalSupply } = p
         let rate = (parseFloat(rewardRate)/parseFloat(totalSupply))
         let supply = formatBalance(new BigNumber(totalSupply), 18, 4)
@@ -104,10 +104,10 @@ export default function Stake() {
               <Card color={color}>
                 <div className={classes.pool}>
                   <div className={classes.image}>
-                    <img src={tokenMetadata[i[symbol][0]].image} style={{ width: mainWidth, marginRight }} />
-                    <img src={tokenMetadata[i[symbol][1]].image} style={{marginBottom: 25, width }} />
-                    <img src={tokenMetadata[i[symbol][2]].image} style={{ marginLeft: -25, width }} />
-                    <img src={tokenMetadata[i[symbol][3]].image} style={{ marginBottom: 10, width }} />
+                    <img alt={`asset-${i}-1`} src={tokenMetadata[i[symbol][0]].image} style={{ width: mainWidth, marginRight }} />
+                    <img alt={`asset-${i}-2`} src={tokenMetadata[i[symbol][1]].image} style={{marginBottom: 25, width }} />
+                    <img alt={`asset-${i}-3`} src={tokenMetadata[i[symbol][2]].image} style={{ marginLeft: -25, width }} />
+                    <img alt={`asset-${i}-4`} src={tokenMetadata[i[symbol][3]].image} style={{ marginBottom: 10, width }} />
                   </div>
                   <div className={classes.information}>
                     {!state.native && (
@@ -139,7 +139,7 @@ export default function Stake() {
           </Grid>
         )
       })}
-      {pools.length == 0 && (
+      {pools.length === 0 && (
         <Grid item xs={10} md={6} style={{ width: '100%' }}>
           <ParentSize>
             {({ width, height }) => (

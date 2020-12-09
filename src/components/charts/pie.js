@@ -1,14 +1,12 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { Pie, defaults } from 'react-chartjs-2'
 import { useTheme } from '@material-ui/core/styles'
 
-import { store } from '../../state'
 import ContentLoader from "react-content-loader"
 import style from '../../assets/css/components/pie'
 import { formatBalance } from '@indexed-finance/indexed.js'
-import { initialPoolState } from '../../assets/constants/parameters'
 
 defaults.global.defaultFontFamily = 'San Francisco Bold';
 
@@ -56,8 +54,6 @@ const getPieColors = (size) => {
 }
 
 export default function PieChart({ metadata, height, ready, native }){
-  const [ component, setComponent ] = useState({ element: <span/>, data: initialPoolState })
-  const [ config, setConfig ] = useState(null)
   const theme = useTheme()
 
   let colors = [ ...getPieColors(metadata.assets.length), `${theme.palette.primary.main}`]
@@ -86,10 +82,9 @@ export default function PieChart({ metadata, height, ready, native }){
       datalabels: {
         color: function(ctx) {
           var index = ctx.dataIndex
-          var label = ctx.chart.data.labels[index]
 
-          if(index == ctx.chart.data.labels.length - 1
-            || index >= 8 || ctx.chart.data.labels.length == 2) {
+          if(index === ctx.chart.data.labels.length - 1
+            || index >= 8 || ctx.chart.data.labels.length === 2) {
             return theme.palette.secondary.main
           } else {
             return 'white'
@@ -115,10 +110,10 @@ export default function PieChart({ metadata, height, ready, native }){
   let { padding, border } = style.getFormatting(native)
 
   return <>
-     {metadata.address == '0x0000000000000000000000000000000000000000' && (
+     {metadata.address === '0x0000000000000000000000000000000000000000' && (
        <Loader padding={padding} theme={theme} height={height} />
      )}
-     {metadata.address != '0x0000000000000000000000000000000000000000' && (
+     {metadata.address !== '0x0000000000000000000000000000000000000000' && (
        <Pie height={height} width={height} options={options(padding)} data={chartConfig(metadata, border)} />
      )}
    </>

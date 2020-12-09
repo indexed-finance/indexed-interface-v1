@@ -14,7 +14,6 @@ import Brightness4Icon from '@material-ui/icons/Brightness4';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import RemoveCircleOutlinedIcon from '@material-ui/icons/RemoveCircleOutlined';
 
-import { useLocation } from 'react-router-dom'
 import jazzicon from '@metamask/jazzicon'
 import { getAllHelpers } from '@indexed-finance/indexed.js';
 
@@ -35,7 +34,6 @@ export default function Navigation({ mode }) {
   const [ login, setLogin ] = useState(false)
   const [ anchorEl, setAnchorEl ] = useState(null)
   const [didCheckCache, setDidCheckCache] = useState(false);
-  const location = useLocation()
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
@@ -188,7 +186,6 @@ export default function Navigation({ mode }) {
 
   return (
     <div>
-    {(
       <div className={classes.root} style={{ marginBottom }}>
       <AppBar className={classes.appBar} position="fixed" style={{ ...padding }}>
         <Toolbar>
@@ -260,8 +257,6 @@ export default function Navigation({ mode }) {
         </Toolbar>
       </AppBar>
     </div>
-   )}
-  {location.pathname === '/' && (<Fragment />)}
   </div>
  )
 }

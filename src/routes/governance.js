@@ -1,17 +1,12 @@
 import React, { Fragment, useState, useEffect, useContext } from "react"
 
-import { styled, makeStyles, withStyles } from '@material-ui/core/styles'
+import { styled } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
-import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
-import Paper from '@material-ui/core/Paper'
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
-import Checkbox from '@material-ui/core/Checkbox'
-import Avatar from '@material-ui/core/Avatar'
 import Lozenge from '@atlaskit/lozenge'
 import { useHistory, Link } from "react-router-dom";
 import { BigNumber, formatBalance } from '@indexed-finance/indexed.js'
@@ -22,17 +17,14 @@ import ButtonSecondary from '../components/buttons/secondary'
 import Container from '../components/container'
 import Input from '../components/inputs/input'
 import Radio from '../components/inputs/radio'
-import Select from '../components/inputs/select'
 import Canvas from '../components/canvas'
 import Progress from '../components/progress'
 import Stacked from '../components/charts/stacked'
 
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../assets/constants/parameters'
 import { NDX, ZERO_ADDRESS } from '../assets/constants/addresses'
-import { balanceOf } from '../lib/erc20'
 import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
-import { getProposals } from '../api/gql'
 
 import style from '../assets/css/routes/governance'
 import getStyles from '../assets/css'
@@ -45,15 +37,6 @@ const proposalState = {
 const INACTIVE = () => <span id='inactive'>INACTIVE</span>
 const DELEGATED = () => <span id='delegated'>DELEGATED</span>
 const ACTIVE = () => <span id='registered'>ACTIVE</span>
-
-const selections = [[{ value: 0, label: null }]];
-
-const getPhase = phase => {
-  if(phase == 'passed') return 'positive'
-  else if(phase == 'rejected') return 'removed'
-  else if(phase == 'active') return 'new'
-  else if(phase == 'executed') return 'inprogress'
-}
 
 const AddressInput = styled(Input)({
   marginTop: 0,
@@ -80,10 +63,6 @@ const SecondaryAction = styled(ListItemSecondaryAction)({
   }
 })
 
-const ListAvatar = styled(ListItemAvatar)({
-  marginRight: 25
-})
-
 const dummy = { snapshots: [], active: 0, inactive: 0, delegated: 0, voters: 0 }
 
 const useStyles = getStyles(style)
@@ -108,7 +87,7 @@ export default function Governance(){
       let amount = (parseFloat(balance)/Math.pow(10, 18))
       .toLocaleString({ minimumFractionDigits: 2 })
 
-      if(isDelegated != ZERO_ADDRESS) setPhase(<Delegate show={true}/>)
+      if(isDelegated !== ZERO_ADDRESS) setPhase(<Delegate show={true}/>)
       else setPhase(<Activate trigger={renderDelegation}/>)
 
       getStatus(isDelegated)
@@ -159,9 +138,9 @@ export default function Governance(){
   }
 
   const getStatus = (delegate) => {
-    if(delegate == state.account) {
+    if(delegate === state.account) {
       setStatus(ACTIVE)
-    } else if(delegate != ZERO_ADDRESS){
+    } else if(delegate !== ZERO_ADDRESS){
       setStatus(DELEGATED)
     } else {
       setStatus(INACTIVE)
@@ -184,7 +163,7 @@ export default function Governance(){
     }
 
     const submit = async() => {
-      if(selection == 0) {
+      if(selection === 0) {
         await delegateAddress(state.account)
       }
       await trigger()
@@ -216,7 +195,7 @@ export default function Governance(){
     }
 
     const submit = async() => {
-      if(input != null) {
+      if(input !== null) {
         await delegateAddress(input)
       }
     }
