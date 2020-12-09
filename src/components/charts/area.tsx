@@ -116,7 +116,7 @@ export default withTooltip<AreaProps, TooltipData>(
             y={0}
             width={width}
             height={height}
-            fill="url(#area-background-gradient)"
+            fill="rgba(0,0,0,0)"
             rx={14}
           />
           <LinearGradient id="area-gradient" from={accentColor} to={accentColor} toOpacity={0.1} />
