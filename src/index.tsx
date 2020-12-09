@@ -29,6 +29,7 @@ const Stake = lazy(() => import('./routes/stake'))
 const Supply = lazy(() => import('./routes/supply'))
 // const Root = lazy(() => import('./routes/root'))
 const Error404 = lazy(() => import('./routes/404'))
+const Category = lazy(() => import('./routes/category'))
 
 const clearTimeDiscrepancies = date => {
   date.setMinutes(0);
@@ -258,6 +259,9 @@ function Application(){
                 </Route>
                 <Route path='/categories'>
                   <Categories />
+                </Route>
+                <Route path='/category/:id'>
+                  <Category />
                 </Route>
                 <Route exact path='/stake'>
                   <Stake />
