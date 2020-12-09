@@ -22,6 +22,13 @@ const setStyle = (theme) => ({
   menu: {
     position: 'absolute'
   },
+  logout: {
+     position: 'absolute',
+     padding: 10,
+     top: 25,
+     marginLeft: 10,
+     fontSize: 25
+  },
   nav: {
      display: 'inline-flex',
      marginLeft: 'auto'
@@ -203,8 +210,7 @@ const mapping = {
 }
 
 const getFormatting = (native) => {
-  let { innerWidth, innerHeight } = window
-  let dimension = screenClass(native, innerWidth)
+  let dimension = screenClass(native, window.innerWidth)
 
   return {
     ...mapping[dimension]

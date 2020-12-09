@@ -100,7 +100,7 @@ const setStyle = (theme) => ({
   },
   author: {
     color: '#645eff',
-    marginTop: 5
+    marginTop: -25
   },
   vote: {
     width: 150,
@@ -109,9 +109,6 @@ const setStyle = (theme) => ({
   },
   column: {
     zIndex: 10
-  },
-  author: {
-    marginTop: -25
   },
   lozenge: {
     float: 'left'
@@ -233,8 +230,7 @@ const mapping = {
 }
 
 const getFormatting = ({ native }) => {
-  let { innerWidth, innerHeight } = window
-  let dimension = screenClass(native, innerWidth)
+  let dimension = screenClass(native, window.innerWidth)
 
   return {
     ...mapping[dimension]

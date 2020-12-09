@@ -110,17 +110,15 @@ export default function Navigation({ mode }) {
       blockie.style.marginTop = '5px'
 
       element.appendChild(blockie)
-    }, [])
+    }, [ address ])
 
     return(
       <Fragment>
-        <a target='_blank' href={`https://etherscan.io/address/${address}`}>
+        <a target='_blank' rel="noopener noreferrer" href={`https://etherscan.io/address/${address}`}>
           <div id='profile-blockie' />
         </a>
-        <IconButton onClick={disconnectWeb3} style={{
-           position: 'absolute', padding: 10, top: 25, marginLeft: 10
-         }}>
-          <RemoveCircleOutlinedIcon color='secondary' style={{ fontSize: 25 }} />
+        <IconButton onClick={disconnectWeb3} className={classes.logout}>
+          <RemoveCircleOutlinedIcon color='secondary' />
         </IconButton>
      </Fragment>
     )
@@ -197,8 +195,8 @@ export default function Navigation({ mode }) {
           <Grid container direction='row' alignItems='center' justify='space-between'>
             <Grid item style={{ marginTop: -3.75 }}>
               <Link to='/'>
-                {mode && (<img className={classes.logo} style={{ marginTop: logoMargin, width, paddingTop }} src={ndxDark} />)}
-                {!mode && (<img className={classes.logo} style={{ marginTop: logoMargin, width, paddingTop }} src={ndxLight} />)}
+                {mode && (<img alt='logo' className={classes.logo} style={{ marginTop: logoMargin, width, paddingTop }} src={ndxDark} />)}
+                {!mode && (<img alt='logo' className={classes.logo} style={{ marginTop: logoMargin, width, paddingTop }} src={ndxLight} />)}
                 <Typography variant={!state.native ? 'h4' : 'h5' } className={classes.title} style={{ marginLeft: titleMargin }}> {display} </Typography>
               </Link>
             </Grid>
@@ -263,7 +261,7 @@ export default function Navigation({ mode }) {
       </AppBar>
     </div>
    )}
-  {location.pathname == '/' && (<Fragment />)}
+  {location.pathname === '/' && (<Fragment />)}
   </div>
  )
 }

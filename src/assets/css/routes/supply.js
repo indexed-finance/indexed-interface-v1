@@ -195,8 +195,7 @@ const mapping = {
 
 
 const getFormatting = ({ ticker, native }) => {
-  let { innerWidth, innerHeight } = window
-  let dimension = screenClass(native, innerWidth)
+  let dimension = screenClass(native, window.innerWidth)
 
   return {
     width: ticker.includes('UNIV2') ? 50 : 30,

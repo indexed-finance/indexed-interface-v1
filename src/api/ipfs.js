@@ -10,10 +10,10 @@ const gatewayUrl = 'https://gateway.temporal.cloud/ipfs/';
 function sha3(value) {
   return soliditySha3(value);
 }
-  
-function sha3Bytes(value) {
-  return soliditySha3({ t: 'bytes', v: value });
-}
+
+// function sha3Bytes(value) {
+  // return soliditySha3({ t: 'bytes', v: value });
+// }
 
 // function jsonSha3(obj) {
 //   const json = detJSON(obj);

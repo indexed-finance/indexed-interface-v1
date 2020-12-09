@@ -111,7 +111,6 @@ const categoryMetadataQuery = (id) => `
 `;
 
 export async function getCategoryMetadata(id) {
-  console.log(`C ID ${id} H 0x${id.toString(16)}`)
   const { data: { category } } = await execRequest(categoryMetadataQuery(id));
   return getIPFSFile(category.metadataHash);
 }
@@ -139,14 +138,6 @@ const priceQuery = () => `
     }
   }
 `
-
-const tokenQuery = (category) => `
-{
-  Tokens(where: { id: "${category}"}) {
-  id
-  }
-}
-`;
 
 const poolQuery = (address) => `
 {

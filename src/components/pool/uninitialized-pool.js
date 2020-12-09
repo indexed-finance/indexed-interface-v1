@@ -9,15 +9,12 @@ import Container from '../container'
 import Spline from '../charts/spline'
 import InitializerForm from './initializer-form';
 import Weights from '../weights';
-import { toWei } from '@indexed-finance/indexed.js'
 
 import { InitializerStateProvider, useInitializerState } from "../../state/initializer";
 import { store } from '../../state'
 
 import style from '../../assets/css/routes/pool'
 import getStyles from '../../assets/css'
-import { toContract } from '../../lib/util/contracts'
-import copyToClipboard from '../../lib/copyToClipboard';
 import Copyable from '../copyable';
 
 const useStyles = getStyles(style);
@@ -44,7 +41,7 @@ function Target({ label, asset, i, height, r }){
 function UninitializedPoolPage({ address, metadata }) {
   const { initState, setHelper, displayPoolTotalCredit, displayUserCredit } = useInitializerState();
   const [ shouldUpdate, setUpdate ] = useState(false);
-  let { state, dispatch } = useContext(store);
+  let { state } = useContext(store);
   const classes = useStyles()
 
   let { native, request } = state

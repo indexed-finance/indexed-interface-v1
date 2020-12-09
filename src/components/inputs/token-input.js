@@ -8,7 +8,7 @@ import Avatar from '@material-ui/core/Avatar'
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import { BigNumber, toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
+import { toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 
 import ButtonTransaction from '../buttons/transaction'
 import Input from './input';

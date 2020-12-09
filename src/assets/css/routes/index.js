@@ -103,7 +103,6 @@ const mapping = {
       borderTop: 'none',
       borderRight: 'none',
       borderLeft: 'none',
-      borderTop: 'none'
     }
   },
   [DESKTOP_NORMAL]: {
@@ -123,7 +122,6 @@ const mapping = {
       borderTop: 'none',
       borderRight: 'none',
       borderLeft: 'none',
-      borderTop: 'none'
     }
   },
   [DESKTOP_LARGE]: {
@@ -143,7 +141,6 @@ const mapping = {
       borderTop: 'none',
       borderRight: 'none',
       borderLeft: 'none',
-      borderTop: 'none'
     }
   },
   [DESKTOP_WIDE]: {
@@ -217,8 +214,7 @@ const mapping = {
 }
 
 const getFormatting = () => {
-  let { innerWidth, innerHeight } = window
-  let dimension = screenClass(false, innerWidth)
+  let dimension = screenClass(false, window.innerWidth)
 
   return {
     ...mapping[dimension]

@@ -55,7 +55,7 @@ function Blockie({ address, id, width, border }) {
     blockie.style.border = `${border} solid #666666`
 
     element.appendChild(blockie)
-  }, [])
+  }, [ address ])
 
   return(
     <div className={classes.profile}>
@@ -110,8 +110,8 @@ export default function Proposal(){
       .on('transactionHash', (transactionHash) =>
         dispatch(TX_PENDING(transactionHash))
       ).on('confirmation', (conf, receipt) => {
-        if(conf == 0){
-          if(receipt.status == 1) {
+        if(conf === 0){
+          if(receipt.status === 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash))
             setTransaction(true)
           } else {

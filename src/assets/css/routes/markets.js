@@ -141,8 +141,7 @@ const mapping = {
 }
 
 const getFormatting = ({ request, native, active }) => {
-  let { innerWidth, innerHeight } = window
-  let dimension = screenClass(native, innerWidth)
+  let dimension = screenClass(native, window.innerWidth)
 
   return {
     pre: !request ? 'auto' : '50%',

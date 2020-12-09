@@ -1,10 +1,9 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { Line } from 'react-chartjs-2'
 import { useTheme } from '@material-ui/core/styles'
 import style from '../../assets/css/components/spline'
 import { max, min } from 'd3-array';
-import ContentLoader from "react-content-loader"
 
 import Loader from '../loaders/spline'
 
@@ -73,7 +72,6 @@ const options = (padding, range, margin) => ({
         }
       }],
       xAxes: [{
-        type: 'linear',
         display: true,
         type: 'time',
         time: {

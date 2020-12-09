@@ -60,10 +60,8 @@ function initializerReducer(state: InitializerState = initialState, actions: Ini
 
   const toggleToken = (action: ToggleToken) => {
     const { index } = action;
-    console.log(`TOGGLE TOKEN:: ${index}`);
     let wasSelected = newState.selected[index];
     newState.selected[index] = !wasSelected;
-    console.log(`NUM SELECTED:: ${newState.selected.filter(x => x).length}`);
     newState.isSingle = newState.selected.filter(x => x).length === 1;
     if (wasSelected) {
       newState.amounts[index] = BN_ZERO;

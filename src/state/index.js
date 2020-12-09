@@ -37,8 +37,6 @@ const StateProvider = ( { children } ) => {
           for (let pool of allPools) {
             if (!pool.userAddress) {
               pool.setUserAddress(account);
-            } else {
-              console.log(`pool already had account ${pool.userAddress}`)
             }
           }
         }

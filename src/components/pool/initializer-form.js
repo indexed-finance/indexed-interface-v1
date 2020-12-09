@@ -11,7 +11,6 @@ import PoolInitializer from '../../assets/constants/abi/PoolInitializer.json'
 
 import { fromWei, toHex } from '@indexed-finance/indexed.js'
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../../assets/constants/parameters'
-import { ZERO_ADDRESS } from '../../assets/constants/addresses'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
 
 import ExplainCredit from './explain-credit';
@@ -44,8 +43,8 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
       .on('transactionHash', (transactionHash) =>
         dispatch(TX_PENDING(transactionHash))
       ).on('confirmation', async(conf, receipt) => {
-        if(conf == 0){
-          if(receipt.status == 1) {
+        if(conf === 0){
+          if(receipt.status === 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash))
           } else {
             dispatch(TX_REVERTED(receipt.transactionHash))

@@ -14,11 +14,6 @@ import { getERC20 } from '../../lib/erc20';
 import WhitelistSelect from '../inputs/whitelist-select';
 import { InputAdornment } from '@material-ui/core';
 
-const ApproveButton = styled(ButtonTransaction)({
-  fontSize: 10,
-  paddingRight: 5
-})
-
 const useStyles = getStyles(style)
 
 export default function TradeInput(props) {

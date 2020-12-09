@@ -44,8 +44,7 @@ const mapping = {
 }
 
 const getFormatting = (native) => {
-  let { innerWidth, innerHeight } = window
-  let dimension = screenClass(native, innerWidth)
+  let dimension = screenClass(native, window.innerWidth)
 
   return {
     ...mapping[dimension]

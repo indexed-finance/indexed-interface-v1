@@ -139,7 +139,7 @@ export default function Index(){
           {state.request && (
             <ul style={{ padding: 0, listStyle: 'none', display: 'inline-block' }}>
               <li style={{ float: 'left', marginRight }}>
-                <h3 className={classes.title}> {metadata.name} [{metadata.symbol}]</h3>
+                <h3 className={classes.title}> {metadata.name} {showVolume && (<span>[{metadata.symbol}]</span>)}</h3>
               </li>
               <li style={{ float: 'left', marginRight }}>
                 <h4 className={classes.price}> ${metadata.price}

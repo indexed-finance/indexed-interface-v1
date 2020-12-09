@@ -238,8 +238,7 @@ const mapping = {
 }
 
 const getFormatting = ({ native, active, request }) => {
-  let { innerWidth, innerHeight } = window
-  let dimension = screenClass(native, innerWidth)
+  let dimension = screenClass(native, window.innerWidth)
   let { marginX, chartHeight } = mapping[dimension]
 
   if(!active) {

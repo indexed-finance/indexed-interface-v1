@@ -86,8 +86,7 @@ const mapping = {
 }
 
 const getFormatting = () => {
-  let { innerWidth, innerHeight } = window
-  let dimension = screenClass(false, innerWidth)
+  let dimension = screenClass(false, window.innerWidth)
 
   return {
     ...mapping[dimension]

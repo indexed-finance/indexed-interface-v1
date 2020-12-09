@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useContext } from 'react'
+import React, { useState } from 'react'
 
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { Pie, defaults } from 'react-chartjs-2'

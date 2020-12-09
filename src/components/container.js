@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useContext } from "react";
+import React from "react";
 
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
@@ -22,7 +22,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Container({ padding, children, margin, title }){
-  const theme = useTheme()
   let marginLeft = padding == '1em 0em' ? 25 : 0
   const classes = useStyles()
 

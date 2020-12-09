@@ -14,7 +14,7 @@ export default function Pool(){
 
   useEffect(() => {
     if(!state.load) dispatch({ type: 'LOAD', payload: true });
-  }, [])
+  })
 
   useEffect(() => {
     const retrievePool = async() => {

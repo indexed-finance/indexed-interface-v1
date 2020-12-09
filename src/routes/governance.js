@@ -108,8 +108,6 @@ export default function Governance(){
       let amount = (parseFloat(balance)/Math.pow(10, 18))
       .toLocaleString({ minimumFractionDigits: 2 })
 
-      console.log(isDelegated)
-
       if(isDelegated != ZERO_ADDRESS) setPhase(<Delegate show={true}/>)
       else setPhase(<Activate trigger={renderDelegation}/>)
 
@@ -133,8 +131,8 @@ export default function Governance(){
       .on('transactionHash', (transactionHash) =>
         dispatch(TX_PENDING(transactionHash))
       ).on('confirmation', async(conf, receipt) => {
-        if(conf == 0){
-          if(receipt.status == 1) {
+        if(conf === 0){
+          if(receipt.status === 1) {
             let isDelegated = await contract.methods.delegates(state.account).call()
             dispatch(TX_CONFIRMED(receipt.transactionHash))
             getStatus(isDelegated)
