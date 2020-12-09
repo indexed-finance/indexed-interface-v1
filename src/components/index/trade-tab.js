@@ -57,7 +57,7 @@ export default function TradeTab({ metadata }) {
       const helper = new UniswapHelper(state.web3.injected, poolToken, whitelistTokens, state.account);
       setHelper(helper);
     }
-    setPool();
+    if(!tradeState.pool) setPool();
   }, [ state.web3.injected, metadata ]);
 
   useEffect(() => {
