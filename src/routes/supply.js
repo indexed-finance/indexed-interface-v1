@@ -67,7 +67,7 @@ export default function Supply() {
         dispatch(TX_PENDING(transactionHash))
       ).on('confirmation', (conf, receipt) => {
         if(conf === 0){
-          if(receipt.status === 1) {
+          if(parseInt(receipt.status) == 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash))
             setMetadata({ ...metadata, isReady: true })
           } else {
@@ -99,7 +99,7 @@ export default function Supply() {
         dispatch(TX_PENDING(transactionHash))
       ).on('confirmation', (conf, receipt) => {
         if(conf === 0){
-          if(receipt.status === 1) {
+          if(parseInt(receipt.status) == 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash))
             setExecution({ f: stake, label: 'STAKE' })
           } else {
@@ -125,7 +125,7 @@ export default function Supply() {
         dispatch(TX_PENDING(transactionHash))
       ).on('confirmation', (conf, receipt) => {
         if(conf === 0){
-          if(receipt.status === 1) {
+          if(parseInt(receipt.status) == 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash))
             setQuery(true)
           } else {
@@ -150,7 +150,7 @@ export default function Supply() {
         dispatch(TX_PENDING(transactionHash))
       ).on('confirmation', (conf, receipt) => {
         if(conf === 0){
-          if(receipt.status === 1) {
+          if(parseInt(receipt.status) == 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash))
             setQuery(true)
           } else {

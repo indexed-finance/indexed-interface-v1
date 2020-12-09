@@ -82,6 +82,7 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
   }
 
   function setHelper(action: SetUniswapHelper) {
+    console.log('HELPER', action.helper)
     newState.helper = action.helper;
   }
 

@@ -111,7 +111,7 @@ export default function Governance(){
         dispatch(TX_PENDING(transactionHash))
       ).on('confirmation', async(conf, receipt) => {
         if(conf === 0){
-          if(receipt.status === 1) {
+          if(parseInt(receipt.status) == 1) {
             let isDelegated = await contract.methods.delegates(state.account).call()
             dispatch(TX_CONFIRMED(receipt.transactionHash))
             getStatus(isDelegated)

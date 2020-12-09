@@ -70,7 +70,7 @@ function InitializedPoolPage({ address, metadata }){
       dispatch(TX_PENDING(transactionHash))
     }).on('confirmation', async(conf, receipt) => {
       if(conf === 0){
-        if(receipt.status === 1) {
+        if(parseInt(receipt.status) == 1) {
           dispatch(TX_CONFIRMED(receipt.transactionHash))
           await getNativeBalances()
         } else {

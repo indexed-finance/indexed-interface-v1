@@ -163,9 +163,8 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
     }
 
     async function setHelper(action: SetUniswapHelper): Promise<void> {
+      console.log('WAITING', action.helper)
       await action.helper.waitForUpdate;
-
-      console.log(action.helper)
 
       const { address, decimals } = action.helper.tokenA;
       const input = {
@@ -183,11 +182,14 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
         displayAmount: '0',
         isPoolToken: false
       };
+
+      console.log('SETTING HELPER')
+
       const { displayAmount: price } = await action.helper.getAmountOut(input.address, output.address, toWei(1));
       dispatch([
         { type: 'SET_UNISWAP_HELPER', helper: action.helper },
-        { type: 'SET_INPUT_TOKEN', token: output },
-        { type: 'SET_OUTPUT_TOKEN', token: input },
+        { type: 'SET_INPUT_TOKEN', token: input },
+        { type: 'SET_OUTPUT_TOKEN', token: output },
         { type: 'SET_PRICE', price }
       ]);
     }

@@ -61,7 +61,7 @@ const StateProvider = ( { children } ) => {
       })
       .on('confirmation', async (conf, receipt) => {
         if(conf === 0){
-          if(receipt.status === 1) {
+          if(receipt.status == 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash));
             resolve();
           } else {

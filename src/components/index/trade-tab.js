@@ -55,9 +55,10 @@ export default function TradeTab({ metadata }) {
         symbol: metadata.symbol
       }
       const helper = new UniswapHelper(state.web3.injected, poolToken, whitelistTokens, state.account);
+
       setHelper(helper);
     }
-    if(!tradeState.pool) setPool();
+    if(!tradeState.helper) setPool();
   }, [ state.web3.injected, metadata ]);
 
   useEffect(() => {
@@ -68,7 +69,7 @@ export default function TradeTab({ metadata }) {
       updatePool();
     }
     setAcct()
-  }, [state.account]);
+  }, [ tradeState ]);
 
   let whitelistSymbols = whitelistTokens.map(t => t.symbol);
   let inputSymbol, outputSymbol;
@@ -79,12 +80,22 @@ export default function TradeTab({ metadata }) {
   }
 
   useEffect(() => {
-    if (!tradeState.helper) return;
+    console.log('HELPER', tradeState.helper)
+
+    if (!tradeState.helper) {
+      return;
+    }
+
+    console.log('GOOD')
+
     let amount = tradeState.input.amount
     let allowance = tradeState.getAllowanceForPair(tradeState.input.address);
 
+
     if(tradeState.input.address == WETH) setApprovalNeeded(false);
     else setApprovalNeeded(amount.gt(allowance));
+
+    console.log('WORKING!')
 
     setRender(true);
   }, [tradeState]);

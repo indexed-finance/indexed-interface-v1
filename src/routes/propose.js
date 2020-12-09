@@ -194,7 +194,7 @@ export default function Propose(){
         dispatch(TX_PENDING(transactionHash))
       ).on('confirmation', (conf, receipt) => {
         if(conf === 0){
-          if(receipt.status === 1) {
+          if(parseInt(receipt.status) == 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash))
           } else {
             dispatch(TX_REVERTED(receipt.transactionHash))
