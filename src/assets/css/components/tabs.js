@@ -54,7 +54,7 @@ const setStyle = (theme) => ({
 
 const mapping = {
   [DESKTOP_SMALL]: {
-    height: 'calc(20em - 100px)',
+    height: 'calc(250px - .25em)',
     width: '62.5vw',
     spacing: 3
   },
