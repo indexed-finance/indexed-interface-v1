@@ -1,4 +1,4 @@
-import { BigNumber, formatBalance, toBN, toTokenAmount } from "@indexed-finance/indexed.js";
+import { BigNumber, formatBalance } from "@indexed-finance/indexed.js";
 import { InitializerToken } from "@indexed-finance/indexed.js/dist/types";
 import { InitializerHelper } from "@indexed-finance/indexed.js/dist/initializer-helper"
 import { useReducer } from "react";
@@ -8,7 +8,8 @@ import {
   InitDispatchAction,
   SetHelper,
   MiddlewareAction,
-  SetTokenAmount, UpdatePool, SetAll
+  SetTokenAmount,
+  SetAll
 } from "../actions/initializer-actions";
 
 import { withInitMiddleware } from "../middleware/index";

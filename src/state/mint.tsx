@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import { MintContextType, MintState, useMint } from './reducers/mint-reducer';
+import { MintContextType, useMint } from './reducers/mint-reducer';
 
 const MintStateContext = createContext(undefined);
 

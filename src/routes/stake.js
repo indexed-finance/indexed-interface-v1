@@ -31,7 +31,7 @@ const i = {
 
 export default function Stake() {
   const [ pools, setPools ] = useState([])
-  let { state, dispatch } = useContext(store)
+  let { state } = useContext(store)
   let { startTime, setStartTime } = useState(1605586873688);
   let theme =  useTheme()
   let classes = useStyles()

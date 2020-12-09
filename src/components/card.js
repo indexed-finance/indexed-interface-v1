@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 
 import { styled } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
@@ -16,10 +16,9 @@ const Wrapper = styled(Paper)({
 
 export default function Canvas({ native, children, color, button, style, custom }){
 
-  let margin = native ? '1em 1.5em .5em 1.5em' : '3em z\z .5em 3em'
-  let hover = {}
+  let margin = native ? '1em 1.5em .5em 1.5em' : '3em 0em .5em 3em'
 
-  if(native == undefined) margin = '1.5em 0em'
+  if(native === undefined) margin = '1.5em 0em'
   if(!color) color = '#666666'
   if(custom) style.width = `calc(${style.width}px - ${custom})`
 

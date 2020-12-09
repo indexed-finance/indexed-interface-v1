@@ -1,6 +1,6 @@
-import React, { Fragment, useEffect } from 'react'
+import React, { Fragment } from 'react'
 
-import { makeStyles, useTheme } from '@material-ui/core/styles'
+import { useTheme } from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table'
 import TableContainer from '@material-ui/core/TableContainer'
 import TableBody from '@material-ui/core/TableBody'

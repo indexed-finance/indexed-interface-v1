@@ -25,7 +25,6 @@ import { getPair } from '../../lib/markets'
 import getStyles from '../../assets/css'
 
 import { store } from '../../state'
-import copyToClipboard from '../../lib/copyToClipboard';
 import Copyable from '../copyable';
 
 const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
@@ -34,7 +33,6 @@ const useStyles = getStyles(style)
 
 function InitializedPoolPage({ address, metadata }){
   const [ balances, setBalances ] = useState({ native: 0, lp: 0, credit: 0 })
-  const [ instance, setInstance ] = useState(null)
   const [ showAlert, setAlert ] = useState(false)
   const [ events, setEvents ] = useState([])
   const classes = useStyles()
@@ -71,8 +69,8 @@ function InitializedPoolPage({ address, metadata }){
       dispatch({ type: 'MODAL', payload: { show: false }})
       dispatch(TX_PENDING(transactionHash))
     }).on('confirmation', async(conf, receipt) => {
-      if(conf == 0){
-        if(receipt.status == 1) {
+      if(conf === 0){
+        if(receipt.status === 1) {
           dispatch(TX_CONFIRMED(receipt.transactionHash))
           await getNativeBalances()
         } else {
@@ -106,7 +104,7 @@ function InitializedPoolPage({ address, metadata }){
   let pool = findHelper(helper)
 
   for(let x in pool.tokens) {
-    let { symbol, address } = pool.tokens[x]
+    let { address } = pool.tokens[x]
     let amount = toWei(Math.floor(Math.random() * 10000))
     const token = new web3.injected.eth.Contract(MockERC20ABI, address)
 
@@ -119,7 +117,7 @@ function InitializedPoolPage({ address, metadata }){
     const retrievePool = async() => {
       let { indexes, web3, helper } = state
 
-      if(Object.keys(indexes).length > 0 && events.length == 0
+      if(Object.keys(indexes).length > 0 && events.length === 0
       && metadata.address !== '0x0000000000000000000000000000000000000000'){
         let target = Object.entries(indexes).find(x => x[1].address === address)
         let pool = findHelper(helper)
@@ -230,10 +228,10 @@ function InitializedPoolPage({ address, metadata }){
               <div className={classes.actions} style={{ height: balanceHeight }}>
                 <p> {metadata.symbol}: <span>{balances.native}</span></p>
                 <p> UNIV2-ETH-{metadata.symbol}: <span>{balances.lp}</span></p>
-                <a href={`https://app.uniswap.org/#/add/ETH/${address}`} style={{ float: 'left' }} target='_blank'>
+                <a href={`https://app.uniswap.org/#/add/ETH/${address}`} style={{ float: 'left' }} rel="noopener noreferrer" target='_blank'>
                   <ButtonPrimary margin={{ marginBottom: 15, padding: '.5em 1.25em' }}  variant='outlined'> ADD LIQUIDITY </ButtonPrimary>
                 </a>
-                <a href={`https://app.uniswap.org/#/remove/${address}/ETH`} style={{ float: 'right' }} target='_blank'>
+                <a href={`https://app.uniswap.org/#/remove/${address}/ETH`} style={{ float: 'right' }} rel="noopener noreferrer" target='_blank'>
                   <ButtonPrimary margin={{ margin: 0, padding: '.5em 1.25em' }}  variant='outlined'> REMOVE LIQUIDITY </ButtonPrimary>
                 </a>
               </div>

@@ -19,11 +19,10 @@ export default function WhitelistSelect({ selectedSymbol, whitelistSymbols, onSe
   useEffect(() => {
     const index = whitelistSymbols.indexOf(selectedSymbol);
     setSelected(index);
-  }, [selectedSymbol]);
+  }, [ selectedSymbol, whitelistSymbols ]);
 
   const handleChange = (event) => {
     const index = event.target.value;
-    console.log(`WHITELISTSELECT::HANDLECHANGE:: ${index}`)
     setSelected(index);
     onSelect(index);
   }

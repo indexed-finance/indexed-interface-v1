@@ -148,7 +148,7 @@ export default function Spline(props){
   let { p, h, width, margin, paddingTop } = style.getFormatting(native)
 
   useEffect(() => {
-    if(metadata.address != '0x0000000000000000000000000000000000000000'){
+    if(metadata.address !== '0x0000000000000000000000000000000000000000'){
       let ranges = metadata.history.length > 0 ? getRanges(metadata.history) : [ 0, 0 ]
 
       setComponent(
@@ -158,7 +158,7 @@ export default function Spline(props){
         />
       )
     }
-  }, [ metadata ])
+  }, [ metadata, height, color, absolute, margin, paddingTop ])
 
   return(
     <>

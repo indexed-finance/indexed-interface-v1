@@ -1,5 +1,5 @@
 import { BigNumber, formatBalance, PoolHelper } from "@indexed-finance/indexed.js";
-import { InitializedPool, PoolToken } from "@indexed-finance/indexed.js/dist/types";
+import { PoolToken } from "@indexed-finance/indexed.js/dist/types";
 import { useReducer } from "react";
 
 import {

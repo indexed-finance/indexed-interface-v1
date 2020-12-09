@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function copyToClipboard(text: string) {
   const ta = document.createElement("textarea");
   ta.innerText = text;

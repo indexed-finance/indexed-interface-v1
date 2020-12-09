@@ -1,4 +1,4 @@
-import { BigNumber, formatBalance, toBN, toTokenAmount, toWei } from "@indexed-finance/indexed.js";
+import { BigNumber, formatBalance, toBN, toTokenAmount } from "@indexed-finance/indexed.js";
 import { withMiddleware } from ".";
 import { MiddlewareAction, MintDispatch, MintDispatchAction, SetPoolOutput, SetTokenExact, SetTokenInput, ToggleToken, UpdatePool } from "../actions/mint-actions";
 import { MintState } from "../reducers/mint-reducer";

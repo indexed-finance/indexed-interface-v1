@@ -239,7 +239,6 @@ const mapping = {
 
 const getFormatting = ({ native, active, request }) => {
   let dimension = screenClass(native, window.innerWidth)
-  let { marginX, chartHeight } = mapping[dimension]
 
   if(!active) {
     if(!native) mapping[dimension].marginX = mapping[dimension].inactive

@@ -1,9 +1,9 @@
-import React, { Fragment, useState, useContext, useEffect, useReducer } from 'react'
+import React, { Fragment, useState, useContext, useEffect } from 'react'
 
 import { useTheme } from '@material-ui/core/styles'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
-import { useParams, Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import Grid from '@material-ui/core/Grid'
 
 import ButtonMarket from '../components/buttons/market'
@@ -49,9 +49,9 @@ export default function Index(){
   const changeExecution = (option) => {
     let newStyle = clearSelections()
 
-    if(option == 'burn') {
+    if(option === 'burn') {
       newStyle.burn = selected;
-    } else if(option == 'mint'){
+    } else if(option === 'mint'){
       newStyle.mint = selected
     } else {
       newStyle.trade = selected
@@ -85,7 +85,7 @@ export default function Index(){
 
   useEffect(() => {
     const getMetadata = async() => {
-      let { indexes, web3, account } = state
+      let { indexes, account } = state
       let emptyMetadata = Object.keys(metadata).length === 0;
 
       if(Object.keys(indexes).length > 0){

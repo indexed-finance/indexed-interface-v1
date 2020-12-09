@@ -27,11 +27,11 @@ export default function Pool(){
       }
     }
     retrievePool()
-  }, [ state.indexes ])
+  }, [ state, address, data.address ])
 
   let { active } = data
 
-  if (active == false) return <InitializerStateProvider>
+  if (active === false) return <InitializerStateProvider>
     <UninitializedPool address={address} metadata={data} />
   </InitializerStateProvider>
   else return <InitializedPool address={address} metadata={data} />

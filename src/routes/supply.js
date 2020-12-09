@@ -1,14 +1,13 @@
-import React, { Fragment, useState, useContext, useEffect, useRef } from 'react'
+import React, { Fragment, useState, useContext, useEffect } from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import { useParams } from  'react-router-dom'
-import { FormControl } from '@material-ui/core';
 
 import StakingRewardsFactory from '../assets/constants/abi/StakingRewardsFactory.json'
 import IStakingRewards from '../assets/constants/abi/IStakingRewards.json'
 import Countdown from "react-countdown";
 import CountUp from 'react-countup';
-import { toWei, fromWei, formatBalance, BigNumber } from '@indexed-finance/indexed.js'
+import { toWei, formatBalance, BigNumber } from '@indexed-finance/indexed.js'
 
 import { TX_CONFIRMED, TX_PENDING, TX_REVERTED } from '../assets/constants/parameters'
 import { STAKING_FACTORY, WETH } from '../assets/constants/addresses'
@@ -22,8 +21,8 @@ import NumberFormat from '../utils/format'
 
 import { tokenMetadata } from '../assets/constants/parameters'
 import { getStakingPool } from '../api/gql'
-import { balanceOf, allowance, getERC20 } from '../lib/erc20'
-import { decToWeiHex, getPair, getBalances } from '../lib/markets'
+import { allowance, getERC20 } from '../lib/erc20'
+import { decToWeiHex, getPair } from '../lib/markets'
 import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
@@ -180,7 +179,7 @@ export default function Supply() {
   }
 
   const getPoolWeight = (value) => {
-    let currentWeight = metadata.supply == 0 ? 1 : metadata.supply
+    let currentWeight = metadata.supply === 0 ? 1 : metadata.supply
     let inputWeight = parseFloat(value)/(parseFloat(currentWeight) + parseFloat(value))
 
     return inputWeight
@@ -223,8 +222,6 @@ export default function Supply() {
         let match = ticker.split('-')
         let target = match[match.length-1]
 
-        console.log(target)
-
         let { pool } = findHelper(target)
         let isWethPair = ticker.includes('UNI')
         let data = await getStakingPool(pool.address, isWethPair)
@@ -260,7 +257,7 @@ export default function Supply() {
 
         setMetadata(data)
 
-        if(web3.injected != false){
+        if(web3.injected !== false){
           await getAccountMetadata(data)
         }
       }
@@ -273,11 +270,11 @@ export default function Supply() {
       let { web3 } = state
       let obj = Object.entries(metadata)
 
-      if(web3.injected && input != null && obj.length > 0) {
+      if(web3.injected && input !== null && obj.length > 0) {
         let amount = parseFloat(input)
         let allowance = await getAllowance()
 
-        if(allowance == 0 || amount > allowance){
+        if(allowance === 0 || amount > allowance){
           setExecution({ f: approve, label: 'APPROVE'})
         } else {
           setExecution({ f: stake, label: 'STAKE'

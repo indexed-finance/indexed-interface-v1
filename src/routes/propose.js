@@ -1,14 +1,13 @@
-import React, { Fragment, useEffect, useContext, useState, useRef } from 'react'
+import React, { Fragment, useEffect, useContext, useState } from 'react'
 import ReactDOM from 'react-dom'
 
 import GovernorAlpha from '../assets/constants/abi/GovernorAlpha.json'
 import BPool from '../assets/constants/abi/BPool.json'
 
-import { makeStyles, styled, withStyles } from '@material-ui/core/styles'
+import { styled } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import IconButton from '@material-ui/core/IconButton'
 import Clear from '@material-ui/icons/Clear'
-import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import ReactMarkdown from 'react-markdown'
 import { ethers } from "ethers"
 
@@ -42,11 +41,9 @@ export default function Propose(){
   const [ contracts, setContracts ] = useState([])
   const [ executions, setExecutions ] = useState([])
   const [ targets, setTargets ] = useState([])
-  const [ focus, setFocus ] = useState(null)
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
-  let description
 
   const parseAbi = (abi) => {
     let { rinkeby } = state.web3
@@ -57,7 +54,7 @@ export default function Propose(){
     for (let funcAbi of abi) {
       let { name, inputs, type, stateMutability, payable } = funcAbi;
 
-      if (!(type != 'function' || stateMutability == 'view')){
+      if (!(type !== 'function' || stateMutability === 'view')){
         const signature = encodeFunctionSignature({ name, type, inputs })
 
         functionList.push({ label: name, value: signature })

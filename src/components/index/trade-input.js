@@ -1,9 +1,7 @@
 import React, { useContext } from 'react';
-import { styled } from '@material-ui/core/styles'
 
 import { toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 
-import ButtonTransaction from '../buttons/transaction'
 import Input from '../inputs/input';
 
 import style from '../../assets/css/components/trade'
@@ -20,17 +18,7 @@ export default function TradeInput(props) {
   const classes = useStyles();
   let token = props.useToken();
   let { state: { account, web3 }, handleTransaction } = useContext(store);
-
-  // Set `amount` to `balance`
-
-  async function approveRemaining() {
-    const erc20 = getERC20(web3.injected, token.address);
-    let fn = erc20.methods.approve(token.target, toHex(token.approvalRemainder))
-    await handleTransaction(fn.send({ from: account }))
-      .then(token.updateDidApprove)
-      .catch((() => {}));
-  }
-
+  
   let errorMsg = token.errorMessage;
   let error = !!errorMsg;
 

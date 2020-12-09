@@ -25,7 +25,7 @@ export default function Banner() {
   let { state } = useContext(store)
   let { indexes, stats, native } = state
 
-  let { width, position, marginBlock, duration, top, paddingTop } = style.getFormatting(native)
+  let { width, position, marginBlock, duration } = style.getFormatting(native)
 
   const startAnimation = () => {
     let timestamp = new Date(Date.now())

@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 
-import { makeStyles, withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/core/styles'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import { usePalette } from 'react-palette'
 
@@ -39,7 +39,7 @@ export default function WeightedToken({ token }) {
   return (
     <div className={classes.root}>
       <div className={classes.wrapper}>
-        <img src={image} className={classes.asset} />
+        <img alt={token.symbol} src={image} className={classes.asset} />
       </div>
       <div className={classes.percentage}>
         <span className={classes.title}>

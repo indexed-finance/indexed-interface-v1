@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
 
-import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -65,7 +64,7 @@ export default function Modal() {
         </DialogContent>
         <DialogActions>
           {actions.map(act => {
-            if(act.f == null) act.f = handleClose
+            if(act.f === null) act.f = handleClose
 
             return(
               <ButtonPrimary variant='outlined' onClick={act.f} color="primary">

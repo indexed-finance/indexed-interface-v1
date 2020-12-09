@@ -1,17 +1,6 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { Line } from 'react-chartjs-2'
-
-const renameKeys = (keysMap, obj) =>
-  obj.map(value =>
-    Object.keys(value).reduce(
-      (acc, key) => ({
-        ...acc,
-        ...{ [keysMap[key] || key]: value[key] }
-      }),
-    {}
-   )
- )
 
 const options = {
   bezierCurve: true,
@@ -128,12 +117,12 @@ export default function Spline({ ready, metadata, height }){
   const [ component, setComponent ] = useState(null)
 
    useEffect(() => {
-      if(metadata.address != '0x0000000000000000000000000000000000000000'){
+      if(metadata.address !== '0x0000000000000000000000000000000000000000'){
         setComponent(
           <Line height={height} options={options} data={getConfig(metadata)} id='stacked' redraw />
         )
       }
-    }, [ metadata ])
+    }, [ metadata, height ])
 
   return (
     <div style={{ 'z-index': 1, float: 'left', width: '100%'}}>

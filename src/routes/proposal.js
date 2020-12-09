@@ -1,7 +1,5 @@
 import React, { Fragment, useEffect, useState, useContext } from 'react'
 
-import { makeStyles, styled, withStyles } from '@material-ui/core/styles'
-import ParentSize from '@vx/responsive/lib/components/ParentSize'
 import Grid from '@material-ui/core/Grid'
 import Lozenge from '@atlaskit/lozenge'
 import jazzicon from '@metamask/jazzicon'
@@ -11,8 +9,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Checkbox from '@material-ui/core/Checkbox';
-import Avatar from '@material-ui/core/Avatar';
 import { useParams } from 'react-router-dom'
 import { BigNumber, formatBalance } from '@indexed-finance/indexed.js'
 
@@ -28,7 +24,6 @@ import Canvas from '../components/canvas'
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING, initialProposalState } from '../assets/constants/parameters'
 import { NDX, DAO } from '../assets/constants/addresses'
 import { toContract } from '../lib/util/contracts'
-import { balanceOf } from '../lib/erc20'
 import style from '../assets/css/routes/proposal'
 import getStyles from '../assets/css'
 import { store } from '../state'
