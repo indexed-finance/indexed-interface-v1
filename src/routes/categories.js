@@ -7,6 +7,8 @@ import Paper from '@material-ui/core/Paper'
 import Container from '../components/container'
 import List from '../components/list'
 
+import { Link } from 'react-router-dom'
+
 import { tokenMetadata } from '../assets/constants/parameters'
 import style from '../assets/css/routes/categories'
 import getStyles from '../assets/css'
@@ -97,16 +99,37 @@ export default function Categories(){
   }, [ ])
 
   let { margin } = style.getFormatting(state)
-
+/* {Object.values(rows).map((value, i) => (
+  <div className={classes.category}>
+    <Link to={`/category/${Object.keys(rows)[i]}`}>
+    <h3> {value.name} [{value.symbol}]</h3>
+    </Link>
+    <p>
+        {state.request && getCategoryImages(value, state).map(i => (
+          <img src={i} className={classes.asset} />
+        ))}
+    </p>
+    <div className={classes.divider} />
+    <List data={Object.values(filtered(state.indexes, value.indexes))}
+      columns={columns}
+      props={state.indexes}
+      height={250}
+      href
+    />
+  </div>
+ )
+)} */
   return (
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item xs={12} md={12} lg={12} xl={12}>
           <Container margin={margin} padding="1em 2em" title='CATEGORIES'>
             <Fragment>
-              {Object.values(rows).map((value) => (
+              {Object.values(rows).map((value, i) => (
                 <div className={classes.category}>
-                  <h3> {value.name} [{value.symbol}]</h3>
+                  <Link to={`/category/${Object.keys(rows)[i]}`}>
+                    <h3> {value.name} [{value.symbol}]</h3>
+                  </Link>
                   <p>
                       {state.request && getCategoryImages(value, state).map(i => (
                         <img src={i} className={classes.asset} />
