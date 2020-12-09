@@ -193,7 +193,7 @@ export default function VerticalTabs({ data }) {
                 VIEW POOL
               </ButtonSecondary>
             </Link>
-            <a target='_blank' rel="noopener noreferrer" href={`https://${process.env.REACT_APP_ETH_NETWORK}.etherscan.io/token/${data.address}`}>
+            <a target='_blank' rel="noopener noreferrer" href={`https://${process.env.REACT_APP_ETH_NETWORK === 'rinkeby' ? 'rinkeby.' : ''}etherscan.io/token/${data.address}`}>
               <IconButton variant='outlined' margin={{ marginLeft: 12.5 }}>
                 <img src={etherscan} style={{ width: 37.5 }} />
               </IconButton>
