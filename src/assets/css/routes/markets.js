@@ -120,7 +120,7 @@ const mapping = {
   },
   [NATIVE_NORMAL]: {
     top: 'calc(100px + 2.5vh)',
-    canvasMargin: '3.375em 1.5em 1em 1.5em',
+    canvasMargin: '3.5em 1.5em 1em 1.5em',
     paddingLeft: 12.5,
     margin: '-.5em 1.5em 1em 1.5em',
     pre2: 'calc(247.5px - 8.125vh)',
@@ -130,7 +130,7 @@ const mapping = {
   },
   [NATIVE_WIDE]: {
     top: 'calc(100px + 4.375vh)',
-    canvasMargin: '3.375em 1.5em 1em 1.5em',
+    canvasMargin: '3.5em 1.5em 1em 1.5em',
     paddingLeft: 12.5,
     margin: '-.5em 1.5em 1em 1.5em',
     pre2: 'calc(250px - 5.75vh)',

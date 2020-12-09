@@ -18,7 +18,8 @@ function mintDispatchMiddleware(dispatch: MintDispatch, state: MintState) {
     const singleInGivenPoolOut = async (poolAmountOut: BigNumber, displayAmount: string, index: number): Promise<MintDispatchAction[]> => {
       const token = tokens[index];
       const result = await pool.calcSingleInGivenPoolOut(token.address, poolAmountOut);
-      const amount = toBN(result.amount);
+      const singleIn = toBN(result.amount);
+
       return [
         { type: 'SET_SPECIFIED_SIDE', side: 'output' },
         { type: 'CLEAR_ALL_AMOUNTS' },

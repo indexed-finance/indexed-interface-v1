@@ -82,7 +82,6 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
   }
 
   function setHelper(action: SetUniswapHelper) {
-    console.log('HELPER', action.helper)
     newState.helper = action.helper;
   }
 
@@ -102,7 +101,6 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
 
     const isInput = compareAddresses(tokenAddress, newState.input.address);
     const isPoolToken = isInput ? newState.input.isPoolToken : newState.output.isPoolToken;
-    console.log(`getAllowanceForPair(): isInput ${isInput} | isPoolToken ${isPoolToken}`)
     const otherToken = isInput ? newState.output.address : newState.input.address;
     const pair = isPoolToken ? newState.helper.getPairForToken(otherToken) : newState.helper.getPairForToken(tokenAddress);
     if (isPoolToken) return pair.allowanceA || BN_ZERO;

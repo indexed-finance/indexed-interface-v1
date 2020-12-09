@@ -27,15 +27,16 @@ export default function Banner() {
 
   let { width, position, marginBlock, duration } = style.getFormatting(native)
 
-  const startAnimation = () => {
+  const startAnimation = (gov) => {
     let timestamp = new Date(Date.now())
     let unixTime = timestamp.getTime()
+    let startingPoint = !gov.id ? thresholds[0] * 0.85 : thresholds[0]
 
     setCoordinate({ x: 0, elapsed: 0, time: unixTime })
     controls.start({
       translateX: thresholds[1],
       transition:{
-        from: thresholds[0],
+        from: startingPoint,
         ease: 'linear',
         repeat: Infinity,
         duration,
@@ -78,7 +79,7 @@ export default function Banner() {
         transition:{
           duration: timeRemaining,
           ease: 'linear',
-          onComplete: v => startAnimation()
+          onComplete: v => startAnimation(messages.proposal)
         }
       })
     }
@@ -99,7 +100,7 @@ export default function Banner() {
       setMessages({
         proposal: last || proposalType, indexes: indxs, init
        })
-      startAnimation()
+      startAnimation(last)
     }
   }, [ indexes ])
 

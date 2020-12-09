@@ -135,9 +135,7 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
 
     async function setInputAmount(action: SetInputAmount): Promise<void> {
       const { decimals } = state.input;
-      console.log(`REDUCER::SETINPUTAMOUNT: AMOUNT ${action.amount} DECIMALS ${decimals}`)
       const amount = toTokenAmount(action.amount, decimals);
-      console.log(`REDUCER::SETINPUTAMOUNT: EXACT ${amount}`)
       return setInput(amount, action.amount);
     }
 
@@ -163,7 +161,6 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
     }
 
     async function setHelper(action: SetUniswapHelper): Promise<void> {
-      console.log('WAITING', action.helper)
       await action.helper.waitForUpdate;
 
       const { address, decimals } = action.helper.tokenA;
@@ -182,8 +179,6 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
         displayAmount: '0',
         isPoolToken: false
       };
-
-      console.log('SETTING HELPER')
 
       const { displayAmount: price } = await action.helper.getAmountOut(input.address, output.address, toWei(1));
       dispatch([
