@@ -114,7 +114,7 @@ export default function TokenInput(props) {
         </Tick>
        {show && (
         <ListItemAvatar className={classes.wrapper}>
-          <Avatar className={classes.avatar} src={tokenMetadata[token.symbol].image} />
+          <Avatar alt={classes.avatar} className={classes.avatar} src={tokenMetadata[token.symbol].image} />
         </ListItemAvatar>
       )}
       <ListItemText style={{ width: '30px' }} primary={token.symbol} secondary={props.secondary || token.symbolAdornment} />

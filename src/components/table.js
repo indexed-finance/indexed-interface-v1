@@ -45,7 +45,7 @@ const Loader = ({ theme }) => (
 )
 
 const columns = [
-  { id: 'name', label: 'NAME', minWidth: 225 },
+  { id: 'name', label: 'NAME', minWidth: 250 },
   {
     id: 'symbol',
     label: 'SYMBOL',
@@ -56,7 +56,7 @@ const columns = [
   {
     id: 'price',
     label: 'PRICE',
-    minWidth: 200,
+    minWidth: 150,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },

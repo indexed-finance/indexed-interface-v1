@@ -69,7 +69,7 @@ export default function Weight({ asset, native, show }) {
   return (
     <div className={classes.root}>
       <div className={classes.wrapper} style={{ marginBottom: !native ? 0 : 15 }}>
-        <img src={image} className={classes.asset} />
+        <img src={image} alt={classes.asset} className={classes.asset} />
       </div>
       <div className={classes.precentage} style={{ float: window.innerWidth > 321 ? metadata.float : 'inherit' }}>
         <span className={classes.altTitle}> {metadata.name} [{metadata.symbol}] </span>

@@ -18,6 +18,7 @@ export default function Category() {
   const { state } = useContext(store);
   const { categories } = state;
   const { id } = useParams();
+  
   useEffect(() => {
     if (!category) setCategory(categories[id]);
   }, [categories]);

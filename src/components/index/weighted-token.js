@@ -39,7 +39,7 @@ export default function WeightedToken({ token }) {
   return (
     <div className={classes.root}>
       <div className={classes.wrapper}>
-        <img alt={token.symbol} src={image} className={classes.asset} />
+        <img alt={classes.asset} src={image} className={classes.asset} />
       </div>
       <div className={classes.percentage}>
         <span className={classes.title}>

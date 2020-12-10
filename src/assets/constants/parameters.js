@@ -26,7 +26,7 @@ import ren from '../images/ren.png'
 import { isNative } from './functions'
 
 let currentTime = (new Date()).getHours()
-let isNight = (currentTime > 20 || currentTime < 6)
+let isNight = (currentTime >= 17 || currentTime < 6)
 
 export const initialState = {
   web3: {
