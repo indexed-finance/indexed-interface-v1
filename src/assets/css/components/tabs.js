@@ -61,7 +61,7 @@ const setStyle = (theme) => ({
 const mapping = {
   [DESKTOP_SMALL]: {
     height: 'calc(250px - .25em)',
-    width: '62.5vw',
+    width: 'inherit',
     spacing: 3
   },
   [DESKTOP_NORMAL]: {
