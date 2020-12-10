@@ -40,7 +40,7 @@ const columns = [
   },
   {
     id: 'supply',
-    label: 'TOTAL SUPPLY',
+    label: 'SUPPLY',
     minWidth: 125,
     align: 'center',
     format: (value) => `${value.toLocaleString('en-US')}`,
@@ -99,26 +99,9 @@ export default function Categories(){
   }, [ ])
 
   let { margin } = style.getFormatting(state)
-/* {Object.values(rows).map((value, i) => (
-  <div className={classes.category}>
-    <Link to={`/category/${Object.keys(rows)[i]}`}>
-    <h3> {value.name} [{value.symbol}]</h3>
-    </Link>
-    <p>
-        {state.request && getCategoryImages(value, state).map(i => (
-          <img src={i} className={classes.asset} />
-        ))}
-    </p>
-    <div className={classes.divider} />
-    <List data={Object.values(filtered(state.indexes, value.indexes))}
-      columns={columns}
-      props={state.indexes}
-      height={250}
-      href
-    />
-  </div>
- )
-)} */
+
+  console.log(state.indexes)
+
   return (
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>
@@ -131,9 +114,9 @@ export default function Categories(){
                     <h3> {value.name} [{value.symbol}]</h3>
                   </Link>
                   <p>
-                      {state.request && getCategoryImages(value, state).map(i => (
-                        <img src={i} className={classes.asset} />
-                      ))}
+                    {state.request && getCategoryImages(value, state).map(i => (
+                      <img src={i} className={classes.asset} />
+                    ))}
                   </p>
                   <div className={classes.divider} />
                   <List data={Object.values(filtered(state.indexes, value.indexes))}
