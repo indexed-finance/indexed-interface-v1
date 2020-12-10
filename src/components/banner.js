@@ -30,7 +30,7 @@ export default function Banner() {
   const startAnimation = (gov) => {
     let timestamp = new Date(Date.now())
     let unixTime = timestamp.getTime()
-    let startingPoint = !gov.id ? thresholds[0] * 0.85 : thresholds[0]
+    let startingPoint = !gov ? thresholds[0] * 0.85 : thresholds[0]
 
     setCoordinate({ x: 0, elapsed: 0, time: unixTime })
     controls.start({
