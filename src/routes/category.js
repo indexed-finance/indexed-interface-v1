@@ -27,7 +27,7 @@ export default function Category() {
   let { margin } = style.getFormatting(state)
 
   return <Grid container direction='column' alignItems='center' justify='center'>
-    <Grid item xs={10} md={6} lg={6} xl={6} >
+    <Grid item xs={10} md={8} lg={8} xl={8} >
       <Container margin={margin} padding="1em 2em" title='CATEGORY'>
         <div className={classes.header}>
           <div id='cat-md' />
