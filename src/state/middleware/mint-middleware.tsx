@@ -17,8 +17,19 @@ function mintDispatchMiddleware(dispatch: MintDispatch, state: MintState) {
 
     const singleInGivenPoolOut = async (poolAmountOut: BigNumber, displayAmount: string, index: number): Promise<MintDispatchAction[]> => {
       const token = tokens[index];
-      const result = await pool.calcSingleInGivenPoolOut(token.address, poolAmountOut);
-      const singleIn = toBN(result.amount);
+      const totalDenorm = tokens.reduce((total, t) => total.plus(t.denorm), toBN(0));
+      const extrapolatedValue = totalDenorm.div(token.usedDenorm);
+      const poolRatio = poolAmountOut.div(pool.pool.totalSupply);
+      const roughInputEstimate = poolRatio.times(extrapolatedValue).times(
+        toBN(1 + parseFloat(formatBalance(pool.pool.swapFee, 18, 4)))
+      );
+      let amount: BigNumber;
+      if (roughInputEstimate.gt(token.usedBalance.div(2))) {
+        amount = roughInputEstimate;
+      } else {
+        const result = await pool.calcSingleInGivenPoolOut(token.address, poolAmountOut);
+        amount = toBN(result.amount);
+      }
 
       return [
         { type: 'SET_SPECIFIED_SIDE', side: 'output' },
