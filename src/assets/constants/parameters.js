@@ -123,6 +123,8 @@ export const initialProposalState = {
  }
 
  function base64(relativePath) {
+   console.log('RELATIVE PATH', relativePath)
+
    if(relativePath.includes(BASE64_PREFIX)) {
      let base64Bytes = relativePath.replace(BASE64_PREFIX, '')
 
