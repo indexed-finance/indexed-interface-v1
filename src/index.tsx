@@ -143,6 +143,8 @@ function Application(){
         stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
         stats.dailyVolume += volume
 
+        let formattedName = name.replace(' Tokens', '')
+
         const price = parseFloat(history[history.length-1].close);
         const index = {
           marketcap: parseFloat((+pool.pool.totalValueLockedUSD).toFixed(2)),
@@ -150,7 +152,7 @@ function Application(){
           delta: delta24hr,
           supply,
           category,
-          name,
+          name: formattedName,
           symbol,
           size: pool.pool.size,
           address,
@@ -179,13 +181,15 @@ function Application(){
           finalValueEstimate = finalValueEstimate.plus(price.times(token.targetBalance));
         });
 
+        let formattedName = name.replace(' Tokens', '')
+
         const index = {
           marketcap: 0,
           price: 0,
           delta: 0,
           supply: 0,
           category,
-          name,
+          name: formattedName,
           size: pool.pool.size,
           symbol,
           address,

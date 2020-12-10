@@ -32,12 +32,18 @@ const setStyle = (theme) => ({
     height: '100%'
   },
   stats: {
+    '& ul': {
+      listStyle: 'none'
+    },
     '& ul li': {
       marginBottom: 15
     }
   },
   statsAlt: {
     marginTop: '-2.75em',
+    '& ul': {
+      listStyle: 'none'
+    },
     '& ul li': {
       marginBottom: 15
     }
