@@ -34,7 +34,7 @@ const setStyle = (theme) => ({
      marginLeft: 'auto'
   },
   iconButton: {
-    marginTop: theme.spacing(.5),
+    marginTop: theme.spacing(.25),
     marginLeft: 50
   },
   appBar: {
@@ -94,8 +94,8 @@ const mapping = {
     paddingTop: '.75vh',
     display: 'INDEXED',
     marginLeft: 15,
-    titleMargin: 20,
-    logoMargin: 7.5,
+    titleMargin: 25,
+    logoMargin: 8.75,
     marginBottom: '5em',
     width: 37.5,
     padding: {
@@ -108,7 +108,7 @@ const mapping = {
     display: 'INDEXED',
     marginLeft: 15,
     logoMargin: 4.5,
-    titleMargin: 20,
+    titleMargin: 25,
     marginBottom: '5em',
     width: 37.5,
     padding: {
@@ -123,7 +123,7 @@ const mapping = {
     marginBottom: '5em',
     logoMargin: 5,
     width: 37.5,
-    titleMargin: 20,
+    titleMargin: 25,
     padding: {
       paddingTop: 12.5,
       paddingBottom: 12.5,
@@ -135,7 +135,7 @@ const mapping = {
     marginLeft: 15,
     marginBottom: '5em',
     logoMargin: 2,
-    titleMargin: 20,
+    titleMargin: 25,
     width: 37.5,
     padding: {
       paddingTop: 12.5,
@@ -146,7 +146,7 @@ const mapping = {
     paddingTop: '.75vh',
     display: 'INDEXED',
     logoMargin: 2.5,
-    titleMargin: 20,
+    titleMargin: 25,
     marginBottom: '5em',
     marginLeft: 15,
     width: 37.5,
@@ -158,8 +158,8 @@ const mapping = {
   [DESKTOP_MASSIVE]: {
     paddingTop: '.75vh',
     display: 'INDEXED',
-    titleMargin: 20,
-    marginLeft: 15,
+    titleMargin: 25,
+    width: 30,
     marginBottom: '5em',
     logoMargin: -3.75,
     width: 37.5,
