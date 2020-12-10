@@ -128,6 +128,8 @@ export const initialProposalState = {
    if(relativePath.includes(BASE64_PREFIX)) {
      let base64Bytes = relativePath.replace(BASE64_PREFIX, '')
 
+     console.log('BASE64 BYTES', base64Bytes)
+
      while (base64Bytes.length % 4 > 0) {
        base64Bytes += '=';
      }
