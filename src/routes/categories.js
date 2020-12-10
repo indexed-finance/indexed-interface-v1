@@ -29,14 +29,14 @@ const columns = [
     label: 'PRICE',
     minWidth: 150,
     align: 'center',
-    format: (value) => `${value.toLocaleString('en-US')}`,
+    format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
     id: 'marketcap',
     label: 'MARKETCAP',
     minWidth: 150,
     align: 'center',
-    format: (value) => `${value.toLocaleString('en-US')}`,
+    format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
     id: 'supply',
@@ -99,8 +99,6 @@ export default function Categories(){
   }, [ ])
 
   let { margin } = style.getFormatting(state)
-
-  console.log(state.indexes)
 
   return (
     <Fragment>
