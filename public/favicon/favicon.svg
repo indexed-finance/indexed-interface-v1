@@ -7,6 +7,10 @@
       path {
         fill: #ffffff !important;
       }
+      svg {
+        stroke: #111111;
+        stroke-width: 7.5;
+      }
     }
     @media (prefers-color-scheme: light) {
       path {
