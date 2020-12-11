@@ -104,18 +104,20 @@ export default function Categories(){
     <Fragment>
       <Grid container direction='column' alignItems='space-between' justify='center'>
         <Grid item xs={12} md={12} lg={12} xl={12}>
-          <Container margin={margin} padding="1em 2em" title='CATEGORIES'>
+          <Container margin={margin} padding="1em 0em" title='CATEGORIES'>
             <Fragment>
               {Object.values(rows).map((value, i) => (
                 <div className={classes.category}>
-                  <Link to={`/category/${Object.keys(rows)[i]}`}>
-                    <h3> {value.name} [{value.symbol}]</h3>
-                  </Link>
-                  <p>
-                    {state.request && getCategoryImages(value, state).map(i => (
-                      <img src={i} className={classes.asset} />
-                    ))}
-                  </p>
+                  <div className={classes.title}>
+                    <Link to={`/category/${Object.keys(rows)[i]}`}>
+                      <h3> {value.name} [{value.symbol}]</h3>
+                    </Link>
+                    <p>
+                      {state.request && getCategoryImages(value, state).map(i => (
+                        <img src={i} className={classes.asset} />
+                      ))}
+                    </p>
+                  </div>
                   <div className={classes.divider} />
                   <List data={Object.values(filtered(state.indexes, value.indexes))}
                     columns={columns}

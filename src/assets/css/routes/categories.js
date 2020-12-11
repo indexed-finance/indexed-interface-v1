@@ -3,6 +3,9 @@ const setStyle = (theme) => ({
     width: '100%',
     marginBottom: '2.5em'
   },
+  title: {
+    padding: '0em 2.5em'
+  },
   divider: {
     borderBottom: '#666666 solid 3px',
   },
