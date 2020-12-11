@@ -108,14 +108,16 @@ export default function TradeTab({ metadata }) {
     let txProps = { from: state.account }
     let fn = () => {}
 
-    if(tokenIn == process.env.REACT_APP_WETH) {
+    console.log(tokenIn, process.env.REACT_APP_WETH)
+
+    if(tokenIn.toLowerCase() == process.env.REACT_APP_WETH) {
       txProps = { from: state.account, value: amountIn }
       fn = pair.methods.swapETHForExactTokens(
         amountOut,
         [tokenIn, tokenOut],
         state.account,
         (+timestamp) + 600);
-    } else if(tokenOut == process.env.REACT_APP_WETH) {
+    } else if(tokenOut.toLowerCase() == process.env.REACT_APP_WETH) {
       fn = pair.methods.swapExactTokensForETH(
         amountIn,
         amountOut,

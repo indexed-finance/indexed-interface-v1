@@ -1,7 +1,52 @@
 import { keccak_256, sha3_256 } from 'js-sha3'
+import { formatBalance } from '@indexed-finance/indexed.js'
+
 import {
-  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, DESKTOP_MASSIVE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, DESKTOP_MASSIVE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL, tokenMetadata
 } from './parameters'
+
+
+export function getHelperData(arr) {
+  if(!arr || arr.length == 0) return []
+
+  return arr.map((value, i) => {
+    let props = { ...value }
+
+    if(props.active) {
+      let { pool } = props.poolHelper
+
+      props.swapFeeUSD = '$' + formatBalance(pool.swapFee, 18, 4)
+      props.feesTotalUSD = '$' + pool.feesTotalUSD
+    }
+
+    return { ...props }
+  })
+}
+
+export const filtered = (raw, targets) =>
+  Object.keys(raw, targets)
+  .filter(key => targets.includes(key))
+  .reduce((obj, key) => {
+    obj[key] = raw[key];
+    return obj;
+  }, {})
+
+export function getCategoryImages(category, state) {
+  let isSelected = {};
+  let categoryImages = [];
+
+  category.indexes.map((index) =>
+    state.indexes[index].assets.map((token) => {
+      if(isSelected[token.symbol]) return;
+      else isSelected[token.symbol] = true;
+      return categoryImages.push(
+        tokenMetadata[token.symbol].image
+      );
+    })
+  )
+
+  return categoryImages
+}
 
 export const toChecksumAddress = (address) => {
   address = address.toLowerCase().replace('0x', '')

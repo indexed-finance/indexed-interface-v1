@@ -293,6 +293,65 @@ export const eventColumns = [
   },
 ]
 
+export const categoryColumns = [
+  {
+    id: 'symbol',
+    label: 'SYMBOL',
+    minWidth: 50,
+    align: 'center',
+    format: (value) => `${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'size',
+    label: 'SIZE',
+    minWidth: 25,
+    align: 'center',
+    format: (value) => `${value.toLocaleString()}`,
+  },
+  {
+    id: 'price',
+    label: 'PRICE',
+    minWidth: 75,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString()}`,
+  },
+  {
+    id: 'supply',
+    label: 'SUPPLY',
+    minWidth: 100,
+    align: 'center',
+    format: (value) => `${value.toLocaleString()}`,
+  },
+  {
+    id: 'marketcap',
+    label: 'MARKETCAP',
+    minWidth: 150,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString()}`,
+  },
+  {
+    id: 'swapFeeUSD',
+    label: 'SWAP FEE',
+    minWidth: 50,
+    align: 'center',
+    format: (value) => `$${value.pool.swapFeeUSD.toLocaleString()}`,
+  },
+  {
+    id: 'feesTotalUSD',
+    label: 'CUMULATIVE FEES',
+    minWidth: 150,
+    align: 'center',
+    format: (value) => `$${value.pool.feesTotalUSD.toLocaleString()}`,
+  },
+  {
+    id: 'volume',
+    label: 'VOLUME',
+    minWidth: 150,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString()}`,
+  },
+]
+
 export const DESKTOP_MASSIVE = 3750
 export const DESKTOP_HUGE = 2750
 export const DESKTOP_WIDE = 2749
