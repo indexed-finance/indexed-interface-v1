@@ -55,6 +55,7 @@ export default function Modal() {
       <Dialog
         open={open}
         TransitionComponent={Transition}
+        className={classes.root}
         keepMounted
         onClose={handleClose}
       >

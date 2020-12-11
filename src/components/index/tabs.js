@@ -208,7 +208,7 @@ export default function VerticalTabs({ data }) {
             <div className={classes.stats}>
               <ul>
                 <li> GROSS FEES: ${parseFloat(meta.pool.feesTotalUSD).toFixed(2)}</li>
-                <li> FEES: ${formatBalance(meta.pool.swapFee, 18, 4)}</li>
+                <li> FEE: ${formatBalance(meta.pool.swapFee, 18, 4)}</li>
                 <li> TVL: ${data.marketcap}</li>
                 <li> SUPPLY: {data.supply}</li>
               </ul>

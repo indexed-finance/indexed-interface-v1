@@ -7,6 +7,13 @@ const setStyle = (theme) => ({
   root: {
     margin: 0,
     padding: theme.spacing(2),
+    '& a': {
+      color: 'orange !important',
+      cursor: 'pointer',
+      '&:hover': {
+        color: '#00e79a !important'
+      }
+    }
   },
   closeButton: {
     position: 'absolute',

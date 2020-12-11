@@ -8,13 +8,31 @@ import Container from '../components/container'
 import List from '../components/list'
 
 import { Link } from 'react-router-dom'
-
+import { formatBalance } from '@indexed-finance/indexed.js'
 import { tokenMetadata } from '../assets/constants/parameters'
 import style from '../assets/css/routes/categories'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
 const useStyles = getStyles(style)
+
+function getHelperData(arr) {
+  if(!arr || arr.length == 0) return []
+
+  return arr.map((value, i) => {
+    let props = { ...value }
+
+    if(props.active) {
+      let { pool } = props.poolHelper
+
+      props.swapFeeUSD = '$' + formatBalance(pool.swapFee, 18, 4)
+      props.feesTotalUSD = '$' + pool.feesTotalUSD
+    }
+
+    return { ...props }
+  })
+}
+
 
 const columns = [
   {
@@ -25,11 +43,24 @@ const columns = [
     format: (value) => `${value.toLocaleString('en-US')}`,
   },
   {
+    id: 'size',
+    label: 'SIZE',
+    minWidth: 25,
+    align: 'center',
+  },
+  {
     id: 'price',
     label: 'PRICE',
-    minWidth: 150,
+    minWidth: 75,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'supply',
+    label: 'SUPPLY',
+    minWidth: 100,
+    align: 'center',
+    format: (value) => `${value.toLocaleString('en-US')}`,
   },
   {
     id: 'marketcap',
@@ -39,18 +70,26 @@ const columns = [
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
-    id: 'supply',
-    label: 'SUPPLY',
-    minWidth: 125,
+    id: 'swapFeeUSD',
+    label: 'SWAP FEE',
+    minWidth: 50,
     align: 'center',
-    format: (value) => `${value.toLocaleString('en-US')}`,
+    format: (value) => `$${value.pool.swapFeeUSD.toLocaleString('en-US')}`,
   },
   {
-    id: 'tokens',
-    label: 'ASSETS',
-    minWidth: 100,
+    id: 'feesTotalUSD',
+    label: 'CUMULATIVE FEES',
+    minWidth: 150,
     align: 'center',
-  }
+    format: (value) => `$${value.pool.feesTotalUSD.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'volume',
+    label: 'VOLUME',
+    minWidth: 150,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
 ];
 
 const filtered = (raw, targets) =>
@@ -119,7 +158,9 @@ export default function Categories(){
                     </p>
                   </div>
                   <div className={classes.divider} />
-                  <List data={Object.values(filtered(state.indexes, value.indexes))}
+                  {console.log(Object.values(filtered(state.indexes, value.indexes)))}
+                  <List
+                    data={getHelperData(Object.values(filtered(state.indexes, value.indexes)))}
                     columns={columns}
                     props={state.indexes}
                     height={250}
