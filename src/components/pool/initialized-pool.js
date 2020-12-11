@@ -62,7 +62,7 @@ function InitializedPoolPage({ address, metadata }){
     let pool = findHelper(helper)
     let contract = toContract(web3.injected, PoolInitializer.abi, pool.initializer)
 
-    return await contract.methods.claimTokens().send({ from: account })
+    return await contract.methods.claimTokens().send({ from: account, gas: 200000 })
     .on('transactionHash', (transactionHash) => {
       dispatch({ type: 'MODAL', payload: { show: false }})
       dispatch(TX_PENDING(transactionHash))
@@ -103,7 +103,7 @@ function InitializedPoolPage({ address, metadata }){
 
   for(let x in pool.tokens) {
     let { address } = pool.tokens[x]
-    let amount = toWei(Math.floor(Math.random() * 10000))
+    let amount = toWei(new BigNumber(Math.floor(Math.random() * 10000)))
     const token = new web3.injected.eth.Contract(MockERC20ABI, address)
 
     await token.methods.getFreeTokens(account, amount)
