@@ -17,8 +17,6 @@ import { toContract } from '../../lib/util/contracts';
 
 const routerABI = require('../../assets/constants/abi/UniswapV2Router.json')
 
-const WETH = "0xc778417e063141139fce010982780140aa0cd5ab"
-
 const useStyles = getStyles(style);
 
 const Trigger = styled(ButtonPrimary)({
@@ -80,22 +78,13 @@ export default function TradeTab({ metadata }) {
   }
 
   useEffect(() => {
-    console.log('HELPER', tradeState.helper)
-
-    if (!tradeState.helper) {
-      return;
-    }
-
-    console.log('GOOD')
+    if (!tradeState.helper)  return;
 
     let amount = tradeState.input.amount
     let allowance = tradeState.getAllowanceForPair(tradeState.input.address);
 
-
-    if(tradeState.input.address == WETH) setApprovalNeeded(false);
+    if(tradeState.input.address == process.env.REACT_APP_WETH) setApprovalNeeded(false);
     else setApprovalNeeded(amount.gt(allowance));
-
-    console.log('WORKING!')
 
     setRender(true);
   }, [tradeState]);
@@ -119,14 +108,14 @@ export default function TradeTab({ metadata }) {
     let txProps = { from: state.account }
     let fn = () => {}
 
-    if(tokenIn == WETH) {
+    if(tokenIn == process.env.REACT_APP_WETH) {
       txProps = { from: state.account, value: amountIn }
       fn = pair.methods.swapETHForExactTokens(
         amountOut,
         [tokenIn, tokenOut],
         state.account,
         (+timestamp) + 600);
-    } else if(tokenOut == WETH) {
+    } else if(tokenOut == process.env.REACT_APP_WETH) {
       fn = pair.methods.swapExactTokensForETH(
         amountIn,
         amountOut,

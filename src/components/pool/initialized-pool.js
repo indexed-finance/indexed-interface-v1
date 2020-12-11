@@ -27,8 +27,6 @@ import getStyles from '../../assets/css'
 import { store } from '../../state'
 import Copyable from '../copyable';
 
-const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
-
 const useStyles = getStyles(style)
 
 function InitializedPoolPage({ address, metadata }){
@@ -46,7 +44,7 @@ function InitializedPoolPage({ address, metadata }){
 
   const getNativeBalances = async() => {
     let { web3, account } = state
-    let pair = await getPair(web3[process.env.REACT_APP_ETH_NETWORK], WETH, address)
+    let pair = await getPair(web3[process.env.REACT_APP_ETH_NETWORK], process.env.REACT_APP_WETH, address)
     let target = web3.injected !== false ? account : '0x0000000000000000000000000000000000000001'
 
     let lp = pair.options.address !== '0x0000000000000000000000000000000000000000' ?

@@ -116,7 +116,7 @@ export default function VerticalTabs({ data }) {
   useEffect(() => {
     const getTrades = async() => {
       if(Object.values(data).length > 0 && meta != dummy){
-        let pair = await getPair(state.web3[process.env.REACT_APP_ETH_NETWORK], WETH, meta.address)
+        let pair = await getPair(state.web3[process.env.REACT_APP_ETH_NETWORK], process.env.REACT_APP_WETH, meta.address)
         let trades = await getMarketTrades(pair.options.address)
         let history = []
 

@@ -8,7 +8,6 @@ import { toContract } from './util/contracts'
 import Decimal from 'decimal.js'
 import BN from 'bn.js'
 
-const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
 const FACTORY = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'
 const ROUTER = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
 
@@ -41,13 +40,13 @@ export async function getPair(web3, addressOne, addressTwo){
 
 export async function getBalances(web3, address, array, map){
   let tokens = array.map(v => { return { address: v.address, symbol: v.symbol }})
-  tokens.push({ address: WETH, symbol: 'ETH' })
+  tokens.push({ address: process.env.REACT_APP_WETH, symbol: 'ETH' })
 
   for(let token in tokens){
     let contract = toContract(web3, IERC20.abi, tokens[token].address)
     let balance = await contract.methods.balanceOf(address).call()
 
-    if(tokens[token].address == WETH){
+    if(tokens[token].address == process.env.REACT_APP_WETH){
       balance = await web3.eth.getBalance(address)
     }
 
