@@ -28,8 +28,6 @@ import { isNative } from './functions'
 let currentTime = (new Date()).getHours()
 let isNight = (currentTime >= 17 || currentTime < 6)
 
-const BASE64_PREFIX = 'data:image/png;base64,'
-
 export const initialState = {
   web3: {
     mainnet: new Web3('https://mainnet.infura.io/v3/1c6549e97ff24d9a99ba4e007b538de6'),
@@ -122,127 +120,111 @@ export const initialProposalState = {
    signatures: []
  }
 
- function base64(relativePath) {
-   console.log('RELATIVE PATH', relativePath)
-
-   if(relativePath.includes(BASE64_PREFIX)) {
-     let base64Bytes = relativePath.replace(BASE64_PREFIX, '')
-
-     console.log('BASE64 BYTES', base64Bytes)
-
-     while (base64Bytes.length % 4 > 0) {
-       base64Bytes += '=';
-     }
-
-     return BASE64_PREFIX + base64Bytes
-   } else {
-     return relativePath
-   }
- }
-
+// Image size formatting over-ride w/ IMAGE_INLINE_SIZE_LIMIT
+// be weary of it causing future trouble w/images
 
 export const tokenMetadata = {
   "BAT": {
     address: "0x0d8775f648430679a709e98d2b0cb6250d2887ef",
     name: "Basic Attention Token",
-    image: base64(bat)
+    image: bat
   },
   "USDC": {
     address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
     name: "USD Coin",
-    image: base64(usdc)
+    image: usdc
   },
   "USDT": {
     address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
     name: "Tether",
-    image: base64(usdt)
+    image: usdt
   },
   "BUSD": {
     address: "0x4fabb145d64652a948d72533023f6e7a623c7c53",
     name: "Binance USD",
-    image: base64(busd)
+    image: busd
   },
   "COMP": {
     address: "0xc00e94cb662c3520282e6f5717214004a7f26888",
     name: "Compound",
-    image: base64(comp)
+    image: comp
   },
   "YFI": {
     address: "0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e",
     name: "Yearn",
-    image: base64(yfi)
+    image: yfi
   },
   "MKR": {
     address: "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
     name: "Maker",
-    image: base64(mkr)
+    image: mkr
   },
   "BAL": {
     address: "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
     name: "Balancer",
-    image: base64(bal)
+    image: bal
   },
   "DAI": {
     address: "0x6b175474e89094c44da98b954eedeac495271d0f",
     name: "Dai Stablecoin",
-    image: base64(dai)
+    image: dai
   },
   "LINK": {
     address: "0x514910771af9ca656af840dff83e8264ecf986ca",
     name: "Chainlink",
-    image: base64(link)
+    image: link
   },
   "ETH": {
     name: "Ethereum",
-    image: base64(eth)
+    image: eth
   },
   "SNX": {
     name: "Synthetix",
-    image: base64(snx)
+    image: snx
   },
   "WBTC": {
     address: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
     name: "Wrapped Bitcoin",
-    image: base64(wbtc)
+    image: wbtc
   },
   "AMPL": {
     name: "Ampleforth",
-    image: base64(ampl)
+    image: ampl
   },
   "UNI": {
     address: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
     name: 'Uniswap',
-    image: base64(uni)
+    image: uni
   },
   "CRV": {
     address: '0xd533a949740bb3306d119cc777fa900ba034cd52',
     name: 'Curve',
-    image: base64(crv)
+    image: crv
   },
   "KNC": {
     address: '0xdd974d5c2e2928dea5f71b9825b8b646686bd200',
     name: 'Kyber Network',
-    image: base64(knc)
+    image: knc
   },
   "AAVE": {
     address: '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9',
     name: 'AaveToken',
-    image: base64(aave)
+    image: aave
   },
   "OMG": {
     address: '0xd26114cd6ee289accf82350c8d8487fedb8a0c07',
     name: 'OmiseGO',
-    image: base64(omg)
+    image: omg
   },
   "UMA": {
     address: "0x04fa0d235c4abf4bcf4787af4cf447de572ef828",
     name: "UMAVotingTokenv1",
-    image: base64(uma)
+    image: uma
   },
   "REN": {
     address: "0x408e41876cccdc0f92210600ef50372656052a38",
     name: "Republic",
-    image: base64(ren)
+    image: ren
   }
 }
 

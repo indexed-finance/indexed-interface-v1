@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, Suspense, lazy } from 'react'
 import ReactDOM from 'react-dom'
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import {  Switch, Route, BrowserRouter as Router } from 'react-router-dom'
+import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 import { getAllHelpers, formatBalance, BigNumber } from '@indexed-finance/indexed.js';
 
 import { StateProvider } from './state'

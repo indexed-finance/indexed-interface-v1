@@ -18,7 +18,6 @@ import Copyable from '../components/copyable'
 
 import { initialPoolState } from '../assets/constants/parameters'
 import style from '../assets/css/routes/markets'
-import indexed from '../assets/images/indexed.png'
 import getStyles from '../assets/css'
 import { store } from '../state'
 
