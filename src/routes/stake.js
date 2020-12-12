@@ -91,6 +91,8 @@ export default function Stake() {
         let width = symbol.includes('UNIV2') ? 25 : 30
         let label = isReady ? 'STAKE' : 'INITIALIZE'
 
+        console.log(symbol)
+
         if(parseFloat(totalSupply) === 0){
           rate = formatBalance(new BigNumber(rewardRate), 18, 4)
         }
