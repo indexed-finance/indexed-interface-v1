@@ -84,21 +84,21 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
     const initializer = toContract(state.web3.injected, abi, initState.pool.address);
     const minimumCredit = toHex(initState.creditEthTotal.times(0.98));
     let fn;
-    if (initState.isSingle) {
+    // if (initState.isSingle) {
       let i = initState.selectedIndex;
       let token = initState.tokens[i].address;
       let amount = initState.amounts[i];
       fn = initializer.methods['contributeTokens(address,uint256,uint256)'](token, amount, minimumCredit);
-    } else {
-      const tokens = [];
-      const amounts = [];
-      initState.tokens.forEach((token, i) => {
-        if (!initState.selected[i]) return;
-        tokens.push(token.address);
-        amounts.push(toHex(initState.amounts[i]));
-      });
-      fn = initializer.methods['contributeTokens(address[],uint256[],uint256)'](tokens, amounts, minimumCredit);
-    }
+    // } else {
+      // const tokens = [];
+      // const amounts = [];
+      // initState.tokens.forEach((token, i) => {
+        // if (!initState.selected[i]) return;
+        // tokens.push(token.address);
+        // amounts.push(toHex(initState.amounts[i]));
+      // });
+      // fn = initializer.methods['contributeTokens(address[],uint256[],uint256)'](tokens, amounts, minimumCredit);
+    // }
     await handleTransaction(fn.send({ from: state.account }))
       .then(() => updatePool(true))
       .catch(() => {});
