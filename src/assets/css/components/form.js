@@ -34,13 +34,13 @@ const mapping = {
     height: 'calc(25vh - 75px)',
   },
   [NATIVE_SMALL]: {
-    height: 'calc(35vh - 75px)',
+    height: 200,
   },
   [NATIVE_NORMAL]: {
-    height: 'calc(35vh - 75px)',
+    height: 250,
   },
   [NATIVE_WIDE]: {
-    height: 'calc(35vh - 75px)',
+    height: 250,
   }
 }
 

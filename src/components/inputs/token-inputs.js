@@ -24,7 +24,7 @@ export default function TokenInputs({ isInitialiser, tokens, useToken, height, w
         tokens.map((token, index) => {
           let label = index === tokens.length-1 ? 'last' : 'item'
           let secondary =  state.native ? <span id={token.symbol} /> : null
-          return token.amountRemaining.eq(0) ? <></> : <TokenInput isInitialiser={isInitialiser} key={index} index={index} label={label} secondary={secondary} token={token} useToken={useToken} inputWidth={inputWidth}  />
+          return token && isInitialiser && token.amountRemaining.eq(0) ? <></> : <TokenInput isInitialiser={isInitialiser} key={index} index={index} label={label} secondary={secondary} token={token} useToken={useToken} inputWidth={inputWidth}  />
         })
       }
     </List>

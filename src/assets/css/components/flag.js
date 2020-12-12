@@ -61,17 +61,17 @@ const mapping = {
     left: '25%',
   },
   [NATIVE_SMALL]: {
-    bottom: '2.5%',
+    bottom: '5%',
     left: '7.5%',
     right: '7.5%'
   },
   [NATIVE_NORMAL]: {
-    bottom: '2.5%',
+    bottom: '5%',
     left: '7.5%',
     right: '7.5%'
   },
   [NATIVE_WIDE]: {
-    bottom: '2.5%',
+    bottom: '5%',
     left: '7.5%',
     right: '7.5%'
   }

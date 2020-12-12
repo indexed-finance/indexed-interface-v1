@@ -362,8 +362,10 @@ export const NATIVE_WIDE = 400
 export const NATIVE_NORMAL = 399
 export const NATIVE_SMALL = 320
 
-export const TX_CONFIRM = { show: true, message: 'TRANSACTION CONFIRMED', opcode: 'success' }
-export const TX_REVERT = { show: true, message: 'TRANSACTION REVERTED', opcode: 'error' }
+const PREFIX = window.innerWidth > 600 ? 'TRANSACTION' : 'TX'
+
+export const TX_CONFIRM = { show: true, message: `${PREFIX} CONFIRMED`, opcode: 'success' }
+export const TX_REVERT = { show: true, message:  `${PREFIX} REVERTED`, opcode: 'error' }
 export const WEB3_PROVIDER = { show: true, message: 'NO WEB3 PROVIDER DETECTED', opcode: 'info' }
 
 const envNetwork = process.env.REACT_APP_ETH_NETWORK;
@@ -373,7 +375,7 @@ const txEtherscanProps = (txHash, network = envNetwork) => ({ type: 'tx', entity
 
 export const TX_PENDING = (txHash, network = envNetwork) => toFlagDispatch({
   show: true,
-  message: 'TRANSACTION PENDING',
+  message: `${PREFIX} PENDING...`,
   opcode: 'info',
   etherscan: txEtherscanProps(txHash, network)
 });
