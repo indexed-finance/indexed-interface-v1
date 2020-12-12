@@ -207,10 +207,10 @@ export default function VerticalTabs({ data }) {
           <Grid item>
             <div className={classes.stats}>
               <ul>
-                <li> GROSS FEES: ${parseFloat(meta.pool.feesTotalUSD).toFixed(2)}</li>
-                <li> FEE: ${formatBalance(meta.pool.swapFee, 18, 4)}</li>
-                <li> TVL: ${data.marketcap}</li>
-                <li> SUPPLY: {data.supply}</li>
+                <li> CUMULATIVE FEES: ${parseFloat(parseFloat(meta.pool.feesTotalUSD).toFixed(2)).toLocaleString()}</li>
+                <li> SWAP FEE: ${formatBalance(meta.pool.swapFee, 18, 4)}</li>
+                <li> TVL: ${data.marketcap ? data.marketcap.toLocaleString() : '0.00'}</li>
+                <li> SUPPLY: {data.supply ? data.supply.toLocaleString() : '0.00'}</li>
               </ul>
             </div>
           </Grid>

@@ -54,7 +54,7 @@ export default function Weight({ asset, native, show }) {
       let desiredWeight = isGeneric ? formatBalance(target, decimals, 4) : target
       let displayPercent = !isGeneric ? percentOfDesired : desiredWeight * 100
       let title = isGeneric ? `≈ $${(displayBalance * asset.priceUSD).toLocaleString()}`
-      : `/ ${desiredWeight.toLocaleString()} ${symbol}`
+      : `/ ${parseFloat(desiredWeight).toLocaleString()} ${symbol}`
 
       setMetadata({
         percent: displayPercent,

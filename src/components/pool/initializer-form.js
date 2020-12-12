@@ -84,8 +84,6 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
     const initializer = toContract(state.web3.injected, abi, initState.pool.address);
     const minimumCredit = toHex(initState.creditEthTotal.times(0.98));
 
-    console.log('IS SINGLE', initState.isSingle, initState.selectedIndex)
-
     let fn;
     if (initState.selectedIndex) {
       let i = initState.selectedIndex;
