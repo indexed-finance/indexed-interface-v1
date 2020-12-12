@@ -85,10 +85,11 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
     const minimumCredit = toHex(initState.creditEthTotal.times(0.98));
 
     let fn;
-    if (initState.selectedIndex) {
+    if (initState.selectedIndex != undefined) {
       let i = initState.selectedIndex;
       let token = initState.tokens[i].address;
-      let amount = initState.amounts[i];
+      let amount = toHex(initState.amounts[i]);
+
       fn = initializer.methods['contributeTokens(address,uint256,uint256)'](token, amount, minimumCredit);
     } else {
       const tokens = [];
@@ -100,9 +101,10 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
       });
       fn = initializer.methods['contributeTokens(address[],uint256[],uint256)'](tokens, amounts, minimumCredit);
     }
+
     await handleTransaction(fn.send({ from: state.account }))
       .then(() => updatePool(true))
-      .catch(() => {});
+      .catch((err) => console.log(err));
   }
 
   useEffect(() => {
@@ -116,7 +118,7 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
 
   useEffect(() => {
     const verifyConnectivity = async() => {
-      if((state.web3.injected || window.ethereum) && !initState.pool.userAddress && isInit) {
+      if((state.web3.injected || window.ethereum) && !initState.pool.userAddress) {
         await initState.pool.setUserAddress(state.account)
         await initState.pool.updateUserData()
         await updatePool()

@@ -37,7 +37,7 @@ const Exit = styled(ExitIcon)({
 
 function hash(value, og) {
   return (
-    <a style={{ 'text-decoration': 'none' }} href={`https://rinkeby.etherscan.io/tx/${og}`} target='_blank'>
+    <a style={{ 'text-decoration': 'none' }} href={`https://${process.env.REACT_APP_ETH_NETWORK === 'rinkeby' ? 'rinkeby.' : ''}etherscan.io/tx/${og}`} target='_blank'>
       <TransactionButton> <o>{value}</o>&nbsp;<Exit/> </TransactionButton>
     </a>
   )

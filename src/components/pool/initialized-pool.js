@@ -228,14 +228,9 @@ function InitializedPoolPage({ address, metadata }){
                 <a href={`https://app.uniswap.org/#/add/ETH/${address}`} style={{ float: 'left' }} rel="noopener noreferrer" target='_blank'>
                   <ButtonPrimary margin={{ marginBottom: 15, padding: '.5em 1.25em' }}  variant='outlined'> ADD LIQUIDITY </ButtonPrimary>
                 </a>
-                {process.env.REACT_APP_ETH_NETWORK === 'mainnet' && (
-                  <a href={`https://app.uniswap.org/#/remove/${address}/ETH`} style={{ float: 'right' }} rel="noopener noreferrer" target='_blank'>
-                    <ButtonPrimary margin={{ margin: 0, padding: '.5em 1.25em' }}  variant='outlined'> REMOVE LIQUIDITY </ButtonPrimary>
-                  </a>
-                )}
-                {process.env.REACT_APP_ETH_NETWORK === 'rinkeby' && (
-                  <ButtonPrimary onClick={getUnderlyingAssets} margin={{ margin: 0, padding: '.5em 1.25em' }}  variant='outlined'> GET ASSETS </ButtonPrimary>
-                )}
+                <a href={`https://app.uniswap.org/#/remove/${address}/ETH`} style={{ float: 'right' }} rel="noopener noreferrer" target='_blank'>
+                  <ButtonPrimary margin={{ margin: 0, padding: '.5em 1.25em' }}  variant='outlined'> REMOVE LIQUIDITY </ButtonPrimary>
+                </a>
               </div>
             </Container>
             <Container margin={margin} padding="1em 0em" title='ASSETS'>
