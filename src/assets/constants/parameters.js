@@ -375,7 +375,7 @@ const txEtherscanProps = (txHash, network = envNetwork) => ({ type: 'tx', entity
 
 export const TX_PENDING = (txHash, network = envNetwork) => toFlagDispatch({
   show: true,
-  message: `${PREFIX} PENDING...`,
+  message: `${PREFIX} PENDING`,
   opcode: 'info',
   etherscan: txEtherscanProps(txHash, network)
 });

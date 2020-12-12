@@ -141,7 +141,7 @@ export default function TradeTab({ metadata }) {
     feeString = `${fee} ${symbol}`;
   }
 
-  let { width } = style.getFormatting(state.native)
+  let { width, marginRight } = style.getFormatting(state.native)
 
   return (
     <Grid container direction='column' alignItems='center' justify='space-around' style={{ width }}>
@@ -170,7 +170,7 @@ export default function TradeTab({ metadata }) {
 
       <Grid item xs={12} md={12} lg={12} xl={12} key='3' style={{ width: '100%'}}>
         <div className={classes.market} >
-          <p> FEE: <span> {feeString} </span> </p>
+          <p> FEE: <span style={{ marginRight }}> {feeString} </span> </p>
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} key='4'>

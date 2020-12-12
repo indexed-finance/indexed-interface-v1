@@ -73,9 +73,9 @@ function UninitializedPoolPage({ address, metadata }) {
     if (initState.pool || !state.helper) return;
     const setPool = () => {
       const helper = findHelper();
-      setHelper(helper);
+      if(helper) setHelper(helper);
     };
-    setPool();
+    if(!initState.pool && state.helper) setPool();
   }, [state.web3.injected, state.helper]);
 
   if (!initState.pool) {

@@ -37,7 +37,6 @@ const setStyle = (theme) => ({
     '& p': {
       fontSize: 14,
       marginLeft: 12.5,
-      marginRight: 12.5
     },
     '& p span': {
       float: 'right',
@@ -54,31 +53,40 @@ const setStyle = (theme) => ({
 
 const mapping = {
   [DESKTOP_SMALL]: {
-    width: 'auto'
+    width: 'auto',
+    marginRight: 10
   },
   [DESKTOP_NORMAL]: {
-    width: 'auto'
+    width: 'auto',
+    marginRight: 10
   },
   [DESKTOP_LARGE]: {
-    width: 'auto'
+    width: 'auto',
+    marginRight: 10
   },
   [DESKTOP_WIDE]: {
-    width: 'auto'
+    width: 'auto',
+    marginRight: 10
   },
   [DESKTOP_HUGE]: {
-    width: 'auto'
+    width: 'auto',
+    marginRight: 10
   },
   [DESKTOP_MASSIVE]: {
-    width: 'auto'
+    width: 'auto',
+    marginRight: 10
   },
   [NATIVE_SMALL]: {
-    width: '100vw'
+    width: '100vw',
+    marginRight: 12.5
   },
   [NATIVE_NORMAL]: {
-    width: '100vw'
+    width: '100vw',
+    marginRight: 12.5
   },
   [NATIVE_WIDE]: {
-    width: '100vw'
+    width: '100vw',
+    marginRight: 12.5
   },
 }
 

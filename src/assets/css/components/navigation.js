@@ -184,7 +184,7 @@ const mapping = {
   [NATIVE_NORMAL]: {
     paddingTop: '1.5vh',
     display: 'INDEXED',
-    logoMargin: 2.5,
+    logoMargin: 3.5,
     marginBottom: '4.5em',
     titleMargin: 15,
     marginLeft: 0,
@@ -199,7 +199,7 @@ const mapping = {
     display: 'INDEXED',
     marginLeft: 0,
     marginBottom: '4.5em',
-    logoMargin: 2,
+    logoMargin: 2.25,
     titleMargin: 15,
     width: 30,
     padding: {
