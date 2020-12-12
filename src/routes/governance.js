@@ -163,7 +163,7 @@ export default function Governance(){
     }
 
     const submit = async() => {
-      if(selection === 0) {
+      if(selection == 0) {
         await delegateAddress(state.account)
       }
       await trigger()
