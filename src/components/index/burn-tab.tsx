@@ -69,7 +69,7 @@ export default function BurnTab({ market, metadata }) {
 
   useEffect(() => {
     const verifyConnectivity = async() => {
-      if(isInit && state.web3.injected && !burnState.pool.userAddress) {
+      if(isInit && (state.web3.injected || window.ethereum) && !burnState.pool.userAddress) {
         await burnState.pool.setUserAddress(state.account)
         await updatePool()
       }
@@ -105,7 +105,7 @@ export default function BurnTab({ market, metadata }) {
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
-        <ButtonPrimary onClick={burn} disabled={!burnState.ready} margin={{ marginTop: 25 }}>
+        <ButtonPrimary onClick={burn} disabled={!burnState.ready} margin={{ margin: 25, marginTop: 30, marginLeft: 150 }}>
           BURN
         </ButtonPrimary>
       </Grid>

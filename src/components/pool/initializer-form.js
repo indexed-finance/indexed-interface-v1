@@ -115,7 +115,7 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
 
   useEffect(() => {
     const verifyConnectivity = async() => {
-      if(state.web3.injected && !initState.pool.userAddress) {
+      if((state.web3.injected || window.ethereum) && !initState.pool.userAddress) {
         await initState.pool.setUserAddress(state.account)
         await initState.pool.updateUserData()
         await updatePool()

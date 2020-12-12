@@ -15,8 +15,8 @@ export function getHelperData(arr) {
     if(props.active) {
       let { pool } = props.poolHelper
 
+      props.feesTotalUSD = '$' + parseFloat(pool.feesTotalUSD).toFixed(2)
       props.swapFeeUSD = '$' + formatBalance(pool.swapFee, 18, 4)
-      props.feesTotalUSD = '$' + pool.feesTotalUSD
     }
 
     return { ...props }

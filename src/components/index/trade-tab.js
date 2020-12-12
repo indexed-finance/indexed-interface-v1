@@ -19,10 +19,6 @@ const routerABI = require('../../assets/constants/abi/UniswapV2Router.json')
 
 const useStyles = getStyles(style);
 
-const Trigger = styled(ButtonPrimary)({
-  marginTop: '25px !important'
-})
-
 export default function TradeTab({ metadata }) {
   const { useInput, useOutput, tradeState, setHelper, updatePool, whitelistTokens, selectWhitelistToken, switchTokens } = useTradeState();
   const [ isRendered, setRender ] = useState(false);
@@ -108,8 +104,6 @@ export default function TradeTab({ metadata }) {
     let txProps = { from: state.account }
     let fn = () => {}
 
-    console.log(tokenIn, process.env.REACT_APP_WETH)
-
     if(tokenIn.toLowerCase() == process.env.REACT_APP_WETH) {
       txProps = { from: state.account, value: amountIn }
       fn = pair.methods.swapETHForExactTokens(
@@ -180,8 +174,8 @@ export default function TradeTab({ metadata }) {
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} key='4'>
-        {approvalNeeded && <Trigger onClick={approveRouter}> APPROVE </Trigger> }
-        {tradeState.ready && <Trigger onClick={executeSwap}> SWAP </Trigger> }
+        {approvalNeeded && <ButtonPrimary margin={{ margin: 25, marginLeft: 150 }} onClick={approveRouter}> APPROVE </ButtonPrimary> }
+        {tradeState.ready && <ButtonPrimary margin={{ margin: 25, marginLeft: 150 }} onClick={executeSwap}> SWAP </ButtonPrimary> }
       </Grid>
     </Grid>
   )

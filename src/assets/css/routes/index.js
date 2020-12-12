@@ -80,7 +80,7 @@ const setStyle = (theme) => ({
     }
   },
   nav: {
-    marginTop: 12.5,
+    marginTop: 20,
     marginBottom: 12.5
   }
 })

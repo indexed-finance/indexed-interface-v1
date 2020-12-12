@@ -74,7 +74,7 @@ export default function Mint({ market, metadata }) {
 
   useEffect(() => {
     const verifyConnectivity = async() => {
-      if(isInit && state.web3.injected && !mintState.pool.userAddress) {
+      if(isInit && (state.web3.injected || window.ethereum) && !mintState.pool.userAddress) {
         await mintState.pool.setUserAddress(state.account)
         await updatePool()
       }
@@ -110,7 +110,7 @@ export default function Mint({ market, metadata }) {
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
-        <ButtonPrimary onClick={mint} disabled={!mintState.ready} margin={{ marginTop: 7.5 }}>
+        <ButtonPrimary onClick={mint} disabled={!mintState.ready} margin={{ margin: 25, marginLeft: 150, marginTop: 7.5 }}>
           MINT
         </ButtonPrimary>
       </Grid>

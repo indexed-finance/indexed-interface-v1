@@ -119,7 +119,7 @@ const mapping = {
     height: '35%'
   },
   [NATIVE_NORMAL]: {
-    top: 'calc(100px + 2.5vh)',
+    top: 'calc(105px + 2.5vh)',
     canvasMargin: '3.5em 1.5em 1em 1.5em',
     paddingLeft: 12.5,
     margin: '-.5em 1.5em 1em 1.5em',

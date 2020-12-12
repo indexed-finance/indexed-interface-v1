@@ -36,7 +36,8 @@ const setStyle = (theme) => ({
     marginBottom: 12.5,
     '& p': {
       fontSize: 14,
-      marginLeft: 12.5
+      marginLeft: 12.5,
+      marginRight: 12.5
     },
     '& p span': {
       float: 'right',
