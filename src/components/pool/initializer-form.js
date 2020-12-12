@@ -83,9 +83,11 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
     const abi = require('../../assets/constants/abi/PoolInitializer.json').abi;
     const initializer = toContract(state.web3.injected, abi, initState.pool.address);
     const minimumCredit = toHex(initState.creditEthTotal.times(0.98));
-    const isSingle = initState.tokens.filter((t, i) => initState.selected[i])
+
+    console.log('IS SINGLE', initState.isSingle, initState.selectedIndex)
+
     let fn;
-    if (isSingle.length == 1) {
+    if (initState.selectedIndex) {
       let i = initState.selectedIndex;
       let token = initState.tokens[i].address;
       let amount = initState.amounts[i];
@@ -112,7 +114,7 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
       setInit(true);
     }
     if (!isInit && !initState.pool && state.helper) setPool();
-  }, [ state.helper, window.ethereum  ])
+  }, [ state.helper, state.web3.injected  ])
 
   useEffect(() => {
     const verifyConnectivity = async() => {
