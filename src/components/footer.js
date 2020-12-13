@@ -31,7 +31,7 @@ export default function Footer() {
   }, [ state.native, location.pathname ])
 
   return(
-    <div className={classes.root} style={{ marginTop: margin }} >
+    state.request && <div className={classes.root} style={{ marginTop: margin }} >
       <Grid container direction='row' alignItems='flex-start' justify='space-between'>
         <Grid item style={{ marginBottom: state.native ? 15 : 0 }}>
          <div className={classes.copyright}> ALL RIGHTS RESERVED. INDEXED 2020 </div>
