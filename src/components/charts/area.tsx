@@ -20,7 +20,7 @@ let stock;
 
 export const background = '#666666';
 export const background2 = '#FFFFFF';
-export const accentColor = '#666666';
+export const accentColor = '#999999';
 export const accentColorDark = '#c2d9fe';
 const tooltipStyles = {
   ...defaultStyles,
