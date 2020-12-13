@@ -6,6 +6,7 @@ import style from '../assets/css/components/footer'
 
 import discord from '../assets/images/discord.png'
 import github from '../assets/images/github.png'
+import medium from '../assets/images/medium.png'
 import twitter from '../assets/images/twitter.png'
 
 import getStyles from '../assets/css'
@@ -29,6 +30,9 @@ export default function Footer({ native }) {
           </label>
           <label className={classes.logo}>
             <img alt='discord' src={discord} />
+          </label>
+          <label className={classes.logo}>
+            <img alt='medium' src={medium} />
           </label>
           <label className={classes.logo}>
             <img alt='github' src={github} />
