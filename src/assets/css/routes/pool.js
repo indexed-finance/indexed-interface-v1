@@ -79,7 +79,6 @@ const setStyle = (theme) => ({
     }
   },
   market: {
-    position: 'absolute',
     paddingLeft: '1.75em',
     '& h2': {
       marginBottom: 0

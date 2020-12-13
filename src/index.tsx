@@ -285,7 +285,7 @@ function Application(){
                 </Route>
               </Switch>
             </Suspense>
-            <Footer native={state.native} />
+            <Footer />
             <Modal />
             <Flag />
           </Main>

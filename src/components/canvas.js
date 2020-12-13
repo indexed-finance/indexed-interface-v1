@@ -13,7 +13,7 @@ export default function Canvas({ native, children, color, button, style, custom 
   let margin = 'auto'
 
   if(!style) {
-     margin = native ? '1em 1.5em .5em 1.5em' : '3em 3em .5em 3em'
+     margin = native ? '2em 1.5em .5em 1.5em' : '3em 3em .5em 3em'
   }
 
   if(native === undefined) margin = '1.5em 0em'

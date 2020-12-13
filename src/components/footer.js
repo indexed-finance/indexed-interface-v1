@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import { useLocation } from 'react-router-dom'
@@ -9,31 +9,32 @@ import discord from '../assets/images/discord.png'
 import github from '../assets/images/github.png'
 import medium from '../assets/images/medium.png'
 import twitter from '../assets/images/twitter.png'
+import { store } from '../state'
 
 import getStyles from '../assets/css'
 
 const useStyles = getStyles(style)
 
-export default function Footer({ native }) {
+export default function Footer() {
   const [ margin, setMargin ] = useState(0)
   const location = useLocation()
   const classes = useStyles()
 
-  let path = location.pathname
+  let { state } = useContext(store)
 
   useEffect(() => {
-    let { marginTop } = style.getFormatting(native)
+    let { marginTop } = style.getFormatting(state.native)
 
-    if(margin != marginTop[path.split('/')[1]]){
-      setMargin(marginTop[path.split('/')[1]])
+    if(margin == 0 || margin != marginTop[location.pathname.split('/')[1]]){
+      setMargin(marginTop[location.pathname.split('/')[1]])
     }
-  }, [ path ])
+  }, [ state.native, location.pathname ])
 
   return(
     <div className={classes.root} style={{ marginTop: margin }} >
       <Grid container direction='row' alignItems='flex-start' justify='space-between'>
-        <Grid item>
-         <div className={classes.copyright}> All Rights Reserved. INDEXED 2020 </div>
+        <Grid item style={{ marginBottom: state.native ? 15 : 0 }}>
+         <div className={classes.copyright}> ALL RIGHTS RESERVED. INDEXED 2020 </div>
         </Grid>
         <Grid item>
           <a className={classes.logo}  rel="noopener noreferrer" href="https://twitter.com/indexedfi" target='_blank'>

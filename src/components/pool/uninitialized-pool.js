@@ -120,11 +120,8 @@ function UninitializedPoolPage({ address, metadata }) {
         <ParentSize>
           {({ width, height }) => (
             <Canvas native={native} style={{ width: !state.native ? width : 'auto', margin }} custom={percent}>
-            <div className={classes.market}>
+            <div className={classes.market} style={{ position: 'relative', padding: '0em 1.5em 1em 1.5em' }}>
               <MetaDisplay />
-            </div>
-            <div className={classes.chart}>
-              <Spline absolute={false} ready={true} padding={padding} native={native} color='#ffa500' metadata={metadata} height={chartHeight} />
             </div>
             <div className={classes.stats} style={{ fontSize }}>
               <ul>

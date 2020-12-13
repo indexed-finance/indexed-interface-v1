@@ -29,7 +29,7 @@ const setStyle = (theme) => ({
     }
   },
   copyright: {
-    paddingTop: 7.5
+    paddingTop: 12.5
   }
 })
 
@@ -108,6 +108,7 @@ const mapping = {
       'supply': '18%',
       'propose': '18%',
       'proposal': '18%',
+      'pool': '18%'
     }
   },
   [NATIVE_SMALL]: {
@@ -115,11 +116,12 @@ const mapping = {
       '': '2.5em',
       'categories': '2.5em',
       'governance': '2.5em',
-      'index': '0em',
+      'index': '3em',
       'stake': '2.5em',
       'supply': '2.5em',
       'propose': '2.5em',
       'proposal': '2.5em',
+      'pool': '2.5em'
     }
   },
   [NATIVE_NORMAL]: {
@@ -127,11 +129,12 @@ const mapping = {
       '': '2.5em',
       'categories': '2.5em',
       'governance': '2.5em',
-      'index': '0em',
+      'index': '5em',
       'stake': '2.5em',
       'supply': '2.5em',
       'propose': '2.5em',
       'proposal': '2.5em',
+      'pool': '2.5em'
     }
   },
   [NATIVE_WIDE]: {
@@ -139,11 +142,12 @@ const mapping = {
       '': '2.5em',
       'categories': '2.5em',
       'governance': '2.5em',
-      'index': '0em',
+      'index': '5em',
       'stake': '2.5em',
       'supply': '2.5em',
       'propose': '2.5em',
       'proposal': '2.5em',
+      'pool': '2.5em'
     }
   }
 }

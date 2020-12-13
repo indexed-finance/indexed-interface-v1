@@ -194,7 +194,7 @@ function InitializedPoolPage({ address, metadata }){
           <ParentSize>
             {({ width, height }) => (
             <Canvas native={native} style={{ width: !state.native ? width : 'auto', margin }} custom={percent}>
-              <div className={classes.market}>
+              <div className={classes.market} style={{ position: 'absolute' }}>
                 <MetaDisplay />
               </div>
               <div className={classes.chart}>
