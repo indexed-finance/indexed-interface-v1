@@ -36,18 +36,18 @@ export default function Footer({ native }) {
          <div className={classes.copyright}> All Rights Reserved. INDEXED 2020 </div>
         </Grid>
         <Grid item>
-          <label className={classes.logo}>
+          <a className={classes.logo}  rel="noopener noreferrer" href="https://twitter.com/indexedfi" target='_blank'>
             <img alt='twitter' src={twitter} />
-          </label>
-          <label className={classes.logo}>
+          </a>
+          <a className={classes.logo}  rel="noopener noreferrer" href="https://discord.com" target='_blank'>
             <img alt='discord' src={discord} />
-          </label>
-          <label className={classes.logo}>
+          </a>
+          <a className={classes.logo}  rel="noopener noreferrer" href="https://medium.com" target='_blank'>
             <img alt='medium' src={medium} />
-          </label>
-          <label className={classes.logo}>
+          </a>
+          <a className={classes.logo}  rel="noopener noreferrer" href="https://github.com/indexed-finance" target='_blank'>
             <img alt='github' src={github} />
-          </label>
+          </a>
         </Grid>
       </Grid>
     </div>
