@@ -91,7 +91,7 @@ export default function Markets(){
             <div className={classes.market} style={{ paddingLeft }}>
               {!native && (
                  <Fragment>
-                  <h2> {market.name} </h2>
+                  <h2> {market.name} [{market.symbol}]</h2>
                   {state.request && !market.active && (<h3 style={{ color: 'orange' }}> UNINITIALISED </h3>)}
                   {market.active && (
                     <h3 style={{ color: '#999999' }}> ${market.price}

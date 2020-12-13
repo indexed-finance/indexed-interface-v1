@@ -76,7 +76,7 @@ const mapping = {
   [DESKTOP_WIDE]: {
     marginTop: {
       '': '18%',
-      'categories': '22.5%',
+      'categories': '25%',
       'governance': '15%',
       'index': '9.7%',
       'stake': '26.75%',
