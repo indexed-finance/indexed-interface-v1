@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import { useLocation } from 'react-router-dom'
@@ -15,15 +15,22 @@ import getStyles from '../assets/css'
 const useStyles = getStyles(style)
 
 export default function Footer({ native }) {
+  const [ margin, setMargin ] = useState(0)
   const location = useLocation()
   const classes = useStyles()
 
-  let { marginTop } = style.getFormatting(native)
   let path = location.pathname
 
+  useEffect(() => {
+    let { marginTop } = style.getFormatting(native)
+
+    if(margin != marginTop[path.split('/')[1]]){
+      setMargin(marginTop[path.split('/')[1]])
+    }
+  }, [ path ])
 
   return(
-    <div className={classes.root} style={{ marginTop: marginTop[path.split('/')[1]] }} >
+    <div className={classes.root} style={{ marginTop: margin }} >
       <Grid container direction='row' alignItems='flex-start' justify='space-between'>
         <Grid item>
          <div className={classes.copyright}> All Rights Reserved. INDEXED 2020 </div>

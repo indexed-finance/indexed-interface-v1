@@ -44,6 +44,7 @@ const mapping = {
       'supply': '2.5em',
       'propose': '2.5em',
       'proposal': '2.5em',
+      'pool': '2.5em'
     }
   },
   [DESKTOP_NORMAL]: {
@@ -56,35 +57,38 @@ const mapping = {
       'supply': '2.5em',
       'propose': '2.5em',
       'proposal': '2.5em',
+      'pool': '2.5em'
     }
   },
   [DESKTOP_LARGE]: {
     marginTop: {
       '': '2.5em',
-      'categories': '2.5em',
+      'categories': '21em',
       'governance': '2.5em',
       'index': '0em',
-      'stake': '2.5em',
+      'stake': '30em',
       'supply': '2.5em',
       'propose': '2.5em',
-      'proposal': '2.5em',
+      'proposal': '20.25em',
+      'pool': '20em'
     }
   },
   [DESKTOP_WIDE]: {
     marginTop: {
       '': '18%',
-      'categories': '18%',
-      'governance': '18%',
-      'index': '18%',
-      'stake': '18%',
+      'categories': '22.5%',
+      'governance': '15%',
+      'index': '9.7%',
+      'stake': '26.75%',
       'supply': '18%',
-      'propose': '18%',
-      'proposal': '18%',
+      'propose': '23.5%',
+      'proposal': '22.45%',
+      'pool': '20%'
     }
   },
   [DESKTOP_HUGE]: {
     marginTop: {
-      '': '18%',
+      '': '17.75%',
       'categories': '18%',
       'governance': '18%',
       'index': '18%',
