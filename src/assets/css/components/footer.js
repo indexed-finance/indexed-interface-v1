@@ -35,31 +35,112 @@ const setStyle = (theme) => ({
 
 const mapping = {
   [DESKTOP_SMALL]: {
-    marginTop: '2.5em',
+    marginTop: {
+      '': '2.5em',
+      'categories': '2.5em',
+      'governance': '2.5em',
+      'index': '0em',
+      'stake': '2.5em',
+      'supply': '2.5em',
+      'propose': '2.5em',
+      'proposal': '2.5em',
+    }
   },
   [DESKTOP_NORMAL]: {
-    marginTop: '2.5em',
+    marginTop: {
+      '': '2.5em',
+      'categories': '2.5em',
+      'governance': '2.5em',
+      'index': '0em',
+      'stake': '2.5em',
+      'supply': '2.5em',
+      'propose': '2.5em',
+      'proposal': '2.5em',
+    }
   },
   [DESKTOP_LARGE]: {
-    marginTop: '2.5em',
+    marginTop: {
+      '': '2.5em',
+      'categories': '2.5em',
+      'governance': '2.5em',
+      'index': '0em',
+      'stake': '2.5em',
+      'supply': '2.5em',
+      'propose': '2.5em',
+      'proposal': '2.5em',
+    }
   },
   [DESKTOP_WIDE]: {
-    marginTop: '18%',
+    marginTop: {
+      '': '18%',
+      'categories': '18%',
+      'governance': '18%',
+      'index': '18%',
+      'stake': '18%',
+      'supply': '18%',
+      'propose': '18%',
+      'proposal': '18%',
+    }
   },
   [DESKTOP_HUGE]: {
-    marginTop: '17.5%',
+    marginTop: {
+      '': '18%',
+      'categories': '18%',
+      'governance': '18%',
+      'index': '18%',
+      'stake': '18%',
+      'supply': '18%',
+      'propose': '18%',
+      'proposal': '18%',
+    }
   },
   [DESKTOP_MASSIVE]: {
-    marginTop: '23.675%',
+    marginTop: {
+      '': '18%',
+      'categories': '18%',
+      'governance': '18%',
+      'index': '18%',
+      'stake': '18%',
+      'supply': '18%',
+      'propose': '18%',
+      'proposal': '18%',
+    }
   },
   [NATIVE_SMALL]: {
-    marginTop: '2.5em',
+    marginTop: {
+      '': '2.5em',
+      'categories': '2.5em',
+      'governance': '2.5em',
+      'index': '0em',
+      'stake': '2.5em',
+      'supply': '2.5em',
+      'propose': '2.5em',
+      'proposal': '2.5em',
+    }
   },
   [NATIVE_NORMAL]: {
-    marginTop: '2.5em',
+    marginTop: {
+      '': '2.5em',
+      'categories': '2.5em',
+      'governance': '2.5em',
+      'index': '0em',
+      'stake': '2.5em',
+      'supply': '2.5em',
+      'propose': '2.5em',
+      'proposal': '2.5em',
+    }
   },
   [NATIVE_WIDE]: {
-    marginTop: '2.5em',
+    marginTop: {
+      '': '2.5em',
+      'categories': '2.5em',
+      'governance': '2.5em',
+      'index': '0em',
+      'stake': '2.5em',
+      'supply': '2.5em',
+      'propose': '2.5em',
+      'proposal': '2.5em',
+    }
   }
 }
 
