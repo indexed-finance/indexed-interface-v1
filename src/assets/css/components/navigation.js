@@ -31,7 +31,10 @@ const setStyle = (theme) => ({
   },
   nav: {
      display: 'inline-flex',
-     marginLeft: 'auto'
+     marginLeft: 'auto',
+     'h3': {
+       maringLeft: 0
+     }
   },
   iconButton: {
     marginTop: theme.spacing(.25),

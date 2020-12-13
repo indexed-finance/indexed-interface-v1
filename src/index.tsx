@@ -7,6 +7,7 @@ import { getAllHelpers, formatBalance, BigNumber } from '@indexed-finance/indexe
 
 import { StateProvider } from './state'
 import Navigation from './components/navigation'
+import Footer from './components/footer'
 import Loader from './components/loader'
 import Modal from './components/modal'
 import Flag from './components/flag'
@@ -284,6 +285,7 @@ function Application(){
                 </Route>
               </Switch>
             </Suspense>
+            <Footer native={state.native} />
             <Modal />
             <Flag />
           </Main>
