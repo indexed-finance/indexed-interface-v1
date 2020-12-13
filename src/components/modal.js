@@ -64,7 +64,7 @@ export default function Modal() {
           <DialogContentText style={{ whiteSpace: 'pre-line' }}>{message}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          {actions.map(act => {
+          {actions && actions.map(act => {
             if(act.f === null) act.f = handleClose
 
             return(
