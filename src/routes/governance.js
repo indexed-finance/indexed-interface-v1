@@ -253,6 +253,11 @@ export default function Governance(){
   }, [ state.request ])
 
   useEffect(() => {
+    if(!state.load){
+      dispatch({
+        type: 'LOAD', payload: true
+      })
+    }
     setPhase(<Init />)
   }, [])
 

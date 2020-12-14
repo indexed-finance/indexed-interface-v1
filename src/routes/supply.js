@@ -285,6 +285,14 @@ export default function Supply() {
     checkAllowance()
   }, [ input ])
 
+  useEffect(() => {
+    if(!state.load) {
+      dispatch({
+        type: 'LOAD', payload: true
+      })
+    }
+  }, [])
+
   let {
     padding, marginBottom, margin, marginRight, claimMargin, width, positioning, inputWidth, listPadding, button, height, reward, buttonPos, marginLeft, infoWidth
   } = style.getFormatting({ ticker, native: state.native })

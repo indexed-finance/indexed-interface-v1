@@ -158,7 +158,7 @@ export default function Spline(props){
         />
       )
     }
-  }, [ metadata, height, color, absolute, margin, paddingTop ])
+  }, [ metadata ])
 
   return(
     <>

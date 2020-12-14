@@ -181,6 +181,14 @@ export default function Proposal(){
     retrieveProposal()
   }, [ , isTransaction ])
 
+  useEffect(() => {
+    if(!state.load) {
+      dispatch({
+        type: 'LOAD', payload: true
+      })
+    }
+  }, [])
+
   let { margin, marginX, width, paddingLeft, progress, radius, marginTop } = style.getFormatting({ native })
 
   let forVotes = formatBalance(new BigNumber(metadata.for), 18, 2)

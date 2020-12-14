@@ -123,6 +123,11 @@ export const initialProposalState = {
 // Image size formatting over-ride w/ IMAGE_INLINE_SIZE_LIMIT
 // be weary of it causing future trouble w/images
 
+export const stakingImageMapping = {
+  "GOV5r": [ 'BAL', 'YFI', 'CRV', 'UNI'],
+  "UNIV2:ETH-GOV5r": [ 'UNI', 'YFI', 'CRV', 'BAL']
+}
+
 export const tokenMetadata = {
   "BAT": {
     address: "0x0d8775f648430679a709e98d2b0cb6250d2887ef",

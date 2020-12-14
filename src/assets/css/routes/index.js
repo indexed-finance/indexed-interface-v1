@@ -109,7 +109,7 @@ const mapping = {
     width: '64.5%',
     height: 'calc(93.75vh - 32.5px)',
     paddingTop: '6.5%',
-    marginTop: '-8.5vh',
+    marginTop: '-7.5vh',
     sideBar: '30%',
     showVolume: true,
     marginRight: 75,

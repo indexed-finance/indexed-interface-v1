@@ -289,6 +289,15 @@ export default function Propose(){
     sortAbis()
   }, [ state.indexes ])
 
+
+  useEffect(() => {
+    if(!state.load) {
+      dispatch({
+        type: 'LOAD', payload: true
+      })
+    }
+  }, [])
+
   let { margin } = style.getFormatting(state)
 
   return (

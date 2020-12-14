@@ -13,10 +13,6 @@ export default function Pool(){
   let { address } = useParams()
 
   useEffect(() => {
-    if(!state.load) dispatch({ type: 'LOAD', payload: true });
-  })
-
-  useEffect(() => {
     const retrievePool = async() => {
       let { indexes } = state
 
@@ -28,6 +24,14 @@ export default function Pool(){
     }
     retrievePool()
   }, [ state, address, data.address ])
+
+  useEffect(() => {
+    if(!state.load) {
+      dispatch({
+        type: 'LOAD', payload: true
+      })
+    }
+  }, [])
 
   let { active } = data
 

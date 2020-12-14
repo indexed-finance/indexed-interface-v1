@@ -12,6 +12,7 @@ import List from '../list'
 import ButtonPrimary from '../buttons/primary'
 
 import { UNCLAIMED_CREDITS, TX_PENDING, TX_REVERTED, TX_CONFIRMED } from '../../assets/constants/parameters'
+import { ZERO_ADDRESS } from '../../assets/constants/addresses'
 
 import MockERC20ABI from '../../assets/constants/abi/MockERC20.json'
 import PoolInitializer from '../../assets/constants/abi/PoolInitializer.json'
@@ -198,7 +199,7 @@ function InitializedPoolPage({ address, metadata }){
               </div>
               <div className={classes.chart}>
                 <Spline
-                  ready={state.request}
+                  ready={metadata.address !== ZERO_ADDRESS}
                   padding={padding}
                   absolute={false}
                   native={native}

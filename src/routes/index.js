@@ -106,7 +106,9 @@ export default function Index(){
 
   useEffect(() => {
     if(!state.load){
-      dispatch({ type: 'LOAD', payload: true })
+      dispatch({
+         type: 'LOAD', payload: true
+       })
     }
   }, [ ])
 

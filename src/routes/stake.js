@@ -14,7 +14,7 @@ import Container from '../components/container'
 import ButtonPrimary from '../components/buttons/primary'
 import Loader from '../components/loaders/stake'
 
-import { tokenMetadata } from '../assets/constants/parameters'
+import { tokenMetadata, stakingImageMapping } from '../assets/constants/parameters'
 import { toContract } from '../lib/util/contracts'
 import { getStakingPools } from '../api/gql'
 import getStyles from '../assets/css'
@@ -24,17 +24,13 @@ const useStyles = getStyles(style)
 
 const DATE_END = 1605586873688
 
-const i = {
-  'GOV5r': [ 'BAL', 'YFI', 'CRV', 'UNI'],
-  'UNIV2:ETH-GOV5r': [ 'UNI', 'YFI', 'CRV', 'BAL']
-}
-
 export default function Stake() {
-  const [ pools, setPools ] = useState([])
-  let { state } = useContext(store)
-  let { startTime, setStartTime } = useState(1605586873688);
-  let theme =  useTheme()
-  let classes = useStyles()
+  const [ startTime, setStartTime ] = useState(1605586873688);
+  const [ pools, setPools ] = useState(undefined)
+  const theme =  useTheme()
+  const classes = useStyles()
+
+  let { state, dispatch } = useContext(store)
 
   useEffect(() => {
     const getPools = async() => {
@@ -60,6 +56,14 @@ export default function Stake() {
     getPools()
   }, []);
 
+  useEffect(() => {
+    if(!state.load) {
+      dispatch({
+        type: 'LOAD', payload: true
+      })
+    }
+  }, [])
+
   let { margin } = style.getFormatting(state)
 
   return(
@@ -81,7 +85,7 @@ export default function Stake() {
           </div>
         </Container>
       </Grid>
-      {pools.length > 0 && pools.map((p, i) => {
+      {pools && pools.map((p, i) => {
         let { symbol, name, rewardRate, isReady, totalSupply } = p
         let rate = (parseFloat(rewardRate)/parseFloat(totalSupply))
         let supply = formatBalance(new BigNumber(totalSupply), 18, 4)
@@ -90,8 +94,6 @@ export default function Stake() {
         let marginRight = symbol.includes('UNIV2') ? 5 : 0
         let width = symbol.includes('UNIV2') ? 25 : 30
         let label = isReady ? 'STAKE' : 'INITIALIZE'
-
-        console.log(symbol)
 
         if(parseFloat(totalSupply) === 0){
           rate = formatBalance(new BigNumber(rewardRate), 18, 4)
@@ -106,10 +108,10 @@ export default function Stake() {
               <Card color={color}>
                 <div className={classes.pool}>
                   <div className={classes.image}>
-                    <img alt={`asset-${i}-1`} src={tokenMetadata[i[symbol][0]].image} style={{ width: mainWidth, marginRight }} />
-                    <img alt={`asset-${i}-2`} src={tokenMetadata[i[symbol][1]].image} style={{marginBottom: 25, width }} />
-                    <img alt={`asset-${i}-3`} src={tokenMetadata[i[symbol][2]].image} style={{ marginLeft: -25, width }} />
-                    <img alt={`asset-${i}-4`} src={tokenMetadata[i[symbol][3]].image} style={{ marginBottom: 10, width }} />
+                    <img alt={`asset-${i}-1`} src={tokenMetadata[stakingImageMapping[symbol][0]].image} style={{ width: mainWidth, marginRight }} />
+                    <img alt={`asset-${i}-2`} src={tokenMetadata[stakingImageMapping[symbol][1]].image} style={{marginBottom: 25, width }} />
+                    <img alt={`asset-${i}-3`} src={tokenMetadata[stakingImageMapping[symbol][2]].image} style={{ marginLeft: -25, width }} />
+                    <img alt={`asset-${i}-4`} src={tokenMetadata[stakingImageMapping[symbol][3]].image} style={{ marginBottom: 10, width }} />
                   </div>
                   <div className={classes.information}>
                     {!state.native && (
@@ -141,7 +143,7 @@ export default function Stake() {
           </Grid>
         )
       })}
-      {pools.length === 0 && (
+      {!pools && (
         <Grid item xs={10} md={6} style={{ width: '100%' }}>
           <ParentSize>
             {({ width, height }) => (
