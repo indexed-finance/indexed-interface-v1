@@ -392,8 +392,8 @@ export const MARKET_ORDER = (input, output, f) => ({
 export const UNCLAIMED_CREDITS = (f) => ({
   show: true,
   title: 'UNCLAIMED CREDITS',
-  message: `You have unclaimed compensation for this pool, would you like to redeem your share?`,
+  message: `You have unclaimed credits for this pool, would you like to redeem your share?`,
   actions: [{ label: 'CONFIRM', f: f }, { label: 'REJECT', f: null }]
 })
-export const INCORRECT_NETWORK = { show: true, title: 'INCORRECT NETWORK', message: `The current network is not supported please change to ${envNetwork}`, actions: [ ] }
+export const INCORRECT_NETWORK = { show: true, title: 'INCORRECT NETWORK', message: `The current network is not supported please change to ${envNetwork}.`, actions: [ ] }
 export const DISCLAIMER = { show: true, title: 'DISCLAIMER', message: <>This is expermential software that has only been <a style={{  textDecoration: 'underline' }}>audited by a single third party</a>, please use it at your own risk.</>, actions: [ ] }

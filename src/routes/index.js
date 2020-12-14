@@ -150,7 +150,7 @@ export default function Index(){
               </li>
               {showVolume && (
                 <li style={{ float: 'right'}}>
-                  <span className={classes.alternative}>24H VOLUME: ${metadata.volume}</span>
+                  <span className={classes.alternative}>VOLUME: ${metadata.volume}</span>
                 </li>
               )}
             </ul>
