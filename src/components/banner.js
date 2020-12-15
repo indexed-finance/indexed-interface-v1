@@ -19,6 +19,7 @@ export default function Banner() {
   const thresholds = getResolutionThresholds()
   const [ messages, setMessages ] = useState({ proposal: proposalType, init: [], indexes: [] })
   const [ coordinate, setCoordinate ] = useState({ x: thresholds[0], time: 0, elapsed: 0 })
+  const [ timer, setTimer ] = useState(null)
   const controls = useAnimation()
   const classes = useStyles()
 
@@ -69,7 +70,9 @@ export default function Banner() {
   }
 
   const replayAnimation = (time) => {
-    setTimeout(function() { startAnimation(messages.proposal); }, time * 1000);
+    window.clearTimeout(timer);
+    let newTimer = setTimeout(function() { startAnimation(messages.proposal); }, time * 1000);
+    setTimer(newTimer)
   }
 
   const resumeAnimation = (e) => {
