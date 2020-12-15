@@ -7,11 +7,16 @@ import Web3 from 'web3'
 
 const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
 
-const whitelist = [
-  { address: '0xc778417e063141139fce010982780140aa0cd5ab', symbol: 'ETH', decimals: 18 },
-  { address: '0x5b36B53960Bc1f8b0cAb48AC51F47C8a03c65888', symbol: 'WBTC', decimals: 18 },
-  { address: '0xea88bdf6917e7e001cb9450e8df08164d75c965e', symbol: 'DAI', decimals: 18 }
-];
+const whitelist = {
+  rinkeby: [
+    { address: '0xc778417e063141139fce010982780140aa0cd5ab', symbol: 'ETH', decimals: 18 },
+    { address: '0x5b36B53960Bc1f8b0cAb48AC51F47C8a03c65888', symbol: 'WBTC', decimals: 18 },
+    { address: '0xea88bdf6917e7e001cb9450e8df08164d75c965e', symbol: 'DAI', decimals: 18 }
+  ],
+  mainnet: [
+    { address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', symbol: 'ETH', decimals: 18 },
+  ]
+};
 
 const BN_ZERO = new BigNumber(0);
 
@@ -264,6 +269,6 @@ export function useTrade(): TradeContextType {
     setHelper,
     updatePool,
     selectWhitelistToken,
-    whitelistTokens: whitelist
+    whitelistTokens: whitelist[process.env.REACT_APP_ETH_NETWORK]
   };
 }
