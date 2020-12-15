@@ -32,6 +32,8 @@ export default function Banner() {
     let unixTime = timestamp.getTime()
     let startingPoint = !gov ? thresholds[0] * 0.675 : thresholds[0]
 
+    console.log('START')
+
     setCoordinate({ x: 0, elapsed: 0, time: unixTime })
     controls.start({
       translateX: thresholds[1],
@@ -66,8 +68,16 @@ export default function Banner() {
     }
   }
 
+  const replayAnimation = (time) => {
+    setTimeout(function() { startAnimation(messages.proposal); }, time * 1000);
+  }
+
   const resumeAnimation = (e) => {
     let timeRemaining = duration - coordinate.elapsed
+
+    if(timeRemaining < 0){
+      timeRemaining = (coordinate.elapsed % duration) * duration
+    }
 
     if(messages.indexes.length > 0){
       let currentTime = new Date(Date.now())
@@ -79,16 +89,16 @@ export default function Banner() {
         transition:{
           duration: timeRemaining,
           ease: 'linear',
-          onComplete: v => startAnimation(messages.proposal)
         }
-      })
+      }, replayAnimation(timeRemaining))
     }
   }
 
   useEffect(() => {
     let [ proposals, init, indxs ] = [ [], [], [] ]
 
-    if(Object.entries(indexes).length > 0) {
+    if(Object.entries(indexes).length > 0
+      && messages.indexes.length == 0) {
       let arr = state.proposals.proposals
       let length = arr.length-1
       let last = arr[length]
