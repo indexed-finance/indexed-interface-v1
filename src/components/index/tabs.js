@@ -208,7 +208,7 @@ export default function VerticalTabs({ data }) {
             <div className={classes.stats}>
               <ul>
                 <li> CUMULATIVE FEES: ${parseFloat(parseFloat(meta.pool.feesTotalUSD).toFixed(2)).toLocaleString()}</li>
-                <li> SWAP FEE: ${formatBalance(meta.pool.swapFee, 18, 4)}</li>
+                <li> SWAP FEE: %{formatBalance(meta.pool.swapFee, 18, 4) * 100}</li>
                 <li> TVL: ${data.marketcap ? data.marketcap.toLocaleString() : '0.00'}</li>
                 <li> SUPPLY: {data.supply ? data.supply.toLocaleString() : '0.00'}</li>
               </ul>

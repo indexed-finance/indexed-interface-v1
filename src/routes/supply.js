@@ -50,9 +50,9 @@ export default function Supply() {
   let classes = useStyles()
   let ticker = uncapitalizeNth(asset.toUpperCase(), asset.length-1)
 
-  const findHelper = (asset) => {
+  const findHelper = () => {
     return state.helper.initialized.find(i =>
-      i.pool.symbol == uncapitalizeNth(asset, asset.length-1)
+      i.pool.symbol == ticker
     );
   };
 

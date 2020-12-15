@@ -155,7 +155,8 @@ export function useBurnTokenActions(
 
   let maximumOutput = poolBalance.div(3);
   let errorMessage = '';
-  if (state.isSingle && amount.gt(maximumOutput)) {
+
+  if (amount.gt(maximumOutput)) {
     errorMessage = 'EXCEEDS MAX OUT';
   }
 

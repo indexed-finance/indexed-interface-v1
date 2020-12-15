@@ -339,7 +339,7 @@ export const categoryColumns = [
     label: 'SWAP FEE',
     minWidth: 50,
     align: 'center',
-    format: (value) => `$${value.pool.swapFeeUSD.toLocaleString()}`,
+    format: (value) => `%${value.pool.swapFeeUSD.toLocaleString()}`,
   },
   {
     id: 'feesTotalUSD',
