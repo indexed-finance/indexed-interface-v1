@@ -174,8 +174,8 @@ export default function TradeTab({ metadata }) {
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} key='4'>
+        {!approvalNeeded && <ButtonPrimary disabled={!tradeState.ready} margin={{ margin: 25, marginLeft: 150 }} onClick={executeSwap}> SWAP </ButtonPrimary> }
         {approvalNeeded && <ButtonPrimary margin={{ margin: 25, marginLeft: 150 }} onClick={approveRouter}> APPROVE </ButtonPrimary> }
-        {tradeState.ready && <ButtonPrimary margin={{ margin: 25, marginLeft: 150 }} onClick={executeSwap}> SWAP </ButtonPrimary> }
       </Grid>
     </Grid>
   )
