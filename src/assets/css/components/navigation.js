@@ -15,9 +15,9 @@ const setStyle = (theme) => ({
     '& h3': {
       padding: 0,
       margin: 0,
-      marginLeft: 75,
-      marginTop: 5
-    }
+    },
+    marginLeft: 60,
+    marginTop: 5
   },
   menu: {
     position: 'absolute'
