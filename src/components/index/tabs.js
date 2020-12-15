@@ -170,7 +170,7 @@ export default function VerticalTabs({ data }) {
       </div>
 
       <TabPanel className={classes.assets} value={value} index={0}>
-        <Grid item container direction='row' alignItems='flex-start' justify='space-around' spacing={spacing}>
+        <Grid item container direction='row' alignItems='flex-start' justify='space-around' spacing={spacing} style={{ paddingBottom: 17.5 }}>
           {state.request && data.active && helper &&
             helper.tokens.map((token, i) => (
               <Grid item key={i}>

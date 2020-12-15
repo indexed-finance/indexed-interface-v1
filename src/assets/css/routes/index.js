@@ -88,7 +88,7 @@ const setStyle = (theme) => ({
 const mapping = {
   [DESKTOP_SMALL]: {
     width: '57.75%',
-    height: 'calc(92.5vh - 20px)',
+    height: 'calc(96.75vh - 20px)',
     paddingTop: '6.25%',
     marginTop: '-8.75vh',
     sideBar: '36.75%',

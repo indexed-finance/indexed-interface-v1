@@ -120,24 +120,28 @@ export default function Banner() {
           </motion.li>
         )}
         <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
-          {messages.init.length == 1 && messages.init.map((value, i) => {
-            return(
-              <Link key={i} to={`/pool/${value.address}`} className={classes.href}>
-                <motion.span>NEW FUND: <motion.span style={{ color: 'orange'}}>{value.symbol}</motion.span></motion.span>
-             </Link>
-            )
-          })}
+          {messages.init.length == 1 && (
+            <Fragment>
+              {messages.init.map((value, i) => {
+                return(
+                  <Link key={i} to={`/pool/${value.address}`} className={classes.href}>
+                    <motion.span>NEW FUND: <motion.span style={{ color: 'orange'}}>{value.symbol}</motion.span></motion.span>
+                  </Link>
+                )
+              })}
+            </Fragment>
+          )}
           {messages.init.length > 1 && (
             <Fragment>
               <span style={{ color: 'orange'}}>NEW FUNDS:</span>
-                {messages.init.map((value, i) => (
-                  <Fragment key={i}>&nbsp;
-                    <Link to={`/pool/${value.address}`} className={classes.href} >
-                      <motion.span>{value.symbol}</motion.span>
-                    </Link>
-                    <motion.span>{i == messages.init.length-1 ? '' : ','}</motion.span>
-                  </Fragment>
-                ))}
+              {messages.init.map((value, i) => (
+                <Fragment key={i}>&nbsp;
+                  <Link to={`/pool/${value.address}`} className={classes.href} >
+                    <motion.span>{value.symbol}</motion.span>
+                  </Link>
+                  <motion.span>{i == messages.init.length-1 ? '' : ','}</motion.span>
+                </Fragment>
+              ))}
             </Fragment>
           )}
         </motion.li>

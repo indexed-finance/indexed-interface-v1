@@ -86,7 +86,8 @@ export default function PieChart({ metadata, height, ready, native }){
           if(index === ctx.chart.data.labels.length - 1
             || index >= 8 || ctx.chart.data.labels.length === 2) {
             return theme.palette.secondary.main
-          } else if (index >= 5) {
+          } else if (index == ctx.chart.data.labels.length - 2
+            && ctx.chart.data.labels.length == 5 || index >= 6) {
             return '#999999'
           } else {
             return 'white'

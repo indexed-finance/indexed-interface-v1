@@ -12,11 +12,16 @@ import {
 } from "../actions/trade-actions";
 import { TradeState } from "../reducers/trade-reducer";
 
-const whitelist = [
-  { address: '0xc778417e063141139fce010982780140aa0cd5ab', symbol: 'weth', decimals: 18 },
-  { address: '0x5b36B53960Bc1f8b0cAb48AC51F47C8a03c65888', symbol: 'wbtc', decimals: 18 },
-  { address: '0xea88bdf6917e7e001cb9450e8df08164d75c965e', symbol: 'dai', decimals: 18 }
-];
+const whitelist = {
+  rinkeby: [
+    { address: '0xc778417e063141139fce010982780140aa0cd5ab', symbol: 'ETH', decimals: 18 },
+    { address: '0x5b36B53960Bc1f8b0cAb48AC51F47C8a03c65888', symbol: 'WBTC', decimals: 18 },
+    { address: '0xea88bdf6917e7e001cb9450e8df08164d75c965e', symbol: 'DAI', decimals: 18 }
+  ],
+  mainnet: [
+    { address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', symbol: 'ETH', decimals: 18 },
+  ]
+};
 
 // function useUniswap({ metadata }) {
 //   const poolToken = {
@@ -171,7 +176,7 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
         decimals,
         isPoolToken: true
       };
-      const wl0 = whitelist[0];
+      const wl0 = whitelist[process.env.REACT_APP_ETH_NETWORK][0];
       const output = {
         address: wl0.address,
         decimals: wl0.decimals,
@@ -191,7 +196,7 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
 
     async function selectWhitelistToken(action: SelectWhitelistToken): Promise<void> {
       const { index } = action;
-      const wlToken = whitelist[index];
+      const wlToken = whitelist[process.env.REACT_APP_ETH_NETWORK][index];
       const newToken = {
         address: wlToken.address,
         decimals: wlToken.decimals,

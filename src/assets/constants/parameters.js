@@ -171,7 +171,7 @@ export const tokenMetadata = {
   },
   "DAI": {
     address: "0x6b175474e89094c44da98b954eedeac495271d0f",
-    name: "Dai Stablecoin",
+    name: "Dai",
     image: dai
   },
   "LINK": {
@@ -223,7 +223,7 @@ export const tokenMetadata = {
   },
   "UMA": {
     address: "0x04fa0d235c4abf4bcf4787af4cf447de572ef828",
-    name: "UMAVotingTokenv1",
+    name: "UMA",
     image: uma
   },
   "REN": {

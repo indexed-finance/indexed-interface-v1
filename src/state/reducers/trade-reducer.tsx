@@ -5,8 +5,6 @@ import { TradeMiddlewareAction, TradeDispatchAction, SetInputToken, SetOutputTok
 import { withTradeMiddleware } from "../middleware/trade-middleware";
 import Web3 from 'web3'
 
-const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
-
 const whitelist = {
   rinkeby: [
     { address: '0xc778417e063141139fce010982780140aa0cd5ab', symbol: 'ETH', decimals: 18 },
@@ -91,7 +89,7 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
   }
 
   const getBalance = (tokenAddress: string): BigNumber => {
-     if(tokenAddress == WETH){
+     if(tokenAddress == process.env.REACT_APP_WETH){
       return newState.helper.ethBalance || BN_ZERO;
     } else if (compareAddresses(newState.helper.tokenA.address, tokenAddress)) {
       return newState.helper.tokenABalance || BN_ZERO;
@@ -102,7 +100,7 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
   }
 
   const getAllowanceForPair = (tokenAddress: string): BigNumber => {
-    if(tokenAddress == WETH) return new BigNumber(toWei(999999))
+    if(tokenAddress == process.env.REACT_APP_WETH) return new BigNumber(toWei(999999))
 
     const isInput = compareAddresses(tokenAddress, newState.input.address);
     const isPoolToken = isInput ? newState.input.isPoolToken : newState.output.isPoolToken;
