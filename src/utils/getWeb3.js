@@ -8,7 +8,7 @@ const providerOptions = {
   walletconnect: {
     package: WalletConnectProvider,
     options: {
-      infuraId: '1c6549e97ff24d9a99ba4e007b538de6'
+      infuraId: '442bad44b92344b7b5294e4329190fea'
     }
   },
   fortmatic: {
