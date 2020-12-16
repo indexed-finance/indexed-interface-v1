@@ -148,7 +148,7 @@ export function useBurnTokenActions(
   let displayBalance = balance.eq(BN_ZERO) ? '0' : formatBalance(balance, decimals, 4);
 
   let toggle = () => dispatch({ type: 'TOGGLE_SELECT_TOKEN', index });
-  let disableInput = !selected;
+  let disableInput = !selected || !(state.isSingle);
   let updateAmount = (input: string | number) => dispatch({ type: 'SET_TOKEN_OUTPUT', index, amount: input });
   let updateBalance = () => dispatch({ type: 'UPDATE_POOL' });
   let tokenDisabled = !ready;
@@ -156,7 +156,7 @@ export function useBurnTokenActions(
   let maximumOutput = poolBalance.div(3);
   let errorMessage = '';
 
-  if (amount.gt(maximumOutput)) {
+  if (state.isSingle && amount.gt(maximumOutput)) {
     errorMessage = 'EXCEEDS MAX OUT';
   }
 
