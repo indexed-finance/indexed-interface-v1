@@ -19,16 +19,29 @@ function burnDispatchMiddleware(dispatch: BurnDispatch, state: BurnState) {
 
     const singleOutGivenPoolIn = async (poolAmountIn: BigNumber, index: number, poolDisplayAmount: string): Promise<BurnDispatchAction[]> => {
       const token = tokens[index];
-      const result = await pool.calcSingleOutGivenPoolIn(token.address, poolAmountIn);
-      const tokenAmount = toBN(result.amount);
+      const totalDenorm = tokens.reduce((total, t) => total.plus(t.denorm), toBN(0));
+      const extrapolatedValueRatio = totalDenorm.div(token.usedDenorm);
+      const extrapolatedValue = extrapolatedValueRatio.times(token.usedBalance)
+      const poolRatio = poolAmountIn.div(pool.pool.totalSupply);
+      const roughOutputEstimate = poolRatio.times(extrapolatedValue).times(
+        toBN(1 - parseFloat(formatBalance(pool.pool.swapFee, 18, 4)))
+      );
+      let amount: BigNumber;
+      if (roughOutputEstimate.gt(token.usedBalance.div(3))) {
+        amount = roughOutputEstimate;
+      } else {
+        const result = await pool.calcSingleOutGivenPoolIn(token.address, poolAmountIn);
+        amount = toBN(result.amount);
+      }
+
       return [
         { type: 'SET_SPECIFIED_SIDE', side: 'output' },
         { type: 'CLEAR_ALL_AMOUNTS' },
         {
           type: 'SET_SINGLE_AMOUNT',
           index,
-          amount: tokenAmount,
-          displayAmount: formatBalance(tokenAmount, token.decimals, 4)
+          amount,//: tokenAmount,
+          displayAmount: formatBalance(amount, token.decimals, 4)
         },
         { type: 'SET_POOL_AMOUNT', amount: toBN(poolAmountIn), displayAmount: poolDisplayAmount },
         { type: 'SET_SPECIFIED_SIDE', side: 'output' }
