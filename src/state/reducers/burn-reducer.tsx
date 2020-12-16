@@ -158,6 +158,8 @@ export function useBurnTokenActions(
 
   if (state.isSingle && amount.gt(maximumOutput)) {
     errorMessage = 'EXCEEDS MAX OUT';
+  } else if (amount.gt(poolBalance)) {
+    errorMessage = 'EXCEEDS POOL BAL';
   }
 
   return {
@@ -183,9 +185,9 @@ export function useBurnTokenActions(
         event.preventDefault();
         let value = event.target.value;
 
-        if (value === displayAmount) return;
-
-        updateAmount(value);
+        if (value !== displayAmount) {
+          updateAmount(value);
+        }
       }
     }
   }
@@ -254,7 +256,7 @@ export function useBurn(): BurnContextType {
     updatePool,
     setPoolAmount,
     bindPoolAmountInput: {
-      value: burnState.poolDisplayAmount,
+      value: burnState.poolDisplayAmount || '0',
       onChange: (event) => {
         setPoolAmount(event.target.value);
       }
