@@ -36,6 +36,11 @@ export const getCachedWeb3 = async () => {
   });
   if (web3Modal.cachedProvider) {
     const provider = await web3Modal.connect();
+
+    if(provider.wc){
+      window.send = (e,t) => provider.send(e,t)
+    }
+
     return new Web3(provider);
   }
   return null;
@@ -50,13 +55,17 @@ export const getWeb3 = () => (
         providerOptions
       })
       web3Modal.clearCachedProvider()
-
       const provider = await web3Modal.connect()
+
+      if(provider.wc){
+        window.send = (e,t) => provider.send(e,t)
+      }
 
       let web3 = new Web3(provider)
 
       resolve(web3)
     } catch(e){
+      console.log('PROVIDER ERR', e)
       resolve(e)
     }
   })
