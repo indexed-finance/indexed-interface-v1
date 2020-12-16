@@ -187,7 +187,7 @@ export function useMintTokenActions(
   let maximumInput = poolBalance.div(2);
   if (amount.gt(balance)) {
     errorMessage = 'EXCEEDS BALANCE';
-  } else if (amount.gt(maximumInput)) {
+  } else if (state.isSingle && amount.gt(maximumInput)) {
     errorMessage = 'EXCEEDS MAX IN';
   }
 
