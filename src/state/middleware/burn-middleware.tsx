@@ -49,9 +49,13 @@ function burnDispatchMiddleware(dispatch: BurnDispatch, state: BurnState) {
     };
 
     const poolInGivenSingleOut = async (address: string, exactAmount: BigNumber, index: number, displayAmount: string): Promise<BurnDispatchAction[]> => {
-      const result = await pool.calcPoolInGivenSingleOut(address, exactAmount);
-      // const { amount: poolAmount } = result;
-      const poolAmount = toBN(result.amount);
+      let poolAmount: BigNumber;
+      if ((exactAmount.gt(tokens[index].usedBalance))) {
+        poolAmount = state.poolAmountIn;
+      } else {
+        const result = await pool.calcPoolInGivenSingleOut(address, exactAmount);
+        poolAmount = toBN(result.amount);
+      }
       return [
         { type: 'SET_SPECIFIED_SIDE', side: 'input' },
         { type: 'CLEAR_ALL_AMOUNTS' },
@@ -85,7 +89,7 @@ function burnDispatchMiddleware(dispatch: BurnDispatch, state: BurnState) {
     }
 
     const setTokenOutput = async ({ index, amount }: SetTokenOutput): Promise<void> => {
-      const { address, decimals } = tokens[index];
+      const { address, decimals, usedBalance } = tokens[index];
       const exactAmount = toTokenAmount(amount, decimals);
       return dispatch(await poolInGivenSingleOut(address, exactAmount, index, amount.toString() || '0'));
     };
