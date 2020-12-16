@@ -60,9 +60,12 @@ export default function BurnTab({ market, metadata }) {
 
   useEffect(() => {
     const setPool = async() => {
+      if (!state.helper) return;
       let poolHelper = state.helper.initialized.find(i => i.pool.address === metadata.address);
-      setHelper(poolHelper);
-      setInit(true);
+      if (poolHelper) {
+        setHelper(poolHelper);
+        setInit(true);
+      }
     }
     if (!burnState.pool && !isInit) setPool();
   }, [ state.helper ])
@@ -83,14 +86,16 @@ export default function BurnTab({ market, metadata }) {
     <div>
     <Grid container direction='column' alignItems='center' justify='space-around' style={{ width }}>
       <Grid item xs={12} md={12} lg={12} xl={12}>
-        <RecieveInput label="DESTROY" variant='outlined'
+        <RecieveInput
+          label="DESTROY"
+          variant='outlined'
+          type='number'
           helperText={<span onClick={setAmountToBalance}> BALANCE: {displayBalance} </span>}
           {
             ...(bindPoolAmountInput)
           }
           InputProps={{
-            endAdornment: market,
-            inputComponent: NumberFormat
+            endAdornment: market
           }}
         />
       </Grid>
