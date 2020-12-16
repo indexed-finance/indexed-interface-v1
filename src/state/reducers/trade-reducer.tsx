@@ -212,7 +212,11 @@ export function useTradeTokenActions(
   }
 
   let setAmountToBalance;
-  if (isInput) setAmountToBalance = () => dispatch({ type: 'SET_INPUT_EXACT', amount: balance });
+  if (isInput){
+    setAmountToBalance = () => dispatch({ type: 'SET_INPUT_EXACT', amount: balance });
+  } else {
+    setAmountToBalance = () => dispatch({ type: 'SET_OUTPUT_AMOUNT', amount: displayBalance });
+  }
 
   let bindInput = {
     value: displayAmount,

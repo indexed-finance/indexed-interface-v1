@@ -12,6 +12,6 @@ export function MaximumAmountToolTip() {
 
 export default function HelperTooltip({ text }) {
   return <Tooltip title={text}>
-    <HelpIcon fontSize='inherit' />
+    <HelpIcon fontSize='inherit' style={{  marginRight: 0 }} />
   </Tooltip>
 }

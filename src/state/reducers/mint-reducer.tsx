@@ -312,7 +312,7 @@ export function useMint(): MintContextType {
   let minPoolAmountOut = mintState.minPoolAmountOut;
   if (minPoolAmountOut.gt(0)) {
     bindPoolAmountInput.helperText = <span>
-      Minimum: {formatBalance(minPoolAmountOut, 18, 4)} <MinimumAmountToolTip />
+      Minimum: {formatBalance(minPoolAmountOut, 18, 4)} <MinimumAmountToolTip/>
     </span>
   }
 

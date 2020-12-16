@@ -155,7 +155,7 @@ export default function TradeTab({ metadata }) {
       </Grid >
       <Grid item xs={12} md={12} lg={12} xl={12} key='1'>
         <div className={classes.swap}>
-          <IconButton onClick={switchTokens}> <Swap /> </IconButton>
+          <IconButton onClick={!tradeState.helper ? () => {} : switchTokens}> <Swap /> </IconButton>
           <p>{priceString}</p>
         </div>
       </Grid>

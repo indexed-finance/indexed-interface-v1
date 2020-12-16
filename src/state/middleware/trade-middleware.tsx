@@ -126,9 +126,14 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
       const output = { ...state.output };
       output.displayAmount = action.amount;
       output.amount = toTokenAmount(action.amount, output.decimals);
+
+      console.log('INPUT', input.address)
+      console.log('OUTPUT', output.address, formatBalance(output.amount, output.decimals, 4))
+
       const inputAmount = await state.helper.getAmountIn(input.address, output.address, output.amount);
-      input.amount = inputAmount.amount;
-      input.displayAmount = inputAmount.displayAmount;
+
+      input.amount = inputAmount.amount.lte(0) ? BN_ZERO : inputAmount.amount;
+      input.displayAmount = inputAmount.amount.lte(0) ? '0.00' : inputAmount.displayAmount;
       const { displayAmount: price } = await state.helper.getAmountOut(input.address, output.address, toWei(1));
 
       dispatch([

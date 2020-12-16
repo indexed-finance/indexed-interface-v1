@@ -1,6 +1,6 @@
 import { BigNumber, formatBalance, PoolHelper } from "@indexed-finance/indexed.js";
 import { PoolToken } from "@indexed-finance/indexed.js/dist/types";
-import { useReducer } from "react";
+import React, { useReducer, ReactElement } from "react";
 
 import {
   SetSingleAmount,
@@ -226,8 +226,7 @@ export type BurnContextType = {
   bindPoolAmountInput: {
     value: string;
     onChange: (event: any) => void;
-    error: boolean;
-    errorMessage: string;
+    helperText?: ReactElement;
   }
 }
 
@@ -248,7 +247,11 @@ export function useBurn(): BurnContextType {
   const error = burnState.poolAmountIn.gt(balance);
   let errorMessage = `BALANCE: ${displayBalance}`;
 
-  if(error) errorMessage = 'EXCEEDS BALANCE'
+  if(error){
+    errorMessage = 'EXCEEDS BALANCE'
+  }
+
+  let helperText = <span style={{ float: 'left', cursor: 'pointer'}} onClick={setAmountToBalance}>{errorMessage}</span>
 
   return {
     balance,
@@ -261,8 +264,7 @@ export function useBurn(): BurnContextType {
     setPoolAmount,
     bindPoolAmountInput: {
       value: burnState.poolDisplayAmount || '0',
-      error,
-      errorMessage,
+      helperText,
       onChange: (event) => {
         event.preventDefault();
         setPoolAmount(event.target.value);

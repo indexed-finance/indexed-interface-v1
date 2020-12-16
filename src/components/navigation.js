@@ -190,7 +190,7 @@ export default function Navigation({ mode }) {
       <AppBar className={classes.appBar} position="fixed" style={{ ...padding }}>
         <Toolbar>
           <Grid container direction='row' alignItems='center' justify='space-between'>
-            <Grid item style={{ marginTop: -3.75 }}>
+            <Grid item style={{ marginTop: !state.native ? -6.75 : -3 }}>
               <Link to='/'>
                 {mode && (<img alt='logo' className={classes.logo} style={{ marginTop: logoMargin, width, paddingTop }} src={ndxDark} />)}
                 {!mode && (<img alt='logo' className={classes.logo} style={{ marginTop: logoMargin, width, paddingTop }} src={ndxLight} />)}
