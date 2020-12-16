@@ -52,11 +52,11 @@ export const getWeb3 = () => (
       web3Modal.clearCachedProvider()
 
       const provider = await web3Modal.connect()
-      let web3 = new Web3(provider.wc || provider)
+
+      let web3 = new Web3(provider)
 
       resolve(web3)
     } catch(e){
-      console.log('PROVIDER ERR', e)
       resolve(e)
     }
   })

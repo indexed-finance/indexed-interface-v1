@@ -71,7 +71,7 @@ export default function Navigation({ mode }) {
       if (!web3) return;
       await handleSetWeb3(web3);
     })();
-  })
+  }, [])
 
   const connectWeb3 = async() => {
     try {
