@@ -52,7 +52,7 @@ export const getWeb3 = () => (
       web3Modal.clearCachedProvider()
 
       const provider = await web3Modal.connect()
-      let web3 = new Web3(provider)
+      let web3 = new Web3(provider.wc || provider)
 
       resolve(web3)
     } catch(e){
