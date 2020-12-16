@@ -19,10 +19,6 @@ const RecieveInput = styled(Input)({
   width: 250,
 })
 
-const Trigger = styled(ButtonPrimary)({
-  marginTop: -7.5
-})
-
 export default function BurnTab({ market, metadata }) {
   const { useToken, burnState, bindPoolAmountInput, setHelper, updatePool, displayBalance, setAmountToBalance } = useBurnState();
   const [ isInit, setInit ] = useState(false)
@@ -78,7 +74,7 @@ export default function BurnTab({ market, metadata }) {
       }
     }
     verifyConnectivity()
-  }, [  state.web3.injected, isInit ])
+  }, [  , state.web3.injected, isInit ])
 
   let { width, height } = style.getFormatting(state.native)
 
@@ -90,7 +86,7 @@ export default function BurnTab({ market, metadata }) {
           label="DESTROY"
           variant='outlined'
           type='number'
-          helperText={<span onClick={setAmountToBalance}> BALANCE: {displayBalance} </span>}
+          helperText={<span onClick={setAmountToBalance}> {bindPoolAmountInput.errorMessage}</span>}
           {
             ...(bindPoolAmountInput)
           }

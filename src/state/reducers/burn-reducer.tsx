@@ -226,6 +226,8 @@ export type BurnContextType = {
   bindPoolAmountInput: {
     value: string;
     onChange: (event: any) => void;
+    error: boolean;
+    errorMessage: string;
   }
 }
 
@@ -236,16 +238,17 @@ export function useBurn(): BurnContextType {
   const displayBalance = formatBalance(balance, 18, 4);
   const useToken = (index: number): TokenActions => useBurnTokenActions(burnState, dispatch, index);
   const setPoolAmount = (amount: string | number) => {
-    // This can be triggered by the `onChange` handler for either input, so make sure the value is different before updating.
     if (amount !== burnState.poolDisplayAmount) {
       dispatch({ type: 'SET_POOL_INPUT', amount });
-    } else {
-      console.log(`Skipped update because amount did not change`)
     }
   }
   const setAmountToBalance = () => dispatch({ type: 'SET_POOL_EXACT', amount: balance })
   const setHelper = (helper: PoolHelper) => dispatch({ type: 'SET_POOL_HELPER', pool: helper });
   const updatePool = () => dispatch({ type: 'UPDATE_POOL' });
+  const error = burnState.poolAmountIn.gt(balance);
+  let errorMessage = `BALANCE: ${displayBalance}`;
+
+  if(error) errorMessage = 'EXCEEDS BALANCE'
 
   return {
     balance,
@@ -258,7 +261,10 @@ export function useBurn(): BurnContextType {
     setPoolAmount,
     bindPoolAmountInput: {
       value: burnState.poolDisplayAmount || '0',
+      error,
+      errorMessage,
       onChange: (event) => {
+        event.preventDefault();
         setPoolAmount(event.target.value);
       }
     }

@@ -27,9 +27,6 @@ const AmountInput = styled(Input)({
   '& input:valid + fieldset': {
     borderColor: '#999999',
   },
-  '& input:invalid + fieldset': {
-    borderColor: 'red',
-  },
   '& input': {
     padding: '.75em 0 .75em .75em',
   }

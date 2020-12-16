@@ -85,8 +85,6 @@ export default function TokenInput(props) {
   let errorMsg = token.errorMessage;
   let error = !!errorMsg;
 
-  if(errorMsg === '') error = false;
-
   let helperText = (error) ? errorMsg : <span className={classes.helper} onClick={() => setAmountToBalance()}>
     {`BALANCE: ${parseFloat(token.displayBalance).toLocaleString()}`}
   </span>;

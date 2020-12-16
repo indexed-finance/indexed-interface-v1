@@ -126,8 +126,6 @@ function burnDispatchMiddleware(dispatch: BurnDispatch, state: BurnState) {
         const poolOut = exceedsMaximum ? maximumInput : amount;
         const displayAmount = formatBalance(poolOut, 18, 4);
 
-        console.log('USED BALANCE', usedBalance)
-
         const actions = !exceedsMaximum ?
           await singleOutGivenPoolIn(state.poolAmountIn, action.index, state.poolDisplayAmount) :
           await poolInGivenSingleOut(address, poolOut, action.index, displayAmount)
@@ -142,7 +140,10 @@ function burnDispatchMiddleware(dispatch: BurnDispatch, state: BurnState) {
     const updatePool = async (): Promise<void> => {
       await state.pool.update();
       let emptyArr = new Array(tokens.length).fill(BN_ZERO);
-      return dispatch({ type: 'SET_ALL_AMOUNTS', amounts: emptyArr, displayAmounts: new Array(tokens.length).fill('0') });
+      return dispatch([
+        { type: 'SET_ALL_AMOUNTS', amounts: emptyArr, displayAmounts: new Array(tokens.length).fill('0') },
+        { type: 'SET_POOL_AMOUNT', amount: BN_ZERO, displayAmount: '0' },
+      ]);
     }
 
     const fallback = async (action: BurnDispatchAction) => dispatch(action);
