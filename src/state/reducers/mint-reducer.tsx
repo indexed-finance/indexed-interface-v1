@@ -112,6 +112,8 @@ function mintReducer(state: MintState = initialState, actions: MintDispatchActio
   }
 
   const setHelper = (action: SetHelper) => {
+    if(!action.pool) return;
+
     newState.pool = action.pool;
 
     newState.tokens = [...action.pool.tokens.map(t => Object.assign({}, t))];

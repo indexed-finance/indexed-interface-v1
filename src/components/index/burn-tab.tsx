@@ -67,8 +67,8 @@ export default function BurnTab({ market, metadata }) {
         setInit(true);
       }
     }
-    if (!burnState.pool && !isInit) setPool();
-  }, [ state.helper ])
+    if (!burnState.pool) setPool();
+  }, [ , state.helper, state.indexes ])
 
   useEffect(() => {
     const verifyConnectivity = async() => {

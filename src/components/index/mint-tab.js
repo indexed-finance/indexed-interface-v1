@@ -67,14 +67,13 @@ export default function Mint({ market, metadata }) {
       let poolHelper = state.helper.initialized.find(i => i.pool.address === metadata.address);
 
       setHelper(poolHelper);
-      setInit(true)
     }
-    if (!mintState.pool) setPool();
-  }, [ state.helper ])
+    if (!mintState.pool && state.helper) setPool();
+  }, [ , state.helper, state.indexes ])
 
   useEffect(() => {
     const verifyConnectivity = async() => {
-      if(isInit && (state.web3.injected || window.ethereum) && !mintState.pool.userAddress) {
+      if(mintState.pool && (state.web3.injected || window.ethereum) && !mintState.pool.userAddress) {
         await mintState.pool.setUserAddress(state.account)
         await updatePool()
       }

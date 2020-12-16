@@ -93,6 +93,7 @@ function burnReducer(state: BurnState = initialState, actions: BurnDispatchActio
 
   const setHelper = (action: SetHelper) => {
     newState.pool = action.pool;
+
     newState.tokens = [...action.pool.tokens.map(t => Object.assign({}, t))];
     newState.amounts = new Array(newState.tokens.length).fill(BN_ZERO);
     newState.displayAmounts = new Array(newState.tokens.length).fill('0');
@@ -145,7 +146,7 @@ export function useBurnTokenActions(
   let selected = state.selected[index];
 
   let displayAmount = state.displayAmounts[index];
-  let displayBalance = balance.eq(BN_ZERO) ? '0' : formatBalance(balance, decimals, 4);
+  let displayBalance = !balance || balance.eq(BN_ZERO) ? '0' : formatBalance(balance, decimals, 4);
 
   let toggle = () => dispatch({ type: 'TOGGLE_SELECT_TOKEN', index });
   let disableInput = !selected || !(state.isSingle);
