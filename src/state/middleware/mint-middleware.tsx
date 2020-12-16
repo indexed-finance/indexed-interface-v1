@@ -18,7 +18,8 @@ function mintDispatchMiddleware(dispatch: MintDispatch, state: MintState) {
     const singleInGivenPoolOut = async (poolAmountOut: BigNumber, displayAmount: string, index: number): Promise<MintDispatchAction[]> => {
       const token = tokens[index];
       const totalDenorm = tokens.reduce((total, t) => total.plus(t.denorm), toBN(0));
-      const extrapolatedValue = totalDenorm.div(token.usedDenorm);
+      const extrapolatedValueRatio = totalDenorm.div(token.usedDenorm);
+      const extrapolatedValue = extrapolatedValueRatio.times(token.usedBalance)
       const poolRatio = poolAmountOut.div(pool.pool.totalSupply);
       const roughInputEstimate = poolRatio.times(extrapolatedValue).times(
         toBN(1 + parseFloat(formatBalance(pool.pool.swapFee, 18, 4)))
@@ -103,17 +104,8 @@ function mintDispatchMiddleware(dispatch: MintDispatch, state: MintState) {
           { type: 'TOGGLE_SELECT_TOKEN', index: action.index }
         ]);
       } else {
-        const { usedBalance, address } = state.tokens[action.index];
-        const amount = state.amounts[action.index];
-        const maximumInput = usedBalance.div(2);
-        const exceedsMaximum = amount.gt(maximumInput);
-        const poolOut = exceedsMaximum ? maximumInput : amount;
-        const displayAmount = formatBalance(poolOut, 18, 4);
+        const actions = await singleInGivenPoolOut(state.poolAmountOut, state.poolDisplayAmount, action.index)
 
-        const actions = !exceedsMaximum ?
-          await singleInGivenPoolOut(state.poolAmountOut, state.poolDisplayAmount, action.index) :
-          await poolOutGivenSingleIn(address, poolOut, displayAmount, action.index)
-        ;
         return dispatch([
           ...actions,
           { type: 'TOGGLE_SELECT_TOKEN', index: action.index }
