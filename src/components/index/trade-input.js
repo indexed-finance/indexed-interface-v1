@@ -16,7 +16,7 @@ export default function TradeInput(props) {
   let errorMsg = token.errorMessage;
   let error = !!errorMsg;
 
-  let helperText = (error) ? errorMsg : <span className={classes.helper} onClick={() => token.setAmountToBalance()}>
+  let helperText = (error) ? errorMsg : <span style={{ float: 'left', cursor: 'pointer'}} onClick={() => token.setAmountToBalance()}>
     {`BALANCE: ${token.displayBalance}`}
   </span>;
 

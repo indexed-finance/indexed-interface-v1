@@ -102,7 +102,9 @@ import {
     }
   },
   helper: {
-    cursor: 'pointer'
+    cursor: 'pointer',
+    fontSize: 10,
+    marginLeft: '0px !important'
   }
 })
 

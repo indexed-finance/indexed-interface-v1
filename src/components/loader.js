@@ -9,7 +9,7 @@ import 'loaders.css'
 export default function LoadingAnimation(){
   let { state } = useContext(store)
 
-  let padding = !state.native ? '42.5vh' : '30vh'
+  let padding = !state.native ? '42.5vh' : '35vh 0px'
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>

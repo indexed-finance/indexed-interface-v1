@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom'
 
 import { formatBalance, BigNumber } from '@indexed-finance/indexed.js'
 import ButtonSecondary from '../buttons/secondary'
+import ButtonPrimary from '../buttons/primary'
 import TransactionButton from '../buttons/transaction'
 import Loader from '../loaders/tabs'
 import WeightedToken from './weighted-token'
@@ -188,18 +189,25 @@ export default function VerticalTabs({ data }) {
       <TabPanel className={classes.panels} value={value} index={2}>
         <Grid item container direction='row' alignItems='flex-start' justify='start' spacing={4}>
           <Grid item key='uniswap'>
-            <Link to={`/pool/${data.address}`}>
-              <ButtonSecondary variant='outlined' margin={{ float: 'left', marginLeft: 20, marginTop: 12.5 }}>
-                VIEW POOL
-              </ButtonSecondary>
-            </Link>
+            <div>
+              <Link to={`/category/0x${data.category}`}>
+                <ButtonPrimary variant='outlined' margin={{ marginLeft: 20, marginTop: 12.5, marginBottom: 12.5 }}>
+                  CATEGORY
+                </ButtonPrimary>
+              </Link>
+              <Link to={`/pool/${data.address}`}>
+                <ButtonSecondary variant='outlined' margin={{ marginLeft: 15, marginTop: 12.5, marginBottom: 12.5  }}>
+                  VIEW POOL
+                </ButtonSecondary>
+              </Link>
+            </div>
             <a target='_blank' rel="noopener noreferrer" href={`https://${process.env.REACT_APP_ETH_NETWORK === 'rinkeby' ? 'rinkeby.' : ''}etherscan.io/token/${data.address}`}>
-              <IconButton variant='outlined' margin={{ marginLeft: 12.5 }}>
+              <IconButton variant='outlined' margin={{ marginLeft: 25 }}>
                 <img src={etherscan} style={{ width: 37.5 }} />
               </IconButton>
             </a>
             <a target='_blank' rel="noopener noreferrer" href={`https://info.uniswap.org/pool/${data.address}`}>
-              <IconButton variant='outlined' margin={{ marginLeft: 12.5 }}>
+              <IconButton variant='outlined' margin={{ marginLeft: 25 }}>
                 <img src={uni} style={{ width: 37.5 }} />
               </IconButton>
             </a>

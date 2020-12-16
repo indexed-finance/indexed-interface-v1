@@ -86,7 +86,7 @@ export default function BurnTab({ market, metadata }) {
           label="DESTROY"
           variant='outlined'
           type='number'
-          helperText={<span onClick={setAmountToBalance}> {bindPoolAmountInput.errorMessage}</span>}
+          helperText={<span style={{ float: 'left', cursor: 'pointer'}} onClick={setAmountToBalance}> {bindPoolAmountInput.errorMessage}</span>}
           {
             ...(bindPoolAmountInput)
           }

@@ -47,7 +47,8 @@ const setStyle = (theme) => ({
     }
   },
   helper: {
-    cursor: 'pointer'
+    cursor: 'pointer',
+    float: 'left'
   }
 })
 
