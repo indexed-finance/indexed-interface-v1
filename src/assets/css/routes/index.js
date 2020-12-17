@@ -73,7 +73,7 @@ const setStyle = (theme) => ({
       float: 'right',
       fontFamily: "San Francisco Bold",
       fontWeight: 500,
-      marginRight: 50,
+      marginRight: 0,
     },
     '& .MuiGrid-container': {
       width: '100% !important'

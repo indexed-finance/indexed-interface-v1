@@ -13,7 +13,7 @@ import {
   SetSpecifiedSide, SetSlippage
 } from "../actions/mint-actions";
 import { withMintMiddleware } from "../middleware";
-import { MaximumAmountToolTip, MinimumAmountToolTip } from "../../components/helper-tooltip";
+import { MaximumAmountToolTip, MaximumSupplyTooltip, MinimumAmountToolTip } from "../../components/helper-tooltip";
 
 const BN_ZERO = new BigNumber(0);
 
@@ -278,7 +278,8 @@ export type MintContextType = {
   bindPoolAmountInput: {
     value: string,
     onChange: (event: any) => void,
-    helperText?: ReactElement
+    helperText?: ReactElement;
+    error: boolean;
   };
   displayBalance: string;
   setAmountToBalance: () => void;
@@ -303,6 +304,7 @@ export function useMint(): MintContextType {
 
   const bindPoolAmountInput: any = {
     value: mintState.poolDisplayAmount || '0',
+    error: false,
     onChange: (event) => {
       event.preventDefault();
       setPoolAmount(event.target.value);
@@ -314,6 +316,18 @@ export function useMint(): MintContextType {
     bindPoolAmountInput.helperText = <span>
       Minimum: {formatBalance(minPoolAmountOut, 18, 4)} <MinimumAmountToolTip/>
     </span>
+  }
+
+  if (mintState.pool) {
+    let { maxTotalSupply, totalSupply } = mintState.pool.pool
+    let newSupply = totalSupply.plus(mintState.poolAmountOut);
+
+    if (!maxTotalSupply.eq(0) && newSupply.gt(maxTotalSupply)) {
+      bindPoolAmountInput.error = true;
+      bindPoolAmountInput.helperText = <span>
+        EXCEEDS MAX SUPPLY <MaximumSupplyTooltip />
+      </span>
+    }
   }
 
   return {

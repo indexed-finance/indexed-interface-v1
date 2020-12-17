@@ -226,6 +226,7 @@ export type BurnContextType = {
   bindPoolAmountInput: {
     value: string;
     onChange: (event: any) => void;
+    error: boolean;
     helperText?: ReactElement;
   }
 }
@@ -265,6 +266,7 @@ export function useBurn(): BurnContextType {
     bindPoolAmountInput: {
       value: burnState.poolDisplayAmount || '0',
       helperText,
+      error,
       onChange: (event) => {
         event.preventDefault();
         setPoolAmount(event.target.value);

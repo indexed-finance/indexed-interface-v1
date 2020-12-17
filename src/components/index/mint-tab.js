@@ -67,6 +67,7 @@ export default function Mint({ market, metadata }) {
       let poolHelper = state.helper.initialized.find(i => i.pool.address === metadata.address);
 
       setHelper(poolHelper);
+      setInit(true)
     }
     if (!mintState.pool && state.helper) setPool();
   }, [ , state.helper, state.indexes ])
@@ -82,7 +83,7 @@ export default function Mint({ market, metadata }) {
       }
     }
     verifyConnectivity()
-  }, [  state.web3.injected, isInit ])
+  }, [  , state.web3.injected, isInit ])
 
   let { width, height } = style.getFormatting(state.native)
 
