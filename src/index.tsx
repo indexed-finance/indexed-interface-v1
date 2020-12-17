@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
-import { getAllHelpers, formatBalance, BigNumber } from '@indexed-finance/indexed.js';
+import { getAllHelpersFromCache, getAllHelpers, formatBalance, BigNumber } from '@indexed-finance/indexed.js';
 
 import { StateProvider } from './state'
 import Navigation from './components/navigation'
@@ -102,9 +102,9 @@ function Application(){
   useEffect(() => {
     const retrieveCategories = async() => {
       let stats = { dailyVolume: 0, totalLocked: 0 };
-      let proposals = { ...await getProposals() };
       let categories = {};
       let indexes = {};
+      let proposals = {}
 
       // let tokenCategories = await getTokenCategories()
 
@@ -113,99 +113,117 @@ function Application(){
         if (categories[categoryID]) {
           return;
         } else {
-          const { name, symbol, description } = await getCategoryMetadata(+categoryID);
+          const id = `0x${(+categoryID).toString(16)}`;
+          const { name, symbol, description } = require(`./assets/constants/categories/${id}.json`)
           categories[categoryID] = { name, symbol, description, indexes: [] };
         }
       };
 
-      for (let pool of state.helper.initialized) {
-        const { category, name, symbol, address, tokens } = pool;
+      async function setProposals() {
+        proposals = { ...await getProposals() };
+      }
 
-        let snapshots = await pool.getSnapshots(90);
-        let timestamp = new Date(Date.now())
-        let categoryID = `0x${category.toString(16)}`;
+      async function setInitializedPools() {
+        for (let pool of state.helper.initialized) {
+          const { category, name, symbol, address, tokens } = pool;
+  
+          let snapshots = await pool.getSnapshots(90);
+          let timestamp = new Date(Date.now())
+          let categoryID = `0x${category.toString(16)}`;
+  
+          await addCategory(categoryID);
+  
+          let supply = pool.pool.totalSupply;
+          if (typeof supply !== 'number' && typeof supply != 'string') {
+            supply = formatBalance(supply, 18, 4);
+          }
+          let target = clearTimeDiscrepancies(new Date(timestamp.getTime() - 86400000));
+          let history = snapshots.map(h => ({ close: +(h.value.toFixed(4)), date: new Date(h.date * 1000) }));
+          let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(4), date: new Date(l.date * 1000) }))
+          let past24h = snapshots.find((i) => (i.date * 1000) === target.getTime())
 
-        await addCategory(categoryID);
-
-        let supply = pool.pool.totalSupply;
-        if (typeof supply !== 'number' && typeof supply != 'string') {
-          supply = formatBalance(supply, 18, 4);
+  
+          if(past24h === undefined) past24h = snapshots[snapshots.length-2];
+  
+          let delta24hr = snapshots.length === 1 ? 0 : (((snapshots[snapshots.length-1].value - past24h.value)/ past24h.value) * 100).toFixed(4);
+          let volume = +(snapshots[snapshots.length-1].totalVolumeUSD).toFixed(2);
+  
+          stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
+          stats.dailyVolume += volume
+  
+          let formattedName = name.replace(' Tokens', '')
+  
+          const price = parseFloat(history[history.length-1].close);
+          const index = {
+            marketcap: parseFloat((+pool.pool.totalValueLockedUSD).toFixed(2)),
+            price,
+            delta: delta24hr,
+            supply,
+            category,
+            name: formattedName,
+            symbol,
+            size: pool.pool.size,
+            address,
+            history,
+            assets: tokens,
+            tokens: tokens.map(token => token.symbol).join(', '),
+            liquidity,
+            active: true,
+            poolHelper: pool,
+            volume
+          };
+          categories[categoryID].indexes.push(symbol);
+          indexes[symbol] = index;
         }
-        let target = clearTimeDiscrepancies(new Date(timestamp.getTime() - 86400000));
-        let history = snapshots.map(h => ({ close: +(h.value.toFixed(4)), date: new Date(h.date * 1000) }));
-        let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(4), date: new Date(l.date * 1000) }))
-        let past24h = snapshots.find((i) => (i.date * 1000) === target.getTime())
-
-        if(past24h === undefined) past24h = snapshots[snapshots.length-2]
-
-        let delta24hr = snapshots.length === 1 ? 0 : (((snapshots[snapshots.length-1].value - past24h.value)/ past24h.value) * 100).toFixed(4);
-        let volume = +(snapshots[snapshots.length-1].totalVolumeUSD).toFixed(2);
-
-        stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
-        stats.dailyVolume += volume
-
-        let formattedName = name.replace(' Tokens', '')
-
-        const price = parseFloat(history[history.length-1].close);
-        const index = {
-          marketcap: parseFloat((+pool.pool.totalValueLockedUSD).toFixed(2)),
-          price,
-          delta: delta24hr,
-          supply,
-          category,
-          name: formattedName,
-          symbol,
-          size: pool.pool.size,
-          address,
-          history,
-          assets: tokens,
-          tokens: tokens.map(token => token.symbol).join(', '),
-          liquidity,
-          active: true,
-          poolHelper: pool,
-          volume
-        };
-        categories[categoryID].indexes.push(symbol);
-        indexes[symbol] = index;
       }
-      for (let pool of state.helper.uninitialized) {
-        await pool.update();
-        const { category, name, symbol, address, tokens } = pool;
-        const categoryID = `0x${category.toString(16)}`;
-        await addCategory(categoryID);
-        let finalValueEstimate = new BigNumber(0);
-        let currentValue = new BigNumber(0);
 
-        tokens.forEach((token) => {
-          const price = pool.tokenPrices[token.address];
-          currentValue = currentValue.plus(price.times(token.balance));
-          finalValueEstimate = finalValueEstimate.plus(price.times(token.targetBalance));
-        });
+      async function setUninitializedPools() {
+        for (let pool of state.helper.uninitialized) {
+          await pool.update();
+          const { category, name, symbol, address, tokens } = pool;
+          const categoryID = `0x${category.toString(16)}`;
+          await addCategory(categoryID);
+          let finalValueEstimate = new BigNumber(0);
+          let currentValue = new BigNumber(0);
+  
+          tokens.forEach((token) => {
+            const price = pool.tokenPrices[token.address];
+            currentValue = currentValue.plus(price.times(token.balance));
+            finalValueEstimate = finalValueEstimate.plus(price.times(token.targetBalance));
+          });
+  
+          let formattedName = name.replace(' Tokens', '')
+  
+          const index = {
+            marketcap: 0,
+            price: 0,
+            delta: 0,
+            supply: 0,
+            category,
+            name: formattedName,
+            size: pool.pool.size,
+            symbol,
+            address,
+            history: [],
+            assets: tokens,
+            tokens: tokens.map(token => token.symbol).join(', '),
+            active: false,
+            poolHelper: pool,
+            volume: 0,
+            currentValue: formatBalance(currentValue, 18, 4),
+            finalValueEstimate: formatBalance(finalValueEstimate, 18, 4)
+          };
+          categories[categoryID].indexes.push(symbol);
+          indexes[symbol] = index;
+        }
 
-        let formattedName = name.replace(' Tokens', '')
-
-        const index = {
-          marketcap: 0,
-          price: 0,
-          delta: 0,
-          supply: 0,
-          category,
-          name: formattedName,
-          size: pool.pool.size,
-          symbol,
-          address,
-          history: [],
-          assets: tokens,
-          tokens: tokens.map(token => token.symbol).join(', '),
-          active: false,
-          poolHelper: pool,
-          volume: 0,
-          currentValue: formatBalance(currentValue, 18, 4),
-          finalValueEstimate: formatBalance(finalValueEstimate, 18, 4)
-        };
-        categories[categoryID].indexes.push(symbol);
-        indexes[symbol] = index;
       }
+
+      await Promise.all([
+        setProposals(),
+        setInitializedPools(),
+        setUninitializedPools()
+      ])
 
       await dispatch({
         type: 'GENERIC',
