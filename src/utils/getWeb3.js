@@ -65,7 +65,6 @@ export const getWeb3 = () => (
 
       resolve(web3)
     } catch(e){
-      console.log('PROVIDER ERR', e)
       resolve(e)
     }
   })

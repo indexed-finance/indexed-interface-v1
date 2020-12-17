@@ -127,7 +127,7 @@ export const getResolutionThresholds = () => {
     if(window.innerWidth <= NATIVE_SMALL){
       return [ -(window.innerWidth * 5), window.innerWidth ]
     } else if(window.innerWidth <= NATIVE_NORMAL){
-      return [ -(window.innerWidth * 4.25), window.innerWidth ]
+      return [ -(window.innerWidth * 4.5), window.innerWidth ]
     } else {
       return [ -(window.innerWidth * 4.5), window.innerWidth ]
     }

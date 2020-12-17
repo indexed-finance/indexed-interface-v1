@@ -73,8 +73,11 @@ export default function Mint({ market, metadata }) {
 
   useEffect(() => {
     const verifyConnectivity = async() => {
-      if(mintState.pool && (state.web3.injected || window.ethereum) && !mintState.pool.userAddress) {
-        await mintState.pool.setUserAddress(state.account)
+      if(mintState.pool && (state.web3.injected || window.ethereum)) {
+        if(!mintState.pool.userAddress || state.account &&
+          state.account.toLowerCase() !== mintState.pool.userAddress.toLowerCase()) {
+            await mintState.pool.setUserAddress(state.account)
+          }
         await updatePool()
       }
     }

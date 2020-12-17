@@ -68,8 +68,11 @@ export default function BurnTab({ market, metadata }) {
 
   useEffect(() => {
     const verifyConnectivity = async() => {
-      if(burnState.pool && (state.web3.injected || window.ethereum) && !burnState.pool.userAddress) {
-        await burnState.pool.setUserAddress(state.account)
+      if(burnState.pool && (state.web3.injected || window.ethereum)) {
+        if(!burnState.pool.userAddress || state.account &&
+          state.account.toLowerCase() !== burnState.pool.userAddress.toLowerCase()){
+            await burnState.pool.setUserAddress(state.account)
+          }
         await updatePool()
       }
     }

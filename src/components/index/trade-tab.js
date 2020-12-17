@@ -51,19 +51,24 @@ export default function TradeTab({ metadata }) {
       const helper = new UniswapHelper(state.web3.injected, poolToken, whitelistTokens, state.account);
 
       setHelper(helper);
+      setRender(true);
     }
     if(!tradeState.helper) setPool();
   }, [ state.web3.injected, metadata ]);
 
   useEffect(() => {
-    if (!state.account || !tradeState.helper || tradeState.helper.userAddress) return;
-    const setAcct = async () => {
-      tradeState.helper.setUserAddress(state.account);
-      await tradeState.helper.waitForUpdate;
-      updatePool();
+    const verifyConnectivity = async() => {
+      if(tradeState.helper && (state.web3.injected || window.ethereum)) {
+        if(!tradeState.helper.userAddress || state.account &&
+          state.account.toLowerCase() !== tradeState.helper.userAddress.toLowerCase()) {
+            await tradeState.helper.setUserAddress(state.account)
+        }
+        await tradeState.helper.waitForUpdate;
+        await updatePool()
+      }
     }
-    setAcct()
-  }, [ tradeState ]);
+    verifyConnectivity()
+  }, [  , state.web3.injected, isRendered ])
 
   let whitelistSymbols = whitelistTokens.map(t => t.symbol);
   let inputSymbol, outputSymbol;
@@ -150,7 +155,7 @@ export default function TradeTab({ metadata }) {
           tradeState.helper && <TradeInput inputWidth={250} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useInput} />
         }
         {
-          !isRendered && <Input label='AMOUNT' variant='outlined' style={{ width: 250 }} InputProps={{ endAdornment: 'ETH' }} />
+          !tradeState.helper  && <Input label='AMOUNT' variant='outlined' style={{ width: 250 }} InputProps={{ endAdornment: 'ETH' }} />
         }
       </Grid >
       <Grid item xs={12} md={12} lg={12} xl={12} key='1'>
@@ -164,7 +169,7 @@ export default function TradeTab({ metadata }) {
           tradeState.helper && <TradeInput inputWidth={250} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useOutput} />
         }
         {
-          !isRendered && <Input label='AMOUNT' variant='outlined' style={{ width: 250 }} InputProps={{ endAdornment: metadata.symbol }} />
+          !tradeState.helper  && <Input label='AMOUNT' variant='outlined' style={{ width: 250 }} InputProps={{ endAdornment: metadata.symbol }} />
         }
       </Grid>
 

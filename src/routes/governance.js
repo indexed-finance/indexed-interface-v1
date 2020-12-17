@@ -101,7 +101,7 @@ export default function Governance(){
     }
   }
 
-  const delegateAddress = async(address) => {
+  const delegateAddress = async(address, fallback) => {
     let { web3, account } = state
     let contract = toContract(web3.injected, Ndx.abi, NDX)
 
@@ -111,10 +111,11 @@ export default function Governance(){
         dispatch(TX_PENDING(transactionHash))
       ).on('confirmation', async(conf, receipt) => {
         if(conf === 0){
-          if(parseInt(receipt.status) == 1) {
+          if(receipt.status == 1) {
             let isDelegated = await contract.methods.delegates(state.account).call()
             dispatch(TX_CONFIRMED(receipt.transactionHash))
             getStatus(isDelegated)
+            await fallback()
           } else {
             dispatch(TX_REVERTED(receipt.transactionHash))
           }
@@ -164,9 +165,10 @@ export default function Governance(){
 
     const submit = async() => {
       if(selection == 0) {
-        await delegateAddress(state.account)
+        await delegateAddress(state.account, trigger)
+      } else {
+        await trigger()
       }
-      await trigger()
     }
 
     return(

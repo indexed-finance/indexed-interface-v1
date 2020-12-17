@@ -44,7 +44,7 @@ function mintDispatchMiddleware(dispatch: MintDispatch, state: MintState) {
       const { usedBalance: poolBalance } = state.tokens[index];
       let poolAmountOut;
       if (amount.gt(poolBalance.div(2))) {
-        poolAmountOut = poolBalance.div(2);
+        poolAmountOut = state.poolAmountOut;
       } else {
         const result = await pool.calcPoolOutGivenSingleIn(address, amount);
         const { amount: poolAmount } = result;

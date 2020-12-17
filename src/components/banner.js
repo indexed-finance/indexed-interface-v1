@@ -50,22 +50,19 @@ export default function Banner() {
 
   const stopAnimation = (e) => {
     if(messages.indexes.length > 0 )  {
-      let subscriptions = [ ...controls.subscribers ]
-      let lastSubscription = subscriptions[subscriptions.length-1]
-      let x = lastSubscription.transform.translateX.replace(/[^0-9\-\.]/g, '')
+      let currentTime = new Date(Date.now())
+      // let subscriptions = [ ...controls.subscribers ]
+      // let lastSubscription = subscriptions[subscriptions.length-1]
+      // let x = lastSubscription.transform.translateX.replace(/[^0-9\-\.]/g, '')
+      let lastTime = (currentTime.getTime() - coordinate.time)/1000
+      let elapsed = coordinate.elapsed + lastTime
 
-      if(!isNaN(parseFloat(x))){
-        let currentTime = new Date(Date.now())
-        let lastTime = (currentTime.getTime() - coordinate.time)/1000
-        let elapsed = coordinate.elapsed + lastTime
-
-        if(lastTime >= duration){
-          elapsed = ((lastTime/duration) % 1) * duration
-        }
-
-        setCoordinate({ ...coordinate, elapsed })
-        controls.stop()
+      if(elapsed >= duration){
+        elapsed = ((lastTime/duration) % 1) * duration
+        console.log('TIME OVERFLOW', elapsed, (lastTime/duration) % 1)
       }
+      setCoordinate({ ...coordinate, elapsed })
+      controls.stop()
     }
   }
 
@@ -78,9 +75,8 @@ export default function Banner() {
   const resumeAnimation = (e) => {
     let timeRemaining = duration - coordinate.elapsed
 
-    if(timeRemaining < 0){
-      timeRemaining = (coordinate.elapsed % duration) * duration
-    }
+    console.log('TIME REMAINING', timeRemaining)
+    console.log('SECONDS ELAPSED', coordinate.elapsed)
 
     if(messages.indexes.length > 0){
       let currentTime = new Date(Date.now())

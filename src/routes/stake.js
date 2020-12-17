@@ -80,7 +80,7 @@ export default function Stake() {
                 <p> TIME REMAINING: </p>
                 <h3> <Countdown date={startTime} /> </h3>
               </React.Fragment>
-              : <p>STAKING HAS NOT BEGUN</p>
+              : <p style={{ color: 'orange' }}>STAKING HAS NOT BEGUN</p>
             }
           </div>
         </Container>
