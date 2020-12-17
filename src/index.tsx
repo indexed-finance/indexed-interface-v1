@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
-import { getAllHelpersFromCache, getAllHelpers, formatBalance, BigNumber } from '@indexed-finance/indexed.js';
+import { getAllHelpers, formatBalance, BigNumber } from '@indexed-finance/indexed.js';
 
 import { StateProvider } from './state'
 import Navigation from './components/navigation'
@@ -131,13 +131,13 @@ function Application(){
       async function setInitializedPools() {
         for (let pool of state.helper.initialized) {
           const { category, name, symbol, address, tokens } = pool;
-  
+
           let snapshots = await pool.getSnapshots(90);
           let timestamp = new Date(Date.now())
           let categoryID = `0x${category.toString(16)}`;
-  
+
           await addCategory(categoryID);
-  
+
           let supply = pool.pool.totalSupply;
           if (typeof supply !== 'number' && typeof supply != 'string') {
             supply = formatBalance(supply, 18, 4);
@@ -147,17 +147,17 @@ function Application(){
           let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(4), date: new Date(l.date * 1000) }))
           let past24h = snapshots.find((i) => (i.date * 1000) === target.getTime())
 
-  
+
           if(past24h === undefined) past24h = snapshots[snapshots.length-2];
-  
+
           let delta24hr = snapshots.length === 1 ? 0 : (((snapshots[snapshots.length-1].value - past24h.value)/ past24h.value) * 100).toFixed(4);
           let volume = +(snapshots[snapshots.length-1].totalVolumeUSD).toFixed(2);
-  
+
           stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
           stats.dailyVolume += volume
-  
+
           let formattedName = name.replace(' Tokens', '')
-  
+
           const price = parseFloat(history[history.length-1].close);
           const index = {
             marketcap: parseFloat((+pool.pool.totalValueLockedUSD).toFixed(2)),
@@ -190,15 +190,15 @@ function Application(){
           await addCategory(categoryID);
           let finalValueEstimate = new BigNumber(0);
           let currentValue = new BigNumber(0);
-  
+
           tokens.forEach((token) => {
             const price = pool.tokenPrices[token.address];
             currentValue = currentValue.plus(price.times(token.balance));
             finalValueEstimate = finalValueEstimate.plus(price.times(token.targetBalance));
           });
-  
+
           let formattedName = name.replace(' Tokens', '')
-  
+
           const index = {
             marketcap: 0,
             price: 0,

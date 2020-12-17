@@ -264,7 +264,7 @@ export const marketColumns = [
   }
 ]
 
-export const eventColumns = [
+export const eventDesktopColumns = [
   {
     id: 'blockNumber',
     label: 'BLOCK',
@@ -298,7 +298,30 @@ export const eventColumns = [
   },
 ]
 
-export const categoryColumns = [
+export const eventNativeColumns = [
+  {
+    id: 'event',
+    label: 'AMOUNT',
+    minWidth: 25,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'type',
+    label: 'TYPE',
+    minWidth: 25,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'tx',
+    label: 'TRANSACTION',
+    minWidth: 50,
+    align: 'center'
+  },
+]
+
+export const categoryDesktopColumns = [
   {
     id: 'symbol',
     label: 'SYMBOL',
@@ -356,6 +379,94 @@ export const categoryColumns = [
     format: (value) => `$${value.toLocaleString()}`,
   },
 ]
+
+export const categoryNativeColumns = [
+  {
+    id: 'symbol',
+    label: 'SYMBOL',
+    minWidth: 25,
+    align: 'center',
+    format: (value) => `${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'size',
+    label: 'SIZE',
+    minWidth: 15,
+    align: 'center',
+    format: (value) => `${value.toLocaleString()}`,
+  },
+  {
+    id: 'supply',
+    label: 'SUPPLY',
+    minWidth: 25,
+    align: 'center',
+    format: (value) => `${value.toLocaleString()}`,
+  },
+]
+
+
+export const poolDesktopColumns = [
+  { id: 'name', label: 'NAME', minWidth: 250 },
+  {
+    id: 'symbol',
+    label: 'SYMBOL',
+    minWidth: 25 ,
+    align: 'center',
+    format: (value) => `[${value.toLocaleString('en-US')}]`,
+  },
+  {
+    id: 'price',
+    label: 'PRICE',
+    minWidth: 150,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'delta',
+    label: '24HR \u0394',
+    minWidth: 25,
+    align: 'center',
+    format: (value) => `%${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'marketcap',
+    label: 'MARKET CAP',
+    minWidth: 200,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'volume',
+    label: 'VOLUME',
+    minWidth: 200,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+];
+
+export const poolNativeColumns  = [
+  {
+    id: 'symbol',
+    label: 'SYMBOL',
+    minWidth: 25 ,
+    align: 'center',
+    format: (value) => `[${value.toLocaleString('en-US')}]`,
+  },
+  {
+    id: 'price',
+    label: 'PRICE',
+    minWidth: 50,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'delta',
+    label: '24HR \u0394',
+    minWidth: 25,
+    align: 'center',
+    format: (value) => `%${value.toLocaleString('en-US')}`,
+  }
+];
 
 export const DESKTOP_MASSIVE = 3750
 export const DESKTOP_HUGE = 2750

@@ -12,38 +12,47 @@ const setStyle = (theme) => ({
 const mapping = {
   [DESKTOP_SMALL]: {
     overflowX: 'hidden',
-    height: 'calc(100vh - 512.5px)'
+    height: 'calc(100vh - 512.5px)',
+    padding: 'auto'
   },
   [DESKTOP_NORMAL]: {
     overflowX: 'hidden',
-    height: 'calc(100vh - 562.5px)'
+    height: 'calc(100vh - 562.5px)',
+    padding: 'auto'
   },
   [DESKTOP_LARGE]: {
     overflowX: 'hidden',
-    height: 'calc(100vh - 625px)'
+    height: 'calc(100vh - 625px)',
+    padding: 'auto'
   },
   [DESKTOP_WIDE]: {
     overflowX: 'hidden',
-    height: 'calc(50vh - 375px)'
+    height: 'calc(50vh - 375px)',
+    padding: 'auto'
   },
   [DESKTOP_HUGE]: {
     overflowX: 'hidden',
-    height: 'calc(50vh - 500px)'
+    height: 'calc(50vh - 500px)',
+    padding: 'auto'
   },
   [DESKTOP_MASSIVE]: {
     overflowX: 'hidden',
-    height: 'calc(50vh - 500px)'
+    height: 'calc(50vh - 500px)',
+    padding: 'auto'
   },
   [NATIVE_SMALL]: {
-    overflowX: 'scroll',
+    overflowX: 'hidden',
+    padding: '20px 16px',
     height: 400
   },
   [NATIVE_NORMAL]: {
-    overflowX: 'scroll',
+    overflowX: 'hidden',
+    padding: '20px 16px',
     height: 300
   },
   [NATIVE_WIDE]: {
-    overflowX: 'scroll',
+    overflowX: 'hidden',
+    padding: '20px 16px',
     height: 350
   }
 }

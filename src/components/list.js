@@ -33,7 +33,7 @@ export default function StickyHeadTable({ width, height, action, data, columns, 
 
   return (
     <Fragment>
-      <TableContainer className={classes.container} style={{ width, maxHeight: height }}>
+      <TableContainer className={classes.container} style={{ overflowX: 'hidden', width, maxHeight: height }}>
         <Table stickyHeader className={classes.table}>
           <Head className={classes.head}>
             <TableRow>
