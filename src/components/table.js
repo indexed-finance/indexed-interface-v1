@@ -62,14 +62,14 @@ const columns = [
   },
   {
     id: 'delta',
-    label: '\u0394',
+    label: '24HR \u0394',
     minWidth: 25,
     align: 'center',
     format: (value) => `%${value.toLocaleString('en-US')}`,
   },
   {
     id: 'marketcap',
-    label: 'MARKETCAP',
+    label: 'MARKET CAP',
     minWidth: 200,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
