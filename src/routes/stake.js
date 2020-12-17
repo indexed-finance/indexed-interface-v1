@@ -22,10 +22,10 @@ import { store } from '../state'
 
 const useStyles = getStyles(style)
 
-const DATE_END = 1605586873688
+const DATE_END = process.env.REACT_APP_ETH_NETWORK === 'rinkeby' ? 1605586873688 : 1608595200000
 
 export default function Stake() {
-  const [ startTime, setStartTime ] = useState(1605586873688);
+  const [ startTime, setStartTime ] = useState(DATE_END);
   const [ pools, setPools ] = useState(undefined)
   const theme =  useTheme()
   const classes = useStyles()
@@ -75,12 +75,9 @@ export default function Stake() {
               Stake index tokens or their associated Uniswap liquidity tokens to earn NDX, the governance token for Indexed Finance.
             </p>
             {
-              process.env.REACT_APP_ETH_NETWORK === 'rinkeby' ?
               <React.Fragment>
-                <p> TIME REMAINING: </p>
-                <h3> <Countdown date={startTime} /> </h3>
+                <p> TIME REMAINING: <Countdown date={startTime} /> </p>
               </React.Fragment>
-              : <p style={{ color: 'orange' }}>STAKING HAS NOT BEGUN</p>
             }
           </div>
         </Container>
