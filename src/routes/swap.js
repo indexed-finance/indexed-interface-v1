@@ -17,7 +17,7 @@ const useStyles = getStyles(style)
 
 function Swap(){
   const [ tokenMetadata, setTokenMetadata] = useState({})
-  let { useInput, tokenList, useOutput, swapState, setTokens, setHelper, updatePool } = useSwapState()
+  let { useInput, tokenList, selectToken, useOutput, swapState, setTokens, setHelper, updatePool, switchTokens } = useSwapState()
   let { state, dispatch } = useContext(store)
   const classes = useStyles()
 
@@ -97,13 +97,13 @@ function Swap(){
           <Grid container direction='column' justify='center' alignItems='center'
             style={{ paddingTop: '1em', paddingBottom: '1em'}}>
             <Grid item>
-              {swapState.pool && <SwapInput tokens={tokenList} useToken={useInput} label='EXCHANGE' />}
+              {swapState.pool && <SwapInput onSelect={selectToken} tokens={tokenList} useToken={useInput} label='EXCHANGE' />}
             </Grid>
             <Grid item>
-              <IconButton> <SwapIcon /> </IconButton>
+              <IconButton onClick={!swapState.pool ? () => {} : switchTokens}> <SwapIcon /> </IconButton>
             </Grid>
             <Grid item>
-              {swapState.pool && <SwapInput tokens={tokenList} useToken={useOutput} label='EXCHANGE' />}
+              {swapState.pool && <SwapInput onSelect={selectToken} tokens={tokenList} useToken={useOutput} label='EXCHANGE' />}
             </Grid>
             <Grid item>
               <ButtonPrimary variant='outlined' margin={{ marginLeft: 300 }}>

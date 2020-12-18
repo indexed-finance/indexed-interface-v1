@@ -7,7 +7,8 @@ import Input from './input'
 
 const TradeInput = styled(Input)({
   '& input': {
-    height: 37.5
+    height: 37.5,
+    fontSize: 20
   }
 })
 
@@ -20,6 +21,8 @@ export default function ExchangeInput(props) {
     {`BALANCE: ${token.displayBalance}`}
   </span>;
 
+  let endAdornment = <Adornment onSelect={props.onSelect} market={token.symbol} assets={props.tokens} />
+
   return(
     <TradeInput
       variant='outlined'
@@ -27,13 +30,8 @@ export default function ExchangeInput(props) {
       type='number'
       style={{ marginBottom: 10 }}
       InputLabelProps={{ shrink: true }}
-      InputProps={{ endAdornment: <Adornment market={token.symbol} assets={props.tokens} /> }}
-      helperText={
-        <span style={{ float: 'left', cursor: 'pointer'}}
-          onClick={() => token.setAmountToBalance()}>
-          {`BALANCE: ${token.displayBalance}`}
-        </span>
-      }
+      InputProps={{ endAdornment }}
+      helperText={helperText}
       {...(token.bindInput)}
     />
   );

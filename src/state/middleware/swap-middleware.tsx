@@ -65,6 +65,8 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
     }
 
     async function switchTokens(): Promise<void> {
+      console.log(state.input, state.output)
+
       let input = { ...state.output };
       let output = { ...state.input };
       dispatch([
@@ -109,6 +111,8 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
     }
 
     async function selectToken(action: SelectToken): Promise<void> {
+      console.log(action)
+
       const { index } = action;
       const wlToken = state.tokenList[index]
       const newToken = {
