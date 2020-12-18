@@ -161,6 +161,7 @@ export function useSwapTokenActions(
   address: string
 ): TokenActions {
   let isInput = compareAddresses(address, state.input.address);
+
   // let { address, decimals, name, symbol, ready, usedBalance: poolBalance } = state.tokens[index];
   let { symbol, decimals } = state.tokenList.find(i => i.address == address)
   let balance = state.getBalance(address);
@@ -218,6 +219,8 @@ export type SwapContextType = {
   setHelper: (pool: PoolHelper) => void;
   updatePool: (clearInputs?: boolean) => void;
   selectToken: (index: number) => void;
+  setTokens: (tokens: TokenList) => void;
+  tokenList: TokenList;
   switchTokens: () => void;
 }
 
@@ -228,6 +231,7 @@ export function useSwap(): SwapContextType {
   const updatePool = (clearInputs?: boolean) => dispatch({ type: 'UPDATE_POOL', clearInputs });
   const setHelper = (pool: PoolHelper ) => dispatch({ type: 'SET_HELPER', pool });
   const setTokens = (tokens: TokenList) => dispatch({ type: 'SET_TOKENS', tokens });
+  const { tokenList } = swapState;
 
   return {
     useInput: () => useSwapTokenActions(swapState, dispatch, swapState.input.address),
@@ -235,7 +239,9 @@ export function useSwap(): SwapContextType {
     switchTokens: () => dispatch({ type: 'SWITCH_TOKENS' }),
     swapState,
     setHelper,
+    setTokens,
     updatePool,
     selectToken,
+    tokenList
   };
 }

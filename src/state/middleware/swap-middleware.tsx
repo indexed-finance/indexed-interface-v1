@@ -75,15 +75,31 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
     }
 
     async function setTokens(action: SetTokens): Promise<void> {
+      const inputToken = action.tokens[0]
+      const input = {
+        address: inputToken.address,
+        decimals: inputToken.decimals,
+        displayAmount: '0.00',
+        amount: BN_ZERO
+      }
+
+      const outputToken = action.tokens[1]
+      const output = {
+        address: outputToken.address,
+        decimals: outputToken.decimals,
+        displayAmount: '0.00',
+        amount: BN_ZERO
+      }
+
       dispatch([
         { type: 'SET_TOKENS', tokens: action.tokens },
+        { type: 'SET_INPUT_TOKEN', token: input },
+        { type: 'SET_OUTPUT_TOKEN', token: output },
         { type: 'SET_PRICE', price:'0.00' }
       ]);
     }
 
     async function setHelper(action: SetHelper): Promise<void> {
-      if(!state.tokenList) return;
-
       await action.pool.waitForUpdate;
 
       dispatch([
