@@ -113,14 +113,9 @@ function Application(){
         if (categories[categoryID]) {
           return;
         } else {
-          if (process.env.REACT_APP_ETH_NETWORK === 'mainnet') {
-            const id = `0x${(+categoryID).toString(16)}`;
-            const { name, symbol, description } = require(`./assets/constants/categories/${id}.json`)
-            categories[categoryID] = { name, symbol, description, indexes: [] };
-          } else {
-            const { name, symbol, description } = await getCategoryMetadata(+categoryID);
-            categories[categoryID] = { name, symbol, description, indexes: [] };
-          }
+          const id = `0x${(+categoryID).toString(16)}`;
+          const { name, symbol, description } = require(`./assets/constants/categories/${id}.json`)
+          categories[categoryID] = { name, symbol, description, indexes: [] };
         }
       };
 
