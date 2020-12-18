@@ -22,20 +22,31 @@ const TradeInput = styled(Input)({
 const useStyles = getStyles(style)
 
 export default function Swap(){
-  let { state } = useContext(store)
+  let { state, dispatch } = useContext(store)
   const classes = useStyles()
+
+
+  useEffect(() => {
+    if(!state.load) {
+      dispatch({
+        type: 'LOAD', payload: true
+      })
+    }
+  }, [])
 
   return (
     <Grid container direction='column' justify='center' alignItems='center'>
       <Grid item>
-        <Container margin='6em 0em' padding='1em 2em' title='SWAP'>
-          <Grid container direction='column' justify='center' alignItems='center'>
+        <Container margin='6em 0em' padding='1em 3em' title='SWAP'>
+          <Grid container direction='column' justify='center' alignItems='center' style={{ paddingTop: '1em', paddingBottom: '1em'}}>
             <Grid item>
               <TradeInput
                 variant='outlined'
                 label='EXCHANGE'
                 InputProps={{ endAdornment: <Adornment market='YFI' /> }}
                 InputLabelProps={{ shrink: true }}
+                style={{ marginBottom: 10 }}
+                helperText='BALANCE: 0.00'
               />
             </Grid>
             <Grid item>
@@ -47,10 +58,11 @@ export default function Swap(){
                 label='RECIEVE'
                 InputProps={{ endAdornment: <Adornment market='WBTC' /> }}
                 InputLabelProps={{ shrink: true }}
+                helperText='BALANCE: 0.00'
               />
             </Grid>
             <Grid item>
-              <ButtonPrimary variant='outlined' margin={{ marginTop: 25, marginBottom: 12.5, marginLeft: 300 }}>
+              <ButtonPrimary variant='outlined' margin={{ marginLeft: 300 }}>
                 SWAP
               </ButtonPrimary>
             </Grid>

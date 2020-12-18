@@ -50,7 +50,7 @@ export default function CurrencySelect({ market, onSelect, assets }) {
           <MenuItem key={i} value={cur.symbol}>
             <div style={{ width: 100, display: 'flex', flexWrap: 'nowrap', alignItems: 'center' }}>
               <img src={tokenMetadata[cur.symbol].image} style={{ width: 27.5, padding: 5 }} />
-              <span style={{ fontSize: 20, marginBlock: 0, marginTop: 5, marginLeft: 5, clear: 'both' }}> {cur.symbol} </span>
+              <span style={{ fontSize: 20, marginBlock: 0, marginTop: 5, marginLeft: 7.5, clear: 'both' }}> {cur.symbol} </span>
             </div>
           </MenuItem>
         ))}
