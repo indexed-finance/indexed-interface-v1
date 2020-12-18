@@ -8,6 +8,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { useParams } from 'react-router-dom'
 
+import { tokenMetadata } from '../assets/constants/parameters'
 import style from '../assets/css/routes/category'
 import Container from '../components/container'
 import List from '../components/list'
@@ -18,7 +19,7 @@ import ReactMarkdown from 'react-markdown'
 const gfm = require('remark-gfm')
 
 export const tokenColumns = [
-  { id: 'name', label: 'NAME', minWidth: 200 },
+  { id: 'name', label: 'NAME', minWidth: 150 },
   {
     id: 'symbol',
     label: 'SYMBOL',
@@ -47,7 +48,7 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box p={3}>
+        <Box p={3} style={{ padding: 0 }}>
           <Typography>{children}</Typography>
         </Box>
       )}
@@ -55,15 +56,23 @@ function TabPanel(props) {
   );
 }
 
+const ImageCell = (i) =>  (
+  <div style={{ display: 'inline-flex', flexWrap: 'nowrap', alignItems: 'center' }}>
+    <img src={tokenMetadata[i.symbol].image} style={{ float: 'left', width: 35, padding: 5 }} />
+    <span style={{ marginBlock: 0, marginLeft: 17.5, clear: 'both' }}> {i.name} </span>
+  </div>
+)
+
 const useStyles = getStyles(style);
 
 export default function Category() {
   const [ category, setCategory ] = useState({ description: null, tokens: [] });
-  const { state } = useContext(store);
-  const { categories } = state;
+  const [value, setValue] = useState(0);
   const { id } = useParams();
   const classes = useStyles();
-  const [value, setValue] = useState(0);
+
+  let { state } = useContext(store);
+  const { categories } = state;
 
   const handleChange = (event, newValue) => {
      setValue(newValue);
@@ -78,10 +87,11 @@ export default function Category() {
         let assets = {}
 
         for(let x = 0; x < pools.length; x++){
-          let fund = pools[x]
-
-          await fund.assets.map(i => {
-            if(!assets[i.symbol]) categoryTokens.push(i)
+          await pools[x].assets.map(i => {
+            if(!assets[i.symbol]) {
+              i.name = ImageCell(i)
+              categoryTokens.push(i)
+            }
           })
         }
 
@@ -107,6 +117,7 @@ export default function Category() {
                   value={value}
                   onChange={handleChange}
                   textColor="secondary"
+                  className={classes.tab}
                 >
                   <Tab label="DESCRIPTION" value={0} / >
                   <Tab label="TOKENS" value={1} />

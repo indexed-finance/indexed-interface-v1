@@ -1,4 +1,8 @@
 const setStyle = (theme) => ({
+  tab: {
+    borderBottom: 'solid 3px #666666',
+    marginRight: 5
+  },
   body: {
     padding: '0em 2em',
     '& p': {
