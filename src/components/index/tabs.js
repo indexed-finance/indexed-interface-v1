@@ -28,7 +28,6 @@ import getStyles from '../../assets/css'
 
 import { marketColumns } from '../../assets/constants/parameters'
 
-const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
 const BN_ZERO = new BigNumber(0)
 
 const Exit = styled(ExitIcon)({
