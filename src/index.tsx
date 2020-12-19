@@ -113,9 +113,14 @@ function Application(){
         if (categories[categoryID]) {
           return;
         } else {
-          const id = `0x${(+categoryID).toString(16)}`;
-          const { name, symbol, description } = require(`./assets/constants/categories/${id}.json`)
-          categories[categoryID] = { name, symbol, description, indexes: [] };
+          if (process.env.REACT_APP_ETH_NETWORK === 'mainnet') {
+            const id = `0x${(+categoryID).toString(16)}`;
+            const { name, symbol, description } = require(`./assets/constants/categories/${id}.json`)
+            categories[categoryID] = { name, symbol, description, indexes: [] };
+          } else {
+            const { name, symbol, description } = await getCategoryMetadata(+categoryID);
+            categories[categoryID] = { name, symbol, description, indexes: [] };
+          }
         }
       };
 
@@ -142,11 +147,12 @@ function Application(){
           let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(4), date: new Date(l.date * 1000) }))
           let past24h = snapshots.find((i) => (i.date * 1000) === target.getTime())
 
-
           if(past24h === undefined) past24h = snapshots[snapshots.length-2];
 
           let delta24hr = snapshots.length === 1 ? 0 : (((snapshots[snapshots.length-1].value - past24h.value)/ past24h.value) * 100).toFixed(4);
-          let volume = +(snapshots[snapshots.length-1].totalVolumeUSD).toFixed(2);
+          let snapshotsLastDay = snapshots.filter(s => (s.date * 1000) >= target.getTime());
+          let volume24hr = snapshotsLastDay.reduce((t, snap) => t + parseFloat(snap.totalVolumeUSD), 0);
+          let volume = volume24hr.toFixed(2)
 
           stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
           stats.dailyVolume += volume
@@ -170,7 +176,7 @@ function Application(){
             liquidity,
             active: true,
             poolHelper: pool,
-            volume
+            volume: parseFloat(volume)
           };
           categories[categoryID].indexes.push(symbol);
           indexes[symbol] = index;
