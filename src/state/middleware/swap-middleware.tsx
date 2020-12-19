@@ -44,6 +44,7 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
       }
 
       const data = await pool.calcOutGivenIn(input.address, output.address, inputAmount);
+      const { displayAmount: pricing } = await pool.calcOutGivenIn(input.address, output.address, toWei(1));
 
       output.amount = toBN(data.amount);
       output.displayAmount = data.displayAmount;
@@ -51,7 +52,7 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
       dispatch([
         { type: 'SET_INPUT_TOKEN', token: input },
         { type: 'SET_OUTPUT_TOKEN', token: output },
-        { type: 'SET_PRICE', price: '0.00' }
+        { type: 'SET_PRICE', price: pricing }
       ]);
     }
 
@@ -71,6 +72,7 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
       }
 
       const data = await pool.calcInGivenOut(output.address, input.address, outputAmount);
+      const { displayAmount: pricing } = await pool.calcOutGivenIn(input.address, output.address, toWei(1));
 
       input.amount = toBN(data.amount);
       input.displayAmount = data.displayAmount;
@@ -78,7 +80,7 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
       dispatch([
         { type: 'SET_INPUT_TOKEN', token: input },
         { type: 'SET_OUTPUT_TOKEN', token: output },
-        { type: 'SET_PRICE', price: '0.00' }
+        { type: 'SET_PRICE', price: pricing }
       ]);
     }
 
@@ -103,11 +105,13 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         && i.pool === input.pool
       );
 
+      const { displayAmount: pricing } = await pool.calcOutGivenIn(input.address, output.address, toWei(1));
+
       dispatch([
         { type: 'SET_OUTPUTS', tokens: outputList },
         { type: 'SET_INPUT_TOKEN', token: input },
         { type: 'SET_OUTPUT_TOKEN', token: output },
-        { type: 'SET_PRICE', price: '0.00' }
+        { type: 'SET_PRICE', price: pricing }
       ]);
     }
 
@@ -140,71 +144,86 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         { type: 'SET_OUTPUTS', tokens: outputList },
         { type: 'SET_INPUT_TOKEN', token: input },
         { type: 'SET_OUTPUT_TOKEN', token: output },
-        { type: 'SET_PRICE', price:'0.00' }
       ]);
     }
 
     async function setHelper(action: SetHelper): Promise<void> {
       await action.pool.waitForUpdate;
+      const inputAddress = state.input.address;
+      const outputAddress = state.output.address;
+
+      const { displayAmount: pricing } = await action.pool.calcOutGivenIn(inputAddress, outputAddress, toWei(1));
 
       dispatch([
         { type: 'SET_HELPER', pool: action.pool },
-        { type: 'SET_PRICE', price:'0.00' }
+        { type: 'SET_PRICE', price: pricing }
       ]);
     }
 
     async function selectOutput(action: SelectOutput): Promise<void> {
       const { index } = action;
       const wlToken = state.outputList[index];
+      const input = { ...state.input };
 
       const newToken = {
         address: wlToken.address,
         decimals: wlToken.decimals,
         pool: wlToken.pool,
-        displayAmount: '0.00',
-        amount: BN_ZERO
+        displayAmount: state.output.displayAmount,
+        amount: state.output.amount
       }
 
+      const data = await pool.calcInGivenOut(newToken.address, input.address, newToken.amount);
+      const { displayAmount: pricing } = await pool.calcOutGivenIn(input.address, newToken.address, toWei(1));
+
+      input.displayAmount = data.displayAmount;
+      input.amount = toBN(data.amount);
+
       dispatch([
-        { type: 'SET_OUTPUT_TOKEN', token: { ...newToken } },
-        { type: 'SET_PRICE', price: '0.00' }
+        { type: 'SET_OUTPUT_TOKEN', token: newToken },
+        { type: 'SET_INPUT_TOKEN', token: input },
+        { type: 'SET_PRICE', price: pricing }
       ]);
     }
 
     async function selectToken(action: SelectToken): Promise<void> {
       const { index } = action;
       const wlToken = state.tokenList[index];
-      const dispatchArray = [];
-
+      let newOutput = { ...state.output }
       const newToken = {
         address: wlToken.address,
         decimals: wlToken.decimals,
         pool: wlToken.pool,
-        displayAmount: '0.00',
-        amount: BN_ZERO
+        displayAmount: state.input.displayAmount,
+        amount: state.input.amount
       }
-
       const outputList = state.tokenList.filter(i =>
-        wlToken.address.toLowerCase() !== i.address.toLowerCase()
-        && i.pool === wlToken.pool
+          wlToken.address.toLowerCase() !== i.address.toLowerCase()
+          && i.pool === wlToken.pool
       );
 
-      dispatchArray.push({ type: 'SET_INPUT_TOKEN', token: { ...newToken } })
-      dispatchArray.push({ type: 'SET_PRICE', price: '0.00' })
-
-      if(state.outputList !== outputList){
-        const newOutput = {
+      if(newOutput.address == newToken.address){
+        newOutput = {
           address: outputList[0].address,
           decimals: outputList[0].decimals,
           pool: outputList[0].pool,
-          displayAmount: '0.00',
-          amount: BN_ZERO
+          displayAmount: state.output.displayAmount,
+          amount: state.output.amount
         }
-        dispatchArray.push({ type: 'SET_OUTPUTS', tokens: outputList })
-        dispatchArray.push({ type: 'SET_OUTPUT_TOKEN', token: newOutput })
       }
 
-      dispatch(dispatchArray)
+      const data = await pool.calcOutGivenIn(newToken.address, newOutput.address, newToken.amount);
+      const { displayAmount: pricing } = await pool.calcOutGivenIn(newToken.address, newOutput.address, toWei(1));
+
+      newOutput.amount = toBN(data.amount);
+      newOutput.displayAmount = data.displayAmount;
+
+      dispatch([
+        { type: 'SET_INPUT_TOKEN', token: newToken },
+        { type: 'SET_OUTPUT_TOKEN', token: newOutput },
+        { type: 'SET_OUTPUTS', tokens: outputList },
+        { type: 'SET_PRICE', price: pricing }
+      ])
     }
 
     const updatePool = async (action: UpdateBalances): Promise<void> => {

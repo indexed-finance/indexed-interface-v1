@@ -3,6 +3,7 @@ import React, { Fragment, useEffect, useContext, useState } from 'react'
 import Grid from '@material-ui/core/Grid'
 import IconButton from '@material-ui/core/IconButton';
 import SwapIcon from '@material-ui/icons/SwapCalls'
+import { formatBalance } from '@indexed-finance/indexed.js'
 
 import { useSwapState } from "../../state/swap";
 import ButtonPrimary from '../buttons/primary'
@@ -59,6 +60,18 @@ export default function Swap({ metadata }){
     }
   }, [])
 
+  let outputSymbol = tokenList ? tokenList.find(i => i.address == swapState.output.address).symbol : ''
+  let inputSymbol = tokenList ? tokenList.find(i => i.address == swapState.input.address).symbol : ''
+  let priceString = tokenList ? `1 ${inputSymbol} = ${swapState.price} ${outputSymbol}` : '';
+
+  let feeString;
+
+  if (swapState.pool && tokenList) {
+    const { amount, decimals, address } = swapState.input;
+    const fee = formatBalance(amount.times(3).div(1000), decimals, 4);
+    feeString = `${fee} ${inputSymbol}`;
+  }
+
   let { marginRight, width } = style.getFormatting(state.native)
 
   return (
@@ -68,7 +81,10 @@ export default function Swap({ metadata }){
         {!swapState.pool && <Input label='EXCHANGE' variant='outlined' style={{ width: 300 }} InputProps={{ endAdornment: ' ' }} />}
       </Grid>
       <Grid item>
-        <IconButton onClick={!swapState.pool ? () => {} : switchTokens}> <SwapIcon /> </IconButton>
+        <div className={classes.swap}>
+          <IconButton onClick={!swapState.pool ? () => {} : switchTokens}> <SwapIcon /> </IconButton>
+          <p>{priceString}</p>
+        </div>
       </Grid>
       <Grid item>
         {swapState.pool && <SwapInput onSelect={selectOutput} tokens={outputList} useToken={useOutput} label='RECIEVE' />}
@@ -76,7 +92,7 @@ export default function Swap({ metadata }){
       </Grid>
       <Grid item style={{ width: '100%'}}>
         <div className={classes.market} >
-          <p> FEE: <span style={{ marginRight }}> 0.00 </span> </p>
+          <p> FEE: <span style={{ marginRight }}> {feeString} </span> </p>
         </div>
       </Grid>
       <Grid item>

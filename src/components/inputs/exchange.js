@@ -22,7 +22,7 @@ export default function ExchangeInput(props) {
       label={props.label}
       error={error}
       type='number'
-      style={{ marginBottom: 10, width: 300 }}
+      style={{ marginBottom: 7.5, width: 300 }}
       InputProps={{ endAdornment }}
       helperText={helperText}
       {...(token.bindInput)}

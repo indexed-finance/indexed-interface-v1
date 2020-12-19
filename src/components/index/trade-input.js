@@ -37,7 +37,7 @@ export default function TradeInput(props) {
       label='AMOUNT'
       type='number'
       helperText={helperText}
-      style={{ width: props.inputWidth }}
+      style={{ marginBottom: 7.5, width: props.inputWidth }}
       InputLabelProps={{ shrink: true }}
       {...(token.bindInput)}
       InputProps={{ endAdornment }}
