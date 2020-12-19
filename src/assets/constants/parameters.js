@@ -19,6 +19,7 @@ import crv from '../images/crv.png'
 import usdc from '../images/usdc.png'
 import uni from '../images/uni.png'
 import aave from '../images/aave.png'
+import zrx from '../images/zrx.png'
 import uma from '../images/uma.png'
 import omg from '../images/omg.png'
 import ren from '../images/ren.png'
@@ -182,6 +183,10 @@ export const tokenMetadata = {
   "ETH": {
     name: "Ethereum",
     image: eth
+  },
+  "ZRX": {
+    name: "0x",
+    image: zrx
   },
   "SNX": {
     name: "Synthetix",
