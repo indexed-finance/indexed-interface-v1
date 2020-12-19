@@ -19,6 +19,7 @@ export default function Swap({ metadata }){
   let { useInput, selectOutput, outputList, tokenList, selectToken, useOutput, swapState,
     setTokens, setHelper, updatePool, switchTokens } = useSwapState()
   const [ tokenMetadata, setTokenMetadata] = useState({})
+  const [ isInit, setInit ] = useState(false)
   let { state, dispatch } = useContext(store)
   const classes = useStyles()
 
@@ -33,6 +34,7 @@ export default function Swap({ metadata }){
       let pool = state.helper.initialized.find(i => i.pool.address === metadata.address);
 
       setHelper(pool)
+      setInit(true)
     }
   }, [ , state.helper, swapState.input ])
 
@@ -78,7 +80,7 @@ export default function Swap({ metadata }){
         </div>
       </Grid>
       <Grid item>
-        <ButtonPrimary variant='outlined' margin={{ marginTop: 25 }}>
+        <ButtonPrimary variant='outlined' margin={{  margin: 25, marginLeft: 150 }}>
           SWAP
         </ButtonPrimary>
       </Grid>

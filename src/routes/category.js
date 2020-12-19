@@ -9,6 +9,7 @@ import Tab from '@material-ui/core/Tab';
 import { useParams } from 'react-router-dom'
 
 import { tokenMetadata } from '../assets/constants/parameters'
+import { getCategory } from '../api/gql'
 import style from '../assets/css/routes/category'
 import Container from '../components/container'
 import List from '../components/list'
@@ -80,29 +81,33 @@ export default function Category() {
 
   useEffect(() => {
     const getCategory = async() => {
-      if (!category.description && categories[id] && state.indexes) {
-        let { indexes } = categories[id]
-        let pools = indexes.map(i => state.indexes[i])
-        let categoryTokens = []
-        let assets = {}
-
-        for(let x = 0; x < pools.length; x++){
-          await pools[x].assets.map(i => {
-            if(!assets[i.symbol]) {
-              i.name = ImageCell(i)
-              categoryTokens.push(i)
-            }
-          })
-        }
-
+      if (!category.description && categories[id]) {
         setCategory({
+          ...category,
           description: categories[id].description,
-          tokens: categoryTokens
         });
       }
     }
     getCategory()
-  }, [ state.indexes, categories ]);
+  }, [ category, categories ]);
+
+  useEffect(() => {
+    const getCategoryTokens = async() => {
+      let categoryTokens = await getCategory(id)
+
+      for(var x = 0; x < categoryTokens.length; x++){
+        let { priceUSD } = categoryTokens[x]
+        categoryTokens[x].priceUSD = '$' + parseFloat(priceUSD).toFixed(2)
+        categoryTokens[x].name = ImageCell(categoryTokens[x])
+      }
+
+      setCategory({
+        ...category,
+        tokens: categoryTokens,
+      });
+    }
+    getCategoryTokens()
+  }, [])
 
   let { margin } = style.getFormatting(state)
 

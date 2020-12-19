@@ -102,6 +102,19 @@ const proposalQuery = id => `
   }
 `
 
+
+const categoryInfoQuery = (id) => `
+{
+  categories(where: { id: "${id}" }) {
+    tokens {
+      symbol
+      priceUSD
+      name
+    }
+  }
+}
+`;
+
 const categoryMetadataQuery = (id) => `
 {
   category(id: "0x${id.toString(16)}") {
@@ -224,6 +237,13 @@ export async function getTokenCategories() {
 export async function getIndexPool(address) {
   let { data: { indexPools } } = await execRequest(poolQuery(address));
   return indexPools;
+}
+
+
+export async function getCategory(id) {
+  let { data: { categories } } = await execRequest(categoryInfoQuery(id));
+
+  return categories[0].tokens;
 }
 
 export async function getUnitializedPool(address) {
