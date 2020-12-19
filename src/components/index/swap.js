@@ -18,7 +18,7 @@ const useStyles = getStyles(style)
 
 export default function Swap({ metadata }){
   let { useInput, selectOutput, outputList, tokenList, selectToken, useOutput, swapState,
-    setTokens, setHelper, updatePool, switchTokens } = useSwapState()
+    setTokens, setHelper, updatePool, switchTokens, feeString } = useSwapState()
   const [ tokenMetadata, setTokenMetadata] = useState({})
   const [ isInit, setInit ] = useState(false)
   let { state, dispatch } = useContext(store)
@@ -64,14 +64,6 @@ export default function Swap({ metadata }){
   let inputSymbol = tokenList ? tokenList.find(i => i.address == swapState.input.address).symbol : ''
   let priceString = tokenList ? `1 ${inputSymbol} = ${swapState.price} ${outputSymbol}` : '';
 
-  let feeString;
-
-  if (swapState.pool && tokenList) {
-    const { amount, decimals, address } = swapState.input;
-    const fee = formatBalance(amount.times(3).div(1000), decimals, 4);
-    feeString = `${fee} ${inputSymbol}`;
-  }
-
   let { marginRight, width } = style.getFormatting(state.native)
 
   return (
@@ -92,7 +84,7 @@ export default function Swap({ metadata }){
       </Grid>
       <Grid item style={{ width: '100%'}}>
         <div className={classes.market} >
-          <p> FEE: <span style={{ marginRight }}> {feeString} </span> </p>
+          <p> FEE: <span style={{ marginRight }}> {feeString || '0'} </span> </p>
         </div>
       </Grid>
       <Grid item>
