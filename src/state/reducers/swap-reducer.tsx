@@ -245,6 +245,7 @@ export type SwapContextType = {
   outputList: TokenList;
   tokenList: TokenList;
   switchTokens: () => void;
+  feeString: string;
 }
 
 export function useSwap(): SwapContextType {
@@ -257,6 +258,17 @@ export function useSwap(): SwapContextType {
   const setTokens = (tokens: TokenList) => dispatch({ type: 'SET_TOKENS', tokens });
   const { tokenList, outputList } = swapState;
 
+  let fee: string;
+  if (swapState.pool) {
+    let swapFee = parseFloat(formatBalance(swapState.pool.pool.swapFee, 18, 10));
+    let outputValue = parseFloat(formatBalance(swapState.output.amount, swapState.output.decimals, 10));
+    fee = (outputValue * swapFee).toFixed(6);
+    if ((+fee) > 1) {
+      fee = parseFloat(fee).toFixed(2);
+    }
+    fee = `${fee} ${swapState.pool.getTokenByAddress(swapState.output.address).symbol}`;
+  }
+
   return {
     useInput: () => useSwapTokenActions(swapState, dispatch, swapState.input.address),
     useOutput: () => useSwapTokenActions(swapState, dispatch, swapState.output.address),
@@ -268,6 +280,7 @@ export function useSwap(): SwapContextType {
     selectToken,
     selectOutput,
     outputList,
-    tokenList
+    tokenList,
+    feeString: fee || ''
   };
 }
