@@ -152,7 +152,7 @@ function Application(){
           let delta24hr = snapshots.length === 1 ? 0 : (((snapshots[snapshots.length-1].value - past24h.value) / past24h.value) * 100).toFixed(4);
           let snapshotsLastDay = snapshots.filter(s => (s.date * 1000) >= target.getTime());
           let volume24hr = snapshotsLastDay.reduce((t, snap) => t + parseFloat(snap.totalVolumeUSD), 0);
-          let volume = volume24hr
+          let volume = volume24hr.toFixed(2)
   
           stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
           stats.dailyVolume += volume;
