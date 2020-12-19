@@ -27,6 +27,7 @@ import { store } from '../../state'
 import getStyles from '../../assets/css'
 
 import { marketColumns } from '../../assets/constants/parameters'
+import { computeUniswapPairAddress } from '@indexed-finance/indexed.js/dist/utils/address'
 
 const BN_ZERO = new BigNumber(0)
 
@@ -115,34 +116,56 @@ export default function VerticalTabs({ data }) {
 
   useEffect(() => {
     const getTrades = async() => {
-      if(Object.values(data).length > 0 && meta != dummy){
-        let pair = await getPair(state.web3[process.env.REACT_APP_ETH_NETWORK], process.env.REACT_APP_WETH, meta.address)
-        let trades = await getMarketTrades(pair.options.address)
+      if(Object.values(data).length > 0 && meta !== dummy) {
+        let pair = computeUniswapPairAddress(process.env.REACT_APP_WETH, meta.address);
+        // let pair = await getPair(state.web3[process.env.REACT_APP_ETH_NETWORK], process.env.REACT_APP_WETH, meta.address)
+        let trades = await getMarketTrades(pair)
         let history = []
 
         for(let order in trades){
           let {
-            amount0In, amount1In, amount0Out, amount1Out, timestamp, transaction
-          } = trades[order]
+            amount0In,
+            amount1In,
+            amount0Out,
+            amount1Out,
+            timestamp,
+            transaction,
+            pair: {
+              token0: { id: token0Address }
+            }
+          } = trades[order];
+          const poolIsToken0 = token0Address.toLowerCase() === meta.address.toLowerCase();
+          let poolAmountIn, poolAmountOut, wethAmountIn, wethAmountOut;
+          if (poolIsToken0) {
+            poolAmountIn = amount0In;
+            poolAmountOut = amount0Out;
+            wethAmountIn = amount1In;
+            wethAmountOut = amount1Out;
+          } else {
+            wethAmountIn = amount0In;
+            wethAmountOut = amount0Out;
+            poolAmountIn = amount1In;
+            poolAmountOut = amount1Out;
+          }
 
-          let orderType = parseFloat(amount1In) == 0 ? 'SELL' : 'BUY'
+          // let orderType = parseFloat(amount0In) === 0 ? 'SELL' : 'BUY'
           let short = shortenHash(transaction.id)
 
-          if(orderType == 'BUY'){
+          if (parseFloat(wethAmountIn) === 0) {
             history.push({
-              output: `${parseFloat(amount0Out).toFixed(2)} ${data.symbol}`,
-              input: `${parseFloat(amount1In).toFixed(2)} ETH`,
+              input: `${parseFloat(poolAmountIn).toFixed(2)} ${data.symbol}`,
+              output: `${parseFloat(wethAmountOut).toFixed(2)} ETH`,
               tx: hash(short, transaction.id),
               time: Date.now(timestamp*1000),
-              type: orderType
+              type: 'SELL'
             })
           } else {
             history.push({
-              input: `${parseFloat(amount0In).toFixed(2)} ${data.symbol}`,
-              output: `${parseFloat(amount1Out).toFixed(2)} ETH`,
+              input: `${parseFloat(wethAmountIn).toFixed(2)} ETH`,
+              output: `${parseFloat(poolAmountOut).toFixed(2)} ${data.symbol}`,
               tx: hash(short, transaction.id),
               time: Date.now(timestamp*1000),
-              type: orderType
+              type: 'BUY'
             })
           }
         }

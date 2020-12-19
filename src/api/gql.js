@@ -215,6 +215,14 @@ const pairQuery = (pairAddress) => `
     transaction {
       id
     }
+    pair {
+      token0 {
+        id
+      }
+      token1 {
+        id
+      }
+    }
     amount0In
     amount1In
     amount0Out
