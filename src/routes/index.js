@@ -12,12 +12,14 @@ import TradeTab from '../components/index/trade-tab'
 import Mint from '../components/index/mint-tab'
 import Burn from '../components/index/burn-tab'
 import Tabs from '../components/index/tabs'
+import Swap from '../components/index/swap'
 
 import style from '../assets/css/routes/index'
 import getStyles from '../assets/css'
 import { getBalances } from '../lib/markets'
 import { store } from '../state'
 import { MintStateProvider } from '../state/mint'
+import { SwapStateProvider } from '../state/swap'
 import { BurnStateProvider } from '../state/burn';
 import { TradeStateProvider } from '../state/trade'
 import TitleLoader from '../components/loaders/title'
@@ -40,7 +42,7 @@ export default function Index(){
 
   name = uncapitalizeNth(name.toUpperCase(), name.length-1)
 
-  const [ styles, setStyles ] = useState({ trade: selected, mint: {}, burn: {}})
+  const [ styles, setStyles ] = useState({ trade: selected, mint: {}, burn: {}, swap: {}})
   const [ metadata, setMetadata ] = useState({})
   const [ execution, setExecution ] = useState('trade')
   const classes = useStyles()
@@ -53,6 +55,8 @@ export default function Index(){
       newStyle.burn = selected;
     } else if(option === 'mint'){
       newStyle.mint = selected
+    } else if(option === 'swap'){
+      newStyle.swap = selected
     } else {
       newStyle.trade = selected
     }
@@ -63,7 +67,7 @@ export default function Index(){
 
   const clearSelections = () => {
     return {
-      trade: {}, mint: {}, burn: {}
+      trade: {}, mint: {}, burn: {}, swap: {}
     }
   }
 
@@ -121,6 +125,7 @@ export default function Index(){
           <div className={classes.nav}>
             <ButtonGroup disableElevation variant='outlined'>
               <ButtonMarket style={styles.trade} onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
+              <ButtonMarket style={styles.swap} onClick={() => changeExecution('swap')}> Swap </ButtonMarket>
               <ButtonMarket style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
               <ButtonMarket style={styles.burn} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
             </ButtonGroup>
@@ -130,6 +135,7 @@ export default function Index(){
           { execution === 'mint' && <MintStateProvider><Mint metadata={metadata} market={name}/></MintStateProvider> }
           { execution === 'burn' && <BurnStateProvider><Burn metadata={metadata} market={name} /></BurnStateProvider> }
           { execution === 'trade' && <TradeStateProvider><TradeTab metadata={metadata} market={name} /></TradeStateProvider> }
+          { execution === 'swap' && <SwapStateProvider><Swap /></SwapStateProvider> }
         </Grid>
       </Grid>
     )
@@ -167,6 +173,7 @@ export default function Index(){
             <header className={classes.selections}>
               <ButtonGroup disableElevation variant='outlined'>
                 <ButtonMarket style={styles.trade} onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
+                <ButtonMarket style={styles.swap} onClick={() => changeExecution('swap')}> Swap </ButtonMarket>
                 <ButtonMarket style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
                 <ButtonMarket style={styles.burn} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
               </ButtonGroup>
@@ -177,6 +184,7 @@ export default function Index(){
               { execution === 'mint' && <MintStateProvider><Mint metadata={metadata} market={name}/></MintStateProvider> }
               { execution === 'burn' && <BurnStateProvider><Burn metadata={metadata} market={name} /></BurnStateProvider> }
               { execution === 'trade' && <TradeStateProvider><TradeTab metadata={metadata} market={name} /></TradeStateProvider> }
+              { execution === 'swap' && <SwapStateProvider><Swap /></SwapStateProvider> }
             </div>
           </Grid>
         </Grid>

@@ -19,7 +19,7 @@ import { useMintState } from '../../state/mint';
 import Slippage from '../inputs/slippage';
 
 const RecieveInput = styled(Input)({
-  width: 250,
+  width: 300,
 })
 
 const useStyles = getStyles(style)

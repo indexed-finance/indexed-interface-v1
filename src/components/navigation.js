@@ -217,8 +217,8 @@ export default function Navigation({ mode }) {
                   <Link to='/stake' className={classes.href}>
                     <h3> STAKE </h3>
                   </Link>
-                  <Link to='/swap' className={classes.href}>
-                    <h3> SWAP </h3>
+                  <Link to='/' className={classes.href}>
+                    <h3> POOLS </h3>
                   </Link>
                   <a href='https://docs.indexed.finance' className={classes.href}>
                     <h3> DOCS </h3>

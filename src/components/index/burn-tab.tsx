@@ -16,7 +16,7 @@ import BurnForm from './burn-form';
 import style from '../../assets/css/components/mint'
 
 const RecieveInput = styled(Input)({
-  width: 250,
+  width: 300,
 })
 
 export default function BurnTab({ market, metadata }) {

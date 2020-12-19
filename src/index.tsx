@@ -26,7 +26,6 @@ const Propose = lazy(() => import('./routes/propose'))
 const Markets = lazy(() => import('./routes/markets'))
 const Index = lazy(() => import('./routes/index'))
 const Pool = lazy(() => import('./routes/pool'))
-const Swap = lazy(() => import('./routes/swap'))
 const Stake = lazy(() => import('./routes/stake'))
 const Supply = lazy(() => import('./routes/supply'))
 // const Root = lazy(() => import('./routes/root'))
@@ -128,7 +127,7 @@ function Application(){
         for (let pool of state.helper.initialized) {
           const { category, name, symbol, address, tokens } = pool;
 
-          let snapshots = await pool.getSnapshots(90);
+          let snapshots = pool.pool.snapshots;
           let timestamp = new Date(Date.now())
           let categoryID = `0x${category.toString(16)}`;
 
@@ -292,9 +291,6 @@ function Application(){
                 </Route>
                 <Route path='/stake/:asset'>
                   <Supply />
-                </Route>
-                <Route path='/swap'>
-                  <Swap />
                 </Route>
                 <Route exact path='/'>
                   <Markets />
