@@ -176,8 +176,6 @@ export function useSwapTokenActions(
   // let { address, decimals, name, symbol, ready, usedBalance: poolBalance } = state.tokens[index];
   let { symbol, decimals } = state.tokenList.find(i => i.address == address)
 
-  console.log(isInput, symbol)
-
   let balance = state.getBalance(address);
   let displayBalance = formatBalance(balance, decimals, 4);
   let token = isInput ? state.input : state.output;
