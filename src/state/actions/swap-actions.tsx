@@ -6,6 +6,7 @@ export type SetInputToken = { type: 'SET_INPUT_TOKEN', token: SwapToken };
 export type SetOutputToken = { type: 'SET_OUTPUT_TOKEN', token: SwapToken };
 export type SetHelper = { type: 'SET_HELPER', pool: PoolHelper };
 export type SetTokens = { type: 'SET_TOKENS', tokens: TokenList };
+export type SetOutputs = { type: 'SET_OUTPUTS', tokens: TokenList };
 export type SetPrice = { type: 'SET_PRICE', price: string };
 
 // Middleware only
@@ -15,7 +16,8 @@ export type SetInputAmount = { type: 'SET_INPUT_AMOUNT', amount: string };
 export type SetInputExact = { type: 'SET_INPUT_EXACT', amount: BigNumber };
 export type SetOutputAmount = { type: 'SET_OUTPUT_AMOUNT', amount: string };
 export type SelectToken = { type: 'SELECT_TOKEN', index: number };
+export type SelectOutput = { type: 'SELECT_OUTPUT', index: number };
 
-export type SwapDispatchAction = SetInputToken | SetTokens | SetOutputToken | SetHelper | SetPrice;
-export type SwapMiddlewareAction = UpdateBalances | SwitchTokens | SetInputAmount | SetTokens | SetOutputAmount | SetHelper | SetInputExact | SelectToken;
+export type SwapDispatchAction = SetInputToken | SetTokens | SetOutputs | SelectOutput | SetOutputToken | SetHelper | SetPrice;
+export type SwapMiddlewareAction = UpdateBalances | SwitchTokens | SetOutputs | SetInputAmount | SetTokens | SetOutputAmount | SetHelper | SetInputExact | SelectToken;
 export type SwapDispatch = (actions: SwapDispatchAction | SwapDispatchAction[]) => void;

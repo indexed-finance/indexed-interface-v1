@@ -16,8 +16,9 @@ import getStyles from '../assets/css'
 const useStyles = getStyles(style)
 
 function Swap(){
+  let { useInput, selectOutput, outputList, tokenList, selectToken, useOutput, swapState,
+    setTokens, setHelper, updatePool, switchTokens } = useSwapState()
   const [ tokenMetadata, setTokenMetadata] = useState({})
-  let { useInput, tokenList, selectToken, useOutput, swapState, setTokens, setHelper, updatePool, switchTokens } = useSwapState()
   let { state, dispatch } = useContext(store)
   const classes = useStyles()
 
@@ -30,7 +31,7 @@ function Swap(){
         for(let x = 0; x < activeIndexes.length; x++){
           await activeIndexes[x].assets.map((i) => {
             if(!swapList[i.symbol]){
-              i.index = activeIndexes[x].symbol
+              i.pool = activeIndexes[x].symbol
               swapList[i.symbol] = i
             }
           })
@@ -48,9 +49,10 @@ function Swap(){
     if(!tokenList && availableTokens.length > 0){
       for(let x = 0; x < availableTokens.length; x++){
         availablePairs.push({
+          pool: availableTokens[x].pool,
           symbol: availableTokens[x].symbol,
           address: availableTokens[x].address,
-          decimals: availableTokens[x].decimals
+          decimals: availableTokens[x].decimals,
         })
       }
       setTokens(availablePairs)
@@ -58,12 +60,16 @@ function Swap(){
   }, [ tokenMetadata ])
 
   useEffect(() => {
-    if(state.helper && !!swapState.input.address){
+    if(state.helper && swapState.input.address !== ''){
       let target = Object.values(tokenMetadata).find(i => i.address === swapState.input.address)
-      let { index } = tokenMetadata[target.symbol]
+      let index = tokenMetadata[target.symbol].pool
+
+      console.log(index, state.indexes[index])
 
       let { address } = state.indexes[index]
       let pool = state.helper.initialized.find(i => i.pool.address === address);
+
+      console.log(pool, address)
 
       setHelper(pool)
     }
@@ -103,7 +109,7 @@ function Swap(){
               <IconButton onClick={!swapState.pool ? () => {} : switchTokens}> <SwapIcon /> </IconButton>
             </Grid>
             <Grid item>
-              {swapState.pool && <SwapInput onSelect={selectToken} tokens={tokenList} useToken={useOutput} label='EXCHANGE' />}
+              {swapState.pool && <SwapInput onSelect={selectOutput} tokens={outputList} useToken={useOutput} label='EXCHANGE' />}
             </Grid>
             <Grid item>
               <ButtonPrimary variant='outlined' margin={{ marginLeft: 300 }}>

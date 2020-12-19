@@ -1,7 +1,7 @@
 import { BigNumber, toWei, formatBalance } from "@indexed-finance/indexed.js";
 import { PoolHelper } from '@indexed-finance/indexed.js';
 import { useReducer } from "react";
-import { SwapMiddlewareAction, SwapDispatchAction, SetInputToken, SetOutputToken, SetHelper, SetTokens } from "../actions/swap-actions";
+import { SwapMiddlewareAction, SwapDispatchAction, SetOutputs, SetInputToken, SetOutputToken, SetHelper, SetTokens } from "../actions/swap-actions";
 import { withSwapMiddleware } from "../middleware/swap-middleware";
 import Web3 from 'web3'
 
@@ -13,12 +13,14 @@ export type SwapToken = {
   amount: BigNumber;
   displayAmount: string;
   errorMessage?: string;
+  pool: string;
 }
 
 export type TokenList = Array<{
   symbol: string,
   decimals: number,
-  address: string
+  address: string,
+  pool: string;
  }>
 
 export type SwapState = {
@@ -26,6 +28,7 @@ export type SwapState = {
   input: SwapToken;
   output: SwapToken;
   tokenList: TokenList;
+  outputList: TokenList;
   getBalance?: (address: string) => BigNumber;
   getAllowance?: (address: string) => BigNumber;
   ready: boolean;
@@ -36,17 +39,20 @@ export type SwapState = {
 const initialState: SwapState = {
   pool: undefined,
   tokenList: undefined,
+  outputList: undefined,
   input: {
     address: '',
+    pool: '',
     decimals: 18,
     amount: BN_ZERO,
-    displayAmount: '0',
+    displayAmount: '0'
   },
   output: {
     address: '',
+    pool: '',
     decimals: 18,
     amount: BN_ZERO,
-    displayAmount: '0',
+    displayAmount: '0'
   },
   ready: false,
   price: ''
@@ -65,13 +71,11 @@ function swapReducer(state: SwapState = initialState, actions: SwapDispatchActio
   const cleanInputAmount = (amt: string) => amt.replace(/^(0{1,})(?=(0\.|\d))+/, '').replace(/^\./, '0.') || '0';
 
   function setInput(action: SetInputToken) {
-
     newState.input = action.token;
     newState.input.displayAmount = cleanInputAmount(action.token.displayAmount);
   }
 
   function setOutput(action: SetOutputToken) {
-
     newState.output = action.token;
     newState.output.displayAmount = cleanInputAmount(action.token.displayAmount);
   }
@@ -82,6 +86,10 @@ function swapReducer(state: SwapState = initialState, actions: SwapDispatchActio
 
   function setTokens(action: SetTokens){
     newState.tokenList = action.tokens;
+  }
+
+  function setOutputTokens(action: SetOutputs){
+    newState.outputList = action.tokens;
   }
 
   const getBalance = (tokenAddress: string): BigNumber => {
@@ -96,6 +104,7 @@ function swapReducer(state: SwapState = initialState, actions: SwapDispatchActio
     switch (action.type) {
       case 'SET_INPUT_TOKEN': { setInput(action); break; }
       case 'SET_OUTPUT_TOKEN': { setOutput(action); break; }
+      case 'SET_OUTPUTS': { setOutputTokens(action); break; }
       case 'SET_TOKENS': { setTokens(action); break; }
       case 'SET_HELPER': { setHelper(action); break; }
       case 'SET_PRICE': { newState.price = action.price; break; }
@@ -224,7 +233,9 @@ export type SwapContextType = {
   setHelper: (pool: PoolHelper) => void;
   updatePool: (clearInputs?: boolean) => void;
   selectToken: (index: number) => void;
+  selectOutput: (index: number) => void
   setTokens: (tokens: TokenList) => void;
+  outputList: TokenList;
   tokenList: TokenList;
   switchTokens: () => void;
 }
@@ -233,10 +244,11 @@ export function useSwap(): SwapContextType {
   const [ swapState, swapDispatch ] = useReducer(swapReducer, initialState);
   const dispatch = withSwapMiddleware(swapState, swapDispatch);
   const selectToken = (index: number) => dispatch({ type: 'SELECT_TOKEN', index });
+  const selectOutput = (index: number) => dispatch({ type: 'SELECT_OUTPUT', index });
   const updatePool = (clearInputs?: boolean) => dispatch({ type: 'UPDATE_POOL', clearInputs });
   const setHelper = (pool: PoolHelper ) => dispatch({ type: 'SET_HELPER', pool });
   const setTokens = (tokens: TokenList) => dispatch({ type: 'SET_TOKENS', tokens });
-  const { tokenList } = swapState;
+  const { tokenList, outputList } = swapState;
 
   return {
     useInput: () => useSwapTokenActions(swapState, dispatch, swapState.input.address),
@@ -247,6 +259,8 @@ export function useSwap(): SwapContextType {
     setTokens,
     updatePool,
     selectToken,
+    selectOutput,
+    outputList,
     tokenList
   };
 }

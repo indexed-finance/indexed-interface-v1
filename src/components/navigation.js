@@ -132,9 +132,6 @@ export default function Navigation({ mode }) {
 
     return(
       <Fragment>
-        <Link className={classes.href} onClick={connectWeb3}>
-          <MenuItem>CONNECT WALLET</MenuItem>
-        </Link>
         {state.native && (
           <Link className={classes.href} onClick={changeTheme}>
             <MenuItem>LIGHT/DARK MODE</MenuItem>
@@ -146,6 +143,12 @@ export default function Navigation({ mode }) {
         <Link className={classes.href} to='/governance' onClick={handleClose}>
           <MenuItem>GOVERNANCE</MenuItem>
         </Link>
+        <Link className={classes.href} to='/swap' onClick={handleClose}>
+          <MenuItem>SWAP</MenuItem>
+        </Link>
+        <a href='https://docs.indexed.finance' className={classes.href}>
+          <MenuItem>DOCS</MenuItem>
+        </a>
         <Link className={classes.href} to='/' onClick={handleClose}>
           <MenuItem>POOLS</MenuItem>
         </Link>
@@ -174,6 +177,12 @@ export default function Navigation({ mode }) {
         </Link>
         <Link className={classes.href} to='/' onClick={handleClose}>
           <MenuItem>POOLS</MenuItem>
+        </Link>
+        <a href='https://docs.indexed.finance' className={classes.href}>
+          <MenuItem>DOCS</MenuItem>
+        </a>
+        <Link className={classes.href} to='/swap' onClick={handleClose}>
+          <MenuItem>SWAP</MenuItem>
         </Link>
         <Link className={classes.href} to='/stake' onClick={handleClose}>
           <MenuItem>STAKE</MenuItem>
@@ -205,11 +214,11 @@ export default function Navigation({ mode }) {
                   <Link to='/categories' className={classes.href}>
                     <h3> CATEGORIES </h3>
                   </Link>
-                  <Link to='/' className={classes.href}>
-                    <h3> POOLS </h3>
-                  </Link>
                   <Link to='/stake' className={classes.href}>
                     <h3> STAKE </h3>
+                  </Link>
+                  <Link to='/swap' className={classes.href}>
+                    <h3> SWAP </h3>
                   </Link>
                   <a href='https://docs.indexed.finance' className={classes.href}>
                     <h3> DOCS </h3>
