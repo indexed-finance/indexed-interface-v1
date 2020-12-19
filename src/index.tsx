@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
-import { getAllHelpersFromCache, getAllHelpers, formatBalance, BigNumber } from '@indexed-finance/indexed.js';
+import { getAllHelpers, formatBalance, BigNumber } from '@indexed-finance/indexed.js';
 
 import { StateProvider } from './state'
 import Navigation from './components/navigation'
@@ -130,9 +130,8 @@ function Application(){
 
       async function setInitializedPools() {
         for (let pool of state.helper.initialized) {
-          const { category, name, symbol, address, tokens } = pool;
-  
-          let snapshots = await pool.getSnapshots(90);
+          const { category, name, symbol, address, tokens, pool: { snapshots } } = pool;
+
           let timestamp = new Date(Date.now())
           let categoryID = `0x${category.toString(16)}`;
   
@@ -150,11 +149,13 @@ function Application(){
   
           if(past24h === undefined) past24h = snapshots[snapshots.length-2];
   
-          let delta24hr = snapshots.length === 1 ? 0 : (((snapshots[snapshots.length-1].value - past24h.value)/ past24h.value) * 100).toFixed(4);
-          let volume = +(snapshots[snapshots.length-1].totalVolumeUSD).toFixed(2);
+          let delta24hr = snapshots.length === 1 ? 0 : (((snapshots[snapshots.length-1].value - past24h.value) / past24h.value) * 100).toFixed(4);
+          let snapshotsLastDay = snapshots.filter(s => (s.date * 1000) >= target.getTime());
+          let volume24hr = snapshotsLastDay.reduce((t, snap) => t + parseFloat(snap.totalVolumeUSD), 0);
+          let volume = volume24hr
   
           stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
-          stats.dailyVolume += volume
+          stats.dailyVolume += volume;
   
           let formattedName = name.replace(' Tokens', '')
   
