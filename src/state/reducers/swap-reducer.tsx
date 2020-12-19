@@ -116,27 +116,36 @@ function swapReducer(state: SwapState = initialState, actions: SwapDispatchActio
   if (newState.pool) {
     isReady = true;
     const checkInputToken = () => {
+      const { tokens } = newState.pool
       const { address, amount } = newState.input;
+      const { usedBalance } = tokens.find(i => i.address == address)
       const balance = getBalance(address);
       const allowance = getAllowance(address);
 
-      // TODO: Calc max swap input
-
-      if (balance.lt(amount)) {
+      if(amount.gt(usedBalance.div(2))) {
+        newState.input.errorMessage = 'EXCEEDS MAX IN';
+        isReady = false;
+      } else if (balance.lt(amount)) {
         newState.input.errorMessage = 'INSUFFICIENT BALANCE';
         isReady = false;
       } else {
         newState.input.errorMessage = '';
       }
+
       if (allowance.lt(amount)) {
         isReady = false;
       }
     };
     const checkOutputToken = () => {
+      const { tokens } = newState.pool
       const { address, amount } = newState.output;
+      const { usedBalance } = tokens.find(i => i.address == address)
 
-      // TODO: Calc max swap output
-      newState.output.errorMessage = '';
+      if (amount.gt(usedBalance.div(2))) {
+        newState.output.errorMessage = 'EXCEEDS MAX OUT';
+      } else {
+        newState.output.errorMessage = '';
+      }
     }
     checkInputToken();
     checkOutputToken();

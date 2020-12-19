@@ -20,6 +20,7 @@ export default function ExchangeInput(props) {
     <Input
       variant='outlined'
       label={props.label}
+      error={error}
       type='number'
       style={{ marginBottom: 10, width: 300 }}
       InputProps={{ endAdornment }}

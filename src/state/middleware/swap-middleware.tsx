@@ -26,13 +26,27 @@ const BN_ZERO = toBN(0);
 
 function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
   return (action: SwapMiddlewareAction | SwapDispatchAction ): Promise<void> => {
+    const { pool } = state;
 
     async function setInput(amount: BigNumber, displayAmount: string): Promise<void> {
       const input = { ...state.input };
+      const output = { ...state.output };
       input.displayAmount = displayAmount;
       input.amount = amount;
 
-      const output = { ...state.output };
+      const { usedBalance: poolBalance } = pool.tokens.find(i => i.address == input.address )
+
+      let inputAmount;
+      if (amount.gt(poolBalance.div(2))) {
+        inputAmount = poolBalance.div(2);
+      } else {
+        inputAmount = input.amount;
+      }
+
+      const data = await pool.calcOutGivenIn(input.address, output.address, inputAmount);
+
+      output.amount = toBN(data.amount);
+      output.displayAmount = data.displayAmount;
 
       dispatch([
         { type: 'SET_INPUT_TOKEN', token: input },
@@ -46,6 +60,20 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
       const output = { ...state.output };
       output.displayAmount = action.amount;
       output.amount = toTokenAmount(action.amount, output.decimals);
+
+      const { usedBalance: poolBalance } = pool.tokens.find(i => i.address == output.address )
+
+      let outputAmount;
+      if (output.amount.gt(poolBalance.div(2))) {
+        outputAmount = poolBalance.div(2);
+      } else {
+        outputAmount = output.amount;
+      }
+
+      const data = await pool.calcInGivenOut(output.address, input.address, outputAmount);
+
+      input.amount = toBN(data.amount);
+      input.displayAmount = data.displayAmount;
 
       dispatch([
         { type: 'SET_INPUT_TOKEN', token: input },

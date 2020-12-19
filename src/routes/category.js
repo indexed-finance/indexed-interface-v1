@@ -60,7 +60,7 @@ function TabPanel(props) {
 const ImageCell = (i) =>  (
   <div style={{ display: 'inline-flex', flexWrap: 'nowrap', alignItems: 'center' }}>
     <img src={tokenMetadata[i.symbol].image} style={{ float: 'left', width: 35, padding: 5 }} />
-    <span style={{ marginBlock: 0, marginLeft: 17.5, clear: 'both' }}> {i.name} </span>
+    <span style={{ marginBlock: 0, marginLeft: 17.5, clear: 'both' }}> {tokenMetadata[i.symbol].name} </span>
   </div>
 )
 
@@ -98,8 +98,6 @@ export default function Category() {
       for(var x = 0; x < categoryTokens.length; x++){
         let { priceUSD } = categoryTokens[x]
         categoryTokens[x].priceUSD = '$' + parseFloat(priceUSD).toFixed(2)
-
-        console.log(categoryTokens[x])
 
         categoryTokens[x].name = ImageCell(categoryTokens[x])
       }

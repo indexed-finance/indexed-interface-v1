@@ -162,7 +162,7 @@ export const tokenMetadata = {
   },
   "MKR": {
     address: "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
-    name: "Maker",
+    name: "MakerDAO",
     image: mkr
   },
   "BAL": {
@@ -218,7 +218,7 @@ export const tokenMetadata = {
   },
   "AAVE": {
     address: '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9',
-    name: 'AaveToken',
+    name: 'Aave',
     image: aave
   },
   "OMG": {
