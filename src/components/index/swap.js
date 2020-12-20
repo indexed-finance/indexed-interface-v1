@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useContext, useState } from 'react'
 import Grid from '@material-ui/core/Grid'
 import IconButton from '@material-ui/core/IconButton';
 import SwapIcon from '@material-ui/icons/SwapCalls'
-import { formatBalance } from '@indexed-finance/indexed.js'
+import { formatBalance, toHex } from '@indexed-finance/indexed.js'
 
 import { useSwapState } from "../../state/swap";
 import ButtonPrimary from '../buttons/primary'
@@ -13,16 +13,52 @@ import Input from '../inputs/input'
 import style from '../../assets/css/components/trade'
 import getStyles from '../../assets/css'
 import { store } from '../../state'
+import { getERC20 } from '../../lib/erc20';
+import { toContract } from '../../lib/util/contracts';
 
 const useStyles = getStyles(style)
 
 export default function Swap({ metadata }){
   let { useInput, selectOutput, outputList, tokenList, selectToken, useOutput, swapState,
-    setTokens, setHelper, updatePool, switchTokens } = useSwapState()
+    setTokens, setHelper, updatePool, switchTokens, feeString } = useSwapState()
   const [ tokenMetadata, setTokenMetadata] = useState({})
+  const [ approvalNeeded, setApprovalNeeded ] = useState(false)
   const [ isInit, setInit ] = useState(false)
-  let { state, dispatch } = useContext(store)
   const classes = useStyles()
+
+  let { state, dispatch, handleTransaction} = useContext(store)
+
+  async function approvePool() {
+    let { amount, address } = swapState.input
+
+    const erc20 = getERC20(state.web3.injected, address);
+    let fn = erc20.methods.approve(metadata.address, toHex(amount))
+    await handleTransaction(fn.send({ from: state.account }))
+      .then(async() =>  await updatePool())
+      .catch((() => {}));
+  }
+
+  const swapTokens = async() => {
+    const { input, output, specifiedSide } = swapState
+    const { address } = swapState.pool
+    const abi = require('../../assets/constants/abi/BPool.json').abi;
+    const pool = toContract(state.web3.injected, abi, address);
+    const amountOut = toHex(output.amount);
+    const amountIn = toHex(input.amount);
+    const maxPrice = '0x0';
+    let fn;
+
+    if(specifiedSide === 'input'){
+      fn = pool.methods.swapExactAmountIn(input.address, amountIn, output.address, amountOut, maxPrice);
+    } else {
+      fn = pool.methods.swapExactAmountOut(input.address, amountIn, output.address, amountOut, maxPrice);
+    }
+
+    await handleTransaction(fn.send({ from: state.account }))
+      .then(async () => {
+        await updatePool();
+    }).catch(() => {});
+  }
 
   useEffect(() => {
     if(!tokenList && metadata.assets && metadata.assets.length > 0){
@@ -55,6 +91,18 @@ export default function Swap({ metadata }){
   }, [  , state.web3.injected, isInit ])
 
   useEffect(() => {
+    if(!swapState.pool) return;
+
+    let { address, amount } = swapState.input
+    let { userAllowances } = swapState.pool
+
+    if(userAllowances[address]) {
+      if(amount.gt(userAllowances[address])) setApprovalNeeded(true)
+      else setApprovalNeeded(false)
+    }
+  }, [ swapState ])
+
+  useEffect(() => {
     if(!state.load) {
       dispatch({
         type: 'LOAD', payload: true
@@ -65,15 +113,6 @@ export default function Swap({ metadata }){
   let outputSymbol = tokenList ? tokenList.find(i => i.address == swapState.output.address).symbol : ''
   let inputSymbol = tokenList ? tokenList.find(i => i.address == swapState.input.address).symbol : ''
   let priceString = tokenList ? `1 ${inputSymbol} = ${!isNaN(parseFloat(swapState.price)) ? swapState.price : '0.0000'} ${outputSymbol}` : '';
-
-  let feeString = null
-
-  if (swapState.pool && tokenList) {
-    const { amount, decimals, address } = swapState.input;
-    const fee = formatBalance(amount.times(3).div(1000), decimals, 4);
-    const display = isNaN(fee) ? '0.00' : fee
-    feeString = `${display} ${inputSymbol}`;
-  }
 
   let { marginRight, width } = style.getFormatting(state.native)
 
@@ -99,9 +138,8 @@ export default function Swap({ metadata }){
         </div>
       </Grid>
       <Grid item>
-        <ButtonPrimary disabled={!swapState.ready} variant='outlined' margin={{  margin: 25, marginLeft: 150 }}>
-          SWAP
-        </ButtonPrimary>
+        { !approvalNeeded && <ButtonPrimary onClick={swapTokens} disabled={!swapState.ready} variant='outlined' margin={{  margin: 25, marginLeft: 150 }}> SWAP </ButtonPrimary>}
+        { approvalNeeded && <ButtonPrimary onClick={approvePool} variant='outlined' margin={{  margin: 25, marginLeft: 150 }}> APPROVE </ButtonPrimary>}
       </Grid>
     </Grid>
   )

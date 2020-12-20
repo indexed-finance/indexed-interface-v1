@@ -33,6 +33,8 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
       const input = { ...state.input };
       const output = { ...state.output };
       const { usedBalance } = pool.tokens.find(i => i.address == input.address);
+      let isError = false;
+
       input.displayAmount = displayAmount;
       input.amount = amount;
 
@@ -41,19 +43,22 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
 
         output.amount = toBN(outputValue.amount)
         output.displayAmount = outputValue.displayAmount;
+      } else {
+        isError = true;
       }
 
       const perciseInput = parseFloat(formatBalance(input.amount, input.decimals, 4));
       const perciseOutput = parseFloat(formatBalance(output.amount, output.decimals, 4));
-      let price = (perciseOutput/perciseInput).toFixed(4).toLocaleString();
+      let price = (perciseOutput/perciseInput).toFixed(4);
 
-      if(input.amount.eq(0) || output.amount.eq(0)){
+      if(isError || input.amount.eq(0) || input.amount.eq(output.amount)){
         let { amount } = await state.pool.calcOutGivenIn(input.address, output.address, toWei(1))
         const newPercise = parseFloat(formatBalance(toBN(amount), output.decimals, 4));
-        price = (newPercise/1).toFixed(4).toLocaleString();
+        price = (newPercise/1).toFixed(4);
       }
 
       dispatch([
+        { type: 'SET_SPECIFIED_SIDE', side: 'input' },
         { type: 'SET_INPUT_TOKEN', token: input },
         { type: 'SET_OUTPUT_TOKEN', token: output },
         { type: 'SET_PRICE', price: price }
@@ -66,25 +71,29 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
       output.displayAmount = action.amount;
       output.amount = toTokenAmount(action.amount, output.decimals);
       const { usedBalance } = pool.tokens.find(i => i.address == output.address);
+      let isError = false;
 
       if (output.amount.lte(usedBalance.div(3))) {
         const inputValue = await state.pool.calcInGivenOut(input.address, output.address, output.amount);
 
         input.amount = toBN(inputValue.amount);
         input.displayAmount = inputValue.displayAmount;
+      } else {
+        isError = true;
       }
 
       const perciseInput = parseFloat(formatBalance(input.amount, input.decimals, 4));
       const perciseOutput = parseFloat(formatBalance(output.amount, output.decimals, 4));
-      let price = (perciseOutput/perciseInput).toFixed(4).toLocaleString();
+      let price = (perciseOutput/perciseInput).toFixed(4);
 
-      if(input.amount.eq(0) || output.amount.eq(0)){
+      if(isError || input.amount.eq(0) || input.amount.eq(output.amount)){
          let { amount } = await state.pool.calcOutGivenIn(input.address, output.address, toWei(1))
          const newPercise = parseFloat(formatBalance(toBN(amount), output.decimals, 4));
-         price = (newPercise/1).toFixed(4).toLocaleString();
+         price = (newPercise/1).toFixed(4);
       }
 
       dispatch([
+        { type: 'SET_SPECIFIED_SIDE', side: 'output' },
         { type: 'SET_INPUT_TOKEN', token: input },
         { type: 'SET_OUTPUT_TOKEN', token: output },
         { type: 'SET_PRICE', price: price }
@@ -114,12 +123,16 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
 
       const perciseInput = parseFloat(formatBalance(input.amount, input.decimals, 4));
       const perciseOutput = parseFloat(formatBalance(output.amount, output.decimals, 4));
-      let price = (perciseOutput/perciseInput).toFixed(4).toLocaleString();
+      const { usedBalance: inputBalance } = pool.tokens.find(i => i.address == input.address);
+      const { usedBalance: outputBalance } = pool.tokens.find(i => i.address == output.address);
 
-      if(input.amount.eq(0) || output.amount.eq(0) ){
+      let price = (perciseOutput/perciseInput).toFixed(4);
+
+      if(input.amount.eq(0) || input.amount.eq(output.amount)
+        || input.amount.gt(inputBalance.div(2)) || output.amount.gt(outputBalance)){
          let { amount } = await state.pool.calcOutGivenIn(input.address, output.address, toWei(1))
          const newPercise = parseFloat(formatBalance(toBN(amount), output.decimals, 4));
-         price = (newPercise/1).toFixed(4).toLocaleString();
+         price = (newPercise/1).toFixed(4);
       }
 
       dispatch([
@@ -155,6 +168,7 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
       }
 
       dispatch([
+        { type: 'SET_SPECIFIED_SIDE', side: 'input' },
         { type: 'SET_TOKENS', tokens: action.tokens },
         { type: 'SET_OUTPUTS', tokens: outputList },
         { type: 'SET_INPUT_TOKEN', token: input },
@@ -169,7 +183,7 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
 
       const { amount } = await action.pool.calcOutGivenIn(inputAddress, outputAddress, toWei(1))
       const newPercise = parseFloat(formatBalance(toBN(amount), state.output.decimals, 4));
-      const price = (newPercise/1).toFixed(4).toLocaleString();
+      const price = (newPercise/1).toFixed(4);
 
       dispatch([
         { type: 'SET_HELPER', pool: action.pool },
@@ -181,6 +195,7 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
       const { index } = action;
       const wlToken = state.outputList[index];
       const input = { ...state.input };
+      let isError = false;
 
       const newToken = {
         address: wlToken.address,
@@ -197,19 +212,22 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
 
         newToken.displayAmount = data.displayAmount;
         newToken.amount = toBN(data.amount);
+      } else {
+        isError = true;
       }
 
       const perciseInput = parseFloat(formatBalance(input.amount, input.decimals, 4));
       const perciseOutput = parseFloat(formatBalance(newToken.amount, newToken.decimals, 4));
-      let price = (perciseOutput/perciseInput).toFixed(4).toLocaleString();
+      let price = (perciseOutput/perciseInput).toFixed(4);
 
-      if(input.amount.eq(0) || newToken.amount.eq(0)){
+      if(isError || input.amount.eq(0) || input.amount.eq(newToken.amount)){
          let { amount } = await state.pool.calcOutGivenIn(input.address, newToken.address, toWei(1))
          const newPercise = parseFloat(formatBalance(toBN(amount), newToken.decimals, 4));
-         price = (newPercise/1).toFixed(4).toLocaleString();
+         price = (newPercise/1).toFixed(4);
       }
 
       dispatch([
+        { type: 'SET_SPECIFIED_SIDE', side: 'input' },
         { type: 'SET_OUTPUT_TOKEN', token: newToken },
         { type: 'SET_INPUT_TOKEN', token: input },
         { type: 'SET_PRICE', price: price }
@@ -227,6 +245,7 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         displayAmount: '0.00',
         amount: BN_ZERO
       }
+      let isError = false;
 
       const outputList = state.tokenList.filter(i =>
           newToken.address.toLowerCase() !== i.address.toLowerCase()
@@ -250,19 +269,22 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
 
         newToken.displayAmount = data.displayAmount;
         newToken.amount = toBN(data.amount);
+      } else {
+        isError = true;
       }
 
       const perciseInput = parseFloat(formatBalance(newToken.amount, newToken.decimals, 4));
       const perciseOutput = parseFloat(formatBalance(newOutput.amount, newOutput.decimals, 4));
-      let price = (perciseOutput/perciseInput).toFixed(4).toLocaleString();
+      let price = (perciseOutput/perciseInput).toFixed(4);
 
-      if(newToken.amount.eq(0) || newOutput.amount.eq(0)){
+      if(isError || newToken.amount.eq(0) || newToken.amount.eq(newOutput.amount)){
          let { amount } = await state.pool.calcOutGivenIn(newToken.address, newOutput.address, toWei(1))
          const newPercise = parseFloat(formatBalance(toBN(amount), newOutput.decimals, 4));
-         price = (newPercise/1).toFixed(4).toLocaleString();
+         price = (newPercise/1).toFixed(4);
       }
 
       dispatch([
+        { type: 'SET_SPECIFIED_SIDE', side: 'output' },
         { type: 'SET_INPUT_TOKEN', token: newToken },
         { type: 'SET_OUTPUT_TOKEN', token: newOutput },
         { type: 'SET_OUTPUTS', tokens: outputList },

@@ -1,7 +1,7 @@
 import { BigNumber, toWei, formatBalance } from "@indexed-finance/indexed.js";
 import { PoolHelper } from '@indexed-finance/indexed.js';
 import { useReducer } from "react";
-import { SwapMiddlewareAction, SwapDispatchAction, SetOutputs, SetInputToken, SetOutputToken, SetHelper, SetTokens } from "../actions/swap-actions";
+import { SetSlippage, SetSpecifiedSide, SwapMiddlewareAction, SwapDispatchAction, SetOutputs, SetInputToken, SetOutputToken, SetHelper, SetTokens } from "../actions/swap-actions";
 import { withSwapMiddleware } from "../middleware/swap-middleware";
 import Web3 from 'web3'
 
@@ -31,6 +31,8 @@ export type SwapState = {
   outputList: TokenList;
   getBalance?: (address: string) => BigNumber;
   getAllowance?: (address: string) => BigNumber;
+  specifiedSide?: 'output' | 'input';
+  slippage: number;
   ready: boolean;
   poolAddress?: string;
   price: string;
@@ -40,6 +42,7 @@ const initialState: SwapState = {
   pool: undefined,
   tokenList: undefined,
   outputList: undefined,
+  slippage: 0,
   input: {
     address: '',
     pool: '',
@@ -81,11 +84,17 @@ function swapReducer(state: SwapState = initialState, actions: SwapDispatchActio
   }
 
   function setHelper(action: SetHelper) {
+    if(!action.pool) return;
+
     newState.pool = action.pool;
   }
 
   function setTokens(action: SetTokens){
     newState.tokenList = action.tokens;
+  }
+
+  function setSide(action: SetSpecifiedSide){
+    newState.specifiedSide = action.side;
   }
 
   function setOutputTokens(action: SetOutputs){
@@ -100,11 +109,17 @@ function swapReducer(state: SwapState = initialState, actions: SwapDispatchActio
     return newState.pool.userAllowances[tokenAddress] || BN_ZERO;
   }
 
+  const setSlippage = (action: SetSlippage) => {
+    newState.slippage = action.slippage;
+  }
+
   for (let action of actions) {
     switch (action.type) {
       case 'SET_INPUT_TOKEN': { setInput(action); break; }
       case 'SET_OUTPUT_TOKEN': { setOutput(action); break; }
+      case 'SET_SPECIFIED_SIDE': { setSide(action); break; }
       case 'SET_OUTPUTS': { setOutputTokens(action); break; }
+      case 'SET_SLIPPAGE': { setSlippage(action); break; }
       case 'SET_TOKENS': { setTokens(action); break; }
       case 'SET_HELPER': { setHelper(action); break; }
       case 'SET_PRICE': { newState.price = action.price; break; }

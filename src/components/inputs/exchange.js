@@ -11,7 +11,7 @@ export default function ExchangeInput(props) {
   let error = !!errorMsg;
 
   let helperText = (error) ? errorMsg : <span style={{ float: 'left', cursor: 'pointer'}} onClick={() => token.setAmountToBalance()}>
-    {`BALANCE: ${parseFloat(token.displayBalance).toLocaleString()}`}
+    {`BALANCE: ${parseFloat(token.displayBalance).toFixed(2)}`}
   </span>;
 
   let endAdornment = <Adornment onSelect={props.onSelect} market={token.symbol} assets={props.tokens} />
