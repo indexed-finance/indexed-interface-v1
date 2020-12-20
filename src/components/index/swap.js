@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useContext, useState } from 'react'
 import Grid from '@material-ui/core/Grid'
 import IconButton from '@material-ui/core/IconButton';
 import SwapIcon from '@material-ui/icons/SwapCalls'
-import { formatBalance, toHex } from '@indexed-finance/indexed.js'
+import { formatBalance, toHex, toBN, toWei, fromWei } from '@indexed-finance/indexed.js'
 
 import { useSwapState } from "../../state/swap";
 import ButtonPrimary from '../buttons/primary'
@@ -20,7 +20,7 @@ const useStyles = getStyles(style)
 
 export default function Swap({ metadata }){
   let { useInput, selectOutput, outputList, tokenList, selectToken, useOutput, swapState,
-    setTokens, priceString, setHelper, updatePool, switchTokens, feeString } = useSwapState()
+    setTokens, minimum, priceString, setHelper, updatePool, switchTokens, feeString } = useSwapState()
   const [ tokenMetadata, setTokenMetadata] = useState({})
   const [ approvalNeeded, setApprovalNeeded ] = useState(false)
   const [ isInit, setInit ] = useState(false)
@@ -40,18 +40,28 @@ export default function Swap({ metadata }){
 
   const swapTokens = async() => {
     const { input, output, specifiedSide, price } = swapState
+
     const { address } = swapState.pool
     const abi = require('../../assets/constants/abi/BPool.json').abi;
     const pool = toContract(state.web3.injected, abi, address);
     const amountOut = toHex(output.amount);
     const amountIn = toHex(input.amount);
-    const maxPrice = toHex(price);
+    const minimumOutput = toHex(minimum);
     let fn;
 
     if(specifiedSide === 'input'){
-      fn = pool.methods.swapExactAmountIn(input.address, amountIn, output.address, amountOut, maxPrice);
+      const perciseInput = input.amount.div(toBN(10).toExponential(input.decimals));
+      const perciseOutput = minimum.div(toBN(10).toExponential(output.decimals));
+      const quote = await pool.methods.getSpotPrice(input.address, output.address).call()
+      const price = toHex(perciseOutput.div(perciseInput).times(toBN(1e18)));
+
+      fn = pool.methods.swapExactAmountIn(input.address, amountIn, output.address, minimumOutput, price);
     } else {
-      fn = pool.methods.swapExactAmountOut(input.address, amountIn, output.address, amountOut, maxPrice);
+      const perciseInput = minimum.div(toBN(10).toExponential(input.decimals));
+      const perciseOutput = output.amount.div(toBN(10).toExponential(output.decimals));
+      const price = toHex(perciseOutput.div(perciseInput).times(toBN(1e18)));
+
+      fn = pool.methods.swapExactAmountOut(input.address, minimumOutput, output.address, amountOut, price);
     }
 
     await handleTransaction(fn.send({ from: state.account }))

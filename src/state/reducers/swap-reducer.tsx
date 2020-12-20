@@ -65,6 +65,14 @@ const compareAddresses = (a: string, b: string): boolean => {
   return a.toLowerCase() === b.toLowerCase();
 }
 
+function upwardSlippage(num: BigNumber, slippage: number): BigNumber {
+  return num.times(1 + slippage).integerValue();
+}
+
+function downwardSlippage(num: BigNumber, slippage: number): BigNumber {
+  return num.times(1 - slippage).integerValue();
+}
+
 function swapReducer(state: SwapState = initialState, actions: SwapDispatchAction | SwapDispatchAction[]): SwapState {
   if (!(Array.isArray(actions))) {
     actions = [actions];
@@ -262,6 +270,7 @@ export type SwapContextType = {
   switchTokens: () => void;
   priceString: string;
   feeString: string;
+  minimum: BigNumber;
 }
 
 export function useSwap(): SwapContextType {
@@ -272,6 +281,16 @@ export function useSwap(): SwapContextType {
   const updatePool = (clearInputs?: boolean) => dispatch({ type: 'UPDATE_POOL', clearInputs });
   const setHelper = (pool: PoolHelper ) => dispatch({ type: 'SET_HELPER', pool });
   const setTokens = (tokens: TokenList) => dispatch({ type: 'SET_TOKENS', tokens });
+  const swapFee = swapState.pool ? parseFloat(formatBalance(swapState.pool.pool.swapFee,  18, 4)) : 0.00
+  let minimum = BN_ZERO;
+  const slippage = 0.01;
+
+  if(swapState.specifiedSide === 'input'){
+    minimum = downwardSlippage(swapState.output.amount, slippage)
+  } else {
+    minimum = upwardSlippage(swapState.input.amount, slippage)
+  }
+
   const { tokenList, outputList } = swapState;
 
   let fee: string;
@@ -303,6 +322,7 @@ export function useSwap(): SwapContextType {
     selectOutput,
     outputList,
     tokenList,
+    minimum,
     priceString: price || '',
     feeString: fee || ''
   };
