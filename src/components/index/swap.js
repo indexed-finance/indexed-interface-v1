@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useContext, useState } from 'react'
 import Grid from '@material-ui/core/Grid'
 import IconButton from '@material-ui/core/IconButton';
 import SwapIcon from '@material-ui/icons/SwapCalls'
-import { formatBalance, toHex, toBN, toWei, fromWei } from '@indexed-finance/indexed.js'
+import { formatBalance, toHex, toBN, toWei, fromWei, BigNumber } from '@indexed-finance/indexed.js'
 
 import { useSwapState } from "../../state/swap";
 import ButtonPrimary from '../buttons/primary'
@@ -51,19 +51,21 @@ export default function Swap({ metadata }){
     let fn;
 
     if(specifiedSide === 'input'){
-      const perciseInput = input.amount.div(toBN(10).toExponential(input.decimals));
-      const perciseOutput = minimum.div(toBN(10).toExponential(output.decimals));
+      const perciseInput = input.amount.div(toBN(10).pow(input.decimals));
+      const perciseOutput = minimum.div(toBN(10).pow(output.decimals));
       const price = toHex(perciseInput.div(perciseOutput).times(toBN(1e18)));
 
-      console.log(perciseInput.div(perciseOutput).times(toBN(1e18)).toString(), quote)
+      console.log('SPOT', perciseInput.div(perciseOutput).times(toBN(1e18)).toString())
+      console.log('REF', quote)
 
       fn = pool.methods.swapExactAmountIn(input.address, amountIn, output.address, minimumOutput, price);
     } else {
-      const perciseInput = minimum.div(toBN(10).toExponential(input.decimals));
-      const perciseOutput = output.amount.div(toBN(10).toExponential(output.decimals));
+      const perciseInput = minimum.div(toBN(10).pow(input.decimals));
+      const perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
       const price = toHex(perciseInput.div(perciseOutput).times(toBN(1e18)));
 
-      console.log(perciseInput.div(perciseOutput).times(toBN(1e18)).toString(), quote)
+      console.log('SPOT', perciseInput.div(perciseOutput).times(toBN(1e18)).toString())
+      console.log('REF', quote)
 
       fn = pool.methods.swapExactAmountOut(input.address, minimumOutput, output.address, amountOut, price);
     }
