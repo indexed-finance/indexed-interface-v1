@@ -43,7 +43,15 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         output.displayAmount = outputValue.displayAmount;
       }
 
-      const price = formatBalance(output.amount.div(input.amount), 1, 4);
+      const perciseInput = parseFloat(formatBalance(input.amount, input.decimals, 4));
+      const perciseOutput = parseFloat(formatBalance(output.amount, output.decimals, 4));
+      let price = (perciseOutput/perciseInput).toFixed(4).toLocaleString();
+
+      if(input.amount.eq(0) || output.amount.eq(0)){
+        let { amount } = await state.pool.calcOutGivenIn(input.address, output.address, toWei(1))
+        const newPercise = parseFloat(formatBalance(toBN(amount), output.decimals, 4));
+        price = (newPercise/1).toFixed(4).toLocaleString();
+      }
 
       dispatch([
         { type: 'SET_INPUT_TOKEN', token: input },
@@ -66,7 +74,15 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         input.displayAmount = inputValue.displayAmount;
       }
 
-      const price = formatBalance(output.amount.div(input.amount), 1, 4);
+      const perciseInput = parseFloat(formatBalance(input.amount, input.decimals, 4));
+      const perciseOutput = parseFloat(formatBalance(output.amount, output.decimals, 4));
+      let price = (perciseOutput/perciseInput).toFixed(4).toLocaleString();
+
+      if(input.amount.eq(0) || output.amount.eq(0)){
+         let { amount } = await state.pool.calcOutGivenIn(input.address, output.address, toWei(1))
+         const newPercise = parseFloat(formatBalance(toBN(amount), output.decimals, 4));
+         price = (newPercise/1).toFixed(4).toLocaleString();
+      }
 
       dispatch([
         { type: 'SET_INPUT_TOKEN', token: input },
@@ -96,7 +112,15 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         && i.pool === input.pool
       );
 
-      const price = formatBalance(output.amount.div(input.amount), 1, 4);
+      const perciseInput = parseFloat(formatBalance(input.amount, input.decimals, 4));
+      const perciseOutput = parseFloat(formatBalance(output.amount, output.decimals, 4));
+      let price = (perciseOutput/perciseInput).toFixed(4).toLocaleString();
+
+      if(input.amount.eq(0) || output.amount.eq(0) ){
+         let { amount } = await state.pool.calcOutGivenIn(input.address, output.address, toWei(1))
+         const newPercise = parseFloat(formatBalance(toBN(amount), output.decimals, 4));
+         price = (newPercise/1).toFixed(4).toLocaleString();
+      }
 
       dispatch([
         { type: 'SET_OUTPUTS', tokens: outputList },
@@ -143,7 +167,9 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
       const inputAddress = state.input.address;
       const outputAddress = state.output.address;
 
-      const { displayAmount: price } = await action.pool.calcOutGivenIn(inputAddress, outputAddress, toWei(1));
+      const { amount } = await action.pool.calcOutGivenIn(inputAddress, outputAddress, toWei(1))
+      const newPercise = parseFloat(formatBalance(toBN(amount), state.output.decimals, 4));
+      const price = (newPercise/1).toFixed(4).toLocaleString();
 
       dispatch([
         { type: 'SET_HELPER', pool: action.pool },
@@ -173,7 +199,15 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         newToken.amount = toBN(data.amount);
       }
 
-      const price = formatBalance(newToken.amount.div(input.amount), 1, 4);
+      const perciseInput = parseFloat(formatBalance(input.amount, input.decimals, 4));
+      const perciseOutput = parseFloat(formatBalance(newToken.amount, newToken.decimals, 4));
+      let price = (perciseOutput/perciseInput).toFixed(4).toLocaleString();
+
+      if(input.amount.eq(0) || newToken.amount.eq(0)){
+         let { amount } = await state.pool.calcOutGivenIn(input.address, newToken.address, toWei(1))
+         const newPercise = parseFloat(formatBalance(toBN(amount), newToken.decimals, 4));
+         price = (newPercise/1).toFixed(4).toLocaleString();
+      }
 
       dispatch([
         { type: 'SET_OUTPUT_TOKEN', token: newToken },
@@ -218,7 +252,15 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         newToken.amount = toBN(data.amount);
       }
 
-      const price = formatBalance(newOutput.amount.div(newToken.amount), 1, 4);
+      const perciseInput = parseFloat(formatBalance(newToken.amount, newToken.decimals, 4));
+      const perciseOutput = parseFloat(formatBalance(newOutput.amount, newOutput.decimals, 4));
+      let price = (perciseOutput/perciseInput).toFixed(4).toLocaleString();
+
+      if(newToken.amount.eq(0) || newOutput.amount.eq(0)){
+         let { amount } = await state.pool.calcOutGivenIn(newToken.address, newOutput.address, toWei(1))
+         const newPercise = parseFloat(formatBalance(toBN(amount), newOutput.decimals, 4));
+         price = (newPercise/1).toFixed(4).toLocaleString();
+      }
 
       dispatch([
         { type: 'SET_INPUT_TOKEN', token: newToken },

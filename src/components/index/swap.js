@@ -34,15 +34,12 @@ export default function Swap({ metadata }){
     if(!swapState.pool && state.helper){
       let pool = state.helper.initialized.find(i => i.pool.address === metadata.address);
 
-      setHelper(pool)
-      setInit(true)
+      if(pool){
+        setHelper(pool)
+        setInit(true)
+      }
     }
   }, [ , state.helper, swapState.input ])
-
-  useEffect(() => {
-    if (!swapState.pool)  return;
-
-  }, [swapState]);
 
   useEffect(() => {
     const verifyConnectivity = async() => {
@@ -69,12 +66,13 @@ export default function Swap({ metadata }){
   let inputSymbol = tokenList ? tokenList.find(i => i.address == swapState.input.address).symbol : ''
   let priceString = tokenList ? `1 ${inputSymbol} = ${!isNaN(parseFloat(swapState.price)) ? swapState.price : '0.0000'} ${outputSymbol}` : '';
 
-  let feeString;
+  let feeString = null
 
   if (swapState.pool && tokenList) {
     const { amount, decimals, address } = swapState.input;
     const fee = formatBalance(amount.times(3).div(1000), decimals, 4);
-    feeString = `${fee} ${inputSymbol}`;
+    const display = isNaN(fee) ? '0.00' : fee
+    feeString = `${display} ${inputSymbol}`;
   }
 
   let { marginRight, width } = style.getFormatting(state.native)
