@@ -44,6 +44,7 @@ export default function Swap({ metadata }){
     const { address } = swapState.pool
     const abi = require('../../assets/constants/abi/BPool.json').abi;
     const pool = toContract(state.web3.injected, abi, address);
+    const quote = await pool.methods.getSpotPrice(input.address, output.address).call()
     const amountOut = toHex(output.amount);
     const amountIn = toHex(input.amount);
     const minimumOutput = toHex(minimum);
@@ -52,14 +53,17 @@ export default function Swap({ metadata }){
     if(specifiedSide === 'input'){
       const perciseInput = input.amount.div(toBN(10).toExponential(input.decimals));
       const perciseOutput = minimum.div(toBN(10).toExponential(output.decimals));
-      const quote = await pool.methods.getSpotPrice(input.address, output.address).call()
-      const price = toHex(perciseOutput.div(perciseInput).times(toBN(1e18)));
+      const price = toHex(perciseInput.div(perciseOutput).times(toBN(1e18)));
+
+      console.log(perciseInput.div(perciseOutput).times(toBN(1e18)).toString(), quote)
 
       fn = pool.methods.swapExactAmountIn(input.address, amountIn, output.address, minimumOutput, price);
     } else {
       const perciseInput = minimum.div(toBN(10).toExponential(input.decimals));
       const perciseOutput = output.amount.div(toBN(10).toExponential(output.decimals));
-      const price = toHex(perciseOutput.div(perciseInput).times(toBN(1e18)));
+      const price = toHex(perciseInput.div(perciseOutput).times(toBN(1e18)));
+
+      console.log(perciseInput.div(perciseOutput).times(toBN(1e18)).toString(), quote)
 
       fn = pool.methods.swapExactAmountOut(input.address, minimumOutput, output.address, amountOut, price);
     }
