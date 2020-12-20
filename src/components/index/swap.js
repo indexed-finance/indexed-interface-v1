@@ -72,7 +72,7 @@ export default function Swap({ metadata }){
 
     await handleTransaction(fn.send({ from: state.account }))
       .then(async () => {
-        await updatePool();
+        await updatePool(true);
     }).catch(() => {});
   }
 
