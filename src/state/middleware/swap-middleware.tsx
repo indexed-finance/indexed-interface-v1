@@ -34,23 +34,21 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
       const output = { ...state.output };
       const { usedBalance } = pool.tokens.find(i => i.address == input.address);
       input.displayAmount = displayAmount;
-      if (amount.gt(usedBalance.div(2))) {
-        input.amount = usedBalance.div(2);
-        input.displayAmount = formatBalance(input.amount, input.decimals, 4);
-      } else {
-        input.amount = amount;
+      input.amount = amount;
+
+      if(amount.lte(usedBalance.div(2))) {
+        const outputValue = await state.pool.calcOutGivenIn(input.address, output.address, input.amount);
+
+        output.amount = toBN(outputValue.amount)
+        output.displayAmount = outputValue.displayAmount;
       }
 
-      const outputValue = await state.pool.calcOutGivenIn(input.address, output.address, input.amount);
-      output.amount = toBN(outputValue.amount)
-      output.displayAmount = outputValue.displayAmount;
-
-      const { displayAmount: pricing } = await pool.calcOutGivenIn(input.address, output.address, toWei(1));
+      const price = formatBalance(output.amount.div(input.amount), 1, 4);
 
       dispatch([
         { type: 'SET_INPUT_TOKEN', token: input },
         { type: 'SET_OUTPUT_TOKEN', token: output },
-        { type: 'SET_PRICE', price: pricing }
+        { type: 'SET_PRICE', price: price }
       ]);
     }
 
@@ -60,15 +58,20 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
       output.displayAmount = action.amount;
       output.amount = toTokenAmount(action.amount, output.decimals);
       const { usedBalance } = pool.tokens.find(i => i.address == output.address);
+
       if (output.amount.lte(usedBalance.div(3))) {
         const inputValue = await state.pool.calcInGivenOut(input.address, output.address, output.amount);
+
         input.amount = toBN(inputValue.amount);
         input.displayAmount = inputValue.displayAmount;
       }
 
+      const price = formatBalance(output.amount.div(input.amount), 1, 4);
+
       dispatch([
         { type: 'SET_INPUT_TOKEN', token: input },
-        { type: 'SET_OUTPUT_TOKEN', token: output }
+        { type: 'SET_OUTPUT_TOKEN', token: output },
+        { type: 'SET_PRICE', price: price }
       ]);
     }
 
@@ -93,13 +96,13 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         && i.pool === input.pool
       );
 
-      const { displayAmount: pricing } = await pool.calcOutGivenIn(input.address, output.address, toWei(1));
+      const price = formatBalance(output.amount.div(input.amount), 1, 4);
 
       dispatch([
         { type: 'SET_OUTPUTS', tokens: outputList },
         { type: 'SET_INPUT_TOKEN', token: input },
         { type: 'SET_OUTPUT_TOKEN', token: output },
-        { type: 'SET_PRICE', price: pricing }
+        { type: 'SET_PRICE', price: price }
       ]);
     }
 
@@ -118,7 +121,7 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         && i.pool === input.pool
       );
 
-      const outputToken = outputList[1]
+      const outputToken = outputList[0]
       const output = {
         address: outputToken.address,
         decimals: outputToken.decimals,
@@ -140,11 +143,11 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
       const inputAddress = state.input.address;
       const outputAddress = state.output.address;
 
-      const { displayAmount: pricing } = await action.pool.calcOutGivenIn(inputAddress, outputAddress, toWei(1));
+      const { displayAmount: price } = await action.pool.calcOutGivenIn(inputAddress, outputAddress, toWei(1));
 
       dispatch([
         { type: 'SET_HELPER', pool: action.pool },
-        { type: 'SET_PRICE', price: pricing }
+        { type: 'SET_PRICE', price: price }
       ]);
     }
 
@@ -157,18 +160,25 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         address: wlToken.address,
         decimals: wlToken.decimals,
         pool: wlToken.pool,
-        displayAmount: '0.00',
-        amount: BN_ZERO
+        displayAmount: state.output.displayAmount,
+        amount: state.output.amount
       };
 
-      const data = await pool.calcOutGivenIn(input.address, newToken.address, input.amount);
-      newToken.amount = toBN(data.amount);
-      newToken.displayAmount = data.displayAmount;
+      const { usedBalance } = pool.tokens.find(i => i.address == input.address);
+
+      if(input.amount.lte(usedBalance.div(2))){
+        const data = await pool.calcOutGivenIn(input.address, newToken.address, input.amount);
+
+        newToken.displayAmount = data.displayAmount;
+        newToken.amount = toBN(data.amount);
+      }
+
+      const price = formatBalance(newToken.amount.div(input.amount), 1, 4);
 
       dispatch([
         { type: 'SET_OUTPUT_TOKEN', token: newToken },
         { type: 'SET_INPUT_TOKEN', token: input },
-        // { type: 'SET_PRICE', price: pricing }
+        { type: 'SET_PRICE', price: price }
       ]);
     }
 
@@ -183,8 +193,9 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         displayAmount: '0.00',
         amount: BN_ZERO
       }
+
       const outputList = state.tokenList.filter(i =>
-          wlToken.address.toLowerCase() !== i.address.toLowerCase()
+          newToken.address.toLowerCase() !== i.address.toLowerCase()
           && i.pool === wlToken.pool
       );
 
@@ -198,17 +209,22 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         }
       }
 
-      const data = await pool.calcInGivenOut(newToken.address, newOutput.address, newOutput.amount);
-      // const { displayAmount: pricing } = await pool.calcOutGivenIn(newToken.address, newOutput.address, toWei(1));
+      const { usedBalance } = pool.tokens.find(i => i.address == newOutput.address);
 
-      // newOutput.amount = toBN(data.amount);
-      // newOutput.displayAmount = data.displayAmount;
+      if(newOutput.amount.lte(usedBalance.div(3))){
+        const data = await pool.calcInGivenOut(newToken.address, newOutput.address, newOutput.amount);
+
+        newToken.displayAmount = data.displayAmount;
+        newToken.amount = toBN(data.amount);
+      }
+
+      const price = formatBalance(newOutput.amount.div(newToken.amount), 1, 4);
 
       dispatch([
         { type: 'SET_INPUT_TOKEN', token: newToken },
         { type: 'SET_OUTPUT_TOKEN', token: newOutput },
         { type: 'SET_OUTPUTS', tokens: outputList },
-        // { type: 'SET_PRICE', price: pricing }
+        { type: 'SET_PRICE', price: price }
       ])
     }
 

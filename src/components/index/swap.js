@@ -18,7 +18,7 @@ const useStyles = getStyles(style)
 
 export default function Swap({ metadata }){
   let { useInput, selectOutput, outputList, tokenList, selectToken, useOutput, swapState,
-    setTokens, setHelper, updatePool, switchTokens, feeString } = useSwapState()
+    setTokens, setHelper, updatePool, switchTokens } = useSwapState()
   const [ tokenMetadata, setTokenMetadata] = useState({})
   const [ isInit, setInit ] = useState(false)
   let { state, dispatch } = useContext(store)
@@ -31,13 +31,18 @@ export default function Swap({ metadata }){
   }, [ state.indexes, metadata ])
 
   useEffect(() => {
-    if(state.helper && swapState.input.address !== ''){
+    if(!swapState.pool && state.helper){
       let pool = state.helper.initialized.find(i => i.pool.address === metadata.address);
 
       setHelper(pool)
       setInit(true)
     }
   }, [ , state.helper, swapState.input ])
+
+  useEffect(() => {
+    if (!swapState.pool)  return;
+
+  }, [swapState]);
 
   useEffect(() => {
     const verifyConnectivity = async() => {
@@ -50,7 +55,7 @@ export default function Swap({ metadata }){
       }
     }
     verifyConnectivity()
-  }, [  , state.web3.injected, tokenList ])
+  }, [  , state.web3.injected, isInit ])
 
   useEffect(() => {
     if(!state.load) {
@@ -62,7 +67,15 @@ export default function Swap({ metadata }){
 
   let outputSymbol = tokenList ? tokenList.find(i => i.address == swapState.output.address).symbol : ''
   let inputSymbol = tokenList ? tokenList.find(i => i.address == swapState.input.address).symbol : ''
-  let priceString = tokenList ? `1 ${inputSymbol} = ${swapState.price} ${outputSymbol}` : '';
+  let priceString = tokenList ? `1 ${inputSymbol} = ${!isNaN(parseFloat(swapState.price)) ? swapState.price : '0.0000'} ${outputSymbol}` : '';
+
+  let feeString;
+
+  if (swapState.pool && tokenList) {
+    const { amount, decimals, address } = swapState.input;
+    const fee = formatBalance(amount.times(3).div(1000), decimals, 4);
+    feeString = `${fee} ${inputSymbol}`;
+  }
 
   let { marginRight, width } = style.getFormatting(state.native)
 
@@ -84,11 +97,11 @@ export default function Swap({ metadata }){
       </Grid>
       <Grid item style={{ width: '100%'}}>
         <div className={classes.market} >
-          <p> FEE: <span style={{ marginRight }}> {feeString || '0'} </span> </p>
+          <p> FEE: <span style={{ marginRight }}> {feeString} </span> </p>
         </div>
       </Grid>
       <Grid item>
-        <ButtonPrimary variant='outlined' margin={{  margin: 25, marginLeft: 150 }}>
+        <ButtonPrimary disabled={!swapState.ready} variant='outlined' margin={{  margin: 25, marginLeft: 150 }}>
           SWAP
         </ButtonPrimary>
       </Grid>

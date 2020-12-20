@@ -141,7 +141,7 @@ function swapReducer(state: SwapState = initialState, actions: SwapDispatchActio
       const { address, amount } = newState.output;
       const { usedBalance } = tokens.find(i => i.address == address)
 
-      if (amount.gt(usedBalance.div(2))) {
+      if (amount.gt(usedBalance.div(3))) {
         newState.output.errorMessage = 'EXCEEDS MAX OUT';
       } else {
         newState.output.errorMessage = '';
