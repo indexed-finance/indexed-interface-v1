@@ -7,7 +7,7 @@ export type SetOutputToken = { type: 'SET_OUTPUT_TOKEN', token: SwapToken };
 export type SetHelper = { type: 'SET_HELPER', pool: PoolHelper };
 export type SetTokens = { type: 'SET_TOKENS', tokens: TokenList };
 export type SetOutputs = { type: 'SET_OUTPUTS', tokens: TokenList };
-export type SetPrice = { type: 'SET_PRICE', price: string };
+export type SetPrice = { type: 'SET_PRICE', price: BigNumber };
 export type SetSlippage = { type: 'SET_SLIPPAGE', slippage: number };
 export type SetSpecifiedSide = { type: 'SET_SPECIFIED_SIDE', side: 'input' | 'output' };
 

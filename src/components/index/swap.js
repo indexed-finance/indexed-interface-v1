@@ -20,7 +20,7 @@ const useStyles = getStyles(style)
 
 export default function Swap({ metadata }){
   let { useInput, selectOutput, outputList, tokenList, selectToken, useOutput, swapState,
-    setTokens, setHelper, updatePool, switchTokens, feeString } = useSwapState()
+    setTokens, priceString, setHelper, updatePool, switchTokens, feeString } = useSwapState()
   const [ tokenMetadata, setTokenMetadata] = useState({})
   const [ approvalNeeded, setApprovalNeeded ] = useState(false)
   const [ isInit, setInit ] = useState(false)
@@ -39,13 +39,13 @@ export default function Swap({ metadata }){
   }
 
   const swapTokens = async() => {
-    const { input, output, specifiedSide } = swapState
+    const { input, output, specifiedSide, price } = swapState
     const { address } = swapState.pool
     const abi = require('../../assets/constants/abi/BPool.json').abi;
     const pool = toContract(state.web3.injected, abi, address);
     const amountOut = toHex(output.amount);
     const amountIn = toHex(input.amount);
-    const maxPrice = '0x0';
+    const maxPrice = toHex(price);
     let fn;
 
     if(specifiedSide === 'input'){
@@ -109,10 +109,6 @@ export default function Swap({ metadata }){
       })
     }
   }, [])
-
-  let outputSymbol = tokenList ? tokenList.find(i => i.address == swapState.output.address).symbol : ''
-  let inputSymbol = tokenList ? tokenList.find(i => i.address == swapState.input.address).symbol : ''
-  let priceString = tokenList ? `1 ${inputSymbol} = ${!isNaN(parseFloat(swapState.price)) ? swapState.price : '0.0000'} ${outputSymbol}` : '';
 
   let { marginRight, width } = style.getFormatting(state.native)
 

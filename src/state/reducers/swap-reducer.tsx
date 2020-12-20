@@ -35,7 +35,7 @@ export type SwapState = {
   slippage: number;
   ready: boolean;
   poolAddress?: string;
-  price: string;
+  price: BigNumber;
 };
 
 const initialState: SwapState = {
@@ -58,7 +58,7 @@ const initialState: SwapState = {
     displayAmount: '0'
   },
   ready: false,
-  price: ''
+  price: BN_ZERO
 };
 
 const compareAddresses = (a: string, b: string): boolean => {
@@ -260,6 +260,7 @@ export type SwapContextType = {
   outputList: TokenList;
   tokenList: TokenList;
   switchTokens: () => void;
+  priceString: string;
   feeString: string;
 }
 
@@ -274,14 +275,20 @@ export function useSwap(): SwapContextType {
   const { tokenList, outputList } = swapState;
 
   let fee: string;
+  let price: string;
+
   if (swapState.pool) {
+    let inputSymbol = swapState.pool.getTokenByAddress(swapState.input.address).symbol;
+    let outputSymbol = swapState.pool.getTokenByAddress(swapState.output.address).symbol;
+    let priceValue = formatBalance(swapState.price, 1, 4)
     let swapFee = parseFloat(formatBalance(swapState.pool.pool.swapFee, 18, 10));
     let outputValue = parseFloat(formatBalance(swapState.output.amount, swapState.output.decimals, 10));
     fee = (outputValue * swapFee).toFixed(6);
     if ((+fee) > 1) {
       fee = parseFloat(fee).toFixed(2);
     }
-    fee = `${fee} ${swapState.pool.getTokenByAddress(swapState.output.address).symbol}`;
+    fee = `${fee} ${outputSymbol}`;
+    price = `1 ${inputSymbol} = ${priceValue} ${outputSymbol}`
   }
 
   return {
@@ -296,6 +303,7 @@ export function useSwap(): SwapContextType {
     selectOutput,
     outputList,
     tokenList,
+    priceString: price || '',
     feeString: fee || ''
   };
 }

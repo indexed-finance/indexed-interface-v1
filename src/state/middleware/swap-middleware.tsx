@@ -47,15 +47,9 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         isError = true;
       }
 
-      const perciseInput = parseFloat(formatBalance(input.amount, input.decimals, 4));
-      const perciseOutput = parseFloat(formatBalance(output.amount, output.decimals, 4));
-      let price = (perciseOutput/perciseInput).toFixed(4);
-
-      if(isError || input.amount.eq(0) || input.amount.eq(output.amount)){
-        let { amount } = await state.pool.calcOutGivenIn(input.address, output.address, toWei(1))
-        const newPercise = parseFloat(formatBalance(toBN(amount), output.decimals, 4));
-        price = (newPercise/1).toFixed(4);
-      }
+      const perciseInput = input.amount.div(toBN(10).toExponential(input.decimals));
+      const perciseOutput = output.amount.div(toBN(10).toExponential(output.decimals));
+      let price = perciseOutput.div(perciseInput);
 
       dispatch([
         { type: 'SET_SPECIFIED_SIDE', side: 'input' },
@@ -82,15 +76,9 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         isError = true;
       }
 
-      const perciseInput = parseFloat(formatBalance(input.amount, input.decimals, 4));
-      const perciseOutput = parseFloat(formatBalance(output.amount, output.decimals, 4));
-      let price = (perciseOutput/perciseInput).toFixed(4);
-
-      if(isError || input.amount.eq(0) || input.amount.eq(output.amount)){
-         let { amount } = await state.pool.calcOutGivenIn(input.address, output.address, toWei(1))
-         const newPercise = parseFloat(formatBalance(toBN(amount), output.decimals, 4));
-         price = (newPercise/1).toFixed(4);
-      }
+      const perciseInput = input.amount.div(toBN(10).toExponential(input.decimals));
+      const perciseOutput = output.amount.div(toBN(10).toExponential(output.decimals));
+      const price = perciseOutput.div(perciseInput);
 
       dispatch([
         { type: 'SET_SPECIFIED_SIDE', side: 'output' },
@@ -121,19 +109,9 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         && i.pool === input.pool
       );
 
-      const perciseInput = parseFloat(formatBalance(input.amount, input.decimals, 4));
-      const perciseOutput = parseFloat(formatBalance(output.amount, output.decimals, 4));
-      const { usedBalance: inputBalance } = pool.tokens.find(i => i.address == input.address);
-      const { usedBalance: outputBalance } = pool.tokens.find(i => i.address == output.address);
-
-      let price = (perciseOutput/perciseInput).toFixed(4);
-
-      if(input.amount.eq(0) || input.amount.eq(output.amount)
-        || input.amount.gt(inputBalance.div(2)) || output.amount.gt(outputBalance)){
-         let { amount } = await state.pool.calcOutGivenIn(input.address, output.address, toWei(1))
-         const newPercise = parseFloat(formatBalance(toBN(amount), output.decimals, 4));
-         price = (newPercise/1).toFixed(4);
-      }
+      const perciseInput = input.amount.div(toBN(10).toExponential(input.decimals));
+      const perciseOutput = output.amount.div(toBN(10).toExponential(output.decimals));
+      const price = perciseOutput.div(perciseInput);
 
       dispatch([
         { type: 'SET_OUTPUTS', tokens: outputList },
@@ -180,10 +158,12 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
       await action.pool.waitForUpdate;
       const inputAddress = state.input.address;
       const outputAddress = state.output.address;
+      const oneToken = toWei(1);
 
-      const { amount } = await action.pool.calcOutGivenIn(inputAddress, outputAddress, toWei(1))
-      const newPercise = parseFloat(formatBalance(toBN(amount), state.output.decimals, 4));
-      const price = (newPercise/1).toFixed(4);
+      const { amount } = await action.pool.calcOutGivenIn(inputAddress, outputAddress, oneToken)
+      const perciseInput = oneToken.div(toBN(10).toExponential(state.input.decimals));
+      const perciseOutput = toBN(amount).div(toBN(10).toExponential(state.output.decimals));
+      const price = perciseOutput.div(perciseInput);
 
       dispatch([
         { type: 'SET_HELPER', pool: action.pool },
@@ -216,15 +196,9 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         isError = true;
       }
 
-      const perciseInput = parseFloat(formatBalance(input.amount, input.decimals, 4));
-      const perciseOutput = parseFloat(formatBalance(newToken.amount, newToken.decimals, 4));
-      let price = (perciseOutput/perciseInput).toFixed(4);
-
-      if(isError || input.amount.eq(0) || input.amount.eq(newToken.amount)){
-         let { amount } = await state.pool.calcOutGivenIn(input.address, newToken.address, toWei(1))
-         const newPercise = parseFloat(formatBalance(toBN(amount), newToken.decimals, 4));
-         price = (newPercise/1).toFixed(4);
-      }
+      const perciseInput = input.amount.div(toBN(10).toExponential(input.decimals));
+      const perciseOutput = newToken.amount.div(toBN(10).toExponential(newToken.decimals));
+      const price = perciseOutput.div(perciseInput);
 
       dispatch([
         { type: 'SET_SPECIFIED_SIDE', side: 'input' },
@@ -273,15 +247,9 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         isError = true;
       }
 
-      const perciseInput = parseFloat(formatBalance(newToken.amount, newToken.decimals, 4));
-      const perciseOutput = parseFloat(formatBalance(newOutput.amount, newOutput.decimals, 4));
-      let price = (perciseOutput/perciseInput).toFixed(4);
-
-      if(isError || newToken.amount.eq(0) || newToken.amount.eq(newOutput.amount)){
-         let { amount } = await state.pool.calcOutGivenIn(newToken.address, newOutput.address, toWei(1))
-         const newPercise = parseFloat(formatBalance(toBN(amount), newOutput.decimals, 4));
-         price = (newPercise/1).toFixed(4);
-      }
+      const perciseInput = newToken.amount.div(toBN(10).toExponential(newToken.decimals));
+      const perciseOutput = newOutput.amount.div(toBN(10).toExponential(newOutput.decimals));
+      const price = perciseOutput.div(perciseInput);
 
       dispatch([
         { type: 'SET_SPECIFIED_SIDE', side: 'output' },
