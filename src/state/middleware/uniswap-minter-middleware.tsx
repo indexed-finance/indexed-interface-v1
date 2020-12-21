@@ -54,23 +54,6 @@ function uniswapMinterDispatchMiddleware(dispatch: UniswapMinterDispatch, state:
         { type: 'SET_SPECIFIED_SIDE', side: 'output' },
         { type: 'SET_OUTPUT_TOKEN', token: output }
       ]);
-      updateParams(
-        { ...state.input },
-        output,
-        'output'
-      )
-      // if (!(+action.amount)) {
-      //   dispatch([
-      //     { type: 'SET_SPECIFIED_SIDE', side: 'output' },
-      //     { type: 'SET_OUTPUT_TOKEN', token: output }
-      //   ]);
-      // } else {
-      //   updateParams(
-      //     { ...state.input },
-      //     output,
-      //     'output'
-      //   )
-      // }
     }
 
     async function setInputAmount(action: SetInputAmount): Promise<void> {
@@ -80,13 +63,6 @@ function uniswapMinterDispatchMiddleware(dispatch: UniswapMinterDispatch, state:
       if (!(+action.amount)) {
         setInput(amount, action.amount);
       }
-      //  else {
-        // updateParams(
-          // { ...state.input, displayAmount: action.amount, amount },
-          // {...state.output},
-          // 'input'
-        // )
-      // }
     }
 
     async function setInputExact(action: SetInputExact): Promise<void> {
