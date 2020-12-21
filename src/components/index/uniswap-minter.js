@@ -68,15 +68,9 @@ export default function UniswapMinter({ metadata }){
 
   useEffect(() => {
     const verifyConnectivity = async() => {
-      console.log('Verifying connectivity')
-      console.log(`Injected: ${!!state.web3.injected}`);
-      console.log(`Account: ${!!state.account}`)
-      console.log(`Minter: ${!!minterState.minter}`)
-      if(minterState.minter && (!!state.web3.injected || !!window.ethereum)) {
-        console.log('Verifying connectivity pt 1')
+      if(minterState.minter && (!!state.web3.injected || !!window.ethereum) && state.account) {
         let address = state.account.toLowerCase();
         if (minterState.pool.userAddress.toLowerCase() !== address) {
-          console.log('Verifying connectivity pt 2')
           await minterState.pool.setUserAddress(address);
           updatePool();
         }
