@@ -44,6 +44,7 @@ export default function Stake() {
         let indexName = await index.methods.name().call()
         let symbol = isWethPair ? `UNIV2:ETH-${indexSymbol}` : indexSymbol;
         let name = isWethPair ? 'Uniswap V2' : indexName;
+
         if (startTime === DATE_END) {
           setStartTime(startsAt);
         }
@@ -74,10 +75,12 @@ export default function Stake() {
             <p>
               Stake index tokens or their associated Uniswap liquidity tokens to earn NDX, the governance token for Indexed Finance.
             </p>
+            Staking will begin later this month. Join us on <a href='https://discord.gg/jaeSTNPNt9' target='_blank'>Discord</a> or follow us on <a href='https://twitter.com/ndxfi' target='_blank'>Twitter</a> for updates.
             {
-              <React.Fragment>
-                <p> TIME REMAINING: <Countdown date={startTime} /> </p>
-              </React.Fragment>
+              
+              // <React.Fragment>
+              //   <p> TIME REMAINING: <Countdown date={startTime} /> </p>
+              // </React.Fragment>
             }
           </div>
         </Container>
