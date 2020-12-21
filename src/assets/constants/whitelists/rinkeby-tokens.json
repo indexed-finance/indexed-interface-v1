@@ -1,0 +1,51 @@
+[
+  {
+    "address": "0x635837d8a215614f47876be75717A251530184F9",
+    "mainnetAddress": "0x514910771AF9Ca656af840dff83E8264EcF986CA",
+    "name": "Chainlink",
+    "symbol": "LINK",
+    "decimals": 18
+  },
+  {
+    "address": "0x5b36B53960Bc1f8b0cAb48AC51F47C8a03c65888",
+    "mainnetAddress": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+    "name": "Wrapped Bitcoin",
+    "symbol": "WBTC",
+    "decimals": 18
+  },
+  {
+    "address": "0x26F20591cB9a4Cb38830F23903f9488bAF3D2a00",
+    "mainnetAddress": "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
+    "name": "Uniswap",
+    "symbol": "UNI",
+    "decimals": 18
+  },
+  {
+    "address": "0xA119b0392bB5140E0A95dC6D4a3478beacE6Ff85",
+    "mainnetAddress": "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2",
+    "name": "Maker",
+    "symbol": "MKR",
+    "decimals": 18
+  },
+  {
+    "address": "0x1E16488078bd7e89D34F0ef46E427cFd72a66Df9",
+    "mainnetAddress": "0x0D8775F648430679A709E98d2b0Cb6250d2887EF",
+    "name": "Basic Attention Token",
+    "symbol": "BAT",
+    "decimals": 18
+  },
+  {
+    "address": "0x72710B0b93c8F86aEf4ec8bd832868A15df50375",
+    "mainnetAddress": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    "symbol": "WETH",
+    "name": "Wrapped Ether",
+    "decimals": 18
+  },
+  {
+    "address": "0x0000000000000000000000000000000000000000",
+    "mainnetAddress": "0x0000000000000000000000000000000000000000",
+    "symbol": "ETH",
+    "name": "Ether",
+    "decimals": 18
+  }
+]
