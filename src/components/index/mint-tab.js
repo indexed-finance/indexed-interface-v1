@@ -4,7 +4,6 @@ import { toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 import { styled } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 
-import { ZERO_ADDRESS } from '../../assets/constants/addresses'
 import { toContract } from '../../lib/util/contracts'
 
 import style from '../../assets/css/components/mint'
@@ -17,6 +16,7 @@ import TokenInputs from '../inputs/token-inputs';
 import { store } from '../../state'
 import { useMintState } from '../../state/mint';
 import Slippage from '../inputs/slippage';
+import UniswapMinter from './uniswap-minter';
 
 const RecieveInput = styled(Input)({
   width: 300,
@@ -27,7 +27,7 @@ const useStyles = getStyles(style)
 export default function Mint({ market, metadata }) {
   const [ isInit, setInit ] = useState(false)
   const classes = useStyles()
-  const { useToken, mintState, bindPoolAmountInput, setHelper, updatePool, setSlippage } = useMintState();
+  const { useToken, mintState, bindPoolAmountInput, setHelper, updatePool, setSlippage, uniswapMinter } = useMintState();
 
   let { state, handleTransaction } = useContext(store);
 
@@ -113,6 +113,15 @@ export default function Mint({ market, metadata }) {
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
+        {
+          uniswapMinter.display && <UniswapMinter metadata={metadata} />
+        }
+        <ButtonPrimary
+          onClick={uniswapMinter.toggleDisplay}
+          margin={{ margin: 25, marginTop: 30, marginLeft: 150 }}
+        >
+          MINT WITH UNISWAP
+        </ButtonPrimary>
         <ButtonPrimary onClick={mint} disabled={!mintState.ready} margin={{ margin: 25, marginLeft: 150, marginTop: 7.5 }}>
           MINT
         </ButtonPrimary>
