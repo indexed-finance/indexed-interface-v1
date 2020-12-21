@@ -29,6 +29,27 @@ import { isNative } from './functions'
 let currentTime = (new Date()).getHours()
 let isNight = (currentTime >= 17 || currentTime < 6)
 
+const rinkebyWhitelist = require('./whitelists/rinkeby-tokens.json');
+const mainnetWhitelist = require('./whitelists/limited-mainnet-tokens.json');
+
+export const whitelistTokens = process.env.REACT_APP_ETH_NETWORK == 'rinkeby'
+  ? rinkebyWhitelist
+  : mainnetWhitelist;
+
+export function getTokenImage(token) {
+  const imageBaseUrl = `https://tokens.1inch.exchange/`;
+  let address;
+  if (typeof token == 'string') {
+    address = token;
+  }
+  if (process.env.REACT_APP_ETH_NETWORK == 'rinkeby') {
+    address = token.mainnetAddress;
+  } else {
+    address = token.address;
+  }
+  return `${imageBaseUrl}${address.toLowerCase()}.png`;
+}
+
 export const initialState = {
   web3: {
     mainnet: new Web3('https://mainnet.infura.io/v3/1c6549e97ff24d9a99ba4e007b538de6'),
