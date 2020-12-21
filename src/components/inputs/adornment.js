@@ -5,7 +5,7 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import MenuItem from '@material-ui/core/MenuItem'
 import Select from '@material-ui/core/Select'
 
-import { tokenMetadata } from '../../assets/constants/parameters'
+import { tokenMetadata, getTokenImage } from '../../assets/constants/parameters'
 
 const Adornment = styled(InputAdornment)({
   overflow: 'none',
@@ -45,13 +45,22 @@ export default function CurrencySelect({ market, onSelect, assets }) {
     }
   }, [ market ])
 
+  let getImg = (cur) => {
+    let meta = tokenMetadata[cur.symbol];
+    if (!meta) {
+      return getTokenImage(cur);
+    } else {
+      return meta.image;
+    }
+  }
+
   return(
     <Adornment style={{ paddingRight: 0 }} position="end">
       <Selection value={currency} onChange={handleChange} >
         {selections.map((cur, i) => (
           <MenuItem key={i} value={cur.symbol}>
             <div style={{ width: 87.5, display: 'flex', flexWrap: 'nowrap', alignItems: 'center' }}>
-              <img src={tokenMetadata[cur.symbol].image} style={{ width: 25, padding: 5 }} />
+              <img src={getImg(cur)} style={{ width: 25, padding: 5 }} />
               <span style={{ fontSize: 16, marginBlock: 0, marginTop: 0, marginLeft: 5, clear: 'both' }}> {cur.symbol} </span>
             </div>
           </MenuItem>
