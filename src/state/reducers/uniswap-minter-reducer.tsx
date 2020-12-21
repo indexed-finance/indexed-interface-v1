@@ -4,6 +4,8 @@ import { MintParams } from "@indexed-finance/indexed.js/dist/minter/types";
 import { useEffect, useReducer, useState } from "react";
 import { ZERO_ADDRESS } from "../../assets/constants/addresses";
 import { whitelistTokens } from "../../assets/constants/parameters";
+import useDebounce from "../../hooks/useDebounce";
+import useDebouncedChangeHandler from "../../hooks/useDebouncedChangeHandler";
 import {
   SetSlippage,
   SetSpecifiedSide,
@@ -219,6 +221,11 @@ export function useMinterTokenActions(
   let displayBalance = formatBalance(balance, decimals, 4);
   let token = isInput ? state.input : state.output;
   let { displayAmount, errorMessage, amount } = token;
+
+  let debouncedAmount = useDebounce(displayAmount, 500);
+  useEffect(() => {
+    dispatch({ type: 'UPDATE_PARAMS' })
+  }, [debouncedAmount])
 
   let setAmount = (amount: string) => {
     if (!isInput) {
