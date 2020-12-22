@@ -208,7 +208,8 @@ export function useSwapTokenActions(
   // let { address, decimals, name, symbol, ready, usedBalance: poolBalance } = state.tokens[index];
   let { symbol, decimals } = state.tokenList.find(i => i.address == address)
 
-  let balance = state.getBalance(address);
+  let balance = (state.pool && state.pool.userAddress && state.pool.userBalances[address.toLowerCase()]) || BN_ZERO;
+  // let balance = state.getBalance(address);
   let displayBalance = formatBalance(balance, decimals, 4);
   let token = isInput ? state.input : state.output;
   let { displayAmount, errorMessage, amount } = token;
