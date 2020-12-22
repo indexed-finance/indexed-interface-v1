@@ -229,7 +229,7 @@ export default function Governance(){
 
   useEffect(() => {
     const retrieveProposals = async() => {
-      if(state.request && state.proposals){
+      if(state.request && state.proposals && Object.keys(state.proposals).length){
         let { proposals, dailyDistributionSnapshots } = state.proposals
 
         let length = dailyDistributionSnapshots.length - 1
