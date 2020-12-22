@@ -15,7 +15,6 @@ import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import RemoveCircleOutlinedIcon from '@material-ui/icons/RemoveCircleOutlined';
 
 import jazzicon from '@metamask/jazzicon'
-import { getAllHelpers } from '@indexed-finance/indexed.js';
 
 import { toChecksumAddress } from '../assets/constants/functions'
 import { WEB3_PROVIDER, INCORRECT_NETWORK } from '../assets/constants/parameters'
@@ -50,7 +49,6 @@ export default function Navigation({ mode }) {
     let accounts = await web3.eth.getAccounts();
     let account = toChecksumAddress(accounts[0]);
     let network = await web3.eth.net.getId();
-    let helper = await getAllHelpers(web3, account);
 
     const expectedID = process.env.REACT_APP_ETH_NETWORK === 'mainnet' ? 1 : 4
     if((+network) !== expectedID){
@@ -59,7 +57,7 @@ export default function Navigation({ mode }) {
       setComponent(<Blockie address={account} />)
       setAnchorEl(null)
       setLogin(true)
-      dispatch({ type: 'WEB3', payload: { web3, account, network, helper } });
+      dispatch({ type: 'WEB3', payload: { web3, account, network } });
     }
   }
 
