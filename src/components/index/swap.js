@@ -15,6 +15,7 @@ import getStyles from '../../assets/css'
 import { store } from '../../state'
 import { getERC20 } from '../../lib/erc20';
 import { toContract } from '../../lib/util/contracts';
+import { bdiv } from '@indexed-finance/indexed.js/dist/bmath';
 
 const useStyles = getStyles(style)
 
@@ -49,25 +50,26 @@ export default function Swap({ metadata }){
     const amountIn = toHex(input.amount);
     const minimumOutput = toHex(minimum);
     let fn;
-
+  
     if(specifiedSide === 'input'){
-      const perciseInput = input.amount.div(toBN(10).pow(input.decimals));
-      const perciseOutput = minimum.div(toBN(10).pow(output.decimals));
-      const price = toHex(perciseInput.div(perciseOutput).times(toBN(1e18)));
-
-      console.log('SPOT', perciseInput.div(perciseOutput).times(toBN(1e18)).toString())
-      console.log('REF', quote)
-
-      fn = pool.methods.swapExactAmountIn(input.address, amountIn, output.address, minimumOutput, price);
+      const maxPrice = bdiv(input.amount.times(1.02), output.amount);
+      fn = pool.methods.swapExactAmountIn(
+        input.address,
+        amountIn,
+        output.address,
+        minimumOutput,
+        toHex(maxPrice)
+      );
     } else {
-      const perciseInput = minimum.div(toBN(10).pow(input.decimals));
-      const perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
-      const price = toHex(perciseInput.div(perciseOutput).times(toBN(1e18)));
+      const maxPrice = bdiv(input.amount.times(1.02), output.amount);
 
-      console.log('SPOT', perciseInput.div(perciseOutput).times(toBN(1e18)).toString())
-      console.log('REF', quote)
-
-      fn = pool.methods.swapExactAmountOut(input.address, minimumOutput, output.address, amountOut, price);
+      fn = pool.methods.swapExactAmountOut(
+        input.address,
+        amountIn,
+        output.address,
+        amountOut,
+        toHex(maxPrice)
+      );
     }
 
     await handleTransaction(fn.send({ from: state.account }))
