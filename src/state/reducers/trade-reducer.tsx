@@ -36,7 +36,7 @@ export type TradeState = {
   getAllowanceForPair?: (address: string) => BigNumber;
   ready: boolean;
   pairAddress?: string;
-  price: string;
+  price: BigNumber;
 };
 
 const initialState: TradeState = {
@@ -57,7 +57,7 @@ const initialState: TradeState = {
     isPoolToken: false
   },
   ready: false,
-  price: ''
+  price: BN_ZERO
 };
 
 const compareAddresses = (a: string, b: string): boolean => {
@@ -254,6 +254,8 @@ export type TradeContextType = {
   selectWhitelistToken: (index: number) => void;
   whitelistTokens: Array<{ symbol: string, decimals: number, address: string }>;
   switchTokens: () => void;
+  priceString: string;
+  feeString: string;
 }
 
 export function useTrade(): TradeContextType {
@@ -263,6 +265,19 @@ export function useTrade(): TradeContextType {
   const updatePool = (clearInputs?: boolean) => dispatch({ type: 'UPDATE_POOL', clearInputs });
   const setHelper = (helper: UniswapHelper) => dispatch({ type: 'SET_UNISWAP_HELPER', helper });
 
+  let price: string;
+  let fee: string;
+
+  if (tradeState.helper) {
+    let inputSymbol = tradeState.helper.getTokenInfo(tradeState.input.address).symbol;
+    let outputSymbol = tradeState.helper.getTokenInfo(tradeState.output.address).symbol;
+    let priceValue = formatBalance(tradeState.price, 1, 5)
+    const { amount, decimals, address } = tradeState.input;
+    fee = formatBalance(amount.times(3).div(1000), decimals, 4);
+    price = `1 ${inputSymbol} = ${priceValue} ${outputSymbol}`
+    fee = `${fee} ${inputSymbol}`;
+  }
+
   return {
     useInput: () => useTradeTokenActions(tradeState, dispatch, tradeState.input.address),
     useOutput: () => useTradeTokenActions(tradeState, dispatch, tradeState.output.address),
@@ -271,6 +286,8 @@ export function useTrade(): TradeContextType {
     setHelper,
     updatePool,
     selectWhitelistToken,
-    whitelistTokens: whitelist[process.env.REACT_APP_ETH_NETWORK]
+    whitelistTokens: whitelist[process.env.REACT_APP_ETH_NETWORK],
+    priceString: price || '',
+    feeString: fee || '',
   };
 }

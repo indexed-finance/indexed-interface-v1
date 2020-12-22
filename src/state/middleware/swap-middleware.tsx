@@ -47,10 +47,23 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         isError = true;
       }
 
+      const perciseInput = input.amount.div(toBN(10).pow(input.decimals));
+      let perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
+      let price = perciseOutput.div(perciseInput);
+
+      if(isError || output.amount.eq(0) || input.amount.eq(0)){
+        const oneToken = toBN(10).pow(input.decimals);
+        const { amount } = await pool.calcOutGivenIn(input.address, output.address, oneToken)
+
+        perciseOutput = toBN(amount).div(toBN(10).pow(output.decimals));
+        price = perciseOutput.div(toBN(1));
+      }
+
       dispatch([
         { type: 'SET_SPECIFIED_SIDE', side: 'input' },
         { type: 'SET_INPUT_TOKEN', token: input },
-        { type: 'SET_OUTPUT_TOKEN', token: output }
+        { type: 'SET_OUTPUT_TOKEN', token: output },
+        { type: 'SET_PRICE', price: price }
       ]);
     }
 
@@ -112,10 +125,23 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         && i.pool === input.pool
       );
 
+      const perciseInput = input.amount.div(toBN(10).pow(input.decimals));
+      let perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
+      let price = perciseOutput.div(perciseInput);
+
+      if(output.amount.eq(0) || input.amount.eq(0)){
+        const oneToken = toBN(10).pow(input.decimals);
+        const { amount } = await pool.calcOutGivenIn(input.address, output.address, oneToken)
+
+        perciseOutput = toBN(amount).div(toBN(10).pow(output.decimals));
+        price = perciseOutput.div(toBN(1));
+      }
+
       dispatch([
         { type: 'SET_OUTPUTS', tokens: outputList },
         { type: 'SET_INPUT_TOKEN', token: input },
-        { type: 'SET_OUTPUT_TOKEN', token: output }
+        { type: 'SET_OUTPUT_TOKEN', token: output },
+        { type: 'SET_PRICE', price: price }
       ]);
     }
 

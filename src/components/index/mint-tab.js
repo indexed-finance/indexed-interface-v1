@@ -113,17 +113,17 @@ export default function Mint({ market, metadata }) {
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
+        <ButtonPrimary onClick={mint} disabled={!mintState.ready} margin={{ margin: 0, marginLeft: 50,  marginTop: 7.5 }}>
+          MINT
+        </ButtonPrimary>
         {
           uniswapMinter.display && <UniswapMinter metadata={metadata} />
         }
         <ButtonPrimary
           onClick={uniswapMinter.toggleDisplay}
-          margin={{ margin: 25, marginTop: 30, marginLeft: 150 }}
+          margin={{ float: 'left', margin: 25, marginTop: 7.5, marginLeft: 0 }}
         >
           MINT WITH UNISWAP
-        </ButtonPrimary>
-        <ButtonPrimary onClick={mint} disabled={!mintState.ready} margin={{ margin: 25, marginLeft: 150, marginTop: 7.5 }}>
-          MINT
         </ButtonPrimary>
       </Grid>
     </Grid>

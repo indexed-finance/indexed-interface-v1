@@ -20,7 +20,7 @@ const routerABI = require('../../assets/constants/abi/UniswapV2Router.json')
 const useStyles = getStyles(style);
 
 export default function TradeTab({ metadata }) {
-  const { useInput, useOutput, tradeState, setHelper, updatePool, whitelistTokens, selectWhitelistToken, switchTokens } = useTradeState();
+  const { useInput, feeString, priceString, useOutput, tradeState, setHelper, updatePool, whitelistTokens, selectWhitelistToken, switchTokens } = useTradeState();
   const [ isRendered, setRender ] = useState(false);
   const [approvalNeeded, setApprovalNeeded] = useState(false);
 
@@ -71,12 +71,6 @@ export default function TradeTab({ metadata }) {
   }, [  , state.web3.injected, isRendered ])
 
   let whitelistSymbols = whitelistTokens.map(t => t.symbol);
-  let inputSymbol, outputSymbol;
-  if (tradeState.helper) {
-    inputSymbol = tradeState.helper.getTokenInfo(tradeState.input.address).symbol;
-    outputSymbol = tradeState.helper.getTokenInfo(tradeState.output.address).symbol;
-
-  }
 
   useEffect(() => {
     if (!tradeState.helper)  return;
@@ -134,16 +128,6 @@ export default function TradeTab({ metadata }) {
 
     await handleTransaction(fn.send(txProps));
     updatePool(true);
-  }
-
-  let priceString = tradeState.helper ? `1 ${inputSymbol} = ${tradeState.price} ${outputSymbol}` : '';
-
-  let feeString;
-  if (tradeState.helper) {
-    const { amount, decimals, address } = tradeState.input;
-    const { symbol } = tradeState.helper.getTokenInfo(address);
-    const fee = formatBalance(amount.times(3).div(1000), decimals, 4);
-    feeString = `${fee} ${symbol}`;
   }
 
   let { width, marginRight } = style.getFormatting(state.native)
