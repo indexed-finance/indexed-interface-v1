@@ -104,7 +104,6 @@ function Application(){
       let stats = { dailyVolume: 0, totalLocked: 0 };
       let categories = {};
       let indexes = {};
-      let proposals = {}
 
       // let tokenCategories = await getTokenCategories()
 
@@ -125,7 +124,8 @@ function Application(){
       };
 
       async function setProposals() {
-        proposals = { ...await getProposals() };
+        const proposals = { ...await getProposals() };
+        dispatch({ type: 'GENERIC', payload: { proposals } })
       }
 
       async function setInitializedPools() {
@@ -226,15 +226,15 @@ function Application(){
       }
 
       await Promise.all([
-        setProposals(),
         setInitializedPools(),
         setUninitializedPools()
-      ])
+      ]);
+      setProposals();
 
       await dispatch({
         type: 'GENERIC',
         payload: {
-          request: true , proposals, stats, categories, indexes,
+          request: true, stats, categories, indexes,
         }
       })
     }
