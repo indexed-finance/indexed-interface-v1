@@ -94,24 +94,31 @@ export default function Banner() {
   }
 
   useEffect(() => {
-    let [ proposals, init, indxs ] = [ [], [], [] ]
-
-    if(Object.entries(indexes).length > 0
-      && messages.indexes.length == 0) {
+    if (Object.keys(state.proposals).length && state.proposals.proposals.length && !messages.proposal.id) {
       let arr = state.proposals.proposals
-      let length = arr.length-1
-      let last = arr[length]
+      let last = arr[arr.length-1]
+      setMessages({
+        ...messages,
+        proposal: last || proposalType
+      });
+      startAnimation(last)
+    }
+  }, [state.proposals]);
 
+  useEffect(() => {
+    let [ init, indxs ] = [ [], [] ]
+    
+    if(
+      Object.keys(indexes).length && !messages.indexes.length
+    ) {
       Object.entries(indexes).map(([ key, value ]) => {
         if(value.active) indxs.push(value)
         else init.push(value)
       })
-      setMessages({
-        proposal: last || proposalType, indexes: indxs, init
-       })
-      startAnimation(last)
+      setMessages({ ...messages, indexes: indxs, init, });
+      startAnimation()
     }
-  }, [ indexes ])
+  }, [ indexes ]);
 
   return(
     <div style={{ width, position, borderBottom: '3px solid #666666' }} id='carosuel' className={classes.root} >
