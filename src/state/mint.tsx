@@ -5,12 +5,6 @@ import { UniswapMinterContextType, useUniswapMinter } from './reducers/uniswap-m
 const MintStateContext = createContext(undefined);
 
 export const MintStateProvider = ({ children }) => {
-  /* {
-    useToken,
-    setPoolAmount,
-    mintState,
-    setHelper,
-  } */
   const mintHooks = useMint();
   const uniswapMinterHooks = useUniswapMinter();
   const stateHooks = {
