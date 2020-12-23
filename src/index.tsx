@@ -11,6 +11,7 @@ import Footer from './components/footer'
 import Loader from './components/loader'
 import Modal from './components/modal'
 import Flag from './components/flag'
+import { StakingContextProvider } from './state/staking/context';
 
 import { DISCLAIMER } from './assets/constants/parameters'
 
@@ -239,7 +240,7 @@ function Application(){
       })
     }
     if(!state.request) retrieveCategories()
-  }, [ state.helper ])
+  }, [ state.didLoadHelper ])
 
   useEffect(() => {
     const initialise = async() => {
@@ -250,7 +251,7 @@ function Application(){
       window.addEventListener("resize", onResize)
       let helper = await getAllHelpers(web3[process.env.REACT_APP_ETH_NETWORK]);
 
-      dispatch({ type: 'GENERIC', payload: { changeTheme, helper } })
+      dispatch({ type: 'GENERIC', payload: { changeTheme, helper, didLoadHelper: true } })
     }
     initialise()
   }, [])
@@ -319,6 +320,10 @@ function Application(){
 }
 
 ReactDOM.render(
-  <StateProvider> <Application /> </StateProvider>,
+  <StateProvider>
+    <StakingContextProvider>
+      <Application />
+    </StakingContextProvider>
+  </StateProvider>,
   document.getElementById('root')
 )
