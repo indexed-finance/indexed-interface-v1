@@ -271,7 +271,7 @@ export function useTrade(): TradeContextType {
   if (tradeState.helper) {
     let inputSymbol = tradeState.helper.getTokenInfo(tradeState.input.address).symbol;
     let outputSymbol = tradeState.helper.getTokenInfo(tradeState.output.address).symbol;
-    let priceValue = formatBalance(tradeState.price, 1, 5)
+    let priceValue = formatBalance(tradeState.price, 0, 5)
     const { amount, decimals, address } = tradeState.input;
     fee = formatBalance(amount.times(3).div(1000), decimals, 4);
     price = `1 ${inputSymbol} = ${priceValue} ${outputSymbol}`

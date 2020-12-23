@@ -94,6 +94,18 @@ const proposalQuery = id => `
   }
 `
 
+const swapQuery = (poolAddress) => `
+{
+ 	swaps(where: { pool: "${poolAddress}" }) {
+    id
+    tokenIn
+    tokenOut
+    tokenAmountIn
+    tokenAmountOut
+    timestamp
+  }
+}
+`
 
 const categoryInfoQuery = (id) => `
 {
@@ -101,6 +113,7 @@ const categoryInfoQuery = (id) => `
     tokens {
       symbol
       priceUSD
+      total
       name
     }
   }
@@ -239,6 +252,10 @@ export async function getIndexPool(address) {
   return indexPools;
 }
 
+export async function getSwaps(poolAddress) {
+  let { data: { swaps } } = await execRequest(swapQuery(poolAddress));
+  return swaps;
+}
 
 export async function getCategory(id) {
   let { data: { categories } } = await execRequest(categoryInfoQuery(id));

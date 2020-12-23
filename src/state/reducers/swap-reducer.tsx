@@ -300,7 +300,7 @@ export function useSwap(): SwapContextType {
   if (swapState.pool) {
     let inputSymbol = swapState.pool.getTokenByAddress(swapState.input.address).symbol;
     let outputSymbol = swapState.pool.getTokenByAddress(swapState.output.address).symbol;
-    let priceValue = formatBalance(swapState.price, 1, 5)
+    let priceValue = formatBalance(swapState.price, 0, 5)
     let swapFee = parseFloat(formatBalance(swapState.pool.pool.swapFee, 18, 10));
     let outputValue = parseFloat(formatBalance(swapState.output.amount, swapState.output.decimals, 10));
     fee = (outputValue * swapFee).toFixed(6);
