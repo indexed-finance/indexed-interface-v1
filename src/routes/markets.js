@@ -77,7 +77,7 @@ export default function Markets(){
 
   let { active } = market
   let {
-    resolution, top, margin, height, pre, pre2, paddingLeft, width, marginTop, canvasMargin
+    resolution, top, margin, height, pre, pre2, paddingLeft, width, marginTop, canvasMargin, canvasWidth
   } = style.getFormatting({ request, native, active })
 
   return (
@@ -87,8 +87,10 @@ export default function Markets(){
         <Grid item xs={12} md={12} lg={12} xl={12}>
           <div style={{ height: pre2 }}>
           <Canvas native={native} style={{ margin: canvasMargin }}>
-            <Spline absolute={true} ready={request} native={native} height={height} color='#66FFFF' metadata={market} padding={top} />
-            <div className={classes.market} style={{ paddingLeft }}>
+            {!native && (
+              <Spline absolute={true} ready={request} native={native} height={height} color='#66FFFF' metadata={market} padding={top} />
+            )}
+            <div className={classes.market} style={{ paddingLeft, width: canvasWidth }}>
               {!native && (
                  <Fragment>
                   <h2> {market.name} [{market.symbol}]</h2>
@@ -104,21 +106,22 @@ export default function Markets(){
               )}
               {native && (
                  <Fragment>
-                  <h3> [{market.symbol}] </h3>
+                  <h3 style={{ fontSize: '5vw'}}> {market.name.replace('Index', '')}</h3>
                   {request && !market.active && (<h4 style={{ color: 'orange' }}> UNINITIALISED </h4>)}
                   {market.active && (
                     <Fragment>
-                      <h4 style={{ color: '#999999' }}> ${market.price} </h4>
-                      <span style={{ color: market.delta > 0 ? '#00e79a': '#ff005a'}}>
-                      ({market.delta > 0 ? '+' : ''}{market.delta}%)
-                      </span>
+                      <h4 style={{ marginTop: 7.5, color: '#999999' }}> ${market.price}
+                        <span style={{ color: market.delta > 0 ? '#00e79a': '#ff005a'}}>
+                          &nbsp;({market.delta > 0 ? '+' : ''}{market.delta}%)
+                        </span>
+                      </h4>
                     </Fragment>
                   )}
                 </Fragment>
               )}
             </div>
-            <Wrapper style={{ background: theme.palette.primary.main }}>
-              {!native && (
+            {!native && (
+              <Wrapper style={{ background: theme.palette.primary.main }}>
                 <ul className={classes.options} style={{ width: pre, paddingRight: 20 }}>
                   <li>ADDRESS:
                     <span>
@@ -137,11 +140,14 @@ export default function Markets(){
                     EXPAND
                   </ButtonPrimary>
                 </ul>
-              )}
-              <div className={classes.pie} style={{ width }}>
-                <Pie ready={request} height={resolution} metadata={market} native={native} />
-              </div>
-            </Wrapper>
+                <div className={classes.pie} style={{ width }}>
+                  <Pie ready={request} height={resolution} metadata={market} native={native} />
+                </div>
+              </Wrapper>
+            )}
+            {native && (
+              <Spline absolute={false} ready={request} native={native} height={150} color='#66FFFF' metadata={market} padding={0} />
+            )}
           </Canvas>
          </div>
         </Grid>
