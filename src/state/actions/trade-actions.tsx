@@ -5,7 +5,7 @@ import { TradeToken } from "../reducers/trade-reducer";
 export type SetInputToken = { type: 'SET_INPUT_TOKEN', token: TradeToken };
 export type SetOutputToken = { type: 'SET_OUTPUT_TOKEN', token: TradeToken };
 export type SetUniswapHelper = { type: 'SET_UNISWAP_HELPER', helper: UniswapHelper };
-export type SetPrice = { type: 'SET_PRICE', price: string };
+export type SetPrice = { type: 'SET_PRICE', price: BigNumber };
 
 
 // Middleware only

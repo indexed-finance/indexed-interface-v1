@@ -229,7 +229,7 @@ export default function Governance(){
 
   useEffect(() => {
     const retrieveProposals = async() => {
-      if(state.request && state.proposals){
+      if(state.request && state.proposals && Object.keys(state.proposals).length){
         let { proposals, dailyDistributionSnapshots } = state.proposals
 
         let length = dailyDistributionSnapshots.length - 1
@@ -285,7 +285,7 @@ export default function Governance(){
               <div className={classes.chart}>
                 <div className={classes.stats}>
                   <h3> TOTAL VOTERS: {metadata.voters}</h3>
-                  <h4> SHARE VALUE: $0.00</h4>
+                  <h4> NDX: $0.00</h4>
                 </div>
                 {!state.native && (
                   <div className={classes.legend} style={{ paddingLeft }}>

@@ -1,15 +1,7 @@
 import { getIPFSFile } from './ipfs';
+import { SUBGRAPH_URL_UNISWAP, SUBGRAPH_URL_INDEXED } from '../assets/constants/urls';
 
-let uniswap_url, subgraph_url;
-if (process.env.REACT_APP_ETH_NETWORK === 'rinkeby') {
-  subgraph_url = 'https://api.thegraph.com/subgraphs/name/indexed-finance/indexed-v1';
-  uniswap_url = 'https://api.thegraph.com/subgraphs/name/samgos/uniswap-v2-rinkeby';
-} else {
-  subgraph_url = 'https://api.thegraph.com/subgraphs/name/indexed-finance/indexed';
-  uniswap_url = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2';
-}
-
-const execRequest = (query, url = subgraph_url) => fetch(
+const execRequest = (query, url = SUBGRAPH_URL_INDEXED) => fetch(
   url,
   {
     method: 'POST',
@@ -101,6 +93,32 @@ const proposalQuery = id => `
     }
   }
 `
+
+const swapQuery = (poolAddress) => `
+{
+ 	swaps(where: { pool: "${poolAddress}" }) {
+    id
+    tokenIn
+    tokenOut
+    tokenAmountIn
+    tokenAmountOut
+    timestamp
+  }
+}
+`
+
+const categoryInfoQuery = (id) => `
+{
+  categories(where: { id: "${id}" }) {
+    tokens {
+      symbol
+      priceUSD
+      total
+      name
+    }
+  }
+}
+`;
 
 const categoryMetadataQuery = (id) => `
 {
@@ -202,6 +220,14 @@ const pairQuery = (pairAddress) => `
     transaction {
       id
     }
+    pair {
+      token0 {
+        id
+      }
+      token1 {
+        id
+      }
+    }
     amount0In
     amount1In
     amount0Out
@@ -226,6 +252,17 @@ export async function getIndexPool(address) {
   return indexPools;
 }
 
+export async function getSwaps(poolAddress) {
+  let { data: { swaps } } = await execRequest(swapQuery(poolAddress));
+  return swaps;
+}
+
+export async function getCategory(id) {
+  let { data: { categories } } = await execRequest(categoryInfoQuery(id));
+
+  return categories[0].tokens;
+}
+
 export async function getUnitializedPool(address) {
   const { data: { poolInitializers } } = await execRequest(initializerQuery(address));
   return poolInitializers;
@@ -244,7 +281,7 @@ export async function getStakingPool(poolAddress, isWethPair) {
 export async function getTokenPriceHistory(tokenAddress, days) {
   const { data: { tokenDayDatas } } = await execRequest(
     tokenDayDataQuery(tokenAddress, days),
-    uniswap_url
+    SUBGRAPH_URL_UNISWAP
   );
   return tokenDayDatas;
 }
@@ -252,7 +289,7 @@ export async function getTokenPriceHistory(tokenAddress, days) {
 export async function getMarketMetadata(pairAddress) {
   const { data: { pairs } } = await execRequest(
     marketMetadataQuery(pairAddress.toLowerCase()),
-    uniswap_url
+    SUBGRAPH_URL_UNISWAP
   );
   return pairs[0];
 }
@@ -260,7 +297,7 @@ export async function getMarketMetadata(pairAddress) {
 export async function getMarketTrades(pairAddress) {
   const { data: { swaps } } = await execRequest(
     pairQuery(pairAddress.toLowerCase()),
-    uniswap_url
+    SUBGRAPH_URL_UNISWAP
   );
   return swaps;
 }
@@ -280,7 +317,7 @@ export async function getProposals() {
 export async function getETHPrice() {
   const { data: { exchanges } } = await execRequest(
     priceQuery(),
-    uniswap_url
+    SUBGRAPH_URL_UNISWAP
   );
 return exchanges[0];
 }

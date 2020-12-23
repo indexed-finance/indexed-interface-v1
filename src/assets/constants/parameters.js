@@ -19,6 +19,7 @@ import crv from '../images/crv.png'
 import usdc from '../images/usdc.png'
 import uni from '../images/uni.png'
 import aave from '../images/aave.png'
+import zrx from '../images/zrx.png'
 import uma from '../images/uma.png'
 import omg from '../images/omg.png'
 import ren from '../images/ren.png'
@@ -28,6 +29,27 @@ import { isNative } from './functions'
 let currentTime = (new Date()).getHours()
 let isNight = (currentTime >= 17 || currentTime < 6)
 
+const rinkebyWhitelist = require('./whitelists/rinkeby-tokens.json');
+const mainnetWhitelist = require('./whitelists/limited-mainnet-tokens.json');
+
+export const whitelistTokens = process.env.REACT_APP_ETH_NETWORK == 'rinkeby'
+  ? rinkebyWhitelist
+  : mainnetWhitelist;
+
+export function getTokenImage(token) {
+  const imageBaseUrl = `https://tokens.1inch.exchange/`;
+  let address;
+  if (typeof token == 'string') {
+    address = token;
+  }
+  if (process.env.REACT_APP_ETH_NETWORK == 'rinkeby') {
+    address = token.mainnetAddress;
+  } else {
+    address = token.address;
+  }
+  return `${imageBaseUrl}${address.toLowerCase()}.png`;
+}
+
 export const initialState = {
   web3: {
     mainnet: new Web3('https://mainnet.infura.io/v3/1c6549e97ff24d9a99ba4e007b538de6'),
@@ -35,6 +57,8 @@ export const initialState = {
     websocket: new Web3('wss://rinkeby.infura.io/ws/v3/1c6549e97ff24d9a99ba4e007b538de6'),
     injected: false
   },
+  didLoadHelper: false,
+  helper: null,
   background: isNight ? '#111111' : '#ffffff',
   color: isNight ? '#ffffff' : '#333333',
   native: isNative({ width: null }),
@@ -123,11 +147,6 @@ export const initialProposalState = {
 // Image size formatting over-ride w/ IMAGE_INLINE_SIZE_LIMIT
 // be weary of it causing future trouble w/images
 
-export const stakingImageMapping = {
-  "GOV5r": [ 'BAL', 'YFI', 'CRV', 'UNI'],
-  "UNIV2:ETH-GOV5r": [ 'UNI', 'YFI', 'CRV', 'BAL']
-}
-
 export const tokenMetadata = {
   "BAT": {
     address: "0x0d8775f648430679a709e98d2b0cb6250d2887ef",
@@ -161,7 +180,7 @@ export const tokenMetadata = {
   },
   "MKR": {
     address: "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
-    name: "Maker",
+    name: "MakerDAO",
     image: mkr
   },
   "BAL": {
@@ -182,6 +201,10 @@ export const tokenMetadata = {
   "ETH": {
     name: "Ethereum",
     image: eth
+  },
+  "ZRX": {
+    name: "0x",
+    image: zrx
   },
   "SNX": {
     name: "Synthetix",
@@ -213,7 +236,7 @@ export const tokenMetadata = {
   },
   "AAVE": {
     address: '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9',
-    name: 'AaveToken',
+    name: 'Aave',
     image: aave
   },
   "OMG": {
@@ -264,7 +287,7 @@ export const marketColumns = [
   }
 ]
 
-export const eventColumns = [
+export const eventDesktopColumns = [
   {
     id: 'blockNumber',
     label: 'BLOCK',
@@ -298,7 +321,30 @@ export const eventColumns = [
   },
 ]
 
-export const categoryColumns = [
+export const eventNativeColumns = [
+  {
+    id: 'event',
+    label: 'AMOUNT',
+    minWidth: 25,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'type',
+    label: 'TYPE',
+    minWidth: 25,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'tx',
+    label: 'TRANSACTION',
+    minWidth: 50,
+    align: 'center'
+  },
+]
+
+export const categoryDesktopColumns = [
   {
     id: 'symbol',
     label: 'SYMBOL',
@@ -356,6 +402,94 @@ export const categoryColumns = [
     format: (value) => `$${value.toLocaleString()}`,
   },
 ]
+
+export const categoryNativeColumns = [
+  {
+    id: 'symbol',
+    label: 'SYMBOL',
+    minWidth: 25,
+    align: 'center',
+    format: (value) => `${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'size',
+    label: 'SIZE',
+    minWidth: 15,
+    align: 'center',
+    format: (value) => `${value.toLocaleString()}`,
+  },
+  {
+    id: 'supply',
+    label: 'SUPPLY',
+    minWidth: 25,
+    align: 'center',
+    format: (value) => `${value.toLocaleString()}`,
+  },
+]
+
+
+export const poolDesktopColumns = [
+  { id: 'name', label: 'NAME', minWidth: 250 },
+  {
+    id: 'symbol',
+    label: 'SYMBOL',
+    minWidth: 25 ,
+    align: 'center',
+    format: (value) => `[${value.toLocaleString('en-US')}]`,
+  },
+  {
+    id: 'price',
+    label: 'PRICE',
+    minWidth: 150,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'delta',
+    label: '24HR \u0394',
+    minWidth: 25,
+    align: 'center',
+    format: (value) => `%${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'marketcap',
+    label: 'MARKET CAP',
+    minWidth: 200,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'volume',
+    label: 'VOLUME',
+    minWidth: 200,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+];
+
+export const poolNativeColumns  = [
+  {
+    id: 'symbol',
+    label: 'SYMBOL',
+    minWidth: 25 ,
+    align: 'center',
+    format: (value) => `[${value.toLocaleString('en-US')}]`,
+  },
+  {
+    id: 'price',
+    label: 'PRICE',
+    minWidth: 50,
+    align: 'center',
+    format: (value) => `$${value.toLocaleString('en-US')}`,
+  },
+  {
+    id: 'delta',
+    label: '24HR \u0394',
+    minWidth: 25,
+    align: 'center',
+    format: (value) => `%${value.toLocaleString('en-US')}`,
+  }
+];
 
 export const DESKTOP_MASSIVE = 3750
 export const DESKTOP_HUGE = 2750

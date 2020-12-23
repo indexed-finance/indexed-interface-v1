@@ -10,6 +10,7 @@ import TableRow from '@material-ui/core/TableRow'
 import { styled } from '@material-ui/core/styles'
 import ContentLoader from "react-content-loader"
 
+import { poolNativeColumns, poolDesktopColumns } from '../assets/constants/parameters'
 import style from '../assets/css/components/table'
 import getStyles from '../assets/css'
 
@@ -44,59 +45,22 @@ const Loader = ({ theme }) => (
     </ContentLoader>
 )
 
-const columns = [
-  { id: 'name', label: 'NAME', minWidth: 250 },
-  {
-    id: 'symbol',
-    label: 'SYMBOL',
-    minWidth: 25 ,
-    align: 'center',
-    format: (value) => `[${value.toLocaleString('en-US')}]`,
-  },
-  {
-    id: 'price',
-    label: 'PRICE',
-    minWidth: 150,
-    align: 'center',
-    format: (value) => `$${value.toLocaleString('en-US')}`,
-  },
-  {
-    id: 'delta',
-    label: '24HR \u0394',
-    minWidth: 25,
-    align: 'center',
-    format: (value) => `%${value.toLocaleString('en-US')}`,
-  },
-  {
-    id: 'marketcap',
-    label: 'MARKET CAP',
-    minWidth: 200,
-    align: 'center',
-    format: (value) => `$${value.toLocaleString('en-US')}`,
-  },
-  {
-    id: 'volume',
-    label: 'VOLUME',
-    minWidth: 200,
-    align: 'center',
-    format: (value) => `$${value.toLocaleString('en-US')}`,
-  },
-];
 
 export default function StickyHeadTable(props) {
   let { market, triggerMarket, state } = props
   let { request, native, indexes } = state
-  let { overflowX, height } = style.getFormatting(native)
+  let { overflowX, height, padding } = style.getFormatting(native)
   const classes = useStyles()
   const theme = useTheme()
 
   return (
     <div className={classes.root}>
       <TableContainer style={{ overflowX, height }} >
-        <Table stickyHeader className={classes.table}>
+        <Table stickyHeader className={classes.table} dense={state.native}>
           <TableHead>
             <Row>
-              {columns.map((column) => (
+              {(state.native ? poolNativeColumns : poolDesktopColumns)
+                .map((column) => (
                 <TableCell
                   key={column.id}
                   align={column.align}
@@ -112,13 +76,14 @@ export default function StickyHeadTable(props) {
 
               return (
                 <Row selected={market === row.symbol} onClick={() => triggerMarket(row.symbol)} hover tabIndex={-1} key={index}>
-                  {columns.map((column, i) => {
+                  {(state.native ? poolNativeColumns : poolDesktopColumns)
+                    .map((column, i) => {
                     const value = row[column.id];
                     if(!row.active && (column.id !== 'name' && column.id !== 'symbol')) {
                       return <TableCell key={column.id + row.symbol + i} align={column.align} />
                     } else if(column.id === 'delta') {
                       return (
-                        <TableCell key={column.id + row.symbol + i} align={column.align}>
+                        <TableCell key={column.id + row.symbol + i} align={column.align} style={{ padding }}>
                           <span style={{ color: value > 0 ? '#00e79a': '#ff005a'}}>
                             ({value > 0 ? '+' : ''}{value}%)
                           </span>
@@ -126,7 +91,7 @@ export default function StickyHeadTable(props) {
                        )
                     } else {
                       return (
-                        <TableCell key={column.id + row.symbol + i} align={column.align}>
+                        <TableCell key={column.id + row.symbol + i} align={column.align} style={{ padding }}>
                           {(column.format && typeof value === 'number') ? column.format(value) : value}
                         </TableCell>
                       )

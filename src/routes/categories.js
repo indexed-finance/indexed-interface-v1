@@ -8,7 +8,7 @@ import Container from '../components/container'
 import List from '../components/list'
 
 import { Link } from 'react-router-dom'
-import { categoryColumns } from '../assets/constants/parameters'
+import { categoryNativeColumns, categoryDesktopColumns  } from '../assets/constants/parameters'
 import { getCategoryImages, filtered, getHelperData } from '../assets/constants/functions'
 import style from '../assets/css/routes/categories'
 import getStyles from '../assets/css'
@@ -59,7 +59,7 @@ export default function Categories(){
                   <div className={classes.divider} />
                   <List
                     data={getHelperData(Object.values(filtered(state.indexes, value.indexes)))}
-                    columns={categoryColumns}
+                    columns={state.native ? categoryNativeColumns : categoryDesktopColumns}
                     props={state.indexes}
                     height={250}
                     href

@@ -12,7 +12,7 @@ import { BigNumber, formatBalance } from '@indexed-finance/indexed.js'
 const useStyles = getStyles(style)
 
 export default function WeightedToken({ token }) {
-  let { image } = tokenMetadata[token.symbol];
+  let { image, name } = tokenMetadata[token.symbol];
   let { data } = usePalette(image)
   const classes = useStyles()
 
@@ -44,7 +44,7 @@ export default function WeightedToken({ token }) {
       <div className={classes.percentage}>
         <span className={classes.title}>
           <div className={classes.name}>
-            {token.name}
+            {name}
           </div>
           <span>[{token.symbol}] </span>
         </span>

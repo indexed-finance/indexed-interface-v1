@@ -20,7 +20,7 @@ const routerABI = require('../../assets/constants/abi/UniswapV2Router.json')
 const useStyles = getStyles(style);
 
 export default function TradeTab({ metadata }) {
-  const { useInput, useOutput, tradeState, setHelper, updatePool, whitelistTokens, selectWhitelistToken, switchTokens } = useTradeState();
+  const { useInput, feeString, priceString, useOutput, tradeState, setHelper, updatePool, whitelistTokens, selectWhitelistToken, switchTokens } = useTradeState();
   const [ isRendered, setRender ] = useState(false);
   const [approvalNeeded, setApprovalNeeded] = useState(false);
 
@@ -71,12 +71,6 @@ export default function TradeTab({ metadata }) {
   }, [  , state.web3.injected, isRendered ])
 
   let whitelistSymbols = whitelistTokens.map(t => t.symbol);
-  let inputSymbol, outputSymbol;
-  if (tradeState.helper) {
-    inputSymbol = tradeState.helper.getTokenInfo(tradeState.input.address).symbol;
-    outputSymbol = tradeState.helper.getTokenInfo(tradeState.output.address).symbol;
-
-  }
 
   useEffect(() => {
     if (!tradeState.helper)  return;
@@ -136,26 +130,16 @@ export default function TradeTab({ metadata }) {
     updatePool(true);
   }
 
-  let priceString = tradeState.helper ? `1 ${inputSymbol} = ${tradeState.price} ${outputSymbol}` : '';
-
-  let feeString;
-  if (tradeState.helper) {
-    const { amount, decimals, address } = tradeState.input;
-    const { symbol } = tradeState.helper.getTokenInfo(address);
-    const fee = formatBalance(amount.times(3).div(1000), decimals, 4);
-    feeString = `${fee} ${symbol}`;
-  }
-
   let { width, marginRight } = style.getFormatting(state.native)
 
   return (
     <Grid container direction='column' alignItems='center' justify='space-around' style={{ width }}>
       <Grid item xs={12} md={12} lg={12} xl={12} key='0'>
         {
-          tradeState.helper && <TradeInput inputWidth={250} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useInput} />
+          tradeState.helper && <TradeInput inputWidth={300} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useInput} />
         }
         {
-          !tradeState.helper  && <Input label='AMOUNT' variant='outlined' style={{ width: 250 }} InputProps={{ endAdornment: 'ETH' }} />
+          !tradeState.helper  && <Input label='AMOUNT' variant='outlined' style={{ width: 300 }} InputProps={{ endAdornment: 'ETH' }} />
         }
       </Grid >
       <Grid item xs={12} md={12} lg={12} xl={12} key='1'>
@@ -166,10 +150,10 @@ export default function TradeTab({ metadata }) {
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} key='2'>
         {
-          tradeState.helper && <TradeInput inputWidth={250} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useOutput} />
+          tradeState.helper && <TradeInput inputWidth={300} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useOutput} />
         }
         {
-          !tradeState.helper  && <Input label='AMOUNT' variant='outlined' style={{ width: 250 }} InputProps={{ endAdornment: metadata.symbol }} />
+          !tradeState.helper  && <Input label='AMOUNT' variant='outlined' style={{ width: 300 }} InputProps={{ endAdornment: metadata.symbol }} />
         }
       </Grid>
 

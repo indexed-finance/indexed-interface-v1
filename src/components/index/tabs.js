@@ -10,7 +10,7 @@ import IconButton from '@material-ui/core/IconButton'
 import Tab from '@material-ui/core/Tab'
 import { Link } from 'react-router-dom'
 
-import { formatBalance, BigNumber } from '@indexed-finance/indexed.js'
+import { formatBalance, BigNumber, toBN } from '@indexed-finance/indexed.js'
 import ButtonSecondary from '../buttons/secondary'
 import ButtonPrimary from '../buttons/primary'
 import TransactionButton from '../buttons/transaction'
@@ -22,13 +22,13 @@ import style from '../../assets/css/components/tabs'
 import etherscan from '../../assets/images/etherscan.png'
 import uni from '../../assets/images/uni.png'
 import { getPair } from '../../lib/markets'
-import { getMarketTrades } from '../../api/gql'
+import { getMarketTrades, getSwaps } from '../../api/gql'
 import { store } from '../../state'
 import getStyles from '../../assets/css'
 
 import { marketColumns } from '../../assets/constants/parameters'
+import { computeUniswapPairAddress } from '@indexed-finance/indexed.js/dist/utils/address'
 
-const WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
 const BN_ZERO = new BigNumber(0)
 
 const Exit = styled(ExitIcon)({
@@ -85,8 +85,11 @@ function TabPanel(props) {
 
 const dummy = { tokens: [], pool: { feesTotalUSD: 0,  swapFee: BN_ZERO, size: 0 }}
 
+const swapsColumns = marketColumns.filter((i) => i.id !== 'type')
+
 export default function VerticalTabs({ data }) {
   const [ trades, setTrades ] = useState([])
+  const [ swaps, setSwaps ] = useState([])
   const [ value, setValue ] = useState(0)
   const [ meta, setMeta ] = useState(dummy)
   const classes = useStyles()
@@ -114,44 +117,98 @@ export default function VerticalTabs({ data }) {
     setValue(newValue);
   }
 
+  const sortSwaps = async(swaps, book) => {
+    for(let order in swaps){
+      let {
+        tokenIn,
+        tokenOut,
+        tokenAmountIn,
+        tokenAmountOut,
+        timestamp,
+        id
+      } = swaps[order]
+
+      let input = helper.getTokenByAddress(tokenIn);
+      let output = helper.getTokenByAddress(tokenOut);
+      let transactionHash = id.split('-')[0];
+      let short = shortenHash(transactionHash);
+
+      book.push({
+        input: `${formatBalance(toBN(tokenAmountIn), input.decimals, 2)} ${input.symbol}`,
+        output: `${formatBalance(toBN(tokenAmountOut), output.decimals, 2)} ${output.symbol}`,
+        tx: hash(short, transactionHash),
+        time: `${timestamp}`,
+      })
+    }
+    return book;
+  }
+
+  const sortTrades = (trades, history) => {
+    for(let order in trades){
+      let {
+        amount0In,
+        amount1In,
+        amount0Out,
+        amount1Out,
+        timestamp,
+        transaction,
+        pair: {
+          token0: { id: token0Address }
+        }
+      } = trades[order];
+      const poolIsToken0 = token0Address.toLowerCase() === meta.address.toLowerCase();
+      let poolAmountIn, poolAmountOut, wethAmountIn, wethAmountOut;
+      if (poolIsToken0) {
+        poolAmountIn = amount0In;
+        poolAmountOut = amount0Out;
+        wethAmountIn = amount1In;
+        wethAmountOut = amount1Out;
+      } else {
+        wethAmountIn = amount0In;
+        wethAmountOut = amount0Out;
+        poolAmountIn = amount1In;
+        poolAmountOut = amount1Out;
+      }
+
+      // let orderType = parseFloat(amount0In) === 0 ? 'SELL' : 'BUY'
+      let short = shortenHash(transaction.id)
+
+      if (parseFloat(wethAmountIn) === 0) {
+        history.push({
+          input: `${parseFloat(poolAmountIn).toFixed(2)} ${data.symbol}`,
+          output: `${parseFloat(wethAmountOut).toFixed(2)} ETH`,
+          tx: hash(short, transaction.id),
+          time: `${timestamp}`,
+          type: 'SELL'
+        })
+      } else {
+        history.push({
+          input: `${parseFloat(wethAmountIn).toFixed(2)} ETH`,
+          output: `${parseFloat(poolAmountOut).toFixed(2)} ${data.symbol}`,
+          tx: hash(short, transaction.id),
+          time: `${timestamp}`,
+          type: 'BUY'
+        })
+      }
+    }
+    return history;
+  }
+
   useEffect(() => {
     const getTrades = async() => {
-      if(Object.values(data).length > 0 && meta != dummy){
-        let pair = await getPair(state.web3[process.env.REACT_APP_ETH_NETWORK], process.env.REACT_APP_WETH, meta.address)
-        let trades = await getMarketTrades(pair.options.address)
-        let history = []
+      if(Object.values(data).length > 0 && meta !== dummy && helper) {
+        let pair = computeUniswapPairAddress(process.env.REACT_APP_WETH, meta.address);
+        let swaps = await getSwaps(meta.address.toLowerCase());
+        let trades = await getMarketTrades(pair);
+        let history = await sortTrades(trades, []);
+        let orderbook = await sortSwaps(swaps, []);
 
-        for(let order in trades){
-          let {
-            amount0In, amount1In, amount0Out, amount1Out, timestamp, transaction
-          } = trades[order]
-
-          let orderType = parseFloat(amount1In) == 0 ? 'SELL' : 'BUY'
-          let short = shortenHash(transaction.id)
-
-          if(orderType == 'BUY'){
-            history.push({
-              output: `${parseFloat(amount0Out).toFixed(2)} ${data.symbol}`,
-              input: `${parseFloat(amount1In).toFixed(2)} ETH`,
-              tx: hash(short, transaction.id),
-              time: Date.now(timestamp*1000),
-              type: orderType
-            })
-          } else {
-            history.push({
-              input: `${parseFloat(amount0In).toFixed(2)} ${data.symbol}`,
-              output: `${parseFloat(amount1Out).toFixed(2)} ETH`,
-              tx: hash(short, transaction.id),
-              time: Date.now(timestamp*1000),
-              type: orderType
-            })
-          }
-        }
         setTrades(history.reverse())
+        setSwaps(orderbook.reverse())
       }
     }
     getTrades()
-  }, [ meta ])
+  }, [ meta, helper ])
 
   let { height, width, spacing } = style.getFormatting()
 
@@ -166,7 +223,8 @@ export default function VerticalTabs({ data }) {
         >
           <Tab key='assets' label="ASSETS" {...a11yProps(0)} />
           <Tab key='trades' label="TRADES" {...a11yProps(1)} />
-          <Tab key='info' label="INFO" {...a11yProps(2)} />
+          <Tab key='assets' label="SWAPS" {...a11yProps(2)} />
+          <Tab key='info' label="INFO" {...a11yProps(3)} />
         </Tabs>
       </div>
 
@@ -187,6 +245,10 @@ export default function VerticalTabs({ data }) {
       </TabPanel>
 
       <TabPanel className={classes.panels} value={value} index={2}>
+        <List height={height} columns={swapsColumns} data={swaps} />
+      </TabPanel>
+
+      <TabPanel className={classes.panels} value={value} index={3}>
         <Grid item container direction='row' alignItems='flex-start' justify='start' spacing={4}>
           <Grid item key='uniswap'>
             <div>

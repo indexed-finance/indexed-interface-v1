@@ -15,7 +15,6 @@ import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import RemoveCircleOutlinedIcon from '@material-ui/icons/RemoveCircleOutlined';
 
 import jazzicon from '@metamask/jazzicon'
-import { getAllHelpers } from '@indexed-finance/indexed.js';
 
 import { toChecksumAddress } from '../assets/constants/functions'
 import { WEB3_PROVIDER, INCORRECT_NETWORK } from '../assets/constants/parameters'
@@ -50,7 +49,6 @@ export default function Navigation({ mode }) {
     let accounts = await web3.eth.getAccounts();
     let account = toChecksumAddress(accounts[0]);
     let network = await web3.eth.net.getId();
-    let helper = await getAllHelpers(web3, account);
 
     const expectedID = process.env.REACT_APP_ETH_NETWORK === 'mainnet' ? 1 : 4
     if((+network) !== expectedID){
@@ -59,7 +57,7 @@ export default function Navigation({ mode }) {
       setComponent(<Blockie address={account} />)
       setAnchorEl(null)
       setLogin(true)
-      dispatch({ type: 'WEB3', payload: { web3, account, network, helper } });
+      dispatch({ type: 'WEB3', payload: { web3, account, network } });
     }
   }
 
@@ -132,9 +130,6 @@ export default function Navigation({ mode }) {
 
     return(
       <Fragment>
-        <Link className={classes.href} onClick={connectWeb3}>
-          <MenuItem>CONNECT WALLET</MenuItem>
-        </Link>
         {state.native && (
           <Link className={classes.href} onClick={changeTheme}>
             <MenuItem>LIGHT/DARK MODE</MenuItem>
@@ -146,6 +141,12 @@ export default function Navigation({ mode }) {
         <Link className={classes.href} to='/governance' onClick={handleClose}>
           <MenuItem>GOVERNANCE</MenuItem>
         </Link>
+        <Link className={classes.href} to='/swap' onClick={handleClose}>
+          <MenuItem>SWAP</MenuItem>
+        </Link>
+        <a href='https://docs.indexed.finance' className={classes.href}>
+          <MenuItem>DOCS</MenuItem>
+        </a>
         <Link className={classes.href} to='/' onClick={handleClose}>
           <MenuItem>POOLS</MenuItem>
         </Link>
@@ -174,6 +175,12 @@ export default function Navigation({ mode }) {
         </Link>
         <Link className={classes.href} to='/' onClick={handleClose}>
           <MenuItem>POOLS</MenuItem>
+        </Link>
+        <a href='https://docs.indexed.finance' className={classes.href}>
+          <MenuItem>DOCS</MenuItem>
+        </a>
+        <Link className={classes.href} to='/swap' onClick={handleClose}>
+          <MenuItem>SWAP</MenuItem>
         </Link>
         <Link className={classes.href} to='/stake' onClick={handleClose}>
           <MenuItem>STAKE</MenuItem>
@@ -205,11 +212,11 @@ export default function Navigation({ mode }) {
                   <Link to='/categories' className={classes.href}>
                     <h3> CATEGORIES </h3>
                   </Link>
-                  <Link to='/' className={classes.href}>
-                    <h3> POOLS </h3>
-                  </Link>
                   <Link to='/stake' className={classes.href}>
                     <h3> STAKE </h3>
+                  </Link>
+                  <Link to='/' className={classes.href}>
+                    <h3> POOLS </h3>
                   </Link>
                   <a href='https://docs.indexed.finance' className={classes.href}>
                     <h3> DOCS </h3>

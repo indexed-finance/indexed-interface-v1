@@ -113,7 +113,20 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
       const outputAmount = await state.helper.getAmountOut(input.address, output.address, input.amount);
       output.amount = outputAmount.amount;
       output.displayAmount = outputAmount.displayAmount;
-      const { displayAmount: price } = await state.helper.getAmountOut(input.address, output.address, toWei(1));
+
+      let perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
+      let perciseInput = input.amount.div(toBN(10).pow(input.decimals));
+      let price = perciseOutput.div(perciseInput);
+      let notANumber = isNaN(parseFloat(formatBalance(price, 1, 4)));
+
+      if(notANumber || amount.eq(0) || output.amount.eq(0)){
+        const oneToken = toBN(10).pow(input.decimals);
+        const standardRate = await state.helper.getAmountOut(input.address, output.address, oneToken);
+
+        perciseOutput = toBN(standardRate.amount).div(toBN(10).pow(output.decimals));
+        price = perciseOutput.div(toBN(1));
+      }
+
       dispatch([
         { type: 'SET_INPUT_TOKEN', token: input },
         { type: 'SET_OUTPUT_TOKEN', token: output },
@@ -127,14 +140,23 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
       output.displayAmount = action.amount;
       output.amount = toTokenAmount(action.amount, output.decimals);
 
-      console.log('INPUT', input.address)
-      console.log('OUTPUT', output.address, formatBalance(output.amount, output.decimals, 4))
-
       const inputAmount = await state.helper.getAmountIn(input.address, output.address, output.amount);
 
       input.amount = inputAmount.amount.lte(0) ? BN_ZERO : inputAmount.amount;
       input.displayAmount = inputAmount.amount.lte(0) ? '0.00' : inputAmount.displayAmount;
-      const { displayAmount: price } = await state.helper.getAmountOut(input.address, output.address, toWei(1));
+
+      let perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
+      let perciseInput = input.amount.div(toBN(10).pow(input.decimals));
+      let price = perciseOutput.div(perciseInput);
+      let notANumber = isNaN(parseFloat(formatBalance(price, 1, 4)));
+
+      if(notANumber || input.amount.eq(0) || output.amount.eq(0)){
+        const oneToken = toBN(10).pow(input.decimals);
+        const standardRate = await state.helper.getAmountOut(input.address, output.address, oneToken);
+
+        perciseOutput = toBN(standardRate.amount).div(toBN(10).pow(output.decimals));
+        price = perciseOutput.div(toBN(1));
+      }
 
       dispatch([
         { type: 'SET_INPUT_TOKEN', token: input },
@@ -160,7 +182,20 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
       let output = { ...state.input };
       let outputAmount = await state.helper.getAmountOut(input.address, output.address, input.amount);
       output = { ...output, ...outputAmount };
-      const { displayAmount: price } = await state.helper.getAmountOut(input.address, output.address, toWei(1));
+
+      let perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
+      let perciseInput = input.amount.div(toBN(10).pow(input.decimals));
+      let price = perciseOutput.div(perciseInput);
+      let notANumber = isNaN(parseFloat(formatBalance(price, 1, 4)));
+
+      if(notANumber || input.amount.eq(0) || output.amount.eq(0)){
+        const oneToken = toBN(10).pow(input.decimals);
+        const standardRate = await state.helper.getAmountOut(input.address, output.address, oneToken);
+
+        perciseOutput = toBN(standardRate.amount).div(toBN(10).pow(output.decimals));
+        price = perciseOutput.div(toBN(1));
+      }
+
       input.isPoolToken = !input.isPoolToken;
       output.isPoolToken = !output.isPoolToken;
       dispatch([
@@ -190,7 +225,19 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
         isPoolToken: false
       };
 
-      const { displayAmount: price } = await action.helper.getAmountOut(input.address, output.address, toWei(1));
+      let perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
+      let perciseInput = input.amount.div(toBN(10).pow(input.decimals));
+      let price = perciseOutput.div(perciseInput);
+      let notANumber = isNaN(parseFloat(formatBalance(price, 1, 4)));
+
+      if(notANumber || input.amount.eq(0) || output.amount.eq(0)){
+        const oneToken = toBN(10).pow(input.decimals);
+        const standardRate = await action.helper.getAmountOut(input.address, output.address, oneToken);
+
+        perciseOutput = toBN(standardRate.amount).div(toBN(10).pow(output.decimals));
+        price = perciseOutput.div(toBN(1));
+      }
+
       dispatch([
         { type: 'SET_UNISWAP_HELPER', helper: action.helper },
         { type: 'SET_INPUT_TOKEN', token: input },
@@ -209,18 +256,41 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
       }
 
       if (state.input.isPoolToken) {
-        const { amount, address } = state.input;
+        const { amount, address, decimals } = state.input;
         const outputAmount = await state.helper.getAmountOut(address, wlToken.address, amount);
-        const { displayAmount: price } = await state.helper.getAmountOut(state.input.address, address, toWei(1));
+
+        let perciseOutput = outputAmount.amount.div(toBN(10).pow(wlToken.deciamls));
+        let perciseInput = amount.div(toBN(10).pow(decimals));
+        let price = perciseOutput.div(perciseInput);
+        let notANumber = isNaN(parseFloat(formatBalance(price, 1, 4)));
+
+        if(amount.eq(0) || outputAmount.amount.eq(0)){
+          const oneToken = toBN(10).pow(decimals);
+          const standardRate = await state.helper.getAmountOut(address, wlToken.address, oneToken);
+
+          perciseOutput = toBN(standardRate.amount).div(toBN(10).pow(wlToken.decimals));
+          price = perciseOutput.div(toBN(1));
+        }
 
         dispatch([
           { type: 'SET_OUTPUT_TOKEN', token: { ...newToken, ...outputAmount } },
           { type: 'SET_PRICE', price }
         ])
       } else {
-        const { amount, address } = state.output;
+        const { amount, address, decimals } = state.output;
         const inputAmount = await state.helper.getAmountIn(wlToken.address, address, amount);
-        const { displayAmount: price } = await state.helper.getAmountOut(address, state.output.address, toWei(1));
+
+        let perciseInput = inputAmount.amount.div(toBN(10).pow(wlToken.decimals));
+        let perciseOutput = amount.div(toBN(10).pow(decimals));
+        let price = perciseOutput.div(perciseInput);
+
+        if(amount.eq(0) || inputAmount.amount.eq(0)){
+          const oneToken = toBN(10).pow(wlToken.decimals);
+          const standardRate = await state.helper.getAmountOut(wlToken.address, address, oneToken);
+
+          perciseOutput = toBN(standardRate.amount).div(toBN(10).pow(decimals));
+          price = perciseOutput.div(toBN(1));
+        }
 
         dispatch([
           { type: 'SET_INPUT_TOKEN', token: { ...newToken, ...inputAmount } },

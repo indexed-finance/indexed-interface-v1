@@ -14,9 +14,9 @@ import ButtonPrimary from '../buttons/primary'
 import { UNCLAIMED_CREDITS, TX_PENDING, TX_REVERTED, TX_CONFIRMED } from '../../assets/constants/parameters'
 import { ZERO_ADDRESS } from '../../assets/constants/addresses'
 
+import { eventNativeColumns, eventDesktopColumns } from '../../assets/constants/parameters'
 import MockERC20ABI from '../../assets/constants/abi/MockERC20.json'
 import PoolInitializer from '../../assets/constants/abi/PoolInitializer.json'
-import { eventColumns } from '../../assets/constants/parameters'
 import style from '../../assets/css/routes/pool'
 
 import { toContract } from '../../lib/util/contracts'
@@ -255,7 +255,7 @@ function InitializedPoolPage({ address, metadata }){
             {({ width, height }) => (
               <Container margin={marginX} padding="1em 0em" title="EVENTS">
                 <div className={classes.events}>
-                  <List height={250} columns={eventColumns} data={events} />
+                  <List height={250} columns={state.native ? eventNativeColumns : eventDesktopColumns} data={events} />
                 </div>
               </Container>
             )}

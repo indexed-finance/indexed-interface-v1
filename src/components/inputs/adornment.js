@@ -5,6 +5,13 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import MenuItem from '@material-ui/core/MenuItem'
 import Select from '@material-ui/core/Select'
 
+import { tokenMetadata, getTokenImage } from '../../assets/constants/parameters'
+
+const Adornment = styled(InputAdornment)({
+  overflow: 'none',
+  float: 'right',
+})
+
 const Selection = styled(Select)({
   padding: 5,
   '& .MuiInput-underline:before': {
@@ -13,21 +20,17 @@ const Selection = styled(Select)({
   }
 })
 
-const defaultSelections = [
-  { address:'0xc778417e063141139fce010982780140aa0cd5ab', symbol: 'ETH' },
-  { address: '0x2d952ad99184ed4638b9aa288f43de14de3147bf', symbol: 'WBTC' }
-]
-
 export default function CurrencySelect({ market, onSelect, assets }) {
-  const [ selections, setSelections ] = useState(defaultSelections)
+  const [ selections, setSelections ] = useState(assets)
   const [ currency, setCurrency ] = useState(market)
 
   const handleChange = (event) => {
     let { value } = event.target
-    let { address } = selections.find(i => i.symbol == value)
+    let target = selections.find(i => i.symbol == value)
+    const index = selections.indexOf(target);
 
     setCurrency(value)
-    onSelect(address)
+    onSelect(index)
   }
 
   useEffect(() => {
@@ -36,13 +39,33 @@ export default function CurrencySelect({ market, onSelect, assets }) {
     }
   }, [assets])
 
+  useEffect(() => {
+    if(currency !== market){
+      setCurrency(market)
+    }
+  }, [ market ])
+
+  let getImg = (cur) => {
+    let meta = tokenMetadata[cur.symbol];
+    if (!meta) {
+      return getTokenImage(cur);
+    } else {
+      return meta.image;
+    }
+  }
+
   return(
-    <InputAdornment style={{ paddingRight: 5 }} position="end">
+    <Adornment style={{ paddingRight: 0 }} position="end">
       <Selection value={currency} onChange={handleChange} >
         {selections.map((cur, i) => (
-          <MenuItem key={i} value={cur.symbol}>{cur.symbol}</MenuItem>
+          <MenuItem key={i} value={cur.symbol}>
+            <div style={{ width: 87.5, display: 'flex', flexWrap: 'nowrap', alignItems: 'center' }}>
+              <img src={getImg(cur)} style={{ width: 25, padding: 5 }} />
+              <span style={{ fontSize: 16, marginBlock: 0, marginTop: 0, marginLeft: 5, clear: 'both' }}> {cur.symbol} </span>
+            </div>
+          </MenuItem>
         ))}
       </Selection>
-    </InputAdornment>
+    </Adornment>
   )
 }
