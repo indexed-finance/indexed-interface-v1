@@ -57,6 +57,8 @@ export const initialState = {
     websocket: new Web3('wss://rinkeby.infura.io/ws/v3/1c6549e97ff24d9a99ba4e007b538de6'),
     injected: false
   },
+  didLoadHelper: false,
+  helper: null,
   background: isNight ? '#111111' : '#ffffff',
   color: isNight ? '#ffffff' : '#333333',
   native: isNative({ width: null }),
@@ -144,11 +146,6 @@ export const initialProposalState = {
 
 // Image size formatting over-ride w/ IMAGE_INLINE_SIZE_LIMIT
 // be weary of it causing future trouble w/images
-
-export const stakingImageMapping = {
-  "GOV5r": [ 'BAL', 'YFI', 'CRV', 'UNI'],
-  "UNIV2:ETH-GOV5r": [ 'UNI', 'YFI', 'CRV', 'BAL']
-}
 
 export const tokenMetadata = {
   "BAT": {
