@@ -1,11 +1,10 @@
-import { BigNumber, toWei, formatBalance, PoolHelper } from "@indexed-finance/indexed.js";
+import { BigNumber, formatBalance, PoolHelper } from "@indexed-finance/indexed.js";
 import Minter from '@indexed-finance/indexed.js/dist/minter';
 import { MintParams } from "@indexed-finance/indexed.js/dist/minter/types";
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { ZERO_ADDRESS } from "../../assets/constants/addresses";
 import { whitelistTokens } from "../../assets/constants/parameters";
 import useDebounce from "../../hooks/useDebounce";
-import useDebouncedChangeHandler from "../../hooks/useDebouncedChangeHandler";
 import {
   SetSlippage,
   SetSpecifiedSide,
@@ -13,7 +12,9 @@ import {
   UniswapMinterMiddlewareAction,
   SetInputToken,
   SetOutputToken,
-  SetHelper, SetMinter, SetParams, SetLoading, UpdateBalances
+  SetMinter,
+  SetParams,
+  SetLoading
 } from "../actions/uniswap-minter-actions";
 import { withUniswapMinterMiddleware } from "../middleware/uniswap-minter-middleware";
 
@@ -77,14 +78,6 @@ const initialState: UniswapMinterState = {
 
 const compareAddresses = (a: string, b: string): boolean => {
   return a.toLowerCase() === b.toLowerCase();
-}
-
-function upwardSlippage(num: BigNumber, slippage: number): BigNumber {
-  return num.times(1 + slippage).integerValue();
-}
-
-function downwardSlippage(num: BigNumber, slippage: number): BigNumber {
-  return num.times(1 - slippage).integerValue();
 }
 
 function uniswapMinterReducer(
