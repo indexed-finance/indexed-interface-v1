@@ -2,13 +2,16 @@ import React, { useEffect, useContext, useState } from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import { Dialog, DialogContent, DialogContentText, DialogTitle, Slide } from '@material-ui/core';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import Typography from '@material-ui/core/Typography';
 
 import { toHex } from '@indexed-finance/indexed.js'
 
 import ButtonPrimary from '../buttons/primary'
 import SwapInput from '../inputs/exchange'
 import Input from '../inputs/input'
-import style from '../../assets/css/components/trade'
+import style from '../../assets/css/components/modal'
 import getStyles from '../../assets/css'
 import { store } from '../../state'
 import { getERC20 } from '../../lib/erc20';
@@ -148,9 +151,15 @@ export default function UniswapMinter({ metadata }){
     TransitionComponent={Transition}
     onClose={toggleDisplay}
   >
-    <DialogTitle onClose={toggleDisplay}>Uniswap Minter</DialogTitle>
+    <DialogTitle disableTypography onClose={toggleDisplay}>
+      <Typography variant="h6">Uniswap Minter</Typography>
+      {toggleDisplay ? (
+        <IconButton aria-label="close" className={classes.closeButton} onClick={toggleDisplay}>
+          <CloseIcon />
+        </IconButton>
+      ) : null}
+    </DialogTitle>
     <DialogContent /* style={{ width: 600 }} */>
-      
       <Grid
         container
         direction='column'
@@ -187,7 +196,7 @@ export default function UniswapMinter({ metadata }){
             ? <ButtonPrimary onClick={approvMinter} style={{ margin: 0 }} variant='filled' color="secondary">
                 Approve Minter
               </ButtonPrimary>
-            : <ButtonPrimary onClick={mintTokens} disabled={!minterState.ready} style={{ margin: 0 }} variant='filled' color="primary">
+            : <ButtonPrimary onClick={mintTokens} disabled={!minterState.ready} style={{ margin: 0, marginBottom: 25 }} variant='filled' color="primary">
               Mint
             </ButtonPrimary>
           }
@@ -198,8 +207,8 @@ export default function UniswapMinter({ metadata }){
       <ButtonPrimary disabled={minterState.loading} onClick={updateParams} variant='filled' color="primary">
         GET BEST PRICE
       </ButtonPrimary>
-      
-      
+
+
     </DialogActions> */}
   </Dialog>
 }

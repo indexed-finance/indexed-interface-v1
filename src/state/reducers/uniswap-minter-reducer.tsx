@@ -141,7 +141,7 @@ function uniswapMinterReducer(
   const setParams = (action: SetParams) => {
     newState.params = action.params;
   }
-  
+
   const setLoading = (action: SetLoading) => {
     newState.loading = action.loading;
   }
@@ -240,7 +240,7 @@ export function useMinterTokenActions(
     value: displayAmount,
     name: symbol,
     disabled: isInput,
-    
+
     onChange: (event) => {
       event.preventDefault();
       let value = event.target.value;

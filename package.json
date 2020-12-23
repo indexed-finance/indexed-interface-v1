@@ -40,6 +40,7 @@
     "d3-time-format": "^3.0.0",
     "decimal.js": "^10.2.0",
     "env-cmd": "^10.1.0",
+    "eth-sig-util": "^3.0.0",
     "ethers": "^5.0.14",
     "fortmatic": "^2.2.1",
     "framer-motion": "^2.9.4",
