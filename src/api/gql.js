@@ -109,11 +109,10 @@ const swapQuery = (poolAddress) => `
 
 const categoryInfoQuery = (id) => `
 {
-  categories(where: { id: "${id}" }) {
+  category(id: "${id}") {
     tokens {
       symbol
       priceUSD
-      total
       name
     }
   }
@@ -258,9 +257,9 @@ export async function getSwaps(poolAddress) {
 }
 
 export async function getCategory(id) {
-  let { data: { categories } } = await execRequest(categoryInfoQuery(id));
+  let { data: { category } } = await execRequest(categoryInfoQuery(id));
 
-  return categories[0].tokens;
+  return category.tokens;
 }
 
 export async function getUnitializedPool(address) {
