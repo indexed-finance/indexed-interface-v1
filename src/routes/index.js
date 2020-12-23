@@ -124,7 +124,7 @@ export default function Index(){
         <Grid item>
           <div className={classes.nav}>
             <ButtonGroup disableElevation variant='outlined'>
-              <ButtonMarket style={styles.trade} onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
+              <ButtonMarket style={styles.trade} onClick={() => changeExecution('trade')}> Buy/Sell </ButtonMarket>
               <ButtonMarket style={styles.swap} onClick={() => changeExecution('swap')}> Swap </ButtonMarket>
               <ButtonMarket style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
               <ButtonMarket style={styles.burn} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
@@ -172,7 +172,7 @@ export default function Index(){
           <Grid item>
             <header className={classes.selections}>
               <ButtonGroup disableElevation variant='outlined'>
-                <ButtonMarket style={styles.trade} onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
+                <ButtonMarket style={styles.trade} onClick={() => changeExecution('trade')}> Buy/Sell </ButtonMarket>
                 <ButtonMarket style={styles.swap} onClick={() => changeExecution('swap')}> Swap </ButtonMarket>
                 <ButtonMarket style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
                 <ButtonMarket style={styles.burn} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
