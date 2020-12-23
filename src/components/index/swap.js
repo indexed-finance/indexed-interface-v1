@@ -143,8 +143,8 @@ export default function Swap({ metadata }){
         </div>
       </Grid>
       <Grid item>
-        {swapState.pool && <SwapInput onSelect={selectOutput} tokens={outputList} useToken={useOutput} label='RECIEVE' />}
-        {!swapState.pool && <Input label='RECIEVE' variant='outlined' style={{ width: 300 }} InputProps={{ endAdornment: ' ' }} />}
+        {swapState.pool && <SwapInput onSelect={selectOutput} tokens={outputList} useToken={useOutput} label='RECEIVE' />}
+        {!swapState.pool && <Input label='RECEIVE' variant='outlined' style={{ width: 300 }} InputProps={{ endAdornment: ' ' }} />}
       </Grid>
       <Grid item style={{ width: '100%'}}>
         <div className={classes.market} >

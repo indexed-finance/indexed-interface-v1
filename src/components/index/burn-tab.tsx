@@ -15,7 +15,7 @@ import { useBurnState } from '../../state/burn';
 import BurnForm from './burn-form';
 import style from '../../assets/css/components/mint'
 
-const RecieveInput = styled(Input)({
+const ReceiveInput = styled(Input)({
   width: 300,
 })
 
@@ -85,7 +85,7 @@ export default function BurnTab({ market, metadata }) {
     <div>
     <Grid container direction='column' alignItems='center' justify='space-around' style={{ width }}>
       <Grid item xs={12} md={12} lg={12} xl={12}>
-        <RecieveInput
+        <ReceiveInput
           label="DESTROY"
           variant='outlined'
           type='number'

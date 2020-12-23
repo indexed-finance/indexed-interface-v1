@@ -18,7 +18,7 @@ import { useMintState } from '../../state/mint';
 import Slippage from '../inputs/slippage';
 import UniswapMinter from './uniswap-minter';
 
-const RecieveInput = styled(Input)({
+const ReceiveInput = styled(Input)({
   width: 300,
 })
 
@@ -90,8 +90,8 @@ export default function Mint({ market, metadata }) {
   return (
     <Grid container direction='column' alignItems='center' justify='space-around' style={{ width }}>
       <Grid item xs={12} md={12} lg={12} xl={12}>
-        <RecieveInput
-          label="RECIEVE"
+        <ReceiveInput
+          label="RECEIVE"
           variant='outlined'
           type='number'
           {
