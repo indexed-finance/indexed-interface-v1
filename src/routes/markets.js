@@ -92,10 +92,12 @@ export default function Markets(){
             )}
             <div className={classes.market} style={{ paddingLeft, width: canvasWidth }}>
               {!native && (
-                 <Fragment>
+                <Fragment>
                   <h2> {market.name} [{market.symbol}]</h2>
-                  {state.request && !market.active && (<h3 style={{ color: 'orange' }}> UNINITIALISED </h3>)}
-                  {market.active && (
+                  {state.request && !active && (
+                      <h3 style={{ color: 'orange' }}> UNINITIALISED </h3>
+                  )}
+                  {active && (
                     <h3 style={{ color: '#999999' }}> ${market.price}
                       <span style={{ color: market.delta > 0 ? '#00e79a': '#ff005a'}}>
                         &nbsp;({market.delta > 0 ? '+' : ''}{market.delta}%)
@@ -106,9 +108,11 @@ export default function Markets(){
               )}
               {native && (
                  <Fragment>
-                  <h3 style={{ fontSize: '5vw'}}> {market.name.replace('Index', '')}</h3>
-                  {request && !market.active && (<h4 style={{ color: 'orange' }}> UNINITIALISED </h4>)}
-                  {market.active && (
+                  <h3 style={{ fontSize: '4.75vw'}}> {market.name.replace('Index', '')}</h3>
+                  {request && !active && (
+                    <h3 style={{ color: 'orange' }}> UNINITIALISED </h3>
+                  )}
+                  {active && (
                     <Fragment>
                       <h4 style={{ marginTop: 7.5, color: '#999999' }}> ${market.price}
                         <span style={{ color: market.delta > 0 ? '#00e79a': '#ff005a'}}>

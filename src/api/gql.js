@@ -113,7 +113,6 @@ const categoryInfoQuery = (id) => `
     tokens {
       symbol
       priceUSD
-      total
       name
     }
   }

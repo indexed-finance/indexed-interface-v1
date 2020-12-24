@@ -72,15 +72,6 @@ input[type=number] {
   border: 2px solid #666666;
 }
 
-@media only screen and (max-width: 600px) {
-
-  #landing-button {
-    margin-left: 50px !important;
-    margin-right: 25px !important;
-  }
-
-}
-
 .MuiFormLabel-root.Mui-focused {
     color: #999999 !important;
 }
@@ -352,6 +343,27 @@ a:hover {
     width: 100% !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
+  }
+
+}
+
+@media only screen and (max-width: 600px) {
+
+  #landing-button {
+    margin-left: 50px !important;
+    margin-right: 25px !important;
+  }
+
+  h1 {
+    font-size: 1.5em !important;
+  }
+
+}
+
+@media only screen and (max-width: 321px) {
+
+  h1 {
+    font-size: 1.25em !important;
   }
 
 }
