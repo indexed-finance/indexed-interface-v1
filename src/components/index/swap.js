@@ -50,7 +50,7 @@ export default function Swap({ metadata }){
     const amountIn = toHex(input.amount);
     const minimumOutput = toHex(minimum);
     let fn;
-  
+
     if(specifiedSide === 'input'){
       const maxPrice = bdiv(input.amount.times(1.02), output.amount);
       fn = pool.methods.swapExactAmountIn(
@@ -128,13 +128,13 @@ export default function Swap({ metadata }){
     }
   }, [])
 
-  let { marginRight, width } = style.getFormatting(state.native)
+  let { marginRight, width, inputWidth } = style.getFormatting(state.native)
 
   return (
     <Grid container direction='column' justify='space-between' alignItems='center' style={{ width }}>
       <Grid item>
-        {swapState.pool && <SwapInput onSelect={selectToken} tokens={tokenList} useToken={useInput} label='EXCHANGE' />}
-        {!swapState.pool && <Input label='EXCHANGE' variant='outlined' style={{ width: 300 }} InputProps={{ endAdornment: ' ' }} />}
+        {swapState.pool && <SwapInput inputWidth={inputWidth} onSelect={selectToken} tokens={tokenList} useToken={useInput} label='EXCHANGE' />}
+        {!swapState.pool && <Input label='EXCHANGE' variant='outlined' style={{ width: inputWidth }} InputProps={{ endAdornment: ' ' }} />}
       </Grid>
       <Grid item>
         <div className={classes.swap}>
@@ -143,8 +143,8 @@ export default function Swap({ metadata }){
         </div>
       </Grid>
       <Grid item>
-        {swapState.pool && <SwapInput onSelect={selectOutput} tokens={outputList} useToken={useOutput} label='RECEIVE' />}
-        {!swapState.pool && <Input label='RECEIVE' variant='outlined' style={{ width: 300 }} InputProps={{ endAdornment: ' ' }} />}
+        {swapState.pool && <SwapInput inputWidth={inputWidth} onSelect={selectOutput} tokens={outputList} useToken={useOutput} label='RECEIVE' />}
+        {!swapState.pool && <Input label='RECEIVE' variant='outlined' style={{ width: inputWidth }} InputProps={{ endAdornment: ' ' }} />}
       </Grid>
       <Grid item style={{ width: '100%'}}>
         <div className={classes.market} >

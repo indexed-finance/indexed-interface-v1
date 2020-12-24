@@ -111,7 +111,7 @@ const mapping = {
   [NATIVE_SMALL]: {
     top: 'calc(100px + .05vh)',
     canvasMargin: '3.25em 1.5em 1em 1.5em',
-    margin: '-.5em 1.5em 1em 1.5em',
+    margin: '-.75em 1.5em 1em 1.5em',
     paddingLeft: 12.5,
     pre2: 'calc(250px - 15vh)',
     canvasWidth: 250,

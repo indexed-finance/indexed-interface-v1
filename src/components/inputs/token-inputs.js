@@ -16,15 +16,13 @@ export default function TokenInputs({ isInitialiser, tokens, useToken, height, w
 
   let { state } = useContext(store)
 
-  let inputWidth = !state.native ? 200 : 175
-
   return (
     <List className={classes.list} style={{ height, width }} dense={state.native}>
       {
         tokens.map((token, index) => {
           let label = index === tokens.length-1 ? 'last' : 'item'
           let secondary =  state.native ? <span id={token.symbol} /> : null
-          return token && isInitialiser && token.amountRemaining.eq(0) ? <></> : <TokenInput isInitialiser={isInitialiser} key={index} index={index} label={label} secondary={secondary} token={token} useToken={useToken} inputWidth={inputWidth}  />
+          return token && isInitialiser && token.amountRemaining.eq(0) ? <></> : <TokenInput isInitialiser={isInitialiser} key={index} index={index} label={label} secondary={secondary} token={token} useToken={useToken} />
         })
       }
     </List>

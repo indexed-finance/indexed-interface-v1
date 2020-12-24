@@ -55,39 +55,48 @@ const setStyle = (theme) => ({
 const mapping = {
   [DESKTOP_SMALL]: {
     width: 'auto',
-    marginRight: 10
+    marginRight: 10,
+    inputWidth: 300
   },
   [DESKTOP_NORMAL]: {
     width: 'auto',
-    marginRight: 10
+    marginRight: 10,
+    inputWidth: 300
   },
   [DESKTOP_LARGE]: {
     width: 'auto',
-    marginRight: 10
+    marginRight: 10,
+    inputWidth: 300
   },
   [DESKTOP_WIDE]: {
     width: 'auto',
-    marginRight: 10
+    marginRight: 10,
+    inputWidth: 300
   },
   [DESKTOP_HUGE]: {
     width: 'auto',
-    marginRight: 10
+    marginRight: 10,
+    inputWidth: 300
   },
   [DESKTOP_MASSIVE]: {
     width: 'auto',
-    marginRight: 10
+    marginRight: 10,
+    inputWidth: 300
   },
   [NATIVE_SMALL]: {
     width: '100vw',
-    marginRight: 12.5
+    marginRight: 12.5,
+    inputWidth: 275
   },
   [NATIVE_NORMAL]: {
     width: '100vw',
-    marginRight: 12.5
+    marginRight: 12.5,
+    inputWidth: 300
   },
   [NATIVE_WIDE]: {
     width: '100vw',
-    marginRight: 12.5
+    marginRight: 12.5,
+    inputWidth: 300
   },
 }
 

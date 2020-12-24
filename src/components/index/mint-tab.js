@@ -85,7 +85,7 @@ export default function Mint({ market, metadata }) {
     verifyConnectivity()
   }, [  , state.web3.injected, isInit ])
 
-  let { width, height } = style.getFormatting(state.native)
+  let { width, height, inputWidth, buttonMargin } = style.getFormatting(state.native)
 
   return (
     <Grid container direction='column' alignItems='center' justify='space-around' style={{ width }}>
@@ -98,6 +98,7 @@ export default function Mint({ market, metadata }) {
             ...(bindPoolAmountInput)
           }
           InputProps={{ endAdornment: market }}
+          style={{ width: inputWidth }}
         />
         <Slippage setSlippage={setSlippage} slippage={mintState.slippage} />
       </Grid>
@@ -113,7 +114,7 @@ export default function Mint({ market, metadata }) {
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
-        <ButtonPrimary onClick={mint} disabled={!mintState.ready} margin={{ margin: 0, marginLeft: 50,  marginTop: 7.5 }}>
+        <ButtonPrimary onClick={mint} disabled={!mintState.ready} margin={buttonMargin.mint}>
           MINT
         </ButtonPrimary>
         {
@@ -121,9 +122,9 @@ export default function Mint({ market, metadata }) {
         }
         <ButtonPrimary
           onClick={uniswapMinter.toggleDisplay}
-          margin={{ float: 'left', margin: 25, marginTop: 7.5, marginLeft: 0 }}
+          margin={buttonMargin.uniswap}
         >
-          MINT WITH UNISWAP
+          {buttonMargin.text}
         </ButtonPrimary>
       </Grid>
     </Grid>
