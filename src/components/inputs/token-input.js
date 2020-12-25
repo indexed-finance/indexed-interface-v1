@@ -11,7 +11,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 
 import { toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 
-import ButtonTransaction from '../buttons/transaction'
+import ButtonTransaction from '../buttons/adornment'
 import Input from './input';
 
 import style from '../../assets/css/components/approvals'

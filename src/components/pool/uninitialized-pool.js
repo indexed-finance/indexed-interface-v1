@@ -29,7 +29,7 @@ function Target({ label, asset, i, height, r }){
   return(
     <Grid item style={{ height }} className={label}>
       <div>
-       <Weights native={r} asset={token} />
+       <Weights width='auto' native={r} asset={token} />
       </div>
       <div style={{ float: 'right',  marginTop:  !r ? '-2.25em' : '.75em'}}>
        <label> Ξ {((price * token.currentBalance)).toLocaleString()} </label>

@@ -92,7 +92,7 @@ const options = (padding, range, margin) => ({
 })
 
 
-const getConfig = (canvas, metadata, color, absolute) => {
+const getConfig = (canvas, metadata, color, absolute, label) => {
   const ctx = canvas.getContext("2d")
   var gradient = ctx.createLinearGradient(0, 337.5, 0, 25)
   let length = metadata.history.length
@@ -119,17 +119,15 @@ const getConfig = (canvas, metadata, color, absolute) => {
   }
 
   return {
-    datasets: [
-    {
+    datasets: [{
       backgroundColor: gradient,
-      fill: true,
-      borderWidth: 3,
-      borderColor: color,
       pointHoverBorderWidth: 15,
+      borderColor: color,
+      borderWidth: 3,
       pointRadius: 4,
-      data: data
-      }
-    ]
+      fill: true,
+      data
+    }]
   }
 }
 

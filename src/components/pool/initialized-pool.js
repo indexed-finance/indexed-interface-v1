@@ -104,8 +104,6 @@ function InitializedPoolPage({ address, metadata }){
         let provider = web3.websocket[process.env.REACT_APP_ETH_NETWORK]
         let tokenEvents = await getEvents(provider, address)
 
-        console.log('EVENTS', tokenEvents)
-
         setEvents(tokenEvents)
 
         if(web3.injected){
@@ -118,7 +116,7 @@ function InitializedPoolPage({ address, metadata }){
   }, [ , metadata ])
 
   let {
-    marginX, margin, width, padding, chartHeight, fontSize, percent, balanceHeight, paddingRight
+    marginX, margin, width, padding, chartHeight, fontSize, percent, balanceHeight, paddingRight, progressWidth
   } = style.getFormatting({ native, request, active: true })
 
   let { name, symbol } = metadata;
@@ -138,7 +136,7 @@ function InitializedPoolPage({ address, metadata }){
     }
     return (
     <Fragment>
-      <h3> {name} [{symbol}] </h3>
+      <h3 style={{ color: document.body.style.color }}> {name} [{symbol}] </h3>
       <div style={{ marginTop: 5} }>
         <Copyable text={address}>
           <h4>{address.substring(0, 6)}...{address.substring(38, 64)}</h4>
@@ -162,15 +160,16 @@ function InitializedPoolPage({ address, metadata }){
               <div className={classes.chart}>
                 <Spline
                   ready={metadata.address !== ZERO_ADDRESS}
-                  padding={padding}
-                  absolute={false}
-                  native={native}
-                  color='#ffa500'
                   metadata={{
                     address: metadata.address,
                     history: metadata.liquidity
                   }}
                   height={chartHeight}
+                  label='LIQUIDITY'
+                  padding={padding}
+                  absolute={false}
+                  native={native}
+                  color='#ffa500'
                 />
               </div>
               <div className={classes.stats} style={{ fontSize }}>
@@ -205,7 +204,7 @@ function InitializedPoolPage({ address, metadata }){
                     {metadata.assets.map((asset, i) => (
                       <Grid item key={i}>
                         <div className={classes.asset}>
-                          <Weights native={state.native} asset={asset} />
+                          <Weights width={progressWidth} native={state.native} asset={asset} />
                         </div>
                       </Grid>
                     ))}

@@ -95,7 +95,7 @@ export default function Markets(){
                 <Fragment>
                   <h2> {market.name} [{market.symbol}]</h2>
                   {state.request && !active && (
-                      <h3 style={{ color: 'orange' }}> UNINITIALISED </h3>
+                    <h3 style={{ color: 'orange' }}> UNINITIALISED </h3>
                   )}
                   {active && (
                     <h3 style={{ color: '#999999' }}> ${market.price}
