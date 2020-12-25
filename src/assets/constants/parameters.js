@@ -27,7 +27,7 @@ import ren from '../images/ren.png'
 import { isNative } from './functions'
 
 let currentTime = (new Date()).getHours()
-let isNight = (currentTime >= 17 || currentTime < 6)
+let isNight = (currentTime >= 17 || currentTime < 9)
 
 const rinkebyWhitelist = require('./whitelists/rinkeby-tokens.json');
 const mainnetWhitelist = require('./whitelists/limited-mainnet-tokens.json');
@@ -54,7 +54,10 @@ export const initialState = {
   web3: {
     mainnet: new Web3('https://mainnet.infura.io/v3/1c6549e97ff24d9a99ba4e007b538de6'),
     rinkeby: new Web3('https://rinkeby.infura.io/v3/1c6549e97ff24d9a99ba4e007b538de6'),
-    websocket: new Web3('wss://rinkeby.infura.io/ws/v3/1c6549e97ff24d9a99ba4e007b538de6'),
+    websocket: {
+      rinkeby: new Web3('wss://rinkeby.infura.io/ws/v3/1c6549e97ff24d9a99ba4e007b538de6'),
+      mainnet: new Web3('wss://mainnet.infura.io/ws/v3/1c6549e97ff24d9a99ba4e007b538de6')
+    },
     injected: false
   },
   didLoadHelper: false,

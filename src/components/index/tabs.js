@@ -1,8 +1,7 @@
 import React, {  useState, useEffect, useContext } from 'react'
 import PropTypes from 'prop-types'
 
-import { makeStyles, styled } from '@material-ui/core/styles'
-import ExitIcon from '@material-ui/icons/ExitToApp'
+import { makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
 import Tabs from '@material-ui/core/Tabs'
@@ -13,7 +12,7 @@ import { Link } from 'react-router-dom'
 import { formatBalance, BigNumber, toBN } from '@indexed-finance/indexed.js'
 import ButtonSecondary from '../buttons/secondary'
 import ButtonPrimary from '../buttons/primary'
-import TransactionButton from '../buttons/transaction'
+import ButtonTransaction from '../buttons/transaction'
 import Loader from '../loaders/tabs'
 import WeightedToken from './weighted-token'
 import List from '../list'
@@ -31,26 +30,12 @@ import { computeUniswapPairAddress } from '@indexed-finance/indexed.js/dist/util
 
 const BN_ZERO = new BigNumber(0)
 
-const Exit = styled(ExitIcon)({
-  fontSize: '1rem'
-})
-
-
-function hash(value, og) {
-  return (
-    <a style={{ 'text-decoration': 'none' }} href={`https://${process.env.REACT_APP_ETH_NETWORK === 'rinkeby' ? 'rinkeby.' : ''}etherscan.io/tx/${og}`} target='_blank'>
-      <TransactionButton> <o>{value}</o>&nbsp;<Exit/> </TransactionButton>
-    </a>
-  )
-}
-
 function a11yProps(index) {
   return {
     id: `vertical-tab-${index}`,
     'aria-controls': `vertical-tabpanel-${index}`,
   }
 }
-
 
 
 TabPanel.propTypes = {
@@ -60,7 +45,6 @@ TabPanel.propTypes = {
 }
 
 const useStyles = getStyles(style)
-
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -106,13 +90,6 @@ export default function VerticalTabs({ data }) {
     if (data && data.address && state.helper && !helper) setPool();
   }, [ state.web3.injected, data, state.helper ]);
 
-  const shortenHash = receipt => {
-    let length = receipt.length
-    let z4 = receipt.substring(0, 4)
-    let l4 = receipt.substring(length-4, length)
-    return `${z4}...${l4}`
-  }
-
   const handleChange = (event, newValue) => {
     setValue(newValue);
   }
@@ -131,12 +108,11 @@ export default function VerticalTabs({ data }) {
       let input = helper.getTokenByAddress(tokenIn);
       let output = helper.getTokenByAddress(tokenOut);
       let transactionHash = id.split('-')[0];
-      let short = shortenHash(transactionHash);
 
       book.push({
         input: `${formatBalance(toBN(tokenAmountIn), input.decimals, 2)} ${input.symbol}`,
         output: `${formatBalance(toBN(tokenAmountOut), output.decimals, 2)} ${output.symbol}`,
-        tx: hash(short, transactionHash),
+        tx: <ButtonTransaction value={transactionHash} />,
         time: `${timestamp}`,
       })
     }
@@ -171,13 +147,12 @@ export default function VerticalTabs({ data }) {
       }
 
       // let orderType = parseFloat(amount0In) === 0 ? 'SELL' : 'BUY'
-      let short = shortenHash(transaction.id)
 
       if (parseFloat(wethAmountIn) === 0) {
         history.push({
           input: `${parseFloat(poolAmountIn).toFixed(2)} ${data.symbol}`,
           output: `${parseFloat(wethAmountOut).toFixed(2)} ETH`,
-          tx: hash(short, transaction.id),
+          tx: <ButtonTransaction value={transaction.id} />,
           time: `${timestamp}`,
           type: 'SELL'
         })
@@ -185,7 +160,7 @@ export default function VerticalTabs({ data }) {
         history.push({
           input: `${parseFloat(wethAmountIn).toFixed(2)} ETH`,
           output: `${parseFloat(poolAmountOut).toFixed(2)} ${data.symbol}`,
-          tx: hash(short, transaction.id),
+          tx: <ButtonTransaction value={transaction.id} />,
           time: `${timestamp}`,
           type: 'BUY'
         })
@@ -203,14 +178,14 @@ export default function VerticalTabs({ data }) {
         let history = await sortTrades(trades, []);
         let orderbook = await sortSwaps(swaps, []);
 
-        setTrades(history.reverse())
-        setSwaps(orderbook.reverse())
+        setTrades(history)
+        setSwaps(orderbook)
       }
     }
     getTrades()
   }, [ meta, helper ])
 
-  let { height, width, spacing } = style.getFormatting()
+  let { height, width, spacing, infoSpacing } = style.getFormatting()
 
   return (
     <div className={classes.root} style={{ height, width }}>
@@ -239,17 +214,14 @@ export default function VerticalTabs({ data }) {
           {!state.request && (<Loader color={state.background} />)}
         </Grid>
       </TabPanel>
-
       <TabPanel className={classes.panels} value={value} index={1}>
         <List height={height} columns={marketColumns} data={trades} />
       </TabPanel>
-
       <TabPanel className={classes.panels} value={value} index={2}>
         <List height={height} columns={swapsColumns} data={swaps} />
       </TabPanel>
-
       <TabPanel className={classes.panels} value={value} index={3}>
-        <Grid item container direction='row' alignItems='flex-start' justify='start' spacing={4}>
+        <Grid item container direction='row' alignItems='flex-start' justify='start' spacing={infoSpacing}>
           <Grid item key='uniswap'>
             <div>
               <Link to={`/category/0x${data.category}`}>
@@ -278,6 +250,7 @@ export default function VerticalTabs({ data }) {
             <div className={classes.stats}>
               <ul>
                 <li> CUMULATIVE FEES: ${parseFloat(parseFloat(meta.pool.feesTotalUSD).toFixed(2)).toLocaleString()}</li>
+                <li> VOLUME: ${data.volume ? data.volume.toLocaleString() : '0.00'}</li>
                 <li> SWAP FEE: {formatBalance(meta.pool.swapFee, 18, 4) * 100}%</li>
                 <li> TVL: ${data.marketcap ? data.marketcap.toLocaleString() : '0.00'}</li>
                 <li> SUPPLY: {data.supply ? data.supply.toLocaleString() : '0.00'}</li>

@@ -94,7 +94,8 @@ export default function Category() {
 
       for(var x = 0; x < categoryTokens.length; x++){
         let { priceUSD } = categoryTokens[x]
-        categoryTokens[x].priceUSD = '$' + parseFloat(priceUSD).toFixed(2)
+        let price = parseFloat(priceUSD).toFixed(2)
+        categoryTokens[x].priceUSD = '$' + parseFloat(price).toLocaleString()
 
         categoryTokens[x].name = ImageCell(categoryTokens[x])
       }

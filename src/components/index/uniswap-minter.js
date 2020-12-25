@@ -84,7 +84,6 @@ export default function UniswapMinter({ metadata }){
 
   async function mintTokens() {
     const { params, minter, input, pool } = minterState;
-    console.log(`Account: ${state.account}`)
     const minterContract = toContract(state.web3.injected, MinterABI, minter.minterAddress);
     let fn;
     let opts = { from: state.account };
@@ -135,14 +134,7 @@ export default function UniswapMinter({ metadata }){
       .catch((() => {}));
   }
 
-  useEffect(() => {
-    if (!state.load) {
-      dispatch({
-        type: 'LOAD', payload: true
-      })
-    }
-  }, []);
-
+  let { inputWidth } = style.getFormatting(state.native)
 
   return <Dialog
     open={true}
@@ -159,7 +151,7 @@ export default function UniswapMinter({ metadata }){
         </IconButton>
       ) : null}
     </DialogTitle>
-    <DialogContent /* style={{ width: 600 }} */>
+    <DialogContent>
       <Grid
         container
         direction='column'
@@ -173,16 +165,16 @@ export default function UniswapMinter({ metadata }){
           </DialogContentText>
         </Grid>
         <Grid item>
-          {minterState.pool && <SwapInput onSelect={selectToken} tokens={tokenList} useToken={useInput} label='EXCHANGE' />}
-          {!minterState.pool && <Input label='EXCHANGE' type='number' variant='outlined' style={{ width: 300 }} InputProps={{ endAdornment: ' ' }} />}
+          {minterState.pool && <SwapInput inputWidth={inputWidth} onSelect={selectToken} tokens={tokenList} useToken={useInput} label='EXCHANGE' />}
         </Grid>
         <Grid item>
           <Input
             label='RECEIVE'
+            type='number'
             variant='outlined'
             { ...(useOutput().bindInput) }
-            style={{ width: 300 }}
             InputProps={{ endAdornment: metadata.symbol }}
+            style={{ width: inputWidth }}
           />
         </Grid>
         <Grid item>

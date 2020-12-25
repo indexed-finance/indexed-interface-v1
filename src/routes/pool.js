@@ -16,14 +16,16 @@ export default function Pool(){
     const retrievePool = async() => {
       let { indexes } = state
 
-      if(Object.keys(indexes).length > 0 && data.address === initialPoolState.address){
-        let target = Object.entries(indexes).find(x => x[1].address === address)
+      if(Object.keys(indexes).length > 0
+        && data === initialPoolState){        
+        let target = Object.entries(indexes)
+        .find(x => x[1].address === address)
 
         setData(target[1])
       }
     }
     retrievePool()
-  }, [ state, address, data.address ])
+  }, [ , state.indexes ])
 
   useEffect(() => {
     if(!state.load) {
@@ -35,7 +37,7 @@ export default function Pool(){
 
   let { active } = data
 
-  if (active === false) return <InitializerStateProvider>
+  if (active === false ) return <InitializerStateProvider>
     <UninitializedPool address={address} metadata={data} />
   </InitializerStateProvider>
   else return <InitializedPool address={address} metadata={data} />
