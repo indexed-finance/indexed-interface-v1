@@ -129,11 +129,11 @@ function Application(){
         for (let proposal of proposals) {
           const { description } = proposal;
           let title = description.split('\n').find(l => l.includes('#'));
-          if (title) title = title.split('\n').find(l => l.includes('#')).replace('#', '');
-          else title = description;
-          proposal.title = title;
+
+          if(title) proposal.title = title.replace('# ', '');
+          else proposal.title = ''
         }
-        dispatch({ type: 'GENERIC', payload: { proposals: { proposals, dailyDistributionSnapshots } } })
+        dispatch({ type: 'GENERIC', payload: { governance: { proposals, dailyDistributionSnapshots } } })
       }
 
       async function setInitializedPools() {
@@ -155,7 +155,7 @@ function Application(){
           let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(4), date: new Date(l.date * 1000) }))
           let past24h = snapshots.find((i) => (i.date * 1000) === target.getTime())
 
-          if(past24h === undefined) past24h = snapshots[snapshots.length-2];
+          if(!past24h) past24h = snapshots[snapshots.length-2]
 
           let delta24hr = snapshots.length === 1 ? '0' : (((snapshots[snapshots.length-1].value - past24h.value)/ past24h.value) * 100).toFixed(2).toString();
           let snapshotsLastDay = snapshots.filter(s => (s.date * 1000) >= target.getTime());
@@ -163,7 +163,7 @@ function Application(){
           let volume = volume24hr.toFixed(2)
 
           stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
-          stats.dailyVolume += volume
+          stats.dailyVolume += parseFloat(volume)
 
           let formattedName = name.replace(' Tokens', '')
 

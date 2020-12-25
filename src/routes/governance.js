@@ -229,8 +229,8 @@ export default function Governance(){
 
   useEffect(() => {
     const retrieveProposals = async() => {
-      if(state.request && state.proposals && Object.keys(state.proposals).length){
-        let { proposals, dailyDistributionSnapshots } = state.proposals
+      if(state.request && state.governance.proposals.length > 0){
+        let { proposals, dailyDistributionSnapshots } = state.governance
 
         let length = dailyDistributionSnapshots.length - 1
         let { active, inactive, delegated, voters } = dailyDistributionSnapshots[length]
@@ -252,7 +252,7 @@ export default function Governance(){
       }
     }
     retrieveProposals()
-  }, [ state.request ])
+  }, [ , state.request, state.governance ])
 
   useEffect(() => {
     if(!state.load){
@@ -320,7 +320,7 @@ export default function Governance(){
 
                 return (
                   <Item key={p.id} button onClick={f}>
-                    <ListItemText primary={<label>{p.description}</label>}
+                    <ListItemText primary={<label>{p.title}</label>}
                       secondary={
                         <div id={proposalState}>
                           <Lozenge isBold>

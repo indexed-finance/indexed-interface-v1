@@ -179,10 +179,9 @@ export default function Proposal(){
   }, [ state.web3.injected ])
 
   useEffect(() => {
-    if (!state.proposals.proposals) return;
+    if (!state.governance.proposals) return;
     const retrieveProposal = async() => {
-      let proposal = state.proposals.proposals.find(p => p.id == id)
-      //await getProposal(id)
+      let proposal = state.governance.proposals.find(p => p.id == id)
       let recentBlock = await state.web3.rinkeby.eth.getBlock('latest')
 
       setComponent({
