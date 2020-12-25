@@ -11,7 +11,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 
 import { toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 
-import ButtonTransaction from '../buttons/transaction'
+import ButtonTransaction from '../buttons/adornment'
 import Input from './input';
 
 import style from '../../assets/css/components/approvals'
@@ -95,7 +95,7 @@ export default function TokenInput(props) {
     }
   }, [ token.bindSetRemainderButton ])
 
-  let { show, inputWidth } = style.getFormatting(native)
+  let { show, fieldWidth } = style.getFormatting(native)
 
   return(
     <ListItem
@@ -131,7 +131,7 @@ export default function TokenInput(props) {
           label='AMOUNT'
           type='number'
           helperText={helperText}
-          style={{ width: props.isInitialiser ? inputWidth : props.inputWidth }}
+          style={{ width: fieldWidth }}
           InputLabelProps={{ shrink: true }}
           {...(token.bindApproveInput)}
           InputProps={{

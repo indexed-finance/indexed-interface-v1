@@ -125,8 +125,15 @@ function Application(){
       };
 
       async function setProposals() {
-        const proposals = { ...await getProposals() };
-        dispatch({ type: 'GENERIC', payload: { proposals } })
+        const { dailyDistributionSnapshots, proposals } = await getProposals();
+        for (let proposal of proposals) {
+          const { description } = proposal;
+          let title = description.split('\n').find(l => l.includes('#'));
+          if (title) title = title.split('\n').find(l => l.includes('#')).replace('#', '');
+          else title = description;
+          proposal.title = title;
+        }
+        dispatch({ type: 'GENERIC', payload: { proposals: { proposals, dailyDistributionSnapshots } } })
       }
 
       async function setInitializedPools() {
@@ -150,7 +157,7 @@ function Application(){
 
           if(past24h === undefined) past24h = snapshots[snapshots.length-2];
 
-          let delta24hr = snapshots.length === 1 ? 0 : (((snapshots[snapshots.length-1].value - past24h.value)/ past24h.value) * 100).toFixed(4);
+          let delta24hr = snapshots.length === 1 ? '0' : (((snapshots[snapshots.length-1].value - past24h.value)/ past24h.value) * 100).toFixed(2).toString();
           let snapshotsLastDay = snapshots.filter(s => (s.date * 1000) >= target.getTime());
           let volume24hr = snapshotsLastDay.reduce((t, snap) => t + parseFloat(snap.totalVolumeUSD), 0);
           let volume = volume24hr.toFixed(2)
@@ -164,7 +171,7 @@ function Application(){
           const index = {
             marketcap: parseFloat((+pool.pool.totalValueLockedUSD).toFixed(2)),
             price,
-            delta: delta24hr,
+            delta: parseFloat(delta24hr),
             supply,
             category,
             name: formattedName,

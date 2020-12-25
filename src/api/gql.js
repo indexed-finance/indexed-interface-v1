@@ -19,9 +19,21 @@ const proposalAndDistributionQuery = () => `
       id
       for
       against
-      description
+      proposer
       expiry
       state
+      title
+      description
+      signatures
+      calldatas
+      values
+      targets
+      votes {
+        id
+        voter
+        option
+        weight
+      }
     }
     dailyDistributionSnapshots(first: 30) {
       id

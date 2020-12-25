@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useContext } from 'react';
+
 import { styled } from '@material-ui/core/styles'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
@@ -12,6 +13,7 @@ import Input from './input';
 
 import style from '../../assets/css/components/approvals'
 import getStyles from '../../assets/css'
+import { store } from '../../state'
 
 import { tokenMetadata } from '../../assets/constants/parameters';
 
@@ -43,8 +45,11 @@ export default function TokenOutput(props) {
   const classes = useStyles();
   let token = props.useToken(props.index);
 
+  let { state } = useContext(store);
   let errorMsg = token.errorMessage;
   let error = !!errorMsg;
+
+  let { show, fieldWidth } = style.getFormatting(state.native)
 
   return(
     <ListItem
@@ -61,9 +66,11 @@ export default function TokenOutput(props) {
             disableRipple
           />
         </Tick>
-      <ListItemAvatar className={classes.wrapper}>
-        <Avatar className={classes.avatar} src={tokenMetadata[token.symbol].image} />
-      </ListItemAvatar>
+      {show && (
+        <ListItemAvatar className={classes.wrapper}>
+          <Avatar className={classes.avatar} src={tokenMetadata[token.symbol].image} />
+        </ListItemAvatar>
+      )}
       <ListItemText primary={token.symbol} secondary={props.secondary} />
       <SecondaryActionAlt>
         <AmountInput
@@ -72,7 +79,7 @@ export default function TokenOutput(props) {
           variant='outlined'
           label='AMOUNT'
           type='number'
-          style={{ width: props.inputWidth }}
+          style={{ width: fieldWidth }}
           InputLabelProps={{ shrink: true }}
           {...(token.bindInput)}
         />

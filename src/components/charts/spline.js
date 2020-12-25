@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { Line } from 'react-chartjs-2'
 import { useTheme } from '@material-ui/core/styles'
 import style from '../../assets/css/components/spline'
+import { ZERO_ADDRESS } from '../../assets/constants/addresses'
 import { max, min } from 'd3-array';
 
 import Loader from '../loaders/spline'
@@ -31,11 +32,16 @@ const options = (padding, range, margin) => ({
   maintainAspectRatio: true,
   aspectRatio: 6,
    tooltips: {
-      yAlign: 'right',
+     yAlign: 'right',
+     callbacks: {
+      label: function(tooltipItem, data) {
+        return `$${tooltipItem.yLabel}`
+      }
+    }
   },
   plugins: {
-     datalabels: false
- },
+    datalabels: false
+  },
   elements: {
       point:{
           radius: 0
@@ -91,7 +97,7 @@ const options = (padding, range, margin) => ({
 })
 
 
-const getConfig = (canvas, metadata, color, absolute) => {
+const getConfig = (canvas, metadata, color, absolute, label) => {
   const ctx = canvas.getContext("2d")
   var gradient = ctx.createLinearGradient(0, 337.5, 0, 25)
   let length = metadata.history.length
@@ -118,17 +124,15 @@ const getConfig = (canvas, metadata, color, absolute) => {
   }
 
   return {
-    datasets: [
-    {
+    datasets: [{
       backgroundColor: gradient,
-      fill: true,
-      borderWidth: 3,
-      borderColor: color,
       pointHoverBorderWidth: 15,
+      borderColor: color,
+      borderWidth: 3,
       pointRadius: 4,
-      data: data
-      }
-    ]
+      fill: true,
+      data
+    }]
   }
 }
 
@@ -148,7 +152,7 @@ export default function Spline(props){
   let { p, h, width, margin, paddingTop } = style.getFormatting(native)
 
   useEffect(() => {
-    if(metadata.address !== '0x0000000000000000000000000000000000000000'){
+    if(metadata.address !== ZERO_ADDRESS){
       let ranges = metadata.history.length > 0 ? getRanges(metadata.history) : [ 0, 0 ]
 
       setComponent(
@@ -170,8 +174,8 @@ export default function Spline(props){
     )}
     {!absolute && (
       <>
-        {!ready && (<div style={{ marginBottom: -20, paddingTop:30}}> <Loader native={native} padding={p} height={h} theme={theme} /> </div>)}
-        {ready && (<> {component} </>)}
+        {!ready && (<div style={{ marginBottom: -20, paddingTop:30 }}> <Loader native={native} padding={p} height={h} theme={theme} /> </div>)}
+        {component}
       </>
     )}
     </>

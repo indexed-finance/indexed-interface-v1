@@ -118,7 +118,8 @@ const mapping = {
     fullChart: 87.5,
     halfChart: 43.75,
     fontSize: 'inherit',
-    balanceHeight: 125
+    balanceHeight: 125,
+    progressWidth: 300
   },
   [DESKTOP_NORMAL]: {
     active: '-18.75em 0em 3em 3em',
@@ -133,7 +134,8 @@ const mapping = {
     paddingRight: 37.5,
     fontSize: 'inherit',
     targetHeight: 100,
-    balanceHeight: 125
+    balanceHeight: 125,
+    progressWidth: 300
   },
   [DESKTOP_LARGE]: {
     active: '-17.875em 0em 3em 3em',
@@ -148,7 +150,8 @@ const mapping = {
     fontSize: 'inherit',
     paddingRight: 37.5,
     targetHeight: 100,
-    balanceHeight: 137.5
+    balanceHeight: 137.5,
+    progressWidth: 300
   },
   [DESKTOP_WIDE]: {
     active: '-20em 0em 3em 3em',
@@ -163,7 +166,8 @@ const mapping = {
     paddingRight: 37.5,
     fontSize: 'inherit',
     targetHeight: 100,
-    balanceHeight: 125
+    balanceHeight: 125,
+    progressWidth: 300
   },
   [DESKTOP_HUGE]: {
     active: '-20.75em 0em 3em 3em',
@@ -178,7 +182,8 @@ const mapping = {
     halfChart: 37.5,
     fontSize: 'inherit',
     targetHeight: 100,
-    balanceHeight: 125
+    balanceHeight: 125,
+    progressWidth: 300
   },
   [DESKTOP_MASSIVE]: {
     active: '-18.5em 0em 3em 3em',
@@ -193,7 +198,8 @@ const mapping = {
     halfChart: 37.5,
     fontSize: 'inherit',
     targetHeight: 100,
-    balanceHeight: 125
+    balanceHeight: 125,
+    progressWidth: 300
   },
   [NATIVE_SMALL]: {
     marginX: '1.5em',
@@ -206,7 +212,8 @@ const mapping = {
     halfChart: 112.5,
     fontSize: '.875em',
     targetHeight: 175,
-    balanceHeight: 187.5
+    balanceHeight: 187.5,
+    progressWidth: 100
   },
   [NATIVE_NORMAL]: {
     marginX: '1.5em',
@@ -219,7 +226,8 @@ const mapping = {
     halfChart: 100,
     fontSize: '.875em',
     targetHeight: 150,
-    balanceHeight: 175
+    balanceHeight: 175,
+    progressWidth: 150
   },
   [NATIVE_WIDE]: {
     marginX: '1.5em',
@@ -232,7 +240,8 @@ const mapping = {
     paddingRight: 12.5,
     fontSize: '.875em',
     targetHeight: 137.5,
-    balanceHeight: 175
+    balanceHeight: 175,
+    progressWidth: 175
   }
 }
 

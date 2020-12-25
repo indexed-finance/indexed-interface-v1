@@ -111,9 +111,10 @@ const mapping = {
   [NATIVE_SMALL]: {
     top: 'calc(100px + .05vh)',
     canvasMargin: '3.25em 1.5em 1em 1.5em',
-    margin: '-.5em 1.5em 1em 1.5em',
+    margin: '-.75em 1.5em 1em 1.5em',
     paddingLeft: 12.5,
     pre2: 'calc(250px - 15vh)',
+    canvasWidth: 250,
     width: '100%',
     resolution: 200,
     height: '35%'
@@ -125,12 +126,14 @@ const mapping = {
     margin: '-.5em 1.5em 1em 1.5em',
     pre2: 'calc(247.5px - 8.125vh)',
     resolution: 200,
+    canvasWidth: 300,
     width: '100%',
     height: '38%'
   },
   [NATIVE_WIDE]: {
     top: 'calc(100px + 4.375vh)',
     canvasMargin: '3.5em 1.5em 1em 1.5em',
+    canvasWidth: 325,
     paddingLeft: 12.5,
     margin: '-.5em 1.5em 1em 1.5em',
     pre2: 'calc(250px - 5.75vh)',

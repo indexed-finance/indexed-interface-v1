@@ -141,9 +141,6 @@ export default function Navigation({ mode }) {
         <Link className={classes.href} to='/governance' onClick={handleClose}>
           <MenuItem>GOVERNANCE</MenuItem>
         </Link>
-        <Link className={classes.href} to='/swap' onClick={handleClose}>
-          <MenuItem>SWAP</MenuItem>
-        </Link>
         <a href='https://docs.indexed.finance' className={classes.href}>
           <MenuItem>DOCS</MenuItem>
         </a>
@@ -179,9 +176,6 @@ export default function Navigation({ mode }) {
         <a href='https://docs.indexed.finance' className={classes.href}>
           <MenuItem>DOCS</MenuItem>
         </a>
-        <Link className={classes.href} to='/swap' onClick={handleClose}>
-          <MenuItem>SWAP</MenuItem>
-        </Link>
         <Link className={classes.href} to='/stake' onClick={handleClose}>
           <MenuItem>STAKE</MenuItem>
         </Link>

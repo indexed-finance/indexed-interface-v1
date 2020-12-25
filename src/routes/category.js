@@ -22,13 +22,6 @@ const gfm = require('remark-gfm')
 export const tokenColumns = [
   { id: 'name', label: 'NAME', minWidth: 150 },
   {
-    id: 'symbol',
-    label: 'SYMBOL',
-    minWidth: 25,
-    align: 'center',
-    format: (value) => `${value.toLocaleString('en-US')}`,
-  },
-  {
     id: 'priceUSD',
     label: 'PRICE',
     minWidth: 25,
@@ -60,11 +53,15 @@ function TabPanel(props) {
 const ImageCell = (i) =>  (
   <div style={{ display: 'inline-flex', flexWrap: 'nowrap', alignItems: 'center' }}>
     <img src={tokenMetadata[i.symbol].image} style={{ float: 'left', width: 35, padding: 5 }} />
-    <span style={{ marginBlock: 0, marginLeft: 17.5, clear: 'both' }}> {tokenMetadata[i.symbol].name} </span>
+    <span style={{ marginBlock: 0, marginLeft: 17.5, clear: 'both' }}>
+      {tokenMetadata[i.symbol].name} [{i.symbol}]
+    </span>
   </div>
 )
 
 const useStyles = getStyles(style);
+
+const nativeTokenColumns = [ tokenColumns[0] ];
 
 export default function Category() {
   const [ category, setCategory ] = useState({ description: null, tokens: [] });
@@ -97,7 +94,8 @@ export default function Category() {
 
       for(var x = 0; x < categoryTokens.length; x++){
         let { priceUSD } = categoryTokens[x]
-        categoryTokens[x].priceUSD = '$' + parseFloat(priceUSD).toFixed(2)
+        let price = parseFloat(priceUSD).toFixed(2)
+        categoryTokens[x].priceUSD = '$' + parseFloat(price).toLocaleString()
 
         categoryTokens[x].name = ImageCell(categoryTokens[x])
       }
@@ -140,7 +138,10 @@ export default function Category() {
                 </div>
               </TabPanel>
               <TabPanel value={value} index={1}>
-                <List height='auto' columns={tokenColumns} data={category.tokens} />
+                <List height='auto'
+                    columns={state.native ? nativeTokenColumns : tokenColumns }
+                  data={category.tokens}
+                />
               </TabPanel>
           </Container>
         )}

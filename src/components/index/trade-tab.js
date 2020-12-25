@@ -130,16 +130,16 @@ export default function TradeTab({ metadata }) {
     updatePool(true);
   }
 
-  let { width, marginRight } = style.getFormatting(state.native)
+  let { inputWidth, width, marginRight } = style.getFormatting(state.native)
 
   return (
     <Grid container direction='column' alignItems='center' justify='space-around' style={{ width }}>
       <Grid item xs={12} md={12} lg={12} xl={12} key='0'>
         {
-          tradeState.helper && <TradeInput inputWidth={300} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useInput} />
+          tradeState.helper && <TradeInput inputWidth={inputWidth} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useInput} />
         }
         {
-          !tradeState.helper  && <Input label='AMOUNT' variant='outlined' style={{ width: 300 }} InputProps={{ endAdornment: 'ETH' }} />
+          !tradeState.helper  && <Input label='AMOUNT' variant='outlined' style={{ width: inputWidth }} InputProps={{ endAdornment: 'ETH' }} />
         }
       </Grid >
       <Grid item xs={12} md={12} lg={12} xl={12} key='1'>
@@ -150,10 +150,10 @@ export default function TradeTab({ metadata }) {
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} key='2'>
         {
-          tradeState.helper && <TradeInput inputWidth={300} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useOutput} />
+          tradeState.helper && <TradeInput inputWidth={inputWidth} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useOutput} />
         }
         {
-          !tradeState.helper  && <Input label='AMOUNT' variant='outlined' style={{ width: 300 }} InputProps={{ endAdornment: metadata.symbol }} />
+          !tradeState.helper  && <Input label='AMOUNT' variant='outlined' style={{ width: inputWidth }} InputProps={{ endAdornment: metadata.symbol }} />
         }
       </Grid>
 

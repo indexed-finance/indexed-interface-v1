@@ -59,7 +59,7 @@ export default function StickyHeadTable(props) {
         <Table stickyHeader className={classes.table} dense={state.native}>
           <TableHead>
             <Row>
-              {(state.native ? poolNativeColumns : poolDesktopColumns)
+              {(state.native ? (window.innerWidth > 320 ? poolNativeColumns : poolNativeColumns.filter((i) => i.id !== 'delta')) : poolDesktopColumns)
                 .map((column) => (
                 <TableCell
                   key={column.id}
@@ -76,7 +76,7 @@ export default function StickyHeadTable(props) {
 
               return (
                 <Row selected={market === row.symbol} onClick={() => triggerMarket(row.symbol)} hover tabIndex={-1} key={index}>
-                  {(state.native ? poolNativeColumns : poolDesktopColumns)
+                {(state.native ? (window.innerWidth > 320 ? poolNativeColumns : poolNativeColumns.filter((i) => i.id !== 'delta')) : poolDesktopColumns)
                     .map((column, i) => {
                     const value = row[column.id];
                     if(!row.active && (column.id !== 'name' && column.id !== 'symbol')) {

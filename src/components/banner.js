@@ -131,7 +131,7 @@ export default function Banner() {
         {messages.proposal.id && (
           <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
             <Link to={`/proposal/${messages.proposal.id}`} className={classes.href}>
-              <motion.span><motion.span style={{ color: '#645eff' }}>PROPOSAL {messages.proposal.id}</motion.span>: {messages.proposal.description.toUpperCase()}</motion.span>
+              <motion.span><motion.span style={{ color: '#645eff' }}>PROPOSAL {messages.proposal.id}</motion.span>: {messages.proposal.title}</motion.span>
             </Link>
           </motion.li>
         )}

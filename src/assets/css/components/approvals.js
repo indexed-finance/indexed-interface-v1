@@ -109,39 +109,39 @@ const setStyle = (theme) => ({
 const mapping = {
   [DESKTOP_SMALL]: {
     show: true,
-    inputWidth: 200
+    fieldWidth: 200
   },
   [DESKTOP_NORMAL]: {
     show: true,
-    inputWidth: 200
+    fieldWidth: 200
   },
   [DESKTOP_LARGE]: {
     show: true,
-    inputWidth: 200
+    fieldWidth: 200
   },
   [DESKTOP_WIDE]: {
     show: true,
-    inputWidth: 200
+    fieldWidth: 200
   },
   [DESKTOP_HUGE]: {
     show: true,
-    inputWidth: 200
+    fieldWidth: 200
   },
   [DESKTOP_MASSIVE]: {
     show: true,
-    inputWidth: 200
+    fieldWidth: 200
   },
   [NATIVE_SMALL]: {
     show: false,
-    inputWidth: 137.5
+    fieldWidth: 150
   },
   [NATIVE_NORMAL]: {
     show: true,
-    inputWidth: 150
+    fieldWidth: 167.5
   },
   [NATIVE_WIDE]: {
     show: true,
-    inputWidth: 150
+    fieldWidth: 175
   },
 }
 

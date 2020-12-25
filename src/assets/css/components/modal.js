@@ -13,6 +13,9 @@ const setStyle = (theme) => ({
       '&:hover': {
         color: '#00e79a !important'
       }
+    },
+    '& .MuiDialog-paper': {
+      margin: 0
     }
   },
   closeButton: {
@@ -24,15 +27,33 @@ const setStyle = (theme) => ({
 })
 
 const mapping = {
-  [DESKTOP_SMALL]: { },
-  [DESKTOP_NORMAL]: { },
-  [DESKTOP_LARGE]: { },
-  [DESKTOP_WIDE]: { },
-  [DESKTOP_HUGE]: { },
-  [DESKTOP_MASSIVE]: { },
-  [NATIVE_SMALL]: {},
-  [NATIVE_NORMAL]: {},
-  [NATIVE_WIDE]: {},
+  [DESKTOP_SMALL]: {
+    inputWidth: 300
+  },
+  [DESKTOP_NORMAL]: {
+    inputWidth: 300
+  },
+  [DESKTOP_LARGE]: {
+    inputWidth: 300
+  },
+  [DESKTOP_WIDE]: {
+    inputWidth: 300
+  },
+  [DESKTOP_HUGE]: {
+    inputWidth: 300
+  },
+  [DESKTOP_MASSIVE]: {
+    inputWidth: 300
+  },
+  [NATIVE_SMALL]: {
+    inputWidth: 'auto'
+  },
+  [NATIVE_NORMAL]: {
+    inputWidth: 'auto'
+  },
+  [NATIVE_WIDE]: {
+    inputWidth: 'auto'
+  },
 }
 
 const getFormatting = (native) => {

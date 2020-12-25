@@ -98,40 +98,166 @@ import {
 const mapping = {
   [DESKTOP_SMALL]: {
     width: 'auto',
-    height: '37.5vh'
+    height: '37.5vh',
+    inputWidth: 300,
+    buttonMargin: {
+      text: 'MINT WITH UNISWAP',
+      mint: {
+        margin: 0,
+        marginLeft: 50,
+        marginTop: 7.5
+      },
+      uniswap: {
+        float: 'left',
+        margin: 25,
+        marginTop: 7.5,
+        marginLeft: 0
+      }
+    }
   },
   [DESKTOP_NORMAL]: {
     width: 'auto',
-    height: '40vh'
+    height: '40vh',
+    inputWidth: 300,
+    buttonMargin: {
+      text: 'MINT WITH UNISWAP',
+      mint: {
+        margin: 0,
+        marginLeft: 50,
+        marginTop: 7.5
+      },
+      uniswap: {
+        float: 'left',
+        margin: 25,
+        marginTop: 7.5,
+        marginLeft: 0
+      }
+    }
   },
   [DESKTOP_LARGE]: {
     width: 'auto',
-    height: '40vh'
+    height: '40vh',
+    inputWidth: 300,
+    buttonMargin: {
+      text: 'MINT WITH UNISWAP',
+      mint: {
+        margin: 0,
+        marginLeft: 50,
+        marginTop: 7.5
+      },
+      uniswap: {
+        float: 'left',
+        margin: 25,
+        marginTop: 7.5,
+        marginLeft: 0
+      }
+    }
   },
   [DESKTOP_WIDE]: {
     width: 'auto',
-    height: '35vh'
+    height: '35vh',
+    inputWidth: 300,
+    buttonMargin: {
+      text: 'MINT WITH UNISWAP',
+      mint: {
+        margin: 0,
+        marginLeft: 50,
+        marginTop: 7.5
+      },
+      uniswap: {
+        float: 'left',
+        margin: 25,
+        marginTop: 7.5,
+        marginLeft: 0
+      }
+    }
   },
   [DESKTOP_HUGE]: {
     width: 'auto',
-    height: '30vh'
+    height: '30vh',
+    inputWidth: 300,
+    buttonMargin: {
+      text: 'MINT WITH UNISWAP',
+      mint: {
+        margin: 0,
+        marginLeft: 50,
+        marginTop: 7.5
+      },
+      uniswap: {
+        float: 'left',
+        margin: 25,
+        marginTop: 7.5,
+        marginLeft: 0
+      }
+    }
   },
   [DESKTOP_MASSIVE]: {
     width: 'auto',
-    height: '22.5vh'
+    height: '22.5vh',
+    inputWidth: 300,
+    buttonMargin: {
+      text: 'MINT WITH UNISWAP',
+      mint: {
+        margin: 0,
+        marginLeft: 50,
+        marginTop: 7.5
+      },
+      uniswap: {
+        float: 'left',
+        margin: 25,
+        marginTop: 7.5,
+        marginLeft: 0
+      }
+    }
   },
   [NATIVE_SMALL]: {
     width: '100vw',
-    height: '32.5vh'
+    height: '32.5vh',
+    inputWidth: 275,
+    buttonMargin: {
+      text: 'UNISWAP MINT',
+      mint: {
+        float: 'right',
+        margin: 0,
+        marginLeft: 10
+      },
+      uniswap: {
+        margin: 0
+      }
+    }
   },
   [NATIVE_NORMAL]: {
     width: '100vw',
-    height: '37.5vh'
+    height: '37.5vh',
+    inputWidth: 300,
+    buttonMargin: {
+      text: 'MINT WITH UNISWAP',
+      mint: {
+        margin: 0,
+        marginLeft: 15
+      },
+      uniswap: {
+        float: 'left',
+        margin: 0
+      }
+    }
   },
   [NATIVE_WIDE]: {
     width: '100vw',
-    height: '37.5vh'
-  },
+    height: '37.5vh',
+    inputWidth: 300,
+    buttonMargin: {
+      text: 'MINT WITH UNISWAP',
+      mint: {
+        margin: 0,
+        marginLeft: 25
+      },
+      uniswap: {
+        float: 'left',
+        margin: 0
+      }
+    }
+  }
 }
 
 const getFormatting = (native) => {

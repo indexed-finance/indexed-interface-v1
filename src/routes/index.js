@@ -135,7 +135,7 @@ export default function Index(){
           { execution === 'mint' && <MintStateProvider><Mint metadata={metadata} market={name}/></MintStateProvider> }
           { execution === 'burn' && <BurnStateProvider><Burn metadata={metadata} market={name} /></BurnStateProvider> }
           { execution === 'trade' && <TradeStateProvider><TradeTab metadata={metadata} market={name} /></TradeStateProvider> }
-          { execution === 'swap' && <SwapStateProvider><Swap /></SwapStateProvider> }
+          { execution === 'swap' && <SwapStateProvider><Swap metadata={metadata} /></SwapStateProvider> }
         </Grid>
       </Grid>
     )

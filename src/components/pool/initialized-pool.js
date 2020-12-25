@@ -20,7 +20,6 @@ import PoolInitializer from '../../assets/constants/abi/PoolInitializer.json'
 import style from '../../assets/css/routes/pool'
 
 import { toContract } from '../../lib/util/contracts'
-import { getBalances } from '../../lib/markets'
 import { getEvents, balanceOf } from '../../lib/erc20'
 import { getPair } from '../../lib/markets'
 import getStyles from '../../assets/css'
@@ -63,7 +62,7 @@ function InitializedPoolPage({ address, metadata }){
     let pool = findHelper(helper)
     let contract = toContract(web3.injected, PoolInitializer.abi, pool.initializer)
 
-    return await contract.methods.claimTokens().send({ from: account, gas: 200000 })
+    return await contract.methods.claimTokens().send({ from: account })
     .on('transactionHash', (transactionHash) => {
       dispatch({ type: 'MODAL', payload: { show: false }})
       dispatch(TX_PENDING(transactionHash))
@@ -97,32 +96,13 @@ function InitializedPoolPage({ address, metadata }){
     }
   }
 
-  const getUnderlyingAssets = async() => {
-  let { web3, account, helper } = state
-  let pool = findHelper(helper)
-
-  for(let x in pool.tokens) {
-    let { address } = pool.tokens[x]
-    let amount = toWei(new BigNumber(Math.floor(Math.random() * 10000)))
-    const token = new web3.injected.eth.Contract(MockERC20ABI, address)
-
-    await token.methods.getFreeTokens(account, amount)
-    .send({ from: account })
-    }
-  }
-
   useEffect(() => {
     const retrievePool = async() => {
-      let { indexes, web3, helper } = state
+      let { web3 } = state
 
-      if(Object.keys(indexes).length > 0 && events.length === 0
-      && metadata.address !== '0x0000000000000000000000000000000000000000'){
-        let target = Object.entries(indexes).find(x => x[1].address === address)
-        let pool = findHelper(helper)
-
-        let tokenEvents = await getEvents(web3.websocket, address)
-        target[1].assets = pool.tokens
-        target[1].type = 'EVENTS'
+      if(events.length == 0 && metadata.address !== ZERO_ADDRESS){
+        let provider = web3.websocket[process.env.REACT_APP_ETH_NETWORK]
+        let tokenEvents = await getEvents(provider, address)
 
         setEvents(tokenEvents)
 
@@ -133,30 +113,10 @@ function InitializedPoolPage({ address, metadata }){
       }
     }
     retrievePool()
-  }, [ state.indexes ])
-
-  useEffect(() => {
-    const retrieveBalances = async() => {
-      let { account, web3, helper } = state
-      let { assets } = metadata
-
-      if(web3.injected && helper){
-        let balances =  await getBalances(
-          web3[process.env.REACT_APP_ETH_NETWORK], account, assets, {}
-        )
-
-        await dispatch({ type: 'BALANCE',
-          payload: { balances }
-        })
-        await getActiveCredit()
-        await getNativeBalances()
-      }
-     }
-    retrieveBalances()
-  }, [ state.helper ])
+  }, [ , metadata ])
 
   let {
-    marginX, margin, width, padding, chartHeight, fontSize, percent, balanceHeight, paddingRight
+    marginX, margin, width, padding, chartHeight, fontSize, percent, balanceHeight, paddingRight, progressWidth
   } = style.getFormatting({ native, request, active: true })
 
   let { name, symbol } = metadata;
@@ -175,14 +135,14 @@ function InitializedPoolPage({ address, metadata }){
       )
     }
     return (
-    <Fragment>
-      <h3> {name} [{symbol}] </h3>
-      <div style={{ marginTop: 5} }>
+    <div style={{ width: 237.5 }}>
+      <h3 style={{ color: document.body.style.color }}> {name} [{symbol}] </h3>
+      <div style={{ marginTop: 2.5 }}>
         <Copyable text={address}>
           <h4>{address.substring(0, 6)}...{address.substring(38, 64)}</h4>
         </Copyable>
       </div>
-    </Fragment>
+    </div>
     )
   }
 
@@ -200,12 +160,16 @@ function InitializedPoolPage({ address, metadata }){
               <div className={classes.chart}>
                 <Spline
                   ready={metadata.address !== ZERO_ADDRESS}
+                  metadata={{
+                    address: metadata.address,
+                    history: metadata.liquidity
+                  }}
+                  height={chartHeight}
+                  label='LIQUIDITY'
                   padding={padding}
                   absolute={false}
                   native={native}
                   color='#ffa500'
-                  metadata={{ history: metadata.liquidity }}
-                  height={chartHeight}
                 />
               </div>
               <div className={classes.stats} style={{ fontSize }}>
@@ -240,7 +204,7 @@ function InitializedPoolPage({ address, metadata }){
                     {metadata.assets.map((asset, i) => (
                       <Grid item key={i}>
                         <div className={classes.asset}>
-                          <Weights native={state.native} asset={asset} />
+                          <Weights width={progressWidth} native={state.native} asset={asset} />
                         </div>
                       </Grid>
                     ))}

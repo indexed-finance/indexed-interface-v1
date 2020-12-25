@@ -12,6 +12,8 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import { useParams } from 'react-router-dom'
 import { BigNumber, formatBalance } from '@indexed-finance/indexed.js'
 
+import { Interface } from 'ethers/lib/utils';
+
 import GovernorAlpha from '../assets/constants/abi/GovernorAlpha.json'
 import Ndx from '../assets/constants/abi/Ndx.json'
 
@@ -22,12 +24,24 @@ import Progress from '../components/progress'
 import Canvas from '../components/canvas'
 
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING, initialProposalState } from '../assets/constants/parameters'
-import { NDX, DAO } from '../assets/constants/addresses'
+import { NDX, DAO, CONTROLLER, STAKING_FACTORY } from '../assets/constants/addresses'
 import { toContract } from '../lib/util/contracts'
 import style from '../assets/css/routes/proposal'
 import getStyles from '../assets/css'
 import { store } from '../state'
 import { getProposal } from '../api/gql'
+
+function getAbiForContract(address) {
+  switch (address.toLowerCase()) {
+    case CONTROLLER.toLowerCase(): {
+      return require('../assets/constants/abi/MarketCapSqrtController.json').abi;
+    }
+    case STAKING_FACTORY.toLowerCase(): {
+      return require('../assets/constants/abi/StakingRewardsFactory.json');
+    }
+    default: return null;
+  }
+}
 
 // TODO, add enum state values + configure subgraph
 const proposalState = {
@@ -165,8 +179,10 @@ export default function Proposal(){
   }, [ state.web3.injected ])
 
   useEffect(() => {
+    if (!state.proposals.proposals) return;
     const retrieveProposal = async() => {
-      let proposal = await getProposal(id)
+      let proposal = state.proposals.proposals.find(p => p.id == id)
+      //await getProposal(id)
       let recentBlock = await state.web3.rinkeby.eth.getBlock('latest')
 
       setComponent({
@@ -179,7 +195,7 @@ export default function Proposal(){
       setMetadata(proposal)
     }
     retrieveProposal()
-  }, [ , isTransaction ])
+  }, [ state.proposals ])
 
   useEffect(() => {
     if(!state.load) {
@@ -210,7 +226,7 @@ export default function Proposal(){
                         <Lozenge isBold> {getProposalState(metadata)} </Lozenge>
                       </div>
                     </div>
-                    <h3> {metadata.description}</h3>
+                    <h3> {metadata.title}</h3>
                     {!state.native && (
                       <div className={classes.reciept}>
                         <span>{metadata.proposer.substring(0, 6)}...{metadata.proposer.substring(38, 64)} • </span>  {metadata.expiry}
@@ -226,14 +242,14 @@ export default function Proposal(){
               </div>
               <div className={classes.results}>
                 <div className={classes.option}>
-                  <div className={classes.vote}> AGAINST </div>
+                  <div className={classes.vote}> FOR </div>
                   <span className={classes.progress}>
                     <Progress color='#00e79a' width={progress} values={values} option='for' />
                     <span> {parseFloat(forVotes).toLocaleString()} NDX</span>
                   </span>
                 </div>
                 <div className={classes.option}>
-                  <div className={classes.vote}> FOR </div>
+                  <div className={classes.vote}> AGAINST </div>
                   <span className={classes.progress}>
                     <Progress color='#f44336' width={progress} values={values} option='against' />
                     <span> {parseFloat(againstVotes).toLocaleString()} NDX</span>
@@ -278,17 +294,39 @@ export default function Proposal(){
             <div className={classes.body}>
               <div className={classes.metadata}>
                 <ul>
-                  {metadata.targets.map((contract, i) => (
-                    <Fragment>
-                      <span> {i}. </span>
-                        <li>
-                          Call <ReactMarkdown source={" `" + metadata.signatures[i] + "` "}/> in
-                          <ReactMarkdown source={" [" + contract + "] "}/>
-                          with parameters;
-                          <ReactMarkdown source={" `" + metadata.calldatas[i] + "` "}/>
-                        </li>
-                    </Fragment>
-                  ))}
+                  {metadata.targets.map((contract, i) => {
+                    const abi = getAbiForContract(contract);
+                    let sig = metadata.signatures[i];
+                    let data = metadata.calldatas[i];
+
+                    let params = [];
+                    if (abi) {
+                      const iface = new Interface(abi);
+                      // let fn = interface.functions[sig];
+                      try {
+                        let sigHash = iface.getSighash(sig);
+                        console.log(new Array(10).fill(sigHash).join('\n'));
+
+                        let fn = iface.getFunction(sigHash);
+                        console.log(fn)
+                        let params = iface.decodeFunctionData(fn, sigHash.concat(data.slice(2)));
+                        data = params.join(', ')
+                      } catch (err) {
+                        console.log(err)
+                      }
+                    }
+                    return (
+                      <Fragment>
+                        <span> {i}. </span>
+                          <li>
+                            Call <ReactMarkdown source={" `" + metadata.signatures[i] + "` "}/> in
+                            <ReactMarkdown source={" [" + contract + "] "}/>
+                            with parameters;
+                            <ReactMarkdown source={" `" + data + "` "}/>
+                          </li>
+                      </Fragment>
+                    )
+                  })}
                 </ul>
               </div>
               <div className={classes.markdown}>

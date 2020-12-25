@@ -79,7 +79,7 @@ export default function BurnTab({ market, metadata }) {
     verifyConnectivity()
   }, [  , state.web3.injected, isInit ])
 
-  let { width, height } = style.getFormatting(state.native)
+  let { inputWidth, width, height } = style.getFormatting(state.native)
 
   return (
     <div>
@@ -95,6 +95,7 @@ export default function BurnTab({ market, metadata }) {
           InputProps={{
             endAdornment: market
           }}
+          style={{ width: inputWidth }}
         />
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} style={{ width: '100%'}}>

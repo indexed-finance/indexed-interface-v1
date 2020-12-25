@@ -16,9 +16,9 @@ const useStyles = getStyles(style)
 
 const dummy = { balance: 0, name: null, symbol: null, weight: 0 }
 
-export default function Weight({ asset, native, show }) {
+export default function Weight({ asset, native, show, width }) {
   const [ metadata, setMetadata ] = useState(dummy)
-  let { image } = tokenMetadata[asset.symbol]
+  let { image, name } = tokenMetadata[asset.symbol]
   let { data } = usePalette(image)
   const classes = useStyles()
 
@@ -28,7 +28,7 @@ export default function Weight({ asset, native, show }) {
       borderRadius: 10,
       marginTop: 5,
       marginBottom: 5,
-      width: !native ? 300 : 'auto'
+      width: width
     },
     colorPrimary: {
       backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? 200 : 700],
@@ -72,7 +72,9 @@ export default function Weight({ asset, native, show }) {
         <img src={image} alt={classes.asset} className={classes.asset} />
       </div>
       <div className={classes.precentage} style={{ float: window.innerWidth > 321 ? metadata.float : 'inherit' }}>
-        <span className={classes.altTitle}> {metadata.name} [{metadata.symbol}] </span>
+        <span className={classes.altTitle}>
+          {!native ? `${name} [${metadata.symbol}]` : metadata.symbol}
+        </span>
         <BorderLinearProgress variant="determinate" value={metadata.percent} />
         <span className={classes.alternative}>
           {metadata.balance.toLocaleString()} {metadata.symbol} {metadata.title}
