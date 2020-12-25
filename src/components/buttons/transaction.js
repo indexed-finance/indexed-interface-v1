@@ -3,7 +3,7 @@ import React from 'react'
 import { styled, useTheme } from '@material-ui/core/styles'
 
 import ExitIcon from '@material-ui/icons/ExitToApp'
-import Button from '@material-ui/core/Button'
+import Button from './adornment'
 
 const Exit = styled(ExitIcon)({
   fontSize: '1rem'
@@ -20,28 +20,13 @@ export default function TransactionButton(props){
   const theme = useTheme()
   let { secondary } = theme.palette
 
-  const Restyled = styled(Button)({
-    border: 'none',
-    color: secondary.main,
-    padding: 0,
-    margin: 0,
-    '&:hover': {
-      color: '#00e79a',
-      fontWeight: 'bold',
-      background: 'inherit',
-      '& o': {
-        color: `${secondary.main}`,
-      }
-    }
-  })
-
   return (
     <a style={{ 'text-decoration': 'none' }}
       href={`https://${process.env.REACT_APP_ETH_NETWORK === 'rinkeby' ? 'rinkeby.' : ''}etherscan.io/tx/${props.value}`}
       target='_blank'>
-      <Restyled>
+      <Button>
         <o>{shortenHash(props.value)}</o>&nbsp;<Exit/>
-      </Restyled>
+      </Button>
     </a>
   )
 }

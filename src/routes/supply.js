@@ -26,11 +26,6 @@ import { useStakingState } from '../state/staking/context';
 
 const useStyles = getStyles(style)
 
-const i = {
-  'GOV5r': [ 'BAL', 'YFI', 'CRV', 'UNI'],
-  'UNIV2:ETH-GOV5r': [ 'UNI', 'YFI', 'CRV', 'BAL']
-}
-
 function uncapitalizeNth(text, n) {
     return (n > 0 ? text.slice(0, n) : '') + text.charAt(n).toLowerCase() + (n < text.length - 1 ? text.slice(n+1) : '')
 }
@@ -144,16 +139,16 @@ export default function Supply() {
   let {
     padding,
     marginBottom, margin, marginRight, claimMargin, marginLeft,
-    width, positioning, inputWidth, listPadding,
+    width, positioning, inputWidth, listPadding ,
     button, height, reward, buttonPos,
     infoWidth
   } = style.getFormatting({ ticker, native: state.native });
 
   const imgStyles = [
-    { width, marginRight },
-    { marginBottom: 25, width },
-    { marginLeft: -25, width },
-    { marginBottom: 10, width }
+    { width, marginRight, marginBottom },
+    { marginBottom: 25, width: 30 },
+    { marginLeft: -25, width: 30 },
+    { marginBottom: 10, width:30  }
   ];
 
   function UserData() {
@@ -208,11 +203,11 @@ export default function Supply() {
     }
     const { userBalanceStakingToken } = pool.pool;
     const displayBalance = userBalanceStakingToken ? formatBalance(userBalanceStakingToken, 18, 4) : '0';
- 
+
     const inputWei = !!input && toTokenAmount(input, 18);
     const sufficientBalance = (userBalanceStakingToken && inputWei) && userBalanceStakingToken.gte(inputWei);
     const error = inputWei && !!(state.web3.injected) && !sufficientBalance;
-    const helperText = error ? 'Insufficient Balance' : <o className={classes.helper}> BALANCE: {displayBalance} </o>;
+    const helperText = error ? 'INSUFFICIENT BALANCE' : <o className={classes.helper}> BALANCE: {displayBalance} </o>;
     return <Input label="AMOUNT" variant='outlined'
       onChange={handleInput}
       error={!!error}
@@ -337,7 +332,7 @@ export default function Supply() {
             <Grid container direction='row' alignItems='center' justify={positioning} spacing={4}>
                 <Fragment>
                   <Grid item>
-                    {(pool.pool && pool.metadata) && 
+                    {(pool.pool && pool.metadata) &&
                       pool.metadata.indexPoolTokenSymbols.slice(0, 4).map(
                         (symbol, i) => <img alt={`asset-${i}`} src={tokenMetadata[symbol].image} style={imgStyles[i]} />
                       )

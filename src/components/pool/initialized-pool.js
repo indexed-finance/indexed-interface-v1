@@ -135,14 +135,14 @@ function InitializedPoolPage({ address, metadata }){
       )
     }
     return (
-    <Fragment>
+    <div style={{ width: 237.5 }}>
       <h3 style={{ color: document.body.style.color }}> {name} [{symbol}] </h3>
-      <div style={{ marginTop: 5} }>
+      <div style={{ marginTop: 2.5 }}>
         <Copyable text={address}>
           <h4>{address.substring(0, 6)}...{address.substring(38, 64)}</h4>
         </Copyable>
       </div>
-    </Fragment>
+    </div>
     )
   }
 

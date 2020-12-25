@@ -44,20 +44,22 @@ export default function Stake() {
         state.pools.map((pool) => {
           const { isReady, hasBegun, active, address, totalSupply, claimedRewards, rewardRate, periodStart, totalRewards } = pool.pool;
           const meta = state.metadata[address];
-          const supply = formatBalance(totalSupply, 18, 4);
+          const displaySupply = formatBalance(totalSupply, 18, 4);
           const claimed = formatBalance(claimedRewards, 18, 4);
-          const rate = formatBalance(
-            rewardRate.times(86400).times(toWei(1)).div(totalSupply),
+          let supply = totalSupply.eq(0) ? toWei(1) : totalSupply
+          let rate = formatBalance(
+            rewardRate.times(86400).times(toWei(1)).div(supply),
             18,
             0
           );
-          const total = formatBalance(totalRewards, 18, 4);
+          let total = formatBalance(totalRewards, 18, 4);
           let symbol = '', name = '', tokens = [];
           if (meta) {
             name = meta.indexPoolName;
             symbol = meta.stakingSymbol;
             tokens = meta.indexPoolTokenSymbols;
           }
+
           let color  = symbol.includes('UNIV2') ? '#fc1c84' : ''
           let mainWidth = symbol.includes('UNIV2') ? 50 : 30
           let marginRight = symbol.includes('UNIV2') ? 5 : 0
@@ -95,7 +97,7 @@ export default function Stake() {
               return <h5>BEGINS IN <Countdown data={periodStart * 1000} /></h5>
             }
             if (active) {
-              return <h5>STAKED: {supply} {state.native ? '' : symbol}</h5>
+              return <h5>STAKED: {displaySupply} {state.native ? '' : symbol}</h5>
             }
             if (hasBegun) {
               return <h5>STAKING FINISHED</h5>

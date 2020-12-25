@@ -32,11 +32,16 @@ const options = (padding, range, margin) => ({
   maintainAspectRatio: true,
   aspectRatio: 6,
    tooltips: {
-      yAlign: 'right',
+     yAlign: 'right',
+     callbacks: {
+      label: function(tooltipItem, data) {
+        return `$${tooltipItem.yLabel}`
+      }
+    }
   },
   plugins: {
-     datalabels: false
- },
+    datalabels: false
+  },
   elements: {
       point:{
           radius: 0
