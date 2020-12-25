@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useContext } from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import { Link } from  'react-router-dom'
@@ -16,6 +16,7 @@ import Loader from '../components/loaders/stake'
 import { tokenMetadata } from '../assets/constants/parameters'
 import getStyles from '../assets/css'
 import { useStakingState } from '../state/staking/context';
+import { store } from '../state'
 
 const useStyles = getStyles(style)
 
@@ -23,9 +24,34 @@ export default function Stake() {
   const theme =  useTheme()
   const classes = useStyles()
 
-  let state = useStakingState();
+  let reducerState = useStakingState();
+  let { state } = useContext(store);
 
-  let { margin } = style.getFormatting(state)
+  let { margin, buttonMargin } = style.getFormatting(state)
+
+  const getPoolStyles = (symbol) => {
+    const isWethPair = symbol.includes('UNIV2')
+
+    if(isWethPair) return {
+      color: '#fc1c84',
+      mainWidth: 50,
+      marginRight: 5,
+      width: 25,
+    }
+    else return {
+      color: '',
+      mainWidth: 30,
+      marginRight: 0,
+      width: 30
+    }
+  }
+
+  const getPoolLabel = (a, b, c) => {
+    if(a) return 'STAKE'
+    else if(b) return 'VIEW'
+    else if(c) return 'INITIALIZE'
+    return ''
+  }
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
@@ -40,30 +66,24 @@ export default function Stake() {
         </Container>
       </Grid>
       {
-        state.pools.length > 0 &&
-        state.pools.map((pool) => {
+        reducerState.pools.length > 0 &&
+        reducerState.pools.map((pool) => {
           const { isReady, hasBegun, active, address, totalSupply, claimedRewards, rewardRate, periodStart, totalRewards } = pool.pool;
-          const meta = state.metadata[address];
+          const meta = reducerState.metadata[address];
+          let supply = totalSupply.eq(0) ? toWei(1) : totalSupply
+          let rate = formatBalance(rewardRate.times(86400).times(toWei(1)).div(supply), 18, 0);
           const displaySupply = formatBalance(totalSupply, 18, 4);
           const claimed = formatBalance(claimedRewards, 18, 4);
-          let supply = totalSupply.eq(0) ? toWei(1) : totalSupply
-          let rate = formatBalance(
-            rewardRate.times(86400).times(toWei(1)).div(supply),
-            18,
-            0
-          );
           let total = formatBalance(totalRewards, 18, 4);
           let symbol = '', name = '', tokens = [];
+
           if (meta) {
-            name = meta.indexPoolName;
+            tokens = meta.indexPoolTokenSymbols.slice(0 , 4);
             symbol = meta.stakingSymbol;
-            tokens = meta.indexPoolTokenSymbols;
+            name = meta.indexPoolName
           }
 
-          let color  = symbol.includes('UNIV2') ? '#fc1c84' : ''
-          let mainWidth = symbol.includes('UNIV2') ? 50 : 30
-          let marginRight = symbol.includes('UNIV2') ? 5 : 0
-          let width = symbol.includes('UNIV2') ? 25 : 30
+          let { mainWidth, width, color, marginRight } = getPoolStyles(symbol)
           let label = isReady ? 'STAKE' : 'INITIALIZE'
 
           const imgStyles = [
@@ -74,22 +94,11 @@ export default function Stake() {
           ];
 
           function Button() {
-            if (active) {
-              return <ButtonPrimary variant='outlined' margin={{ marginBottom: 25, marginRight: 25 }}>
-               STAKE
+            return (
+              <ButtonPrimary variant='outlined' margin={buttonMargin}>
+               {getPoolLabel(active, hasBegun, isReady)}
              </ButtonPrimary>
-            }
-            if (hasBegun) {
-              return <ButtonPrimary variant='outlined' margin={{ marginBottom: 25, marginRight: 25 }}>
-               VIEW
-             </ButtonPrimary>
-            }
-            if (isReady) {
-              return <ButtonPrimary variant='outlined' margin={{ marginBottom: 25, marginRight: 25 }}>
-                INITIALIZE
-              </ButtonPrimary>
-            }
-            return <></>
+            )
           }
 
           function Status() {
@@ -136,25 +145,15 @@ export default function Stake() {
                 <Card color={color}>
                   <div className={classes.pool}>
                     <div className={classes.image}>
-                      {
-                        tokens.slice(0, 4).map(
-                          (symbol, i) => <img alt={`asset-${i}`} src={tokenMetadata[symbol].image} style={imgStyles[i]} />
-                        )
-                      }
+                      {tokens.map((symbol, i) =>
+                        <img alt={`asset-${i}`} src={tokenMetadata[symbol].image} style={imgStyles[i]} />
+                      )}
                     </div>
                     <div className={classes.information}>
-                      {!state.native && (
-                        <Fragment>
-                          <h3> {name} [{symbol}] </h3>
-                          { Status() }
-                        </Fragment>
-                      )}
-                      {state.native && (
-                        <Fragment>
-                          <h4> {symbol} </h4>
-                          { Status() }
-                        </Fragment>
-                      )}
+                      <Fragment>
+                        <h4> {!state.native ? `${name} [${symbol}]` : symbol} </h4>
+                        { Status() }
+                      </Fragment>
                     </div>
                     { Content() }
                   </div>
@@ -167,7 +166,7 @@ export default function Stake() {
           )
         })
       }
-      {!state.pools.length && (
+      {!reducerState.pools.length && (
         <Grid item xs={10} md={6} style={{ width: '100%' }}>
           <ParentSize>
             {({ width, height }) => (

@@ -69,7 +69,7 @@ export const initialState = {
   load: false,
   dark: isNight,
   categories: {},
-  proposals: {
+  governance: {
     dailyDistributionSnapshots: [],
     proposals: []
   },

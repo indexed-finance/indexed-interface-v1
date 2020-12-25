@@ -94,8 +94,8 @@ export default function Banner() {
   }
 
   useEffect(() => {
-    if (Object.keys(state.proposals).length && state.proposals.proposals.length && !messages.proposal.id) {
-      let arr = state.proposals.proposals
+    if (state.governance.proposals.length && !messages.proposal.id) {
+      let arr = state.governance.proposals
       let last = arr[arr.length-1]
       setMessages({
         ...messages,
@@ -107,7 +107,7 @@ export default function Banner() {
 
   useEffect(() => {
     let [ init, indxs ] = [ [], [] ]
-    
+
     if(
       Object.keys(indexes).length && !messages.indexes.length
     ) {
@@ -131,7 +131,9 @@ export default function Banner() {
         {messages.proposal.id && (
           <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
             <Link to={`/proposal/${messages.proposal.id}`} className={classes.href}>
-              <motion.span><motion.span style={{ color: '#645eff' }}>PROPOSAL {messages.proposal.id}</motion.span>: {messages.proposal.title}</motion.span>
+              <motion.span><motion.span style={{ color: '#645eff' }}>
+                PROPOSAL {messages.proposal.id}</motion.span>: {messages.proposal.title.toUpperCase()}
+              </motion.span>
             </Link>
           </motion.li>
         )}
@@ -141,7 +143,9 @@ export default function Banner() {
               {messages.init.map((value, i) => {
                 return(
                   <Link key={i} to={`/pool/${value.address}`} className={classes.href}>
-                    <motion.span>NEW FUND: <motion.span style={{ color: 'orange'}}>{value.symbol}</motion.span></motion.span>
+                    <motion.span>
+                      NEW FUND: <motion.span style={{ color: 'orange'}}>{value.symbol}</motion.span>
+                    </motion.span>
                   </Link>
                 )
               })}
