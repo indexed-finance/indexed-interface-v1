@@ -179,10 +179,10 @@ export default function Proposal(){
   }, [ state.web3.injected ])
 
   useEffect(() => {
-    if (!state.governance.proposals) return;
+    if (state.governance.proposals.length == 0) return;
     const retrieveProposal = async() => {
       let proposal = state.governance.proposals.find(p => p.id == id)
-      let recentBlock = await state.web3.rinkeby.eth.getBlock('latest')
+      let recentBlock = await state.web3[process.env.REACT_APP_ETH_NETWORK].eth.getBlock('latest')
 
       setComponent({
         blockie: <Blockie border='5px' width={radius} id='blockie' address={proposal.proposer} />,
@@ -194,7 +194,7 @@ export default function Proposal(){
       setMetadata(proposal)
     }
     retrieveProposal()
-  }, [ state.proposals ])
+  }, [ , state.governance ])
 
   useEffect(() => {
     if(!state.load) {
