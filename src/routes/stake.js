@@ -74,9 +74,9 @@ export default function Stake() {
           const meta = reducerState.metadata[address];
           let supply = totalSupply.eq(0) ? toWei(1) : totalSupply
           let rate = formatBalance(rewardRate.times(86400).times(toWei(1)).div(supply), 18, 0);
-          const displaySupply = formatBalance(totalSupply, 18, 4);
-          const claimed = formatBalance(claimedRewards, 18, 4);
-          let total = formatBalance(totalRewards, 18, 4);
+          const displaySupply = parseFloat(formatBalance(totalSupply, 18, 4));
+          const claimed = parseFloat(formatBalance(claimedRewards, 18, 4));
+          let total = parseFloat(formatBalance(totalRewards, 18, 4));
           let symbol = '', name = '', tokens = [];
 
           if (meta) {
@@ -119,7 +119,7 @@ export default function Stake() {
               return <h5>BEGINS IN <Countdown data={periodStart * 1000} /></h5>
             }
             if (active) {
-              return <h5>STAKED: {displaySupply} {state.native ? '' : symbol}</h5>
+              return <h5>STAKED: {displaySupply.toLocaleString()} {state.native ? '' : symbol}</h5>
             }
             if (hasBegun) {
               return <h5>STAKING FINISHED</h5>
@@ -131,24 +131,24 @@ export default function Stake() {
             if (!isReady) {
               return <ul className={classes.list}>
                 <li> BEGINS IN <Countdown data={periodStart * 1000} /> </li>
-                <li> TOTAL: {total} NDX </li>
+                <li> TOTAL: {total.toLocaleString()} NDX </li>
               </ul>
             }
             if (active) {
               return <ul className={classes.list}>
-                <li> RATE: {rate} NDX/DAY </li>
-                <li> LP's: 0 </li>
+                <li> RATE: {rate.toLocaleString()} NDX/DAY </li>
+                <li> CLAIMED: {claimed.toLocaleString()} NDX </li>
               </ul>
             }
             if (hasBegun) {
               return <ul className={classes.list}>
-                <li> CLAIMED: {claimed} NDX </li>
-                <li> TOTAL: {total} NDX </li>
+                <li> CLAIMED: {claimed.toLocaleString()} NDX </li>
+                <li> TOTAL: {total.toLocaleString()} NDX </li>
               </ul>
             }
             return <ul className={classes.list}>
               <li> CAN BE INITIALIZED </li>
-              <li> AVAILABLE: {parseInt(total)} NDX </li>
+              <li> AVAILABLE: {total.toLocaleString()} NDX </li>
             </ul>
           }
 

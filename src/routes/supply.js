@@ -2,10 +2,11 @@ import React, { Fragment, useState, useContext, useEffect } from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import { useParams } from  'react-router-dom'
+import CountUp from 'react-countup';
 
 import StakingRewardsFactory from '../assets/constants/abi/StakingRewardsFactory.json'
 import IStakingRewards from '../assets/constants/abi/IStakingRewards.json'
-import { formatBalance, toTokenAmount } from '@indexed-finance/indexed.js'
+import { formatBalance, toTokenAmount, toWei, toBN } from '@indexed-finance/indexed.js'
 
 import { TX_CONFIRMED, TX_PENDING, TX_REVERTED } from '../assets/constants/parameters'
 import { STAKING_FACTORY } from '../assets/constants/addresses'
@@ -25,10 +26,6 @@ import { store } from '../state'
 import { useStakingState } from '../state/staking/context';
 
 const useStyles = getStyles(style)
-
-function uncapitalizeNth(text, n) {
-    return (n > 0 ? text.slice(0, n) : '') + text.charAt(n).toLowerCase() + (n < text.length - 1 ? text.slice(n+1) : '')
-}
 
 export default function Supply() {
   const [ execution, setExecution ] = useState({ f: () => {}, label: 'STAKE' })
@@ -153,10 +150,25 @@ export default function Supply() {
   ];
 
   function UserData() {
-    const earned = pool.pool && pool.pool.userEarnedRewards;
-    const earnedDisplay = earned ? formatBalance(earned, 18, 6) : '0';
-    const staked = pool.pool && pool.pool.userBalanceRewards;
-    const stakedDisplay = staked ? formatBalance(staked, 18, 6) : '0';
+    let userEarnedRewards = pool.pool && pool.pool.userEarnedRewards ? pool.pool.userEarnedRewards : toBN(0)
+    let userBalanceRewards = pool.pool && pool.pool.userBalanceRewards ? pool.pool.userBalanceRewards : toBN(0)
+    let dailySupply = pool.pool ? pool.pool.pool.rewardRate.times(86400) : toBN(0)
+    let totalSupply = pool.pool ? pool.pool.pool.totalSupply : toBN(0)
+
+    if(totalSupply.eq(0)){
+      totalSupply = toBN(toWei(1))
+    }
+
+    const earnedDisplay = formatBalance(userEarnedRewards, 18, 6);
+    const rateDisplay = formatBalance(dailySupply, 18, 6);
+    const stakedDisplay = formatBalance(userBalanceRewards, 18, 6);
+    const supplyDisplay = formatBalance(totalSupply, 18, 6);
+
+    let relative = parseFloat(stakedDisplay)/parseFloat(supplyDisplay)
+    let returns = parseFloat(rateDisplay) * (isNaN(relative) ? 0 : relative)
+    let future =  parseFloat(earnedDisplay) + returns
+    let claim = parseFloat(earnedDisplay)
+
     return (
       <Canvas native={state.native} style={{ overflowX: 'hidden', margin }}>
         <div className={classes.rewards} style={{ width: reward }}>
@@ -164,16 +176,16 @@ export default function Supply() {
           <div>
             {!state.native && (
               <h2 style={{ marginLeft: claimMargin }}>
-                { earnedDisplay } NDX
+                <CountUp decimals={6} perserveValue separator="," start={claim} end={future} duration={86400} /> NDX
               </h2>
             )}
             {state.native && (
               <h3 style={{ marginLeft: claimMargin }}>
-                {earnedDisplay} NDX
+                <CountUp decimals={6} perserveValue separator="," start={claim} end={future} duration={86400} /> NDX
               </h3>
             )}
             <ButtonPrimary
-              disabled={!state.web3.injected || !earned || earned.eq(0)}
+              disabled={!state.web3.injected || !userEarnedRewards || userEarnedRewards.eq(0)}
               onClick={claim}
               variant='outlined'
               margin={{ marginTop: buttonPos, marginBottom: 12.5, marginRight: 37.5 }}
@@ -183,7 +195,7 @@ export default function Supply() {
           </div>
           <ul className={classes.list}>
             <li> STAKED: {stakedDisplay} {!state.native && (<>{ticker}</>)}</li>
-            <li> RATE: {stats.display} NDX/DAY</li>
+            <li> RATE: {returns.toLocaleString()} NDX/DAY</li>
           </ul>
         </div>
       </Canvas>
