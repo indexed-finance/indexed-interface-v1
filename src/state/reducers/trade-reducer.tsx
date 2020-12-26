@@ -276,9 +276,9 @@ export function useTrade(): TradeContextType {
     let inputSymbol = tradeState.helper.getTokenInfo(tradeState.input.address).symbol;
     let outputSymbol = tradeState.helper.getTokenInfo(tradeState.output.address).symbol;
     let priceValue = formatBalance(tradeState.price, 0, 5)
-    let isWethPair = inputSymbol !== 'ETH'
+    let isWethPair = inputSymbol === 'ETH'
 
-    let usdRate = isWethPair ? tradeState.price : toBN(1).div(tradeState.price)
+    let usdRate = !isWethPair ? tradeState.price : toBN(1).div(tradeState.price)
     const { amount, decimals, address } = tradeState.input;
     fee = formatBalance(amount.times(3).div(1000), decimals, 4);
     price = `1 ${inputSymbol} = ${priceValue} ${outputSymbol}`

@@ -47,7 +47,7 @@ const proposalAndDistributionQuery = () => `
 
 const swapQuery = (poolAddress) => `
 {
- 	swaps(where: { pool: "${poolAddress}" }) {
+ 	swaps(orderBy: timestamp, orderDirection: desc, where: { pool: "${poolAddress}" }) {
     id
     tokenIn
     tokenOut
@@ -120,7 +120,7 @@ const marketMetadataQuery = (pairAddress) => `
 
 const pairQuery = (pairAddress) => `
 {
-	swaps(where:{ pair: "${pairAddress}"}) {
+	swaps(orderBy: timestamp, orderDirection: desc, where:{ pair: "${pairAddress}"}) {
     transaction {
       id
     }

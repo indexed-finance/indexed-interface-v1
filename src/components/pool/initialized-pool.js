@@ -20,7 +20,7 @@ import PoolInitializer from '../../assets/constants/abi/PoolInitializer.json'
 import style from '../../assets/css/routes/pool'
 
 import { toContract } from '../../lib/util/contracts'
-import { getEvents, balanceOf } from '../../lib/erc20'
+import { balanceOf } from '../../lib/erc20'
 import { getPair } from '../../lib/markets'
 import getStyles from '../../assets/css'
 
@@ -101,10 +101,7 @@ function InitializedPoolPage({ address, metadata }){
       let { web3 } = state
 
       if(events.length == 0 && metadata.address !== ZERO_ADDRESS){
-        let provider = web3.websocket[process.env.REACT_APP_ETH_NETWORK]
-        let tokenEvents = await getEvents(provider, address)
-
-        setEvents(tokenEvents)
+        setEvents([])
 
         if(web3.injected){
           await getActiveCredit()

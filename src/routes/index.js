@@ -16,7 +16,6 @@ import Swap from '../components/index/swap'
 
 import style from '../assets/css/routes/index'
 import getStyles from '../assets/css'
-import { getBalances } from '../lib/markets'
 import { store } from '../state'
 import { MintStateProvider } from '../state/mint'
 import { SwapStateProvider } from '../state/swap'
@@ -70,22 +69,6 @@ export default function Index(){
       trade: {}, mint: {}, burn: {}, swap: {}
     }
   }
-
-  useEffect(() => {
-    const retrieveBalances = async() => {
-      let { account, indexes, web3 } = state
-
-      if(web3.injected && indexes && indexes[name]){
-        let { assets } = indexes[name]
-        let balances =  await getBalances(web3[process.env.REACT_APP_ETH_NETWORK], account, assets, {})
-
-        await dispatch({ type: 'BALANCE',
-          payload: { balances }
-        })
-      }
-    }
-    retrieveBalances()
-  }, [ state.web3.injected ])
 
   useEffect(() => {
     const getMetadata = async() => {

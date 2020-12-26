@@ -131,8 +131,8 @@ export default function TradeTab({ metadata }) {
   }
 
   let { inputWidth, width, marginRight } = style.getFormatting(state.native)
-  let usdPricePerToken = parseFloat(parseFloat(ethUSD) * usdRate) * 1.01
-  let exceedsTrueUSDValue = !isWethPair ? usdPricePerToken > parseFloat(metadata.price) : usdPricePerToken  < parseFloat(metadata.price);
+  let usdPricePerToken = parseFloat(parseFloat(ethUSD) * usdRate) * 1.005
+  let exceedsTrueUSDValue = isWethPair ? usdPricePerToken > parseFloat(metadata.price) : usdPricePerToken  < parseFloat(metadata.price);
 
   return (
     <Grid container direction='column' alignItems='center' justify='space-around' style={{ width }}>
