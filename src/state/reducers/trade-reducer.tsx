@@ -1,5 +1,5 @@
 import { BigNumber, toWei, formatBalance } from "@indexed-finance/indexed.js";
-import { UniswapHelper } from '@indexed-finance/indexed.js';
+import { UniswapHelper, toBN } from '@indexed-finance/indexed.js';
 import { useReducer } from "react";
 import { TradeMiddlewareAction, TradeDispatchAction, SetInputToken, SetOutputToken, SetUniswapHelper } from "../actions/trade-actions";
 import { withTradeMiddleware } from "../middleware/trade-middleware";
@@ -256,6 +256,8 @@ export type TradeContextType = {
   switchTokens: () => void;
   priceString: string;
   feeString: string;
+  usdRate: number;
+  isWethPair: boolean;
 }
 
 export function useTrade(): TradeContextType {
@@ -267,15 +269,23 @@ export function useTrade(): TradeContextType {
 
   let price: string;
   let fee: string;
+  let rate: number;
+  let isEth: boolean;
 
   if (tradeState.helper) {
     let inputSymbol = tradeState.helper.getTokenInfo(tradeState.input.address).symbol;
     let outputSymbol = tradeState.helper.getTokenInfo(tradeState.output.address).symbol;
     let priceValue = formatBalance(tradeState.price, 0, 5)
+    let isWethPair = inputSymbol !== 'ETH'
+
+    let usdRate = isWethPair ? tradeState.price : toBN(1).div(tradeState.price)
     const { amount, decimals, address } = tradeState.input;
     fee = formatBalance(amount.times(3).div(1000), decimals, 4);
     price = `1 ${inputSymbol} = ${priceValue} ${outputSymbol}`
+
+    rate = parseFloat(formatBalance(usdRate, 0, 5))
     fee = `${fee} ${inputSymbol}`;
+    isEth = isWethPair
   }
 
   return {
@@ -289,5 +299,7 @@ export function useTrade(): TradeContextType {
     whitelistTokens: whitelist[process.env.REACT_APP_ETH_NETWORK],
     priceString: price || '',
     feeString: fee || '',
+    usdRate: rate || 0,
+    isWethPair: isEth
   };
 }

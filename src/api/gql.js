@@ -45,67 +45,6 @@ const proposalAndDistributionQuery = () => `
   }
 `
 
-const stakingQuery = () => `
-{
-  ndxStakingPools(first: 5) {
-    id
-    startsAt
-		isReady
-    indexPool
-    stakingToken
-    totalSupply
-    periodFinish
-    lastUpdateTime
-    totalRewards
-    claimedRewards
-    rewardRate
-  }
-}
-`
-
-const stakeQuery = (stakingAddress, isWethPair) => (`
-{
-  ndxStakingPools(where: { indexPool: "${stakingAddress}", isWethPair: ${isWethPair}}) {
-    id
-    startsAt
-		isReady
-    indexPool
-    stakingToken
-    totalSupply
-    periodFinish
-    lastUpdateTime
-    totalRewards
-    claimedRewards
-    rewardRate
-  }
-}
-`);
-
-const proposalQuery = id => `
-  {
-    proposals(where: { id: "${id}" }){
-      id
-      for
-      against
-      proposer
-      expiry
-      state
-      title
-      description
-      signatures
-      calldatas
-      values
-      targets
-      votes {
-        id
-        voter
-        option
-        weight
-      }
-    }
-  }
-`
-
 const swapQuery = (poolAddress) => `
 {
  	swaps(where: { pool: "${poolAddress}" }) {
@@ -161,57 +100,11 @@ const categoriesQuery = () => `
 }`
 
 const priceQuery = () => `
-  {
-    exchanges(where: { id:"0x2a1530c4c41db0b0b2bb646cb5eb1a67b7158667"}) {
-      price
-    }
-  }
-`
-
-const poolQuery = (address) => `
 {
-  indexPools(where: { id: "${address}" }) {
-    id
-    size
-    category { id }
-    tokens {
-      id
-      balance
-      token { id }
-      denorm
-      desiredDenorm
-    }
-    totalWeight
-    totalSupply
+  pairs(where: { id: "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc"}) {
+    token0Price
   }
-}
-`;
-
-const initializerQuery = (poolAddress) => `
-{
-  poolInitializers(where: { pool: "${poolAddress}" }) {
-    id
-    totalCreditedWETH
-    pool {
-      id
-    }
-    tokens {
-      id
-    }
-  }
-}
-`
-
-// where: { date_gt: "${timestampFrom}", date_lt: "${timestampTo}" }
-
-const tokenDayDataQuery = (tokenAddress, days) => `
-{
-  tokenDayDatas(orderBy: date, orderDirection: desc, first: ${days}, where: { token: "${tokenAddress}" }) {
-    date
-    priceUSD
-  }
-}
-`
+}`
 
 const marketMetadataQuery = (pairAddress) => `
 {
@@ -258,11 +151,6 @@ export async function getTokenCategories() {
   return categories;
 }
 
-export async function getIndexPool(address) {
-  let { data: { indexPools } } = await execRequest(poolQuery(address));
-  return indexPools;
-}
-
 export async function getSwaps(poolAddress) {
   let { data: { swaps } } = await execRequest(swapQuery(poolAddress));
   return swaps;
@@ -270,31 +158,7 @@ export async function getSwaps(poolAddress) {
 
 export async function getCategory(id) {
   let { data: { category } } = await execRequest(categoryInfoQuery(id));
-
   return category.tokens;
-}
-
-export async function getUnitializedPool(address) {
-  const { data: { poolInitializers } } = await execRequest(initializerQuery(address));
-  return poolInitializers;
-}
-
-export async function getStakingPools() {
-  const { data: { ndxStakingPools } } = await execRequest(stakingQuery());
-  return ndxStakingPools;
-}
-
-export async function getStakingPool(poolAddress, isWethPair) {
-  const { data: { ndxStakingPools } } = await execRequest(stakeQuery(poolAddress, isWethPair));
-  return ndxStakingPools[0];
-}
-
-export async function getTokenPriceHistory(tokenAddress, days) {
-  const { data: { tokenDayDatas } } = await execRequest(
-    tokenDayDataQuery(tokenAddress, days),
-    SUBGRAPH_URL_UNISWAP
-  );
-  return tokenDayDatas;
 }
 
 export async function getMarketMetadata(pairAddress) {
@@ -313,22 +177,15 @@ export async function getMarketTrades(pairAddress) {
   return swaps;
 }
 
-export async function getProposal(id) {
-  const { data: { proposals } } = await execRequest(proposalQuery(id));
-
-  return proposals[0]
-}
-
 export async function getProposals() {
   const { data } = await execRequest(proposalAndDistributionQuery());
-
   return { ...data  }
 }
 
 export async function getETHPrice() {
-  const { data: { exchanges } } = await execRequest(
+  const { data: { pairs } } = await execRequest(
     priceQuery(),
-    SUBGRAPH_URL_UNISWAP
+    'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2'
   );
-return exchanges[0];
+  return pairs[0].token0Price;
 }

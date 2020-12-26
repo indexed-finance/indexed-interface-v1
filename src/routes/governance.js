@@ -229,9 +229,9 @@ export default function Governance(){
 
   useEffect(() => {
     const retrieveProposals = async() => {
-      if(state.request && state.governance.proposals.length > 0){
-        let { proposals, dailyDistributionSnapshots } = state.governance
+      let { proposals, dailyDistributionSnapshots } = state.governance
 
+      if((proposals.length > 0 || dailyDistributionSnapshots.length > 0) && state.request){
         let length = dailyDistributionSnapshots.length - 1
         let { active, inactive, delegated, voters } = dailyDistributionSnapshots[length]
         let recentBlock = await state.web3.rinkeby.eth.getBlock('latest')

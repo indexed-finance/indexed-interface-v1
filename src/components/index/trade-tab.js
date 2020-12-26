@@ -8,48 +8,48 @@ import style from '../../assets/css/components/trade'
 import getStyles from '../../assets/css'
 
 import { store } from '../../state';
+import { ZERO_ADDRESS } from '../../assets/constants/addresses'
 import { useTradeState } from '../../state/trade';
 import TradeInput from './trade-input';
 import { getERC20 } from '../../lib/erc20';
 import ButtonPrimary from '../buttons/primary';
 import Input from '../inputs/input';
 import { toContract } from '../../lib/util/contracts';
+import { getETHPrice } from '../../api/gql';
+import { SlippgeExceedsTrueValue } from '../helper-tooltip';
 
 const routerABI = require('../../assets/constants/abi/UniswapV2Router.json')
 
 const useStyles = getStyles(style);
 
 export default function TradeTab({ metadata }) {
-  const { useInput, feeString, priceString, useOutput, tradeState, setHelper, updatePool, whitelistTokens, selectWhitelistToken, switchTokens } = useTradeState();
-  const [ isRendered, setRender ] = useState(false);
+  const { useInput, usdRate, isWethPair, feeString, priceString, useOutput, tradeState, setHelper, updatePool, whitelistTokens, selectWhitelistToken, switchTokens } = useTradeState();
   const [approvalNeeded, setApprovalNeeded] = useState(false);
+  const [ isRendered, setRender ] = useState(false);
+  const [ ethUSD, setPrice ] = useState(0)
 
   let { state, handleTransaction } = useContext(store);
   const classes = useStyles()
 
   useEffect(() => {
-    if (
-      tradeState.helper ||
-      !metadata ||
-      !metadata.address ||
-      metadata.addresss === '0x0000000000000000000000000000000000000000' ||
-      !state.web3.injected
-    ) {
-      console.log(metadata)
+    if (tradeState.helper || !metadata || !metadata.address ||
+      metadata.addresss === ZERO_ADDRESS || !state.web3.injected) {
       return console.log(`Skipping Setter`);
     }
     const setPool = async () => {
-      console.log(`Setting Pool With Whitelist`);
-      console.log(whitelistTokens)
-      console.log(`Setting Pool With Metadata`);
-      console.log(metadata)
+      const quoteEthUSD = await getETHPrice()
       const poolToken = {
         address: metadata.address,
         decimals: 18,
         symbol: metadata.symbol
       }
-      const helper = new UniswapHelper(state.web3.injected, poolToken, whitelistTokens, state.account);
-
+      const helper = new UniswapHelper(
+        state.web3.injected,
+        poolToken,
+        whitelistTokens,
+        state.account
+      );
+      setPrice(parseFloat(quoteEthUSD))
       setHelper(helper);
       setRender(true);
     }
@@ -131,6 +131,8 @@ export default function TradeTab({ metadata }) {
   }
 
   let { inputWidth, width, marginRight } = style.getFormatting(state.native)
+  let usdPricePerToken = parseFloat(parseFloat(ethUSD) * usdRate) * 1.01
+  let exceedsTrueUSDValue = !isWethPair ? usdPricePerToken > parseFloat(metadata.price) : usdPricePerToken  < parseFloat(metadata.price);
 
   return (
     <Grid container direction='column' alignItems='center' justify='space-around' style={{ width }}>
@@ -144,8 +146,12 @@ export default function TradeTab({ metadata }) {
       </Grid >
       <Grid item xs={12} md={12} lg={12} xl={12} key='1'>
         <div className={classes.swap}>
-          <IconButton onClick={!tradeState.helper ? () => {} : switchTokens}> <Swap /> </IconButton>
           <p>{priceString}</p>
+          <IconButton onClick={!tradeState.helper ? () => {} : switchTokens}> <Swap /> </IconButton>
+          <p style={{ color: exceedsTrueUSDValue ? '#f44336' : '#00e79a' }}>
+            1 {metadata.symbol} = ${parseFloat((usdPricePerToken).toFixed(2)).toLocaleString()}
+            &nbsp;{exceedsTrueUSDValue ? <SlippgeExceedsTrueValue isWethPair={isWethPair} /> : <></> }
+          </p>
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} key='2'>
