@@ -36,12 +36,14 @@ export default function Stake() {
       color: '#fc1c84',
       mainWidth: 50,
       marginRight: 5,
+      showUni: true,
       width: 25,
     }
     else return {
       color: '',
       mainWidth: 30,
       marginRight: 0,
+      showUni: false,
       width: 30
     }
   }
@@ -83,8 +85,19 @@ export default function Stake() {
             name = meta.indexPoolName
           }
 
-          let { mainWidth, width, color, marginRight } = getPoolStyles(symbol)
+          let { mainWidth, width, color, marginRight, showUni } = getPoolStyles(symbol)
           let label = isReady ? 'STAKE' : 'INITIALIZE'
+
+          if(showUni) {
+            let findExisting = tokens.find(i => i == 'UNI')
+
+            if(findExisting) {
+              tokens[tokens.indexOf(findExisting)] = tokens[0]
+              tokens[0] = findExisting
+            } else {
+              tokens[0] = 'UNI'
+            }
+          }
 
           const imgStyles = [
             { width: mainWidth, marginRight },

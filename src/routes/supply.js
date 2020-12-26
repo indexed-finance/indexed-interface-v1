@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useContext } from 'react'
+import React, { Fragment, useState, useContext, useEffect } from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import { useParams } from  'react-router-dom'
@@ -36,12 +36,13 @@ export default function Supply() {
   const [ metadata, setMetadata ] = useState({ supply: 0, rate: 0 })
   const [ input, setInput ] = useState(null)
   const [ shouldQuery, setQuery ] = useState(false)
+  const [ tokens, setTokens ] = useState([])
   const { useStakingPool } = useStakingState();
 
   let { state, dispatch, handleTransaction } = useContext(store)
   let { asset } = useParams()
   let classes = useStyles()
-  let ticker = uncapitalizeNth(asset.toUpperCase(), asset.length-1)
+  let ticker = asset.toUpperCase()
   const pool = useStakingPool(ticker);
 
   const initializePool = async(addr) => {
@@ -319,6 +320,31 @@ export default function Supply() {
     )
   }
 
+  useEffect(() => {
+    // Ensure that if a pool is using a UNIV2 for staking, to
+    // format images in occurance and if not render as is
+    const sortDisplayImages = () => {
+      if(!pool.pool && !pool.metadata) return;
+      else if(tokens.length > 0) return;
+
+      let targetArr = pool.metadata.indexPoolTokenSymbols.slice(0, 4)
+      let findExisting = targetArr.find(i => i == 'UNI')
+
+      if(!ticker.includes('UNI')) {
+        setTokens(targetArr)
+      } else {
+        if(findExisting) {
+          targetArr[targetArr.indexOf(findExisting)] = targetArr[0]
+          targetArr[0] = findExisting
+        } else {
+          targetArr[0] = 'UNI'
+        }
+        setTokens(targetArr)
+      }
+    }
+    sortDisplayImages()
+  }, [ , pool.metadata ])
+
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
     <Grid item xs={10} md={6}>
@@ -332,11 +358,9 @@ export default function Supply() {
             <Grid container direction='row' alignItems='center' justify={positioning} spacing={4}>
                 <Fragment>
                   <Grid item>
-                    {(pool.pool && pool.metadata) &&
-                      pool.metadata.indexPoolTokenSymbols.slice(0, 4).map(
-                        (symbol, i) => <img alt={`asset-${i}`} src={tokenMetadata[symbol].image} style={imgStyles[i]} />
-                      )
-                    }
+                    {tokens.map(
+                      (symbol, i) => <img alt={`asset-${i}`} src={tokenMetadata[symbol].image} style={imgStyles[i]} />
+                    )}
                   </Grid>
                   <Grid item>
                     { FormInput() }
