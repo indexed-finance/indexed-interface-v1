@@ -1,11 +1,9 @@
 const setStyle = (theme) => ({
   header: {
-    '& p': {
-      '& a': {
-        color: 'orange !important',
-        '&:hover': {
-          color: '#00e79a !important'
-        }
+    '& a': {
+      color: 'orange !important',
+      '&:hover': {
+        color: '#00e79a !important'
       }
     },
     '& h3': {

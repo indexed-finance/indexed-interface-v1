@@ -94,16 +94,16 @@ export default function Banner() {
   }
 
   useEffect(() => {
-    if (state.governance.proposals.length && !messages.proposal.id) {
-      let arr = state.governance.proposals
-      let last = arr[arr.length-1]
-      setMessages({
-        ...messages,
-        proposal: last || proposalType
-      });
+    let { proposals } = state.governance
+
+    if (proposals.length > 0 && !messages.proposal.id) {
+      let last = proposals[proposals.length-1]
+      let proposal = !last ? proposalType : last
+
+      setMessages({ ...messages, proposal });
       startAnimation(last)
     }
-  }, [state.proposals]);
+  }, [ , state.governance ]);
 
   useEffect(() => {
     let [ init, indxs ] = [ [], [] ]

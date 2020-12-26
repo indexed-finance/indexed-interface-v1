@@ -288,30 +288,30 @@ export default function Supply() {
         stakingTokenSymbol = pool.metadata.stakingSymbol;
       }
       const dailySupply = rewardRate.times(86400);
-      claimed = formatBalance(claimedRewards, 18, 4);
-      rate = formatBalance(dailySupply, 18, 4);
-      staked = formatBalance(totalSupply, 18, 4);
-      rewards = formatBalance(totalRewards, 18, 4);
+      claimed = parseFloat(formatBalance(claimedRewards, 18, 2));
+      rate = parseFloat(formatBalance(dailySupply, 18, 2));
+      staked = parseFloat(formatBalance(totalSupply, 18, 2));
+      rewards = parseFloat(formatBalance(totalRewards, 18, 2));
     }
     return (
       <ul className={classes.stats}>
         <li> STAKED {ticker}: <span>
-            {staked.toLocaleString({ minimumFractionDigits: 2 })}
+            {staked.toLocaleString()}
           </span>
         </li>
         <li> NDX PER DAY: <span>
-            {rate.toLocaleString({ minimumFractionDigits: 2 })}
+            {rate.toLocaleString()}
           </span>
         </li>
         {
           !state.native &&
           <Fragment>
             <li> TOTAL NDX: <span>
-                {rewards.toLocaleString({ minimumFractionDigits: 2 })}
+                {rewards.toLocaleString()}
               </span>
             </li>
             <li> CLAIMED NDX: <span>
-                {claimed.toLocaleString({ minimumFractionDigits: 2 })}
+                {claimed.toLocaleString()}
               </span>
             </li>
           </Fragment>
@@ -321,7 +321,7 @@ export default function Supply() {
   }
 
   useEffect(() => {
-    // Ensure that if a pool is using a UNIV2 for staking, to
+    // Ensure that if a pool is using a UNIV2 token for staking, to
     // format images in occurance and if not render as is
     const sortDisplayImages = () => {
       if(!pool.pool && !pool.metadata) return;
