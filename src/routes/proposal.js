@@ -10,7 +10,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import { useParams } from 'react-router-dom'
-import { BigNumber, formatBalance } from '@indexed-finance/indexed.js'
+import { toBN, formatBalance } from '@indexed-finance/indexed.js'
 
 import { Interface } from 'ethers/lib/utils';
 
@@ -95,7 +95,7 @@ export default function Proposal(){
 
   const handleInput = (event) => {
     let target = event.target.value == 1 ? metadata.against : metadata.for
-    let weight = formatBalance(new BigNumber(target), 18, 4)
+    let weight = formatBalance(toBN(target), 18, 4)
     let { amount } = state.balances['NDX']
 
     if(weight > 0) {
@@ -137,17 +137,20 @@ export default function Proposal(){
         {logs.map((value, i) => {
          let { id, voter, option, weight } = value
          const color = option ? '#00e79a' : '#f44336'
-         const label = option ? 'FOR' : 'AGAINST'
+         const label = option ? '+' : '-'
+         const votingWeight = formatBalance(toBN(weight), 18, 2)
 
          return (
-           <ListItem key={value.address} button style={{ zIndex: 1}}>
-             <ListItemAvatar>
-               <Blockie border='3px' width={35} id={voter} address={voter} />
-             </ListItemAvatar>
-              <ListItemText
-                primary={`${voter.substring(0, 6)}...${voter.substring(38, 64)}`}
-                secondary={<b style={{ color }}>{label}</b>}
-              />
+            <ListItem button component='a' key={value.address} style={{ zIndex: 1}} target='_blank'
+              href={`https://${process.env.REACT_APP_ETH_NETWORK === 'rinkeby' ? 'rinkeby.' : ''}etherscan.io/tx/${id}`}
+            >
+              <ListItemAvatar>
+                <Blockie border='3px' width={35} id={voter} address={voter} />
+               </ListItemAvatar>
+               <ListItemText
+                  primary={`${voter.substring(0, 6)}...${voter.substring(38, 64)}`}
+                  secondary={<label style={{ color }}>{label}{votingWeight}</label>}
+                />
               <ListItemSecondaryAction />
            </ListItem>
           )
@@ -164,7 +167,7 @@ export default function Proposal(){
       if(web3.injected) {
         let contract = toContract(web3.injected, Ndx.abi, NDX)
         let balance = await contract.methods.getCurrentVotes(state.account).call()
-        let amount = formatBalance(new BigNumber(balance), 18, 4)
+        let amount = formatBalance(toBN(balance), 18, 4)
 
         dispatch({ type: 'BALANCE',
           payload: {
@@ -206,8 +209,8 @@ export default function Proposal(){
 
   let { margin, marginX, width, paddingLeft, progress, radius, marginTop } = style.getFormatting({ native })
 
-  let forVotes = formatBalance(new BigNumber(metadata.for), 18, 2)
-  let againstVotes = formatBalance(new BigNumber(metadata.against), 18, 2)
+  let forVotes = formatBalance(toBN(metadata.for), 18, 2)
+  let againstVotes = formatBalance(toBN(metadata.against), 18, 2)
   let values = { for: parseInt(metadata.for), against: parseInt(metadata.against) }
 
   return (
