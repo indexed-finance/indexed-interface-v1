@@ -22,6 +22,7 @@ import Progress from '../components/progress'
 import Stacked from '../components/charts/stacked'
 
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../assets/constants/parameters'
+import { isAddress } from '../assets/constants/functions'
 import { NDX, ZERO_ADDRESS } from '../assets/constants/addresses'
 import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
@@ -191,22 +192,26 @@ export default function Governance(){
 
   function Delegate({ show }){
     const [ input, setInput ] = useState(null)
+    const [ error, setError ] = useState(undefined)
 
     const handleInput = (event) => {
       setInput(event.target.value)
     }
 
     const submit = async() => {
-      if(input !== null) {
+      if(isAddress(input)){
+        await setError(undefined)
         await delegateAddress(input)
+      } else {
+        setError('INVALID ADDRESS')
       }
     }
 
     return(
       <Fragment>
         <Grid item>
-          <p> Allocate your votes to another address:</p>
-          <AddressInput onChange={handleInput} value={input} variant="outlined" label='ADDRESS'/>
+          <p style={{ marginTop: 5 }}> Allocate your votes to another address:</p>
+          <AddressInput error={!!error} helperText={error} onChange={handleInput} value={input} variant="outlined" label='ADDRESS'/>
         </Grid>
         <Grid item>
           <ButtonPrimary onClick={submit} margin={{ marginTop: !state.native ? 0 : 5, marginLeft: 25, float: 'right' }}> DELEGATE </ButtonPrimary>

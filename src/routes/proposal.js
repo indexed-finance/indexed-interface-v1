@@ -137,8 +137,8 @@ export default function Proposal(){
         {logs.map((value, i) => {
          let { id, voter, option, weight } = value
          const color = option ? '#00e79a' : '#f44336'
+         const votingWeight = parseFloat(formatBalance(toBN(weight), 18, 2)).toLocaleString()
          const label = option ? '+' : '-'
-         const votingWeight = formatBalance(toBN(weight), 18, 2)
 
          return (
             <ListItem button component='a' key={value.address} style={{ zIndex: 1}} target='_blank'
@@ -149,7 +149,7 @@ export default function Proposal(){
                </ListItemAvatar>
                <ListItemText
                   primary={`${voter.substring(0, 6)}...${voter.substring(38, 64)}`}
-                  secondary={<label style={{ color }}>{label}{votingWeight}</label>}
+                  secondary={<label style={{ color }}>{label}{votingWeight} NDX</label>}
                 />
               <ListItemSecondaryAction />
            </ListItem>
