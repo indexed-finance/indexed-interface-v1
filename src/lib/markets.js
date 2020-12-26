@@ -38,26 +38,6 @@ export async function getPair(web3, addressOne, addressTwo){
   return toContract(web3, UniV2PairABI.abi, pairAddress)
 }
 
-export async function getBalances(web3, address, array, map){
-  let tokens = array.map(v => { return { address: v.address, symbol: v.symbol }})
-  tokens.push({ address: process.env.REACT_APP_WETH, symbol: 'ETH' })
-
-  for(let token in tokens){
-    let contract = toContract(web3, IERC20.abi, tokens[token].address)
-    let balance = await contract.methods.balanceOf(address).call()
-
-    if(tokens[token].address == process.env.REACT_APP_WETH){
-      balance = await web3.eth.getBalance(address)
-    }
-
-    map[tokens[token].symbol] = {
-      amount: (balance/Math.pow(10,18)).toFixed(2),
-      address: tokens[token].address,
-    }
-  }
-  return map
-}
-
 export async function getRouter(web3){
   return toContract(web3, UniswapV2Router.abi, ROUTER)
 }

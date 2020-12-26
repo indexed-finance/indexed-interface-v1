@@ -16,7 +16,6 @@ import Swap from '../components/index/swap'
 
 import style from '../assets/css/routes/index'
 import getStyles from '../assets/css'
-import { getBalances } from '../lib/markets'
 import { store } from '../state'
 import { MintStateProvider } from '../state/mint'
 import { SwapStateProvider } from '../state/swap'
@@ -72,22 +71,6 @@ export default function Index(){
   }
 
   useEffect(() => {
-    const retrieveBalances = async() => {
-      let { account, indexes, web3 } = state
-
-      if(web3.injected && indexes && indexes[name]){
-        let { assets } = indexes[name]
-        let balances =  await getBalances(web3[process.env.REACT_APP_ETH_NETWORK], account, assets, {})
-
-        await dispatch({ type: 'BALANCE',
-          payload: { balances }
-        })
-      }
-    }
-    retrieveBalances()
-  }, [ state.web3.injected ])
-
-  useEffect(() => {
     const getMetadata = async() => {
       let { indexes, account } = state
       let emptyMetadata = Object.keys(metadata).length === 0;
@@ -124,7 +107,7 @@ export default function Index(){
         <Grid item>
           <div className={classes.nav}>
             <ButtonGroup disableElevation variant='outlined'>
-              <ButtonMarket style={styles.trade} onClick={() => changeExecution('trade')}> Buy/Sell </ButtonMarket>
+              <ButtonMarket style={styles.trade} onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
               <ButtonMarket style={styles.swap} onClick={() => changeExecution('swap')}> Swap </ButtonMarket>
               <ButtonMarket style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
               <ButtonMarket style={styles.burn} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>

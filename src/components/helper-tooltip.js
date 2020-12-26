@@ -18,6 +18,11 @@ export function MaximumAmountToolTip() {
   return <HelperTooltip text='To protect against large price swings, the transaction will revert if the maximum input is exceeded.' />
 }
 
+export function SlippgeExceedsTrueValue({ isWethPair }) {
+  let message = isWethPair ? ['is greater than', 'Mint'] : ['is less than', 'Burn']
+
+  return <HelperTooltip text={`WARNING, this orders spot price ${message[0]} the index's true USD value! ${message[1]} some tokens for a better quote.`} />
+}
 
 export function MaximumSupplyTooltip() {
   return <HelperTooltip text='The maximum supply is currently restricted to minimize risk to users.' />
