@@ -82,23 +82,23 @@ export default function Supply() {
     } catch (e) {}
   }
 
-  const claim = async() => {
+  const claimReward = async() => {
     let { web3, account } = state
-    let { id } = metadata
+    let poolAddress = pool.pool.pool.address
 
     setQuery(false)
 
     try {
-      let contract = toContract(web3.injected, IStakingRewards, id)
+      let contract = toContract(web3.injected, IStakingRewards, poolAddress)
 
       await contract.methods.exit().send({ from: account })
       .on('transactionHash', (transactionHash) =>
         dispatch(TX_PENDING(transactionHash))
       ).on('confirmation', (conf, receipt) => {
         if(conf === 0){
-          if(parseInt(receipt.status) == 1) {
+          if(receipt.status == 1) {
             dispatch(TX_CONFIRMED(receipt.transactionHash))
-            setQuery(true)
+            pool.pool.updatePool();
           } else {
             dispatch(TX_REVERTED(receipt.transactionHash))
           }
@@ -152,22 +152,22 @@ export default function Supply() {
   function UserData() {
     let userEarnedRewards = pool.pool && pool.pool.userEarnedRewards ? pool.pool.userEarnedRewards : toBN(0)
     let userBalanceRewards = pool.pool && pool.pool.userBalanceRewards ? pool.pool.userBalanceRewards : toBN(0)
-    let dailySupply = pool.pool ? pool.pool.pool.rewardRate.times(86400) : toBN(0)
     let totalSupply = pool.pool ? pool.pool.pool.totalSupply : toBN(0)
+    let rewardRate = pool.pool ? pool.pool.pool.rewardRate : toBN(0)
 
     if(totalSupply.eq(0)){
       totalSupply = toBN(toWei(1))
     }
 
-    const earnedDisplay = formatBalance(userEarnedRewards, 18, 6);
-    const rateDisplay = formatBalance(dailySupply, 18, 6);
+    const dailySupply = rewardRate.times(86400).times(toWei(1)).div(totalSupply);
+    const relativeWeight = userBalanceRewards.div(totalSupply);
+    const expectedReturns = dailySupply.times(relativeWeight);
+    const futureRewards = expectedReturns.plus(userEarnedRewards);
+    const earnedDisplay = parseFloat(formatBalance(userEarnedRewards, 18, 6));
+    const returnsDisplay = parseFloat(formatBalance(futureRewards, 18, 6));
+    const rateDisplay = formatBalance(expectedReturns, 18, 2);
     const stakedDisplay = formatBalance(userBalanceRewards, 18, 6);
     const supplyDisplay = formatBalance(totalSupply, 18, 6);
-
-    let relative = parseFloat(stakedDisplay)/parseFloat(supplyDisplay)
-    let returns = parseFloat(rateDisplay) * (isNaN(relative) ? 0 : relative)
-    let future =  parseFloat(earnedDisplay) + returns
-    let claim = parseFloat(earnedDisplay)
 
     return (
       <Canvas native={state.native} style={{ overflowX: 'hidden', margin }}>
@@ -176,17 +176,17 @@ export default function Supply() {
           <div>
             {!state.native && (
               <h2 style={{ marginLeft: claimMargin }}>
-                <CountUp decimals={6} perserveValue separator="," start={claim} end={future} duration={86400} /> NDX
+                <CountUp decimals={6} perserveValue separator="," start={earnedDisplay} end={returnsDisplay} duration={86400} /> NDX
               </h2>
             )}
             {state.native && (
               <h3 style={{ marginLeft: claimMargin }}>
-                <CountUp decimals={6} perserveValue separator="," start={claim} end={future} duration={86400} /> NDX
+                <CountUp decimals={6} perserveValue separator="," start={earnedDisplay} end={returnsDisplay} duration={86400} /> NDX
               </h3>
             )}
             <ButtonPrimary
-              disabled={!state.web3.injected || !userEarnedRewards || userEarnedRewards.eq(0)}
-              onClick={claim}
+              disabled={userBalanceRewards.eq(0)}
+              onClick={claimReward}
               variant='outlined'
               margin={{ marginTop: buttonPos, marginBottom: 12.5, marginRight: 37.5 }}
             >
@@ -195,7 +195,7 @@ export default function Supply() {
           </div>
           <ul className={classes.list}>
             <li> STAKED: {stakedDisplay} {!state.native && (<>{ticker}</>)}</li>
-            <li> RATE: {returns.toLocaleString()} NDX/DAY</li>
+            <li> RATE: {rateDisplay} NDX/DAY</li>
           </ul>
         </div>
       </Canvas>
