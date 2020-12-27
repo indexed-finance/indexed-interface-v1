@@ -36,10 +36,12 @@ export type SwapState = {
   ready: boolean;
   poolAddress?: string;
   price: BigNumber;
+  maxPrice: BigNumber;
 };
 
 const initialState: SwapState = {
   pool: undefined,
+  maxPrice: BN_ZERO,
   tokenList: undefined,
   outputList: undefined,
   slippage: 0,
@@ -131,6 +133,7 @@ function swapReducer(state: SwapState = initialState, actions: SwapDispatchActio
       case 'SET_TOKENS': { setTokens(action); break; }
       case 'SET_HELPER': { setHelper(action); break; }
       case 'SET_PRICE': { newState.price = action.price; break; }
+      case 'SET_MAX_PRICE': { newState.maxPrice = action.price; break; }
     }
   }
 

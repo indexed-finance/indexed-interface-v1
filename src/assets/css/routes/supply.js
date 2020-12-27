@@ -46,6 +46,11 @@ const setStyle = (theme) => ({
       float: 'right',
     }
   },
+  buttonBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center'
+  }
 })
 
 const mapping = {
@@ -62,7 +67,12 @@ const mapping = {
     reward: '34em',
     containerPadding: '1em 2em',
     buttonPos:  {
-      marginTop: -55,
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 37.5
+    },
+    button2Pos:  {
+      marginTop: 15,
       marginBottom: 12.5,
       marginRight: 37.5
     },
@@ -86,7 +96,12 @@ const mapping = {
     height: '10em',
     reward: '34em',
     buttonPos:  {
-      marginTop: -55,
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 37.5
+    },
+    button2Pos:  {
+      marginTop: 15,
       marginBottom: 12.5,
       marginRight: 37.5
     },
@@ -109,7 +124,12 @@ const mapping = {
     height: '10em',
     reward: '34em',
     buttonPos:  {
-      marginTop: -55,
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 37.5
+    },
+    button2Pos:  {
+      marginTop: 15,
       marginBottom: 12.5,
       marginRight: 37.5
     },
@@ -132,7 +152,12 @@ const mapping = {
     height: '10em',
     reward: '34em',
     buttonPos:  {
-      marginTop: -55,
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 37.5
+    },
+    button2Pos:  {
+      marginTop: 15,
       marginBottom: 12.5,
       marginRight: 37.5
     },
@@ -155,7 +180,12 @@ const mapping = {
     height: '10em',
     reward: '34em',
     buttonPos:  {
-      marginTop: -55,
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 37.5
+    },
+    button2Pos:  {
+      marginTop: 15,
       marginBottom: 12.5,
       marginRight: 37.5
     },
@@ -179,7 +209,12 @@ const mapping = {
     fontSize: 'auto',
     claimMargin: 50,
     buttonPos:  {
-      marginTop: -55,
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 17.5
+    },
+    button2Pos:  {
+      marginTop: 15,
       marginBottom: 12.5,
       marginRight: 37.5
     },
@@ -201,7 +236,12 @@ const mapping = {
     height: '12.75em',
     reward: 200,
     buttonPos:  {
-      marginTop: 100,
+      marginTop: 10,
+      marginBottom: 0,
+      marginRight: 0,
+    },
+    button2Pos:  {
+      marginTop: 10,
       marginBottom: 0,
       marginRight: 0,
     },
@@ -225,7 +265,12 @@ const mapping = {
     height: '12.5em',
     reward: 'calc(22.5em - 64px)',
     buttonPos:  {
-      marginTop: 67.5,
+      marginTop: 10,
+      marginBottom: 0,
+      marginRight: 17.5
+    },
+    button2Pos:  {
+      marginTop: 10,
       marginBottom: 0,
       marginRight: 37.5
     },
@@ -251,7 +296,12 @@ const mapping = {
     reward: 'calc(22.5em - 64px)',
     infoWidth: 270,
     buttonPos:  {
-      marginTop: 67.5,
+      marginTop: 10,
+      marginBottom: 0,
+      marginRight: 10
+    },
+    button2Pos:  {
+      marginTop: 10,
       marginBottom: 0,
       marginRight: 10
     },

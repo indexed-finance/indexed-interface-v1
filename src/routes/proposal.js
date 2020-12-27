@@ -9,6 +9,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import CountDown from 'react-countdown';
 import { useParams } from 'react-router-dom'
 import { toBN, formatBalance } from '@indexed-finance/indexed.js'
 
@@ -31,6 +32,8 @@ import getStyles from '../assets/css'
 import { store } from '../state'
 import { getProposal } from '../api/gql'
 
+const govABI = require('../assets/constants/abi/GovernorAlpha.json');
+
 function getAbiForContract(address) {
   switch (address.toLowerCase()) {
     case CONTROLLER.toLowerCase(): {
@@ -46,7 +49,9 @@ function getAbiForContract(address) {
 // TODO, add enum state values + configure subgraph
 const proposalState = {
   0: 'active',
-  1: 'rejcted'
+  1: 'canceled',
+  2: 'queued',
+  3: 'executed'
 }
 
 const useStyles = getStyles(style)
@@ -79,18 +84,20 @@ export default function Proposal(){
   const [ component, setComponent ] = useState({ blockie: null, list: null })
   const [ isTransaction, setTransaction ] = useState(false)
 
-  let { state, dispatch } = useContext(store)
+  let { state, dispatch, handleTransaction } = useContext(store)
   let { id } = useParams()
   let { native } = state
 
   const [ metadata, setMetadata ] = useState(initialProposalState)
   const [ weight, setWeight ] = useState(null)
-  const [ input, setInput ] = useState(1)
+  const [ input, setInput ] = useState(1);
+
   const classes = useStyles()
 
   const getProposalState = (proposal) => {
-    if(proposal.block >= proposal.expiry) return 'expired'
-    else return proposalState[proposal.state]
+    let _state = proposalState[proposal.state];
+    if(proposal.block >= proposal.expiry && _state === 'active') return 'expired'
+    else return _state;
   }
 
   const handleInput = (event) => {
@@ -159,7 +166,6 @@ export default function Proposal(){
     )
   }
 
-
   useEffect(() => {
     const getAccountMetadata = async() => {
       let { web3 } = state
@@ -197,7 +203,19 @@ export default function Proposal(){
       setMetadata(proposal)
     }
     retrieveProposal()
-  }, [ , state.governance ])
+  }, [ , state.governance ]);
+
+  useEffect(() => {
+    if (!metadata.id || metadata.eta || proposalState[metadata.state] !== 'queued') {
+      return;
+    }
+    async function getEta() {
+      const dao = toContract(state.web3[process.env.REACT_APP_ETH_NETWORK], govABI.abi, DAO);
+      const prop = await dao.methods.proposals(metadata.id).call();
+      metadata.eta = prop.eta;
+    }
+    getEta();
+  }, [ metadata ]);
 
   useEffect(() => {
     if(!state.load) {
@@ -205,7 +223,85 @@ export default function Proposal(){
         type: 'LOAD', payload: true
       })
     }
-  }, [])
+  }, []);
+
+  async function execute() {
+    const gov = toContract(state.web3.injected, govABI.abi, DAO);
+    const fn = gov.methods.execute(metadata.id);
+    await handleTransaction(fn.send({ from: state.account }))
+      .then(() => {
+        setMetadata({ ...metadata, state: 3 });
+      });
+  }
+
+  function DisplayActionBox() {
+    const propState = getProposalState(metadata);
+    if (propState === 'active') {
+      return <div className={classes.modal}>
+        <label>
+          <b style={{ float: 'left'}}>
+            FOR <Radio value={1} checked={input == 1} onClick={handleInput} color='#00e79a' />
+          </b>
+          <b style={{ float: 'right'}}>
+            AGAINST <Radio value={0} checked={input == 0} onClick={handleInput} color='#f44336' />
+          </b>
+        </label>
+        <p> WEIGHT: {parseFloat(state.balances['NDX'].amount).toLocaleString()} NDX </p>
+        <p> IMPACT: <span> {weight}% </span> </p>
+        <ButtonPrimary variant='outlined' style={{ marginBottom: 25 }} onClick={vote}>
+          VOTE
+        </ButtonPrimary>
+      </div>
+    }
+    function DisplayVotes() {
+      return <label>
+        <b style={{ float: 'left'}}>
+          FOR {formatBalance(toBN(metadata.for), 18, 4)}
+        </b>
+        <b style={{ float: 'right'}}>
+          AGAINST {formatBalance(toBN(metadata.against), 18, 4)}
+        </b>
+      </label>
+    }
+    if (propState === 'expired') {
+      return <div className={classes.modal}>
+        
+        <p> Proposal Has Expired </p>
+      </div>
+    }
+    if (propState === 'canceled') {
+      return <div className={classes.modal}>
+        <DisplayVotes />
+        <p> Proposal Canceled </p>
+      </div>
+    }
+    if (propState === 'queued') {
+      let timestamp;
+      if (metadata.eta) {
+        timestamp = (metadata.eta * 1000);
+      } else {
+        timestamp = new Date().getTime() + ((86400) * 1000)
+      }
+      if (new Date().getTime() > timestamp) {
+        return <div className={classes.modal}>
+          <DisplayVotes />
+          <p>Proposal Ready To Be Executed</p>
+          <ButtonPrimary variant='outlined' style={{ marginBottom: 25 }} disabled={!state.account} onClick={execute}>Execute</ButtonPrimary>
+        </div>
+      }
+      const readyDate = new Date(timestamp);
+      const dateString = `${readyDate.toDateString()} ${readyDate.getUTCHours()}:${readyDate.getUTCMinutes()}`
+      return <div className={classes.modal}>
+        <DisplayVotes />
+        <p>Ready At: {dateString} UTC</p>
+        <p>Time Left: <CountDown date={timestamp} /></p>
+      </div>
+    }
+    return <div className={classes.modal}>
+      <DisplayVotes />
+      <p>Proposal Has Been Executed</p>
+    </div>
+  }
 
   let { margin, marginX, width, paddingLeft, progress, radius, marginTop } = style.getFormatting({ native })
 
@@ -264,21 +360,7 @@ export default function Proposal(){
         <Grid item xs={12} md={4} lg={4} xl={4}>
           <div className={classes.column}>
             <Canvas native={state.native}>
-              <div className={classes.modal}>
-                <label>
-                  <b style={{ float: 'left'}}>
-                    FOR <Radio value={1} checked={input == 1} onClick={handleInput} color='#00e79a' />
-                  </b>
-                  <b style={{ float: 'right'}}>
-                    AGAINST <Radio value={0} checked={input == 0} onClick={handleInput} color='#f44336' />
-                  </b>
-                </label>
-                <p> WEIGHT: {parseFloat(state.balances['NDX'].amount).toLocaleString()} NDX </p>
-                <p> IMPACT: <span> {weight}% </span> </p>
-                <ButtonPrimary variant='outlined' style={{ marginBottom: 25 }} onClick={vote}>
-                  VOTE
-                </ButtonPrimary>
-              </div>
+              <DisplayActionBox />
             </Canvas>
             <Container margin={marginX} title='VOTES' padding='1em 0em'>
               <div className={classes.log}>

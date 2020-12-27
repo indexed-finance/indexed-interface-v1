@@ -40,19 +40,17 @@ export default function Swap({ metadata }){
   }
 
   const swapTokens = async() => {
-    const { input, output, specifiedSide, price } = swapState
+    const { input, output, specifiedSide, maxPrice } = swapState
 
     const { address } = swapState.pool
     const abi = require('../../assets/constants/abi/BPool.json').abi;
     const pool = toContract(state.web3.injected, abi, address);
-    const quote = await pool.methods.getSpotPrice(input.address, output.address).call()
     const amountOut = toHex(output.amount);
     const amountIn = toHex(input.amount);
     const minimumOutput = toHex(minimum);
     let fn;
 
     if(specifiedSide === 'input'){
-      const maxPrice = bdiv(input.amount.times(1.02), output.amount);
       fn = pool.methods.swapExactAmountIn(
         input.address,
         amountIn,
@@ -61,7 +59,6 @@ export default function Swap({ metadata }){
         toHex(maxPrice)
       );
     } else {
-      const maxPrice = bdiv(input.amount.times(1.02), output.amount);
 
       fn = pool.methods.swapExactAmountOut(
         input.address,

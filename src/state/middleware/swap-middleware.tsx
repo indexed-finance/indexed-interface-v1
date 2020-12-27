@@ -34,17 +34,19 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
       const output = { ...state.output };
       const { usedBalance } = pool.tokens.find(i => i.address == input.address);
       let isError = false;
+      let maxPrice: BigNumber;
 
       input.displayAmount = displayAmount;
       input.amount = amount;
 
       if(amount.lte(usedBalance.div(2))) {
         const outputValue = await state.pool.calcOutGivenIn(input.address, output.address, input.amount);
-
+        maxPrice = outputValue.spotPriceAfter.times(1.02);
         output.amount = toBN(outputValue.amount)
         output.displayAmount = outputValue.displayAmount;
       } else {
         isError = true;
+        maxPrice = BN_ZERO;
       }
 
       const perciseInput = input.amount.div(toBN(10).pow(input.decimals));
@@ -63,7 +65,8 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         { type: 'SET_SPECIFIED_SIDE', side: 'input' },
         { type: 'SET_INPUT_TOKEN', token: input },
         { type: 'SET_OUTPUT_TOKEN', token: output },
-        { type: 'SET_PRICE', price: price }
+        { type: 'SET_PRICE', price: price },
+        { type: 'SET_MAX_PRICE', price: maxPrice }
       ]);
     }
 
@@ -74,14 +77,17 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
       output.amount = toTokenAmount(action.amount, output.decimals);
       const { usedBalance } = pool.tokens.find(i => i.address == output.address);
       let isError = false;
+      let maxPrice: BigNumber;
 
       if (output.amount.lte(usedBalance.div(3))) {
         const inputValue = await state.pool.calcInGivenOut(input.address, output.address, output.amount);
 
         input.amount = toBN(inputValue.amount);
         input.displayAmount = inputValue.displayAmount;
+        maxPrice = inputValue.spotPriceAfter.times(1.02)
       } else {
         isError = true;
+        maxPrice = BN_ZERO;
       }
 
       const perciseInput = input.amount.div(toBN(10).pow(input.decimals));
@@ -100,7 +106,8 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         { type: 'SET_SPECIFIED_SIDE', side: 'output' },
         { type: 'SET_INPUT_TOKEN', token: input },
         { type: 'SET_OUTPUT_TOKEN', token: output },
-        { type: 'SET_PRICE', price: price }
+        { type: 'SET_PRICE', price: price },
+        { type: 'SET_MAX_PRICE', price: maxPrice }
       ]);
     }
 
