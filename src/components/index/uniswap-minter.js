@@ -39,6 +39,7 @@ export default function UniswapMinter({ metadata }){
       tokenList,
       toggleDisplay,
       message,
+      approvalNeeded
     }
   } = useMintState();
 
@@ -52,8 +53,10 @@ export default function UniswapMinter({ metadata }){
     if (address != ZERO_ADDRESS) {
       const erc20 = getERC20(state.web3.injected, address);
       let fn = erc20.methods.approve(minterState.minter.minterAddress, toHex(amount))
-      await handleTransaction(fn.send({ from: state.account }))
-        .then(async() =>  await updatePool())
+      handleTransaction(fn.send({ from: state.account }))
+        .then(() => {
+          updatePool();
+        })
         .catch((() => {}));
     }
   }
@@ -61,7 +64,9 @@ export default function UniswapMinter({ metadata }){
   useEffect(() => {
     if(!minterState.pool && state.helper) {
       let pool = state.helper.initialized.find(i => i.pool.address === metadata.address);
-
+      if (!pool.userAddress && state.account) {
+        pool.setUserAddress(state.account);
+      }
       if(pool) {
         setHelper(pool)
         setInit(true)
@@ -71,16 +76,16 @@ export default function UniswapMinter({ metadata }){
 
   useEffect(() => {
     const verifyConnectivity = async() => {
-      if(minterState.minter && (!!state.web3.injected || !!window.ethereum) && state.account) {
+      if(minterState.minter && state.account) {
         let address = state.account.toLowerCase();
         if (minterState.pool.userAddress.toLowerCase() !== address) {
-          await minterState.pool.setUserAddress(address);
+          minterState.pool.setUserAddress(address);
           updatePool();
         }
       }
     }
     verifyConnectivity()
-  }, [ state.web3.injected, !!minterState.minter ])
+  }, [ state.account, minterState.minter ])
 
   async function mintTokens() {
     const { params, minter, input, pool } = minterState;
@@ -129,12 +134,13 @@ export default function UniswapMinter({ metadata }){
         throw Error('err');
       }
     }
-    await handleTransaction(fn.send(opts))
+    console.log(await fn.call(opts))
+    handleTransaction(fn.send(opts))
       .then(async() =>  await updatePool())
       .catch((() => {}));
   }
 
-  let { inputWidth } = style.getFormatting(state.native)
+  let { inputWidth } = style.getFormatting(state.native);
 
   return <Dialog
     open={true}
@@ -184,7 +190,7 @@ export default function UniswapMinter({ metadata }){
         </Grid>
         <Grid item>
           {
-            minterState.approvalNeeded
+            approvalNeeded
             ? <ButtonPrimary onClick={approvMinter} style={{ margin: 0 }} variant='filled' color="secondary">
                 Approve Minter
               </ButtonPrimary>
@@ -195,12 +201,5 @@ export default function UniswapMinter({ metadata }){
         </Grid>
       </Grid>
     </DialogContent>
-    {/* <DialogActions >
-      <ButtonPrimary disabled={minterState.loading} onClick={updateParams} variant='filled' color="primary">
-        GET BEST PRICE
-      </ButtonPrimary>
-
-
-    </DialogActions> */}
   </Dialog>
 }

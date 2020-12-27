@@ -352,12 +352,12 @@ export default function Supply() {
     return (
       <ul className={classes.stats}>
         <li>
-          Rewards Address: <span>
+          REWARDS POOL: <span>
             {poolAddress.slice(0, 6)}...{poolAddress.slice(-4)}
             <EtherScanLink network={process.env.REACT_APP_ETH_NETWORK} type='account' entity={poolAddress} />
           </span>
         </li>
-        <li>Staking Ends: <span> {dateEnd} </span> </li>
+        <li>STAKING ENDS: <span> {dateEnd} </span> </li>
         <li> STAKED {ticker}: <span>
             {staked.toLocaleString()}
           </span>
