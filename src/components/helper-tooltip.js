@@ -21,7 +21,7 @@ export function MaximumAmountToolTip() {
 export function SlippgeExceedsTrueValue({ isWethPair }) {
   let message = isWethPair ? ['is greater than', 'Mint'] : ['is less than', 'Burn']
 
-  return <HelperTooltip text={`WARNING, this orders spot price ${message[0]} the index's true USD value! ${message[1]} some tokens for a better quote.`} />
+  return <HelperTooltip text={`WARNING, this order's spot price ${message[0]} the value of the token! ${message[1]} some tokens for a better price.`} />
 }
 
 export function MaximumSupplyTooltip() {

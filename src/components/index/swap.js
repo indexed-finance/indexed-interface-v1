@@ -40,19 +40,17 @@ export default function Swap({ metadata }){
   }
 
   const swapTokens = async() => {
-    const { input, output, specifiedSide, price } = swapState
+    const { input, output, specifiedSide, maxPrice } = swapState
 
     const { address } = swapState.pool
     const abi = require('../../assets/constants/abi/BPool.json').abi;
     const pool = toContract(state.web3.injected, abi, address);
-    const quote = await pool.methods.getSpotPrice(input.address, output.address).call()
     const amountOut = toHex(output.amount);
     const amountIn = toHex(input.amount);
     const minimumOutput = toHex(minimum);
     let fn;
 
     if(specifiedSide === 'input'){
-      const maxPrice = bdiv(input.amount.times(1.02), output.amount);
       fn = pool.methods.swapExactAmountIn(
         input.address,
         amountIn,
@@ -61,7 +59,6 @@ export default function Swap({ metadata }){
         toHex(maxPrice)
       );
     } else {
-      const maxPrice = bdiv(input.amount.times(1.02), output.amount);
 
       fn = pool.methods.swapExactAmountOut(
         input.address,
@@ -78,17 +75,19 @@ export default function Swap({ metadata }){
     }).catch(() => {});
   }
 
-  useEffect(() => {
-    if(!tokenList && metadata.assets && metadata.assets.length > 0){
-      setTokens(metadata.assets)
-    }
-  }, [ state.indexes, metadata ])
+  // useEffect(() => {
+  //   if(!tokenList && metadata.assets && metadata.assets.length > 0) {
+  //     setTokens(metadata.assets)
+  //   }
+  // }, [ state.indexes, metadata ])
 
   useEffect(() => {
     if(!swapState.pool && state.helper){
       let pool = state.helper.initialized.find(i => i.pool.address === metadata.address);
-
-      if(pool){
+      if (!pool.userAddress && state.account) {
+        pool.setUserAddress(state.account);
+      }
+      if(pool) {
         setHelper(pool)
         setInit(true)
       }
@@ -100,8 +99,9 @@ export default function Swap({ metadata }){
       if(swapState.pool && (state.web3.injected || window.ethereum)) {
         if(!swapState.pool.userAddress || state.account &&
           state.account.toLowerCase() !== swapState.pool.userAddress.toLowerCase()) {
-            await swapState.pool.setUserAddress(state.account)
-          }
+            swapState.pool.setUserAddress(state.account)
+            await swapState.pool.waitForUpdate;
+        }
         await updatePool()
       }
     }

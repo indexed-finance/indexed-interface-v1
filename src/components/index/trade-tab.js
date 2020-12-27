@@ -32,8 +32,13 @@ export default function TradeTab({ metadata }) {
   const classes = useStyles()
 
   useEffect(() => {
-    if (tradeState.helper || !metadata || !metadata.address ||
-      metadata.addresss === ZERO_ADDRESS || !state.web3.injected) {
+    if (
+      tradeState.helper ||
+      !metadata ||
+      !metadata.address ||
+      metadata.addresss === ZERO_ADDRESS ||
+      !state.web3[process.env.REACT_APP_ETH_NETWORK]
+    ) {
       return console.log(`Skipping Setter`);
     }
     const setPool = async () => {
@@ -44,17 +49,17 @@ export default function TradeTab({ metadata }) {
         symbol: metadata.symbol
       }
       const helper = new UniswapHelper(
-        state.web3.injected,
+        state.web3[process.env.REACT_APP_ETH_NETWORK],
         poolToken,
         whitelistTokens,
         state.account
       );
-      setPrice(parseFloat(quoteEthUSD))
+      setPrice(parseFloat(quoteEthUSD));
       setHelper(helper);
       setRender(true);
     }
     if(!tradeState.helper) setPool();
-  }, [ state.web3.injected, metadata ]);
+  }, [ state.web3[process.env.REACT_APP_ETH_NETWORK], metadata ]);
 
   useEffect(() => {
     const verifyConnectivity = async() => {
@@ -94,8 +99,8 @@ export default function TradeTab({ metadata }) {
   }
 
   async function executeSwap() {
-    const amountIn = toHex(tradeState.input.amount.integerValue());
-    const amountOut = toHex(tradeState.output.amount.integerValue());
+    const amountIn = tradeState.input.amount.integerValue();
+    const amountOut = tradeState.output.amount.integerValue();
     const tokenIn = tradeState.input.address;
     const tokenOut = tradeState.output.address;
     const pair = toContract(state.web3.injected, routerABI, '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D');
@@ -105,25 +110,47 @@ export default function TradeTab({ metadata }) {
 
     if(tokenIn.toLowerCase() == process.env.REACT_APP_WETH) {
       txProps = { from: state.account, value: amountIn }
-      fn = pair.methods.swapETHForExactTokens(
-        amountOut,
-        [tokenIn, tokenOut],
-        state.account,
-        (+timestamp) + 600);
+      if (tradeState.side === 'input') {
+        fn = pair.methods.swapExactETHForTokens(
+          toHex(amountOut),
+          [tokenIn, tokenOut],
+          state.account,
+          (+timestamp) + 600
+        );
+      } else {
+        fn = pair.methods.swapETHForExactTokens(
+          toHex(amountOut),
+          [tokenIn, tokenOut],
+          state.account,
+          (+timestamp) + 600
+        );
+      }
     } else if(tokenOut.toLowerCase() == process.env.REACT_APP_WETH) {
-      fn = pair.methods.swapExactTokensForETH(
-        amountIn,
-        amountOut,
-        [tokenIn, tokenOut],
-        state.account,
-        (+timestamp) + 600);
+      if (tradeState.side == 'input') {
+        fn = pair.methods.swapExactTokensForETH(
+          toHex(amountIn),
+          toHex(amountOut),
+          [tokenIn, tokenOut],
+          state.account,
+          (+timestamp) + 600
+        );
+      } else {
+        fn = pair.methods.swapTokensForExactETH(
+          toHex(amountOut),
+          toHex(amountIn),
+          [tokenIn, tokenOut],
+          state.account,
+          (+timestamp) + 600
+        );
+      }
     } else {
       fn = pair.methods.swapExactTokensForTokens(
         amountIn,
         amountOut,
         [tokenIn, tokenOut],
         state.account,
-        (+timestamp) + 600);
+        (+timestamp) + 600
+      );
     }
 
     await handleTransaction(fn.send(txProps));

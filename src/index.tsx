@@ -151,8 +151,8 @@ function Application(){
             supply = formatBalance(supply, 18, 4);
           }
           let target = clearTimeDiscrepancies(new Date(timestamp.getTime() - 86400000));
-          let history = snapshots.map(h => ({ close: +(h.value.toFixed(4)), date: new Date(h.date * 1000) }));
-          let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(4), date: new Date(l.date * 1000) }))
+          let history = snapshots.map(h => ({ close: +(h.value.toFixed(2)), date: new Date(h.date * 1000) }));
+          let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(2), date: new Date(l.date * 1000) }))
           let past24h = snapshots.find((i) => (i.date * 1000) === target.getTime())
 
           if(!past24h) past24h = snapshots[snapshots.length-2]

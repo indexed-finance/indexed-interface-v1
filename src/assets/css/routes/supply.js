@@ -46,6 +46,11 @@ const setStyle = (theme) => ({
       float: 'right',
     }
   },
+  buttonBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center'
+  }
 })
 
 const mapping = {
@@ -60,7 +65,20 @@ const mapping = {
     listPadding: 'inherit',
     height: '12.5em',
     reward: '34em',
-    buttonPos: -55,
+    containerPadding: '1em 2em',
+    buttonPos:  {
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 37.5
+    },
+    button2Pos:  {
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 37.5
+    },
+    fontSize: 'auto',
+    main: 50,
+    secondary: 30,
     button: {
        marginTop: -50,
        marginRight: 25,
@@ -74,9 +92,22 @@ const mapping = {
     claimMargin: 50,
     inputWidth: 200,
     listPadding: 'inherit',
+    containerPadding: '1em 2em',
     height: '10em',
     reward: '34em',
-    buttonPos: -55,
+    buttonPos:  {
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 37.5
+    },
+    button2Pos:  {
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 37.5
+    },
+    fontSize: 'auto',
+    main: 50,
+    secondary: 30,
     button: {
        marginTop: -50,
        marginRight: 25,
@@ -89,9 +120,22 @@ const mapping = {
     inputWidth: 200,
     claimMargin: 50,
     listPadding: 'inherit',
+    containerPadding: '1em 2em',
     height: '10em',
     reward: '34em',
-    buttonPos: -55,
+    buttonPos:  {
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 37.5
+    },
+    button2Pos:  {
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 37.5
+    },
+    fontSize: 'auto',
+    main: 50,
+    secondary: 30,
     button: {
        marginTop: -50,
        marginRight: 25,
@@ -104,9 +148,22 @@ const mapping = {
     inputWidth: 200,
     claimMargin: 50,
     listPadding: 'inherit',
+    containerPadding: '1em 2em',
     height: '10em',
     reward: '34em',
-    buttonPos: -55,
+    buttonPos:  {
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 37.5
+    },
+    button2Pos:  {
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 37.5
+    },
+    fontSize: 'auto',
+    main: 50,
+    secondary: 30,
     button: {
        marginTop: -50,
        marginRight: 25,
@@ -118,10 +175,23 @@ const mapping = {
     positioning: 'center',
     inputWidth: 200,
     listPadding: 'inherit',
+    containerPadding: '1em 2em',
     claimMargin: 50,
     height: '10em',
     reward: '34em',
-    buttonPos: -55,
+    buttonPos:  {
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 37.5
+    },
+    button2Pos:  {
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 37.5
+    },
+    fontSize: 'auto',
+    main: 50,
+    secondary: 30,
     button: {
        marginTop: -50,
        marginRight: 25,
@@ -133,10 +203,23 @@ const mapping = {
     positioning: 'center',
     inputWidth: 200,
     listPadding: 'inherit',
+    containerPadding: '1em 2em',
     height: '10em',
     reward: '34em',
+    fontSize: 'auto',
     claimMargin: 50,
-    buttonPos: -55,
+    buttonPos:  {
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 17.5
+    },
+    button2Pos:  {
+      marginTop: 15,
+      marginBottom: 12.5,
+      marginRight: 37.5
+    },
+    main: 50,
+    secondary: 30,
     button: {
        marginTop: -50,
        marginRight: 25,
@@ -146,16 +229,29 @@ const mapping = {
     margin: '2em 0em 1.5em 0em',
     padding: '0em 0em 1em',
     positioning: 'flex-start',
-    inputWidth: 125,
-    listPadding: 0,
+    containerPadding: '1em 1.25em',
+    inputWidth: 112.5,
+    listPadding: 10,
     claimMargin: 0,
-    height: '11.5em',
-    reward: 'calc(22.5em - 64px)',
-    buttonPos: 67.5,
+    height: '12.75em',
+    reward: 200,
+    buttonPos:  {
+      marginTop: 10,
+      marginBottom: 0,
+      marginRight: 0,
+    },
+    button2Pos:  {
+      marginTop: 10,
+      marginBottom: 0,
+      marginRight: 0,
+    },
+    fontSize: '.65em',
+    secondary: 22.5,
+    main: 30,
     infoWidth: 195,
     button: {
        marginTop: -37.5,
-       marginRight: -12.5,
+       marginRight: -2.5,
     }
   },
   [NATIVE_NORMAL]: {
@@ -163,30 +259,56 @@ const mapping = {
     padding: '0em 0em 1em',
     positioning: 'flex-start',
     inputWidth: 125,
+    containerPadding: '1em 1.5em',
     claimMargin: 0,
     listPadding: 0,
-    height: '11.5em',
+    height: '12.5em',
     reward: 'calc(22.5em - 64px)',
-    buttonPos: 67.5,
+    buttonPos:  {
+      marginTop: 10,
+      marginBottom: 0,
+      marginRight: 17.5
+    },
+    button2Pos:  {
+      marginTop: 10,
+      marginBottom: 0,
+      marginRight: 37.5
+    },
+    fontSize: '.8em',
     infoWidth: 240,
+    secondary: 30,
+    main: 40,
     button: {
-       marginTop: -37.5,
-       marginRight: -12.5,
+       marginTop: -40,
+       marginRight: -7.5,
     }
   },
   [NATIVE_WIDE]: {
     margin: '2em 0em 1.5em 0em',
     padding: '0em 0em 1em',
     positioning: 'flex-start',
+    containerPadding: '1em 2em',
+    fontSize: '.875em',
     inputWidth: 125,
     claimMargin: 0,
     listPadding: 0,
-    height: '11.5em',
+    height: '12.5em',
     reward: 'calc(22.5em - 64px)',
-    infoWidth: 250,
-    buttonPos: 67.5,
+    infoWidth: 270,
+    buttonPos:  {
+      marginTop: 10,
+      marginBottom: 0,
+      marginRight: 10
+    },
+    button2Pos:  {
+      marginTop: 10,
+      marginBottom: 0,
+      marginRight: 10
+    },
+    secondary: 30,
+    main: 45,
     button: {
-       marginTop: -37.5,
+       marginTop: -40,
        marginRight: -12.5,
     }
   }
@@ -198,8 +320,8 @@ const getFormatting = ({ ticker, native }) => {
   let dimension = screenClass(native, window.innerWidth)
 
   return {
-    width: ticker.includes('UNIV2') ? 50 : 30,
-    marginRight: ticker.includes('UNIV2') ? 7.5 : 0,
+    width: ticker.includes('UNIV2') ? mapping[dimension].main : mapping[dimension].secondary,
+    marginRight: ticker.includes('UNIV2') ? 7 : 0,
     marginBottom: ticker.includes('UNIV2') ? 0 : 10,
     ...mapping[dimension]
   }

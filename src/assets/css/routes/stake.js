@@ -1,11 +1,9 @@
 const setStyle = (theme) => ({
   header: {
-    '& p': {
-      '& a': {
-        color: 'orange !important',
-        '&:hover': {
-          color: '#00e79a !important'
-        }
+    '& a': {
+      color: 'orange !important',
+      '&:hover': {
+        color: '#00e79a !important'
       }
     },
     '& h3': {
@@ -43,6 +41,7 @@ const setStyle = (theme) => ({
 const getFormatting = (state) => {
   return {
     margin: !state.native ? '4em 0em' : '3em 0em',
+    buttonMargin: { margin: 25 }
   }
 }
 
