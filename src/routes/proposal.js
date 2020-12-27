@@ -30,7 +30,7 @@ import { toContract } from '../lib/util/contracts'
 import style from '../assets/css/routes/proposal'
 import getStyles from '../assets/css'
 import { store } from '../state'
-import { getProposal } from '../api/gql'
+const dateFormat = require("dateformat");
 
 const govABI = require('../assets/constants/abi/GovernorAlpha.json');
 
@@ -276,12 +276,8 @@ export default function Proposal(){
       </div>
     }
     if (propState === 'queued') {
-      let timestamp;
-      if (metadata.eta) {
-        timestamp = (metadata.eta * 1000);
-      } else {
-        timestamp = new Date().getTime() + ((86400) * 1000)
-      }
+      const timestamp = (metadata.eta * 1000);
+     
       if (new Date().getTime() > timestamp) {
         return <div className={classes.modal}>
           <DisplayVotes />
@@ -290,7 +286,7 @@ export default function Proposal(){
         </div>
       }
       const readyDate = new Date(timestamp);
-      const dateString = `${readyDate.toDateString()} ${readyDate.getUTCHours()}:${readyDate.getUTCMinutes()}`
+      const dateString = dateFormat(readyDate, 'UTC:mmm d, yyyy, h:MM TT');
       return <div className={classes.modal}>
         <DisplayVotes />
         <p>Ready At: {dateString} UTC</p>

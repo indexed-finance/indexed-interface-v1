@@ -17,6 +17,7 @@ const proposalAndDistributionQuery = () => `
   {
     proposals(first: 25){
       id
+      eta
       for
       against
       proposer
