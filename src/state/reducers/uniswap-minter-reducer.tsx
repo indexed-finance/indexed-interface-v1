@@ -153,6 +153,7 @@ function uniswapMinterReducer(
   }
 
   let isReady = false;
+  newState.approvalNeeded = false;
 
   if (newState.minter && newState.params) {
     isReady = true;
