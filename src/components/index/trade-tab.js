@@ -129,7 +129,7 @@ export default function TradeTab({ metadata }) {
       if (tradeState.side == 'input') {
         fn = pair.methods.swapExactTokensForETH(
           toHex(amountIn),
-          toHex(amountOut.times(0.99)),
+          toHex(amountOut),
           [tokenIn, tokenOut],
           state.account,
           (+timestamp) + 600

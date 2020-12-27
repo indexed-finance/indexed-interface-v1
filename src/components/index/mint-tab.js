@@ -77,7 +77,8 @@ export default function Mint({ market, metadata }) {
       if(mintState.pool && (state.web3.injected || window.ethereum)) {
         if(!mintState.pool.userAddress || state.account &&
           state.account.toLowerCase() !== mintState.pool.userAddress.toLowerCase()) {
-            await mintState.pool.setUserAddress(state.account)
+            mintState.pool.setUserAddress(state.account)
+            await mintState.pool.waitForUpdate;
           }
         await updatePool()
       }
