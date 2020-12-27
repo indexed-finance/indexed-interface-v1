@@ -389,7 +389,6 @@ export default function Proposal(){
                       // let fn = interface.functions[sig];
                       try {
                         let sigHash = iface.getSighash(sig);
-                        console.log(new Array(10).fill(sigHash).join('\n'));
 
                         let fn = iface.getFunction(sigHash);
                         console.log(fn)
