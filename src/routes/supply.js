@@ -6,7 +6,7 @@ import CountUp from 'react-countup';
 
 import StakingRewardsFactory from '../assets/constants/abi/StakingRewardsFactory.json'
 import IStakingRewards from '../assets/constants/abi/IStakingRewards.json'
-import { formatBalance, toTokenAmount, toWei, toBN } from '@indexed-finance/indexed.js'
+import { formatBalance, toTokenAmount, toWei, toBN, toHex } from '@indexed-finance/indexed.js'
 
 import { TX_CONFIRMED, TX_PENDING, TX_REVERTED } from '../assets/constants/parameters'
 import { STAKING_FACTORY } from '../assets/constants/addresses'
@@ -60,7 +60,7 @@ export default function Supply() {
     try{
       let contract = getERC20(web3.injected, pool.pool.pool.stakingToken);
 
-      await contract.methods.approve(pool.pool.rewardsAddress, toTokenAmount(input, 18))
+      await contract.methods.approve(pool.pool.rewardsAddress, toHex(toTokenAmount(input, 18)))
       .send({ from: account })
       .on('transactionHash', (transactionHash) =>
         dispatch(TX_PENDING(transactionHash))
@@ -84,44 +84,43 @@ export default function Supply() {
       let contract = toContract(web3.injected, IStakingRewards, pool.pool.rewardsAddress);
 
       let amount = toTokenAmount(input, 18)
-      await contract.methods.stake(amount).send({ from: account })
-      .on('transactionHash', (transactionHash) =>
-        dispatch(TX_PENDING(transactionHash))
-      ).on('confirmation', async(conf, receipt) => {
-        if(conf === 0){
-          if(receipt.status == 1) {
-            await pool.pool.updatePool();
-            await dispatch(TX_CONFIRMED(receipt.transactionHash))
-            await setInput(null)
-          } else {
-            dispatch(TX_REVERTED(receipt.transactionHash))
-          }
-        }
-      })
+      const fn = contract.methods.stake(toHex(amount));
+      await handleTransaction(fn.send({ from: account }))
+        .then(async () => {
+          await pool.pool.updatePool();
+          await setInput(null)
+        })
     } catch (e) { console.log(e)}
   }
 
   const claimReward = async() => {
-    let { web3, account } = state
+    let { web3 } = state
     let poolAddress = pool.pool.pool.address
 
     setQuery(false)
 
     try {
       let contract = toContract(web3.injected, IStakingRewards, poolAddress)
+      const fn = contract.methods.getReward();
+      await handleTransaction(fn.send({ from: state.account }))
+      .then(async () => {
+        await pool.pool.updatePool();
+      })
+    } catch(e) {}
+  }
 
-      await contract.methods.exit().send({ from: account })
-      .on('transactionHash', (transactionHash) =>
-        dispatch(TX_PENDING(transactionHash))
-      ).on('confirmation', async(conf, receipt) => {
-        if(conf === 0){
-          if(receipt.status == 1) {
-            await pool.pool.updatePool();
-            await dispatch(TX_CONFIRMED(receipt.transactionHash))
-          } else {
-            dispatch(TX_REVERTED(receipt.transactionHash))
-          }
-        }
+  const exit = async () => {
+    let { web3 } = state
+    let poolAddress = pool.pool.pool.address
+
+    setQuery(false)
+
+    try {
+      let contract = toContract(web3.injected, IStakingRewards, poolAddress)
+      const fn = contract.methods.exit();
+      await handleTransaction(fn.send({ from: state.account }))
+      .then(async () => {
+        await pool.pool.updatePool();
       })
     } catch(e) {}
   }
@@ -156,7 +155,7 @@ export default function Supply() {
   let {
     padding,
     marginBottom, margin, marginRight, claimMargin, marginLeft,
-    width, positioning, inputWidth, listPadding ,
+    width, positioning, inputWidth, listPadding , button2Pos,
     button, height, reward, buttonPos, secondary,
     containerPadding, fontSize,
     infoWidth
@@ -179,7 +178,7 @@ export default function Supply() {
       totalSupply = toWei(1)
     }
 
-    const dailySupply = rewardRate.times(86400).times(toWei(1)).div(totalSupply);
+    const dailySupply = rewardRate.times(86400);
     const relativeWeight = userBalanceRewards.div(totalSupply);
     const expectedReturns = dailySupply.times(relativeWeight);
     const futureRewards = expectedReturns.plus(userEarnedRewards);
@@ -190,20 +189,28 @@ export default function Supply() {
     const supplyDisplay = formatBalance(totalSupply, 18, 6);
 
     return (
-      <Canvas native={state.native} style={{ overflowX: 'hidden', margin }}>
+      <Canvas native={state.native} /* padding={containerPadding} */ style={{ overflowX: 'hidden', margin }}  title={state.native ? 'Rewards' : 'User Rewards'}>
         <div className={classes.rewards} style={{ width: reward }}>
-          <p> REWARD </p>
+          {/* <p> USER REWARDS </p> */}
+          <p>Estimated Rewards</p>
           <div>
             {!state.native && (
-              <h2 style={{ marginLeft: claimMargin }}>
-                <CountUp useEasing={false} redraw decimals={6} perserveValue separator="," start={earnedDisplay} end={returnsDisplay} duration={86400} /> NDX
-              </h2>
-            )}
-            {state.native && (
               <h3 style={{ marginLeft: claimMargin }}>
                 <CountUp useEasing={false} redraw decimals={6} perserveValue separator="," start={earnedDisplay} end={returnsDisplay} duration={86400} /> NDX
               </h3>
             )}
+            {state.native && (
+              <h4 style={{ marginLeft: claimMargin }}>
+                <CountUp useEasing={false} redraw decimals={5} perserveValue separator="," start={earnedDisplay} end={returnsDisplay} duration={86400} /> NDX
+              </h4>
+            )}
+            
+          </div>
+          <ul className={classes.list}>
+            <li> STAKED: {stakedDisplay} {!state.native && (<>{ticker}</>)}</li>
+            <li> RATE: {rateDisplay} NDX/DAY</li>
+          </ul>
+          <div className={classes.buttonBox}>
             <ButtonPrimary
               disabled={userBalanceRewards.eq(0)}
               onClick={claimReward}
@@ -212,11 +219,15 @@ export default function Supply() {
             >
               CLAIM
             </ButtonPrimary>
+            <ButtonPrimary
+              disabled={userBalanceRewards.eq(0)}
+              onClick={exit}
+              variant='outlined'
+              margin={button2Pos}
+            >
+              EXIT
+            </ButtonPrimary>
           </div>
-          <ul className={classes.list}>
-            <li> STAKED: {stakedDisplay} {!state.native && (<>{ticker}</>)}</li>
-            <li> RATE: {rateDisplay} NDX/DAY</li>
-          </ul>
         </div>
       </Canvas>
     )
@@ -312,17 +323,18 @@ export default function Supply() {
   }
 
   function DisplayMetadata() {
-    let claimed, rewards, rate, staked, stakingTokenSymbol;
+    let claimed, rewards, rate, staked, stakingTokenSymbol, dateEnd;
     if (!pool.pool) {
-      [claimed, rewards, rate, staked, stakingTokenSymbol] = [0, 0, 0, 0, ''];
+      [claimed, rewards, rate, staked, stakingTokenSymbol, dateEnd] = [0, 0, 0, 0, '', ''];
     } else {
-      const { pool: { totalSupply, claimedRewards, rewardRate, totalRewards } } = pool.pool;
+      const { pool: { totalSupply, claimedRewards, rewardRate, totalRewards, periodFinish } } = pool.pool;
+      const endDate = new Date(periodFinish * 1000);
+      dateEnd = `${endDate.toDateString()} ${endDate.getUTCHours()}:${endDate.getUTCMinutes()}`
       if (pool.metadata) {
         stakingTokenSymbol = pool.metadata.stakingSymbol;
       }
 
-      let currentSupply = totalSupply.eq(0) ? toWei(1) : totalSupply
-      const dailySupply = rewardRate.times(86400).times(toWei(1)).div(currentSupply);
+      const dailySupply = rewardRate.times(86400);
       claimed = parseFloat(formatBalance(claimedRewards, 18, 2));
       rate = parseFloat(formatBalance(dailySupply, 18, 2));
       staked = parseFloat(formatBalance(totalSupply, 18, 2));
@@ -331,6 +343,7 @@ export default function Supply() {
 
     return (
       <ul className={classes.stats}>
+        <li>Staking Ends: <span> {dateEnd} </span> </li>
         <li> STAKED {ticker}: <span>
             {staked.toLocaleString()}
           </span>
@@ -389,7 +402,7 @@ export default function Supply() {
       </div>
     </Grid>
       <Grid item xs={10} md={6}>
-        <Container margin='1em 0em 1em 0em' padding={containerPadding} title={ticker}>
+        <Container margin='1em 0em 1em 0em' padding={containerPadding} title={state.native ? ticker : `${ticker} Rewards`}>
           <div className={classes.modal} style={{ padding, height }}>
             <Grid container direction='row' alignItems='center' justify={positioning} spacing={4}>
                 <Fragment>
