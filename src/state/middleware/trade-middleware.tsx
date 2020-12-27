@@ -120,8 +120,8 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
       const output = { ...state.output };
       if (state.side === 'input') {
         const outputAmount = await state.helper.getAmountOut(input.address, output.address, input.amount);
-        output.amount = outputAmount.amount;
-        output.displayAmount = outputAmount.displayAmount;
+        output.amount = outputAmount.amount.times(0.99);
+        output.displayAmount = formatBalance(output.amount, output.decimals, 4);
 
         let perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
         let perciseInput = input.amount.div(toBN(10).pow(input.decimals));
@@ -142,8 +142,8 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
       } else {
         const inputAmount = await state.helper.getAmountIn(input.address, output.address, output.amount);
 
-        input.amount = inputAmount.amount.lte(0) ? BN_ZERO : inputAmount.amount;
-        input.displayAmount = inputAmount.amount.lte(0) ? '0.00' : inputAmount.displayAmount;
+        input.amount = inputAmount.amount.lte(0) ? BN_ZERO : inputAmount.amount.times(1.01);
+        input.displayAmount = inputAmount.amount.lte(0) ? '0.00' : formatBalance(input.amount, input.decimals, 4);
   
         let perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
         let perciseInput = input.amount.div(toBN(10).pow(input.decimals));

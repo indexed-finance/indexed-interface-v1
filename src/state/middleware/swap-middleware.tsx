@@ -176,27 +176,64 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         amount: BN_ZERO
       }
 
+      let price = toBN(0);
+      if (state.pool) {
+        const oneToken = toBN(10).pow(state.input.decimals);
+        const { amount } = await state.pool.calcOutGivenIn(input.address, output.address, oneToken)
+        const perciseOutput = toBN(amount).div(toBN(10).pow(state.output.decimals));
+        price = perciseOutput.div(toBN(1));
+      }
+
       dispatch([
         { type: 'SET_SPECIFIED_SIDE', side: 'input' },
         { type: 'SET_TOKENS', tokens: action.tokens },
         { type: 'SET_OUTPUTS', tokens: outputList },
         { type: 'SET_INPUT_TOKEN', token: input },
         { type: 'SET_OUTPUT_TOKEN', token: output },
+        { type: 'SET_PRICE', price: price }
       ]);
     }
 
     async function setHelper(action: SetHelper): Promise<void> {
       await action.pool.waitForUpdate;
-      const inputAddress = state.input.address;
-      const outputAddress = state.output.address;
-      const oneToken = toBN(10).pow(state.input.decimals);
+      const tokens = action.pool.tokens.map(({ symbol, decimals, address }) => ({ symbol, decimals, address, pool: action.pool.address }));
+      const inputToken = tokens[0]
+      const input = {
+        address: inputToken.address,
+        decimals: inputToken.decimals,
+        displayAmount: '0.00',
+        pool: inputToken.pool,
+        amount: BN_ZERO
+      }
 
-      const { amount } = await action.pool.calcOutGivenIn(inputAddress, outputAddress, oneToken)
-      const perciseOutput = toBN(amount).div(toBN(10).pow(state.output.decimals));
-      const price = perciseOutput.div(toBN(1));
+      const outputList = tokens.filter(i =>
+        inputToken.address.toLowerCase() !== i.address.toLowerCase()
+      );
+
+      const outputToken = outputList[0]
+      const output = {
+        address: outputToken.address,
+        decimals: outputToken.decimals,
+        displayAmount: '0.00',
+        pool: outputToken.pool,
+        amount: BN_ZERO
+      }
+
+      let price = toBN(0);
+      if (state.pool) {
+        const oneToken = toBN(10).pow(state.input.decimals);
+        const { amount } = await state.pool.calcOutGivenIn(input.address, output.address, oneToken)
+        const perciseOutput = toBN(amount).div(toBN(10).pow(state.output.decimals));
+        price = perciseOutput.div(toBN(1));
+      }
 
       dispatch([
         { type: 'SET_HELPER', pool: action.pool },
+        { type: 'SET_SPECIFIED_SIDE', side: 'input' },
+        { type: 'SET_TOKENS', tokens: tokens },
+        { type: 'SET_OUTPUTS', tokens: outputList },
+        { type: 'SET_INPUT_TOKEN', token: input },
+        { type: 'SET_OUTPUT_TOKEN', token: output },
         { type: 'SET_PRICE', price: price }
       ]);
     }
