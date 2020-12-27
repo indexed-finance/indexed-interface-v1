@@ -118,7 +118,6 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
     async function updatePrice(): Promise<void> {
       const input = { ...state.input };
       const output = { ...state.output };
-      console.log(new Array(20).fill('UPDATING PRICE').join('\n'))
       if (state.side === 'input') {
         const outputAmount = await state.helper.getAmountOut(input.address, output.address, input.amount);
         output.amount = outputAmount.amount;
