@@ -1,9 +1,11 @@
 import { BigNumber, toWei, formatBalance } from "@indexed-finance/indexed.js";
 import { UniswapHelper, toBN } from '@indexed-finance/indexed.js';
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { TradeMiddlewareAction, TradeDispatchAction, SetInputToken, SetOutputToken, SetUniswapHelper } from "../actions/trade-actions";
 import { withTradeMiddleware } from "../middleware/trade-middleware";
 import Web3 from 'web3'
+import useDebounce from "../../hooks/useDebounce";
+import { UNISWAP_ROUTER } from '../../assets/constants/addresses';
 
 const whitelist = {
   rinkeby: [
@@ -37,6 +39,7 @@ export type TradeState = {
   ready: boolean;
   pairAddress?: string;
   price: BigNumber;
+  side: 'input' | 'output';
 };
 
 const initialState: TradeState = {
@@ -57,7 +60,8 @@ const initialState: TradeState = {
     isPoolToken: false
   },
   ready: false,
-  price: BN_ZERO
+  price: BN_ZERO,
+  side: 'input'
 };
 
 const compareAddresses = (a: string, b: string): boolean => {
@@ -125,6 +129,7 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
       case 'SET_OUTPUT_TOKEN': { setOutput(action); break; }
       case 'SET_UNISWAP_HELPER': { setHelper(action); break; }
       case 'SET_PRICE': { newState.price = action.price; break; }
+      case 'SET_SIDE': { newState.side = action.side; break; }
     }
   }
 
@@ -218,6 +223,12 @@ export function useTradeTokenActions(
     setAmountToBalance = () => dispatch({ type: 'SET_OUTPUT_AMOUNT', amount: displayBalance });
   }
 
+
+  let debouncedAmount = useDebounce(displayAmount, 500);
+  useEffect(() => {
+    dispatch({ type: 'UPDATE_PRICE' })
+  }, [debouncedAmount])
+
   let bindInput = {
     value: displayAmount,
     name: symbol,
@@ -241,7 +252,7 @@ export function useTradeTokenActions(
     bindInput,
     displayBalance,
     updateBalance,
-    target: state.pairAddress
+    target: UNISWAP_ROUTER
   }
 }
 
