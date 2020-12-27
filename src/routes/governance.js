@@ -116,7 +116,7 @@ export default function Governance(){
             let isDelegated = await contract.methods.delegates(state.account).call()
             dispatch(TX_CONFIRMED(receipt.transactionHash))
             getStatus(isDelegated)
-            await fallback()
+            fallback()
           } else {
             dispatch(TX_REVERTED(receipt.transactionHash))
           }
@@ -198,10 +198,13 @@ export default function Governance(){
       setInput(event.target.value)
     }
 
+    const clearInput = () => setInput(null)
+
     const submit = async() => {
+       setError(undefined)
+
       if(isAddress(input)){
-        await setError(undefined)
-        await delegateAddress(input)
+        await delegateAddress(input, clearInput)
       } else {
         setError('INVALID ADDRESS')
       }
