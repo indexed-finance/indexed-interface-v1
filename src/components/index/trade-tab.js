@@ -2,7 +2,7 @@ import { formatBalance, UniswapHelper } from '@indexed-finance/indexed.js';
 import { toHex } from '@indexed-finance/indexed.js/dist/utils/bignumber';
 import { Grid, IconButton, styled } from '@material-ui/core';
 import React, { useEffect, useContext, useState } from 'react'
-import Swap from '@material-ui/icons/SwapCalls'
+import Swap from '@material-ui/icons/SwapVertOutlined'
 
 import style from '../../assets/css/components/trade'
 import getStyles from '../../assets/css'
@@ -165,7 +165,7 @@ export default function TradeTab({ metadata }) {
     <Grid container direction='column' alignItems='center' justify='space-around' style={{ width }}>
       <Grid item xs={12} md={12} lg={12} xl={12} key='0'>
         {
-          tradeState.helper && <TradeInput inputWidth={inputWidth} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useInput} />
+          tradeState.helper && <TradeInput label='SEND' inputWidth={inputWidth} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useInput} />
         }
         {
           !tradeState.helper  && <Input label='AMOUNT' variant='outlined' style={{ width: inputWidth }} InputProps={{ endAdornment: 'ETH' }} />
@@ -183,7 +183,7 @@ export default function TradeTab({ metadata }) {
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} key='2'>
         {
-          tradeState.helper && <TradeInput inputWidth={inputWidth} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useOutput} />
+          tradeState.helper && <TradeInput label='RECEIVE' inputWidth={inputWidth} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useOutput} />
         }
         {
           !tradeState.helper  && <Input label='AMOUNT' variant='outlined' style={{ width: inputWidth }} InputProps={{ endAdornment: metadata.symbol }} />
