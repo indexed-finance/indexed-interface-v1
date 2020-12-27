@@ -14,7 +14,7 @@ export default function EtherScanLink(props) {
       break;
     case 'account':
     case 'contract':
-      relPath = `account/${entity}`
+      relPath = `address/${entity}`
       break;
     case 'token':
       relPath = `token/${entity}`;

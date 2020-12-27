@@ -75,17 +75,19 @@ export default function Swap({ metadata }){
     }).catch(() => {});
   }
 
-  useEffect(() => {
-    if(!tokenList && metadata.assets && metadata.assets.length > 0){
-      setTokens(metadata.assets)
-    }
-  }, [ state.indexes, metadata ])
+  // useEffect(() => {
+  //   if(!tokenList && metadata.assets && metadata.assets.length > 0) {
+  //     setTokens(metadata.assets)
+  //   }
+  // }, [ state.indexes, metadata ])
 
   useEffect(() => {
     if(!swapState.pool && state.helper){
       let pool = state.helper.initialized.find(i => i.pool.address === metadata.address);
-
-      if(pool){
+      if (!pool.userAddress && state.account) {
+        pool.setUserAddress(state.account);
+      }
+      if(pool) {
         setHelper(pool)
         setInit(true)
       }
@@ -97,8 +99,9 @@ export default function Swap({ metadata }){
       if(swapState.pool && (state.web3.injected || window.ethereum)) {
         if(!swapState.pool.userAddress || state.account &&
           state.account.toLowerCase() !== swapState.pool.userAddress.toLowerCase()) {
-            await swapState.pool.setUserAddress(state.account)
-          }
+            swapState.pool.setUserAddress(state.account)
+            await swapState.pool.waitForUpdate;
+        }
         await updatePool()
       }
     }
