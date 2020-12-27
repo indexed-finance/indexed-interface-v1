@@ -34,7 +34,7 @@ export default function TradeInput(props) {
       className={classes[label]}
       error={error}
       variant='outlined'
-      label='AMOUNT'
+      label={props.label || 'AMOUNT'}
       type='number'
       helperText={helperText}
       style={{ marginBottom: 7.5, width: props.inputWidth }}
