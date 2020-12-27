@@ -159,6 +159,7 @@ function uniswapMinterReducer(
     newState.getAllowance = getAllowance;
     newState.getBalance = getBalance;
     newState.poolAddress = newState.pool.address;
+    newState.approvalNeeded = false;
     let amount = newState.input.amount;
     if (amount.eq(0)) {
       isReady = false;
