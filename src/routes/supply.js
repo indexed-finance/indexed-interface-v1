@@ -24,6 +24,7 @@ import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
 import { useStakingState } from '../state/staking/context';
+import EtherScanLink from '../components/buttons/etherscan-link';
 const dateFormat = require("dateformat");
 
 const useStyles = getStyles(style)
@@ -325,8 +326,9 @@ export default function Supply() {
 
   function DisplayMetadata() {
     let claimed, rewards, rate, staked, stakingTokenSymbol, dateEnd;
+    let poolAddress;
     if (!pool.pool) {
-      [claimed, rewards, rate, staked, stakingTokenSymbol, dateEnd] = [0, 0, 0, 0, '', ''];
+      [claimed, rewards, rate, staked, stakingTokenSymbol, dateEnd, poolAddress] = [0, 0, 0, 0, '', '', ''];
     } else {
       const { pool: { totalSupply, claimedRewards, rewardRate, totalRewards, periodFinish } } = pool.pool;
       const endDate = new Date(periodFinish * 1000);
@@ -344,10 +346,17 @@ export default function Supply() {
       rate = parseFloat(formatBalance(dailySupply, 18, 2));
       staked = parseFloat(formatBalance(totalSupply, 18, 2));
       rewards = parseFloat(formatBalance(totalRewards, 18, 2));
+      poolAddress = pool.pool.pool.address
     }
 
     return (
       <ul className={classes.stats}>
+        <li>
+          Rewards Address: <span>
+            {poolAddress.slice(0, 6)}...{poolAddress.slice(-4)}
+            <EtherScanLink network={process.env.REACT_APP_ETH_NETWORK} type='account' entity={poolAddress} />
+          </span>
+        </li>
         <li>Staking Ends: <span> {dateEnd} </span> </li>
         <li> STAKED {ticker}: <span>
             {staked.toLocaleString()}
