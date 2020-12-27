@@ -157,15 +157,16 @@ export default function Supply() {
     padding,
     marginBottom, margin, marginRight, claimMargin, marginLeft,
     width, positioning, inputWidth, listPadding ,
-    button, height, reward, buttonPos,
+    button, height, reward, buttonPos, secondary,
+    containerPadding, fontSize,
     infoWidth
   } = style.getFormatting({ ticker, native: state.native });
 
   const imgStyles = [
     { width, marginRight, marginBottom },
-    { marginBottom: 25, width: 30 },
-    { marginLeft: -25, width: 30 },
-    { marginBottom: 10, width:30  }
+    { marginBottom: 25, width: secondary },
+    { marginLeft: -25, width: secondary },
+    { marginBottom: 10, width:secondary  }
   ];
 
   function UserData() {
@@ -207,7 +208,7 @@ export default function Supply() {
               disabled={userBalanceRewards.eq(0)}
               onClick={claimReward}
               variant='outlined'
-              margin={{ marginTop: buttonPos, marginBottom: 12.5, marginRight: 37.5 }}
+              margin={buttonPos}
             >
               CLAIM
             </ButtonPrimary>
@@ -327,6 +328,7 @@ export default function Supply() {
       staked = parseFloat(formatBalance(totalSupply, 18, 2));
       rewards = parseFloat(formatBalance(totalRewards, 18, 2));
     }
+
     return (
       <ul className={classes.stats}>
         <li> STAKED {ticker}: <span>
@@ -387,7 +389,7 @@ export default function Supply() {
       </div>
     </Grid>
       <Grid item xs={10} md={6}>
-        <Container margin='1em 0em 1em 0em' padding="1em 2em" title={ticker}>
+        <Container margin='1em 0em 1em 0em' padding={containerPadding} title={ticker}>
           <div className={classes.modal} style={{ padding, height }}>
             <Grid container direction='row' alignItems='center' justify={positioning} spacing={4}>
                 <Fragment>
@@ -402,7 +404,7 @@ export default function Supply() {
                 </Fragment>
             </Grid>
             {pool.pool && pool.pool.pool.isReady && (
-              <ul className={classes.estimation} style={{ padding: listPadding }}>
+              <ul className={classes.estimation} style={{ fontSize, padding: listPadding }}>
                 <li> EST REWARD: <span id='est'>0</span> NDX/DAY </li>
                 <li> POOL WEIGHT: <span id='weight'>0</span>% </li>
               </ul>
