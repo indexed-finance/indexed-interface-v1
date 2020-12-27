@@ -59,11 +59,21 @@ export default function Supply() {
 
     try{
       let contract = getERC20(web3.injected, pool.pool.pool.stakingToken);
-      const fn = contract.methods.approve(pool.pool.rewardsAddress, toTokenAmount(input, 18));
-      await handleTransaction(fn.send({ from: account }))
-      .then(async () => {
-        pool.pool.updatePool();
-      }).catch(() => {});
+
+      await contract.methods.approve(pool.pool.rewardsAddress, toTokenAmount(input, 18))
+      .send({ from: account })
+      .on('transactionHash', (transactionHash) =>
+        dispatch(TX_PENDING(transactionHash))
+      ).on('confirmation', async(conf, receipt) => {
+        if(conf === 0){
+          if(receipt.status == 1) {
+            await pool.pool.updatePool();
+            await dispatch(TX_CONFIRMED(receipt.transactionHash))
+          } else {
+            dispatch(TX_REVERTED(receipt.transactionHash))
+          }
+        }
+      })
     } catch(e) {}
   }
 
@@ -74,12 +84,21 @@ export default function Supply() {
       let contract = toContract(web3.injected, IStakingRewards, pool.pool.rewardsAddress);
 
       let amount = toTokenAmount(input, 18)
-      const fn = contract.methods.stake(amount);
-      await handleTransaction(fn.send({ from: account }))
-      .then(async () => {
-        pool.pool.updatePool();
-      }).catch(() => {});
-    } catch (e) {}
+      await contract.methods.stake(amount).send({ from: account })
+      .on('transactionHash', (transactionHash) =>
+        dispatch(TX_PENDING(transactionHash))
+      ).on('confirmation', async(conf, receipt) => {
+        if(conf === 0){
+          if(receipt.status == 1) {
+            await pool.pool.updatePool();
+            await dispatch(TX_CONFIRMED(receipt.transactionHash))
+            await setInput(null)
+          } else {
+            dispatch(TX_REVERTED(receipt.transactionHash))
+          }
+        }
+      })
+    } catch (e) { console.log(e)}
   }
 
   const claimReward = async() => {
@@ -94,11 +113,11 @@ export default function Supply() {
       await contract.methods.exit().send({ from: account })
       .on('transactionHash', (transactionHash) =>
         dispatch(TX_PENDING(transactionHash))
-      ).on('confirmation', (conf, receipt) => {
+      ).on('confirmation', async(conf, receipt) => {
         if(conf === 0){
           if(receipt.status == 1) {
-            dispatch(TX_CONFIRMED(receipt.transactionHash))
-            pool.pool.updatePool();
+            await pool.pool.updatePool();
+            await dispatch(TX_CONFIRMED(receipt.transactionHash))
           } else {
             dispatch(TX_REVERTED(receipt.transactionHash))
           }
@@ -302,9 +321,6 @@ export default function Supply() {
       }
 
       let currentSupply = totalSupply.eq(0) ? toWei(1) : totalSupply
-
-      console.log(totalSupply.eq(0))
-
       const dailySupply = rewardRate.times(86400).times(toWei(1)).div(currentSupply);
       claimed = parseFloat(formatBalance(claimedRewards, 18, 2));
       rate = parseFloat(formatBalance(dailySupply, 18, 2));
