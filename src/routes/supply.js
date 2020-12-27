@@ -24,6 +24,7 @@ import { toContract } from '../lib/util/contracts'
 import getStyles from '../assets/css'
 import { store } from '../state'
 import { useStakingState } from '../state/staking/context';
+const dateFormat = require("dateformat");
 
 const useStyles = getStyles(style)
 
@@ -329,7 +330,11 @@ export default function Supply() {
     } else {
       const { pool: { totalSupply, claimedRewards, rewardRate, totalRewards, periodFinish } } = pool.pool;
       const endDate = new Date(periodFinish * 1000);
-      dateEnd = `${endDate.toDateString()} ${endDate.getUTCHours()}:${endDate.getUTCMinutes()}`
+      if (state.native) {
+        dateEnd = dateFormat(endDate, 'mm-dd-yy h:mm') + ' UTC';
+      } else {
+        dateEnd = dateFormat(endDate, 'mmm d, yyyy, h:MM TT') + ' UTC';
+      }
       if (pool.metadata) {
         stakingTokenSymbol = pool.metadata.stakingSymbol;
       }
