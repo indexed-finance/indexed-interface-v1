@@ -289,9 +289,11 @@ export default function Proposal(){
           <ButtonPrimary variant='outlined' style={{ marginBottom: 25 }} disabled={!state.account} onClick={execute}>Execute</ButtonPrimary>
         </div>
       }
+      const readyDate = new Date(timestamp);
+      const dateString = `${readyDate.toDateString()} ${readyDate.getUTCHours()}:${readyDate.getUTCMinutes()}`
       return <div className={classes.modal}>
         <DisplayVotes />
-        <p>Proposal Ready At: {new Date(timestamp).toDateString()}</p>
+        <p>Ready At: {dateString} UTC</p>
         <p>Time Left: <CountDown date={timestamp} /></p>
       </div>
     }
