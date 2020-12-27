@@ -32,8 +32,13 @@ export default function TradeTab({ metadata }) {
   const classes = useStyles()
 
   useEffect(() => {
-    if (tradeState.helper || !metadata || !metadata.address ||
-      metadata.addresss === ZERO_ADDRESS || !state.web3.injected) {
+    if (
+      tradeState.helper ||
+      !metadata ||
+      !metadata.address ||
+      metadata.addresss === ZERO_ADDRESS ||
+      !state.web3[process.env.REACT_APP_ETH_NETWORK]
+    ) {
       return console.log(`Skipping Setter`);
     }
     const setPool = async () => {
@@ -44,17 +49,17 @@ export default function TradeTab({ metadata }) {
         symbol: metadata.symbol
       }
       const helper = new UniswapHelper(
-        state.web3.injected,
+        state.web3[process.env.REACT_APP_ETH_NETWORK],
         poolToken,
         whitelistTokens,
         state.account
       );
-      setPrice(parseFloat(quoteEthUSD))
+      setPrice(parseFloat(quoteEthUSD));
       setHelper(helper);
       setRender(true);
     }
     if(!tradeState.helper) setPool();
-  }, [ state.web3.injected, metadata ]);
+  }, [ state.web3[process.env.REACT_APP_ETH_NETWORK], metadata ]);
 
   useEffect(() => {
     const verifyConnectivity = async() => {
