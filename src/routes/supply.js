@@ -156,7 +156,7 @@ export default function Supply() {
     let rewardRate = pool.pool ? pool.pool.pool.rewardRate : toBN(0)
 
     if(totalSupply.eq(0)){
-      totalSupply = toBN(toWei(1))
+      totalSupply = toWei(1)
     }
 
     const dailySupply = rewardRate.times(86400).times(toWei(1)).div(totalSupply);
@@ -172,16 +172,16 @@ export default function Supply() {
     return (
       <Canvas native={state.native} style={{ overflowX: 'hidden', margin }}>
         <div className={classes.rewards} style={{ width: reward }}>
-          <p> NDX EARNED </p>
+          <p> REWARD </p>
           <div>
             {!state.native && (
               <h2 style={{ marginLeft: claimMargin }}>
-                <CountUp decimals={6} perserveValue separator="," start={earnedDisplay} end={returnsDisplay} duration={86400} /> NDX
+                <CountUp useEasing={false} redraw decimals={6} perserveValue separator="," start={earnedDisplay} end={returnsDisplay} duration={86400} /> NDX
               </h2>
             )}
             {state.native && (
               <h3 style={{ marginLeft: claimMargin }}>
-                <CountUp decimals={6} perserveValue separator="," start={earnedDisplay} end={returnsDisplay} duration={86400} /> NDX
+                <CountUp useEasing={false} redraw decimals={6} perserveValue separator="," start={earnedDisplay} end={returnsDisplay} duration={86400} /> NDX
               </h3>
             )}
             <ButtonPrimary
@@ -216,11 +216,12 @@ export default function Supply() {
     }
     const { userBalanceStakingToken } = pool.pool;
     const displayBalance = userBalanceStakingToken ? formatBalance(userBalanceStakingToken, 18, 4) : '0';
+    const setAmountToBalance = () => handleInput({ target: { value: displayBalance }})
 
     const inputWei = !!input && toTokenAmount(input, 18);
     const sufficientBalance = (userBalanceStakingToken && inputWei) && userBalanceStakingToken.gte(inputWei);
     const error = inputWei && !!(state.web3.injected) && !sufficientBalance;
-    const helperText = error ? 'INSUFFICIENT BALANCE' : <o className={classes.helper}> BALANCE: {displayBalance} </o>;
+    const helperText = error ? 'INSUFFICIENT BALANCE' : <o onClick={setAmountToBalance} className={classes.helper}> BALANCE: {displayBalance} </o>;
     return <Input label="AMOUNT" variant='outlined'
       onChange={handleInput}
       error={!!error}
@@ -299,7 +300,12 @@ export default function Supply() {
       if (pool.metadata) {
         stakingTokenSymbol = pool.metadata.stakingSymbol;
       }
-      const dailySupply = rewardRate.times(86400);
+
+      let currentSupply = totalSupply.eq(0) ? toWei(1) : totalSupply
+
+      console.log(totalSupply.eq(0))
+
+      const dailySupply = rewardRate.times(86400).times(toWei(1)).div(currentSupply);
       claimed = parseFloat(formatBalance(claimedRewards, 18, 2));
       rate = parseFloat(formatBalance(dailySupply, 18, 2));
       staked = parseFloat(formatBalance(totalSupply, 18, 2));
