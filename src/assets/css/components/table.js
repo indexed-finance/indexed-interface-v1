@@ -12,7 +12,7 @@ const setStyle = (theme) => ({
 const mapping = {
   [DESKTOP_SMALL]: {
     overflowX: 'hidden',
-    height: 'calc(100vh - 512.5px)',
+    height: 'calc(100vh - 312.5px)',
     padding: 'auto'
   },
   [DESKTOP_NORMAL]: {
@@ -27,7 +27,7 @@ const mapping = {
   },
   [DESKTOP_WIDE]: {
     overflowX: 'hidden',
-    height: 'calc(50vh - 375px)',
+    height: 'calc(75vh - 375px)',
     padding: 'auto'
   },
   [DESKTOP_HUGE]: {
