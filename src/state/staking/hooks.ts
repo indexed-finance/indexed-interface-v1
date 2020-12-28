@@ -50,8 +50,6 @@ export function useStaking(): StakingContextType {
     loadStakingPools();
   }, []);
 
-  let interval = null;
-
   useEffect(() => {
     const account = globalState.account;
     if (!state.pools.length || !account) return;
@@ -96,18 +94,6 @@ export function useStaking(): StakingContextType {
         });
       }
       dispatch(actions);
-
-      if (!interval) {
-        interval = setInterval(async () => {
-          if (state.pools.length) {
-            for (let pool of state.pools) {
-              pool.updatePromise = pool.updatePool();
-              console.log('run update interval')
-            }
-            await Promise.all(state.pools.map(p => p.waitForUpdate()));
-          }
-        }, 15000);
-      }
     }
     setMetadata();
   }, [ globalState.didLoadHelper, state.pools.length ]);
