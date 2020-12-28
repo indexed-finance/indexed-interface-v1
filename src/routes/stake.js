@@ -73,9 +73,10 @@ export default function Stake() {
           const { isReady, hasBegun, active, address, totalSupply, claimedRewards, rewardRate, periodStart, totalRewards } = pool.pool;
           const meta = reducerState.metadata[address];
           let supply = totalSupply.eq(0) ? toWei(1) : totalSupply
-          let rate = formatBalance(rewardRate.times(86400).times(toWei(1)).div(supply), 18, 0);
+          let rate = formatBalance(rewardRate.times(86400), 18, 0);
           const displaySupply = parseFloat(formatBalance(totalSupply, 18, 4));
-          const claimed = parseFloat(formatBalance(claimedRewards, 18, 4));
+          // const claimed = parseFloat(formatBalance(claimedRewards, 18, 4));
+
           let total = parseFloat(formatBalance(totalRewards, 18, 4));
           let symbol = '', name = '', tokens = [];
 
@@ -137,12 +138,13 @@ export default function Stake() {
             if (active) {
               return <ul className={classes.list}>
                 <li> RATE: {rate.toLocaleString()} NDX/DAY </li>
-                <li> CLAIMED: {claimed.toLocaleString()} NDX </li>
+                <li> TOTAL: {total.toLocaleString()} NDX </li>
               </ul>
             }
             if (hasBegun) {
               return <ul className={classes.list}>
-                <li> CLAIMED: {claimed.toLocaleString()} NDX </li>
+                <li> RATE: {rate.toLocaleString()} NDX/DAY </li>
+                {/* <li> CLAIMED: {claimed.toLocaleString()} NDX </li> */}
                 <li> TOTAL: {total.toLocaleString()} NDX </li>
               </ul>
             }

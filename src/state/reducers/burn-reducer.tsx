@@ -119,19 +119,21 @@ function burnReducer(state: BurnState = initialState, actions: BurnDispatchActio
   }
 
   let validInputs = true;
-  newState.tokens.forEach((token, i) => {
-    if (newState.amounts[i].gt(token.usedBalance.div(3))) {
-      validInputs = false;
-    }
-  });
+  if (newState.isSingle) {
+    newState.tokens.forEach((token, i) => {
+      if (newState.amounts[i].gt(token.usedBalance.div(3))) {
+        validInputs = false;
+      }
+    });
+  }
 
   let isReady = validInputs && !newState.poolAmountIn.eq(0) &&
-    newState.pool &&
-    newState.pool.userPoolBalance &&
-    newState.pool.userPoolBalance.gte(newState.poolAmountIn);
-    newState.ready = isReady;
+  newState.pool &&
+  newState.pool.userPoolBalance &&
+  newState.pool.userPoolBalance.gte(newState.poolAmountIn);
+  newState.ready = isReady;
 
-    return newState;
+  return newState;
 }
 
 export function useBurnTokenActions(
