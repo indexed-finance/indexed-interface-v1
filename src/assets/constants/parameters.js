@@ -52,8 +52,8 @@ export function getTokenImage(token) {
 
 export const initialState = {
   web3: {
-    mainnet: new Web3('https://mainnet.infura.io/v3/442bad44b92344b7b5294e4329190fea'),
-    rinkeby: new Web3('https://rinkeby.infura.io/v3/442bad44b92344b7b5294e4329190fea'),
+    mainnet: process.env.REACT_APP_ETH_NETWORK === 'mainnet' ? new Web3('https://mainnet.infura.io/v3/442bad44b92344b7b5294e4329190fea') : null,
+    rinkeby: process.env.REACT_APP_ETH_NETWORK === 'rinkeby' ? new Web3('https://rinkeby.infura.io/v3/442bad44b92344b7b5294e4329190fea') : null,
     injected: false
   },
   didLoadHelper: false,
