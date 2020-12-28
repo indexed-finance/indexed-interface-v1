@@ -52,21 +52,15 @@ export function useStaking(): StakingContextType {
 
   let interval = null;
 
-  
-
   useEffect(() => {
     const account = globalState.account;
     if (!state.pools.length || !account) return;
     const setAccount = async () => {
-      console.log('SETTING ACCOUNT TO ', account)
-      if (state.pools.find(p => p.userAddress)) {
-        return;
-      }
       for (let pool of state.pools) {
-        if (pool.userAddress) return;
+        if (pool.userAddress) continue;
         pool.setUserAddress(account);
+        await pool.waitForUpdate()
       }
-      await Promise.all(state.pools.map(p => p.waitForUpdate()));
       if (interval) {
         clearInterval(interval)
       }
