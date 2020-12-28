@@ -1,5 +1,5 @@
 import { formatBalance, getStakingHelpers, PoolHelper, StakingPoolHelper } from '@indexed-finance/indexed.js'
-import { useContext, useEffect, useReducer } from 'react';
+import { useContext, useEffect, useReducer, useState } from 'react';
 import { AddPools, SetMetadata, StakingAction } from './actions';
 import { store } from '../index'
 
@@ -21,6 +21,7 @@ export function useStakingPool(state: StakingState, indexOrSymbol: number | stri
   })
   const metadata = pool && state.metadata[pool.pool.address];
   const data: StakingPoolHook = { pool, metadata };
+  
   if (pool) {
     data.userBalanceStakingToken = pool.userBalanceStakingToken ? formatBalance(pool.userBalanceStakingToken, 18, 4) : '0';
     data.userAllowanceStakingToken = pool.userAllowanceStakingToken ? formatBalance(pool.userAllowanceStakingToken, 18, 4) : '0';
@@ -41,7 +42,6 @@ export function useStaking(): StakingContextType {
   const { state: globalState } = useContext(store);
 
   useEffect(() => {
-    console.log(globalState)
     const provider = globalState.web3[process.env.REACT_APP_ETH_NETWORK];
     const loadStakingPools = async () => {
       const pools = await getStakingHelpers(provider, globalState.account);
@@ -57,22 +57,10 @@ export function useStaking(): StakingContextType {
     if (!state.pools.length || !account) return;
     const setAccount = async () => {
       for (let pool of state.pools) {
-        if (pool.userAddress) continue;
+        if (pool.userAddress) return;
         pool.setUserAddress(account);
-        await pool.waitForUpdate()
+        // await pool.waitForUpdate()
       }
-      if (interval) {
-        clearInterval(interval)
-      }
-      interval = setInterval(async () => {
-        if (state.pools.length) {
-          for (let pool of state.pools) {
-            pool.updatePromise = pool.updatePool();
-            console.log('run update interval')
-          }
-          await Promise.all(state.pools.map(p => p.waitForUpdate()));
-        }
-      }, 15000);
     }
     setAccount();
   }, [ globalState.account, state.pools.length ])
@@ -90,6 +78,9 @@ export function useStaking(): StakingContextType {
       for (let pool of state.pools) {
         const { indexPool } = pool.pool;
         const helper = indexPoolHelpers.find(h => h.address.toLowerCase() == indexPool.toLowerCase());
+        if (globalState.account && !pool.userAddress) {
+          pool.setUserAddress(globalState.account)
+        }
         const { name: indexPoolName, symbol: indexPoolSymbol } = helper;
         const indexPoolTokenSymbols = helper.tokens.map(t => t.symbol);
         const stakingSymbol = pool.pool.isWethPair ? `UNIV2:ETH-${indexPoolSymbol}` : indexPoolSymbol;
@@ -105,9 +96,21 @@ export function useStaking(): StakingContextType {
         });
       }
       dispatch(actions);
+
+      if (!interval) {
+        interval = setInterval(async () => {
+          if (state.pools.length) {
+            for (let pool of state.pools) {
+              pool.updatePromise = pool.updatePool();
+              console.log('run update interval')
+            }
+            await Promise.all(state.pools.map(p => p.waitForUpdate()));
+          }
+        }, 15000);
+      }
     }
     setMetadata();
-  }, [ globalState.didLoadHelper, state.pools ]);
+  }, [ globalState.didLoadHelper, state.pools.length ]);
 
   return {
     pools: state.pools,
