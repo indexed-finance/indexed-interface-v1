@@ -50,18 +50,38 @@ export function useStaking(): StakingContextType {
     loadStakingPools();
   }, []);
 
+  let interval = null;
+
+  
+
   useEffect(() => {
     const account = globalState.account;
     if (!state.pools.length || !account) return;
-    const setAccount = () => {
+    const setAccount = async () => {
       console.log('SETTING ACCOUNT TO ', account)
+      if (state.pools.find(p => p.userAddress)) {
+        return;
+      }
       for (let pool of state.pools) {
         if (pool.userAddress) return;
         pool.setUserAddress(account);
       }
+      await Promise.all(state.pools.map(p => p.waitForUpdate()));
+      if (interval) {
+        clearInterval(interval)
+      }
+      interval = setInterval(async () => {
+        if (state.pools.length) {
+          for (let pool of state.pools) {
+            pool.updatePromise = pool.updatePool();
+            console.log('run update interval')
+          }
+          await Promise.all(state.pools.map(p => p.waitForUpdate()));
+        }
+      }, 15000);
     }
     setAccount();
-  }, [ globalState.account, state.pools ])
+  }, [ globalState.account, state.pools.length ])
 
   useEffect(() => {
     const indexPoolHelpers: undefined | PoolHelper[] = globalState.didLoadHelper && globalState.helper.initialized;
