@@ -194,7 +194,7 @@ export default function Supply() {
       <Canvas native={state.native} /* padding={containerPadding} */ style={{ overflowX: 'hidden', margin }}  title={state.native ? 'Rewards' : 'User Rewards'}>
         <div className={classes.rewards} style={{ width: reward }}>
           {/* <p> USER REWARDS </p> */}
-          <p>Estimated Rewards</p>
+          <p>Earned Rewards</p>
           <div>
             <h3>{earnedDisplay} NDX</h3>
             {/* {!state.native && (
@@ -378,10 +378,10 @@ export default function Supply() {
                 {rewards.toLocaleString()}
               </span>
             </li>
-            <li> CLAIMED NDX: <span>
+            {/* <li> CLAIMED NDX: <span>
                 {claimed.toLocaleString()}
               </span>
-            </li>
+            </li> */}
           </Fragment>
         }
       </ul>
