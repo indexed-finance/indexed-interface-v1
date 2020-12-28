@@ -92,7 +92,7 @@ function uniswapMinterDispatchMiddleware(dispatch: UniswapMinterDispatch, state:
       }
       let newParams: MintParams;
       let { amount, address } = input;
-      let options = { slippage: state.slippage, maxHops: 2 }
+      let options = { slippage: state.slippage, maxHops: 2, compareGasPrice: true }
       function updateInput(tokenAmount: TokenAmount) {
         if (+(tokenAmount.displayAmount) != +(input.displayAmount)) {
           input.displayAmount = tokenAmount.displayAmount;
