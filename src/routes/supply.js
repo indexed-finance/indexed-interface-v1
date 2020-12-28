@@ -196,7 +196,8 @@ export default function Supply() {
           {/* <p> USER REWARDS </p> */}
           <p>Estimated Rewards</p>
           <div>
-            {!state.native && (
+            <h3>{earnedDisplay} NDX</h3>
+            {/* {!state.native && (
               <h3 style={{ marginLeft: claimMargin }}>
                 <CountUp useEasing={false} redraw decimals={6} perserveValue separator="," start={earnedDisplay} end={returnsDisplay} duration={86400} /> NDX
               </h3>
@@ -205,10 +206,14 @@ export default function Supply() {
               <h4 style={{ marginLeft: claimMargin }}>
                 <CountUp useEasing={false} redraw decimals={5} perserveValue separator="," start={earnedDisplay} end={returnsDisplay} duration={86400} /> NDX
               </h4>
-            )}
+            )} */}
             
           </div>
           <ul className={classes.list}>
+            {
+              relativeWeight.gt(0) && <li>WEIGHT: {parseFloat((relativeWeight.toNumber() * 100).toFixed(4))}%</li>
+            }
+            
             <li> STAKED: {stakedDisplay} {!state.native && (<>{ticker}</>)}</li>
             <li> RATE: {rateDisplay} NDX/DAY</li>
           </ul>
