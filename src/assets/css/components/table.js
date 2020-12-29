@@ -12,32 +12,32 @@ const setStyle = (theme) => ({
 const mapping = {
   [DESKTOP_SMALL]: {
     overflowX: 'hidden',
-    height: 'calc(100vh - 512.5px)',
+    height: '300px',
     padding: 'auto'
   },
   [DESKTOP_NORMAL]: {
     overflowX: 'hidden',
-    height: 'calc(100vh - 562.5px)',
+    height: '300px',
     padding: 'auto'
   },
   [DESKTOP_LARGE]: {
     overflowX: 'hidden',
-    height: 'calc(100vh - 625px)',
+    height: '300px',
     padding: 'auto'
   },
   [DESKTOP_WIDE]: {
     overflowX: 'hidden',
-    height: 'calc(50vh - 375px)',
+    height: '300px',
     padding: 'auto'
   },
   [DESKTOP_HUGE]: {
     overflowX: 'hidden',
-    height: 'calc(50vh - 500px)',
+    height: '300px',
     padding: 'auto'
   },
   [DESKTOP_MASSIVE]: {
     overflowX: 'hidden',
-    height: 'calc(50vh - 500px)',
+    height: '300px',
     padding: 'auto'
   },
   [NATIVE_SMALL]: {

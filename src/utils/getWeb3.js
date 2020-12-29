@@ -28,6 +28,18 @@ const providerOptions = {
   }
 }
 
+export const clearCachedWeb3 = () => {
+  const web3Modal = new Web3Modal({
+    network: 'mainnet',
+    cacheProvider: true,
+    providerOptions
+  });
+  if (web3Modal.cachedProvider) {
+    web3Modal.clearCachedProvider();
+  }
+}
+
+
 export const getCachedWeb3 = async () => {
   const web3Modal = new Web3Modal({
     network: 'mainnet',

@@ -240,7 +240,7 @@ export default function VerticalTabs({ data }) {
                 <img src={etherscan} style={{ width: 37.5 }} />
               </IconButton>
             </a>
-            <a target='_blank' rel="noopener noreferrer" href={`https://info.uniswap.org/pool/${data.address}`}>
+            <a target='_blank' rel="noopener noreferrer" href={`https://info.uniswap.org/token/${data.address}`}>
               <IconButton variant='outlined' margin={{ marginLeft: 25 }}>
                 <img src={uni} style={{ width: 37.5 }} />
               </IconButton>

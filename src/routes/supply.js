@@ -194,9 +194,10 @@ export default function Supply() {
       <Canvas native={state.native} /* padding={containerPadding} */ style={{ overflowX: 'hidden', margin }}  title={state.native ? 'Rewards' : 'User Rewards'}>
         <div className={classes.rewards} style={{ width: reward }}>
           {/* <p> USER REWARDS </p> */}
-          <p>Estimated Rewards</p>
+          <p>Earned Rewards</p>
           <div>
-            {!state.native && (
+            <h3>{earnedDisplay} NDX</h3>
+            {/* {!state.native && (
               <h3 style={{ marginLeft: claimMargin }}>
                 <CountUp useEasing={false} redraw decimals={6} perserveValue separator="," start={earnedDisplay} end={returnsDisplay} duration={86400} /> NDX
               </h3>
@@ -205,10 +206,14 @@ export default function Supply() {
               <h4 style={{ marginLeft: claimMargin }}>
                 <CountUp useEasing={false} redraw decimals={5} perserveValue separator="," start={earnedDisplay} end={returnsDisplay} duration={86400} /> NDX
               </h4>
-            )}
+            )} */}
             
           </div>
           <ul className={classes.list}>
+            {
+              relativeWeight.gt(0) && <li>WEIGHT: {parseFloat((relativeWeight.toNumber() * 100).toFixed(4))}%</li>
+            }
+            
             <li> STAKED: {stakedDisplay} {!state.native && (<>{ticker}</>)}</li>
             <li> RATE: {rateDisplay} NDX/DAY</li>
           </ul>
@@ -352,12 +357,12 @@ export default function Supply() {
     return (
       <ul className={classes.stats}>
         <li>
-          Rewards Address: <span>
+          REWARDS POOL: <span>
             {poolAddress.slice(0, 6)}...{poolAddress.slice(-4)}
             <EtherScanLink network={process.env.REACT_APP_ETH_NETWORK} type='account' entity={poolAddress} />
           </span>
         </li>
-        <li>Staking Ends: <span> {dateEnd} </span> </li>
+        <li>STAKING ENDS: <span> {dateEnd} </span> </li>
         <li> STAKED {ticker}: <span>
             {staked.toLocaleString()}
           </span>
@@ -373,10 +378,10 @@ export default function Supply() {
                 {rewards.toLocaleString()}
               </span>
             </li>
-            <li> CLAIMED NDX: <span>
+            {/* <li> CLAIMED NDX: <span>
                 {claimed.toLocaleString()}
               </span>
-            </li>
+            </li> */}
           </Fragment>
         }
       </ul>

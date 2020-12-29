@@ -21,7 +21,7 @@ import { WEB3_PROVIDER, INCORRECT_NETWORK } from '../assets/constants/parameters
 import ndxLight from '../assets/images/indexed-light.png'
 import ndxDark from '../assets/images/indexed-dark.png'
 import style from '../assets/css/components/navigation'
-import { getCachedWeb3, getWeb3 } from '../utils/getWeb3'
+import { getCachedWeb3, getWeb3, clearCachedWeb3 } from '../utils/getWeb3'
 import getStyles from '../assets/css'
 
 import { store } from '../state'
@@ -81,6 +81,7 @@ export default function Navigation({ mode }) {
   }
 
   const disconnectWeb3 = () => {
+    clearCachedWeb3();
     setComponent(<Fragment />)
     dispatch({
       type: 'WEB3', payload: {

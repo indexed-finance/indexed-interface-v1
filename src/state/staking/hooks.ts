@@ -1,5 +1,5 @@
 import { formatBalance, getStakingHelpers, PoolHelper, StakingPoolHelper } from '@indexed-finance/indexed.js'
-import { useContext, useEffect, useReducer } from 'react';
+import { useContext, useEffect, useReducer, useState } from 'react';
 import { AddPools, SetMetadata, StakingAction } from './actions';
 import { store } from '../index'
 
@@ -21,6 +21,7 @@ export function useStakingPool(state: StakingState, indexOrSymbol: number | stri
   })
   const metadata = pool && state.metadata[pool.pool.address];
   const data: StakingPoolHook = { pool, metadata };
+  
   if (pool) {
     data.userBalanceStakingToken = pool.userBalanceStakingToken ? formatBalance(pool.userBalanceStakingToken, 18, 4) : '0';
     data.userAllowanceStakingToken = pool.userAllowanceStakingToken ? formatBalance(pool.userAllowanceStakingToken, 18, 4) : '0';
@@ -41,7 +42,6 @@ export function useStaking(): StakingContextType {
   const { state: globalState } = useContext(store);
 
   useEffect(() => {
-    console.log(globalState)
     const provider = globalState.web3[process.env.REACT_APP_ETH_NETWORK];
     const loadStakingPools = async () => {
       const pools = await getStakingHelpers(provider, globalState.account);
@@ -53,15 +53,15 @@ export function useStaking(): StakingContextType {
   useEffect(() => {
     const account = globalState.account;
     if (!state.pools.length || !account) return;
-    const setAccount = () => {
-      console.log('SETTING ACCOUNT TO ', account)
+    const setAccount = async () => {
       for (let pool of state.pools) {
         if (pool.userAddress) return;
         pool.setUserAddress(account);
+        // await pool.waitForUpdate()
       }
     }
     setAccount();
-  }, [ globalState.account, state.pools ])
+  }, [ globalState.account, state.pools.length ])
 
   useEffect(() => {
     const indexPoolHelpers: undefined | PoolHelper[] = globalState.didLoadHelper && globalState.helper.initialized;
@@ -76,6 +76,9 @@ export function useStaking(): StakingContextType {
       for (let pool of state.pools) {
         const { indexPool } = pool.pool;
         const helper = indexPoolHelpers.find(h => h.address.toLowerCase() == indexPool.toLowerCase());
+        if (globalState.account && !pool.userAddress) {
+          pool.setUserAddress(globalState.account)
+        }
         const { name: indexPoolName, symbol: indexPoolSymbol } = helper;
         const indexPoolTokenSymbols = helper.tokens.map(t => t.symbol);
         const stakingSymbol = pool.pool.isWethPair ? `UNIV2:ETH-${indexPoolSymbol}` : indexPoolSymbol;
@@ -93,7 +96,7 @@ export function useStaking(): StakingContextType {
       dispatch(actions);
     }
     setMetadata();
-  }, [ globalState.didLoadHelper, state.pools ]);
+  }, [ globalState.didLoadHelper, state.pools.length ]);
 
   return {
     pools: state.pools,

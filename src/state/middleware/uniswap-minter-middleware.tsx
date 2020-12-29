@@ -86,18 +86,13 @@ function uniswapMinterDispatchMiddleware(dispatch: UniswapMinterDispatch, state:
       output: UniswapMinterToken,
       specifiedSide: 'input' | 'output'
     ): Promise<void> {
-      console.log('Updating params...')
-      // let input = { ...state.input };
-      // let output = { ...state.output };
-      // let specifiedSide = state.specifiedSide;
       const minter = state.minter;
       if (!minter) {
-        console.log('No minter, skipping!')
         return;
       }
       let newParams: MintParams;
       let { amount, address } = input;
-      let options = { slippage: state.slippage }
+      let options = { slippage: state.slippage, maxHops: 2, compareGasPrice: true }
       function updateInput(tokenAmount: TokenAmount) {
         if (+(tokenAmount.displayAmount) != +(input.displayAmount)) {
           input.displayAmount = tokenAmount.displayAmount;
@@ -112,7 +107,7 @@ function uniswapMinterDispatchMiddleware(dispatch: UniswapMinterDispatch, state:
       }
       if (specifiedSide == 'input') {
         if (!(+input.displayAmount)) {
-          console.log(`No input or output, skipping!`);
+          // console.log(`No input or output, skipping!`);
           return;
         }
         if (address == ZERO_ADDRESS) {
