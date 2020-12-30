@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useContext, useEffect } from 'react'
 
+import { Link } from 'react-router-dom'
 import Grid from '@material-ui/core/Grid'
 import { useParams } from  'react-router-dom'
 import CountUp from 'react-countup';
@@ -332,6 +333,23 @@ export default function Supply() {
   function DisplayMetadata() {
     let claimed, rewards, rate, staked, stakingTokenSymbol, dateEnd;
     let poolAddress;
+
+    function StakingTokenLink() {
+      if (!pool.pool) {
+        return <></>
+      }
+      if (pool.pool.pool.isWethPair) {
+        return <a
+          href={`https://info.uniswap.org/pair/${pool.pool.stakingToken}`}
+          target='_blank'
+          rel='noreferrer noopener'
+        >
+          {stakingTokenSymbol}
+        </a>
+      }
+      return <Link to={`/index/${stakingTokenSymbol}`}>{stakingTokenSymbol}</Link>
+    }
+
     if (!pool.pool) {
       [claimed, rewards, rate, staked, stakingTokenSymbol, dateEnd, poolAddress] = [0, 0, 0, 0, '', '', ''];
     } else {
@@ -376,6 +394,10 @@ export default function Supply() {
           <Fragment>
             <li> TOTAL NDX: <span>
                 {rewards.toLocaleString()}
+              </span>
+            </li>
+            <li> STAKING TOKEN: <span>
+                <StakingTokenLink />
               </span>
             </li>
             {/* <li> CLAIMED NDX: <span>
