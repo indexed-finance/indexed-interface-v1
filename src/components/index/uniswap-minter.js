@@ -171,7 +171,7 @@ export default function UniswapMinter({ metadata }){
           </DialogContentText>
         </Grid>
         <Grid item>
-          {minterState.pool && <SwapInput inputWidth={inputWidth} onSelect={selectToken} tokens={tokenList} useToken={useInput} label='EXCHANGE' />}
+          {minterState.pool && <SwapInput inputWidth={inputWidth} onSelect={selectToken} tokens={tokenList} useToken={useInput} label='SEND' />}
         </Grid>
         <Grid item>
           <Input

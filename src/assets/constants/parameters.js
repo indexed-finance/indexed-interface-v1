@@ -26,8 +26,14 @@ import ren from '../images/ren.png'
 
 import { isNative } from './functions'
 
-let currentTime = (new Date()).getHours()
-let isNight = (currentTime >= 17 || currentTime < 9)
+let dark = localStorage.getItem('dark');
+if (dark === null) {
+  let currentTime = (new Date()).getHours()
+  let isNight = (currentTime >= 17 || currentTime < 6)
+  dark = isNight;
+} else {
+  dark = JSON.parse(dark);
+}
 
 const rinkebyWhitelist = require('./whitelists/rinkeby-tokens.json');
 const mainnetWhitelist = require('./whitelists/limited-mainnet-tokens.json');
@@ -58,12 +64,12 @@ export const initialState = {
   },
   didLoadHelper: false,
   helper: null,
-  background: isNight ? '#111111' : '#ffffff',
-  color: isNight ? '#ffffff' : '#333333',
+  background: dark ? '#111111' : '#ffffff',
+  color: dark ? '#ffffff' : '#333333',
   native: isNative({ width: null }),
   request: false,
   load: false,
-  dark: isNight,
+  dark: dark,
   categories: {},
   governance: {
     dailyDistributionSnapshots: [],
@@ -438,7 +444,7 @@ export const poolDesktopColumns = [
   },
   {
     id: 'price',
-    label: 'PRICE',
+    label: 'VALUE',
     minWidth: 150,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
@@ -476,7 +482,7 @@ export const poolNativeColumns  = [
   },
   {
     id: 'price',
-    label: 'PRICE',
+    label: 'VALUE',
     minWidth: 50,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,

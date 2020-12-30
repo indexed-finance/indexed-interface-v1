@@ -54,7 +54,7 @@ export default function StickyHeadTable({ width, height, action, data, columns, 
               let f = () => {}
 
               if(href){
-                f = () => history.push(`/pool/${row.address}`)
+                f = () => history.push(`/index/${row.symbol}`)
               }
 
               return (
