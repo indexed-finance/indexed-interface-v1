@@ -23,6 +23,7 @@ import { BurnStateProvider } from '../state/burn';
 import { TradeStateProvider } from '../state/trade'
 import TitleLoader from '../components/loaders/title'
 import Loader from '../components/loaders/area'
+import IndexChartContainer from '../components/charts/IndexChartContainer'
 
 function uncapitalizeNth(text, n) {
     return (n > 0 ? text.slice(0, n) : '') + text.charAt(n).toLowerCase() + (n < text.length - 1 ? text.slice(n+1) : '')
@@ -44,6 +45,9 @@ export default function Index(){
   const [ styles, setStyles ] = useState({ trade: selected, mint: {}, burn: {}, swap: {}})
   const [ metadata, setMetadata ] = useState({})
   const [ execution, setExecution ] = useState('trade')
+  const [ duration, setDuration ] = useState('day');
+  const [ yAxisKey, setYAxisKey ] = useState('value');
+
   const classes = useStyles()
   const theme = useTheme()
 
@@ -124,6 +128,14 @@ export default function Index(){
     )
   }
 
+  const usedDelta = metadata && Object.keys(metadata).length ? (
+    yAxisKey === 'value' ? (duration === 'day' ? metadata.delta : metadata.weekDelta)
+    : (duration === 'day' ? metadata.tvlDayDelta : metadata.tvlWeekDelta)
+  ) : 0;
+
+  const usedPriceOrTVL = metadata && Object.keys(metadata).length ?
+  (yAxisKey === 'value' ? metadata.price : metadata.marketcap) : 0;
+
   return (
     <div className={classes.root} style={{ maxWidth, ...border }}>
       <div className={classes.header} style={{ width }}>
@@ -133,9 +145,9 @@ export default function Index(){
                 <h3 className={classes.title}> {metadata.name}  [{metadata.symbol}]</h3>
               </li>
               <li style={{ float: 'left', marginRight }}>
-                <h4 className={classes.price}> ${metadata.price}
-                  <span style={{ color: metadata.delta > 0 ? '#00e79a': '#ff005a' }}>
-                  &nbsp;({ metadata.delta > 0 ? '+' : ''}{metadata.delta}%)
+                <h4 className={classes.price}> ${usedPriceOrTVL.toLocaleString()}
+                  <span style={{ color: usedDelta > 0 ? '#00e79a': '#ff005a' }}>
+                  &nbsp;({ usedDelta > 0 ? '+' : ''}{usedDelta}%)
                   </span>
                 </h4>
               </li>
@@ -177,7 +189,17 @@ export default function Index(){
           {({ width, height }) => (
             <Fragment>
               {!state.request && !metadata.history && (<Loader paddingTop={paddingTop} width={width} height={height} color={state.background}/> )}
-              {state.request && metadata.active && metadata.history && (<Area data={metadata.history} width={width} height={height} /> )}
+              {state.request && metadata.active && metadata.history &&
+              <IndexChartContainer
+                color={state.background}
+                width={width}
+                height={height}
+                duration={duration}
+                setDuration={setDuration}
+                snapshots={metadata.poolHelper.pool.snapshots}
+                yAxisKey={yAxisKey}
+                setYAxisKey={setYAxisKey}
+              /> /* (<Area data={metadata.history} width={width} height={height} /> ) */}
             </Fragment>
           )}
         </ParentSize>
