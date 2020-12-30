@@ -81,6 +81,7 @@ function Application(){
     setBackground(background, color)
     setTheme(getTheme(modeChange))
     setMode(modeChange)
+    localStorage.setItem('dark', modeChange.toString());
   }
 
   const setBackground = (background, color) => {
