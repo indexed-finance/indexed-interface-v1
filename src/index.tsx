@@ -150,28 +150,37 @@ function Application(){
           if (typeof supply !== 'number' && typeof supply != 'string') {
             supply = formatBalance(supply, 18, 4);
           }
-          let target = clearTimeDiscrepancies(new Date(timestamp.getTime() - 86400000));
           let history = snapshots.map(h => ({ close: +(h.value.toFixed(2)), date: new Date(h.date * 1000) }));
           let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(2), date: new Date(l.date * 1000) }))
-          let past24h = snapshots.find((i) => (i.date * 1000) === target.getTime())
 
-          if(!past24h) past24h = snapshots[snapshots.length-2]
 
-          let delta24hr = snapshots.length === 1 ? '0' : (((snapshots[snapshots.length-1].value - past24h.value)/ past24h.value) * 100).toFixed(2).toString();
-          let snapshotsLastDay = snapshots.filter(s => (s.date * 1000) >= target.getTime());
-          let volume24hr = snapshotsLastDay.reduce((t, snap) => t + parseFloat(snap.totalVolumeUSD), 0);
+          snapshots.sort((a, b) => a.date - b.date);
+          const latest = snapshots[snapshots.length - 1];
+          const last24hr = snapshots.filter(s => s.date >= latest.date - 86400);
+          const lastWeek = snapshots.filter(s => s.date >= latest.date - 604800);
+
+          let volume24hr = last24hr.reduce((t, snap) => t + parseFloat(snap.totalVolumeUSD), 0);
           let volume = volume24hr.toFixed(2)
 
           stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
-          stats.dailyVolume += parseFloat(volume)
+          stats.dailyVolume += parseFloat(volume);
 
           let formattedName = name.replace(' Tokens', '')
 
-          const price = parseFloat(history[history.length-1].close);
+          pool.pool.snapshots.sort((a, b) => a.date - b.date);
+
+          let dayDelta = ((latest.value - last24hr[0].value) / last24hr[0].value) * 100;
+          let weekDelta = ((latest.value - lastWeek[0].value) / lastWeek[0].value) * 100;
+
+          let tvlDayDelta = ((latest.totalValueLockedUSD - last24hr[0].totalValueLockedUSD) / last24hr[0].totalValueLockedUSD) * 100;
+          let tvlWeekDelta = ((latest.totalValueLockedUSD - lastWeek[0].totalValueLockedUSD) / lastWeek[0].totalValueLockedUSD) * 100;
+
+          const price = parseFloat(latest.value.toFixed(2));
           const index = {
-            marketcap: parseFloat((+pool.pool.totalValueLockedUSD).toFixed(2)),
+            marketcap: parseFloat((+latest.totalValueLockedUSD).toFixed(2)),
             price,
-            delta: parseFloat(delta24hr),
+            delta: parseFloat(dayDelta.toFixed(2)),
+            weekDelta: parseFloat(weekDelta.toFixed(2)),
             supply,
             category,
             name: formattedName,
@@ -184,7 +193,9 @@ function Application(){
             liquidity,
             active: true,
             poolHelper: pool,
-            volume: parseFloat(volume)
+            volume: stats.dailyVolume,
+            tvlDayDelta: parseFloat(tvlDayDelta.toFixed(2)),
+            tvlWeekDelta: parseFloat(tvlWeekDelta.toFixed(2))
           };
           categories[categoryID].indexes.push(symbol);
           indexes[symbol] = index;
