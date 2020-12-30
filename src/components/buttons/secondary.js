@@ -3,7 +3,7 @@ import React from 'react'
 import { styled, useTheme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 
-export default function ButtonPrimary(props){
+export default function ButtonSecondary(props){
   const theme = useTheme()
   let { secondary, primary } = theme.palette
   let margin = {}
