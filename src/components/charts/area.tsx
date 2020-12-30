@@ -98,10 +98,6 @@ export default withTooltip<AreaProps, TooltipData>(
 
         const d0 = data[index - 1];
         const d1 = data[index];
-        console.log(`d0`)
-        console.log(d0)
-        console.log(`d1`)
-        console.log(d1)
         let d = d0;
         if (d1 && getDate(d1)) {
           d = x0.valueOf() - getDate(d0).valueOf() > getDate(d1).valueOf() - x0.valueOf() ? d1 : d0;
