@@ -242,7 +242,7 @@ export default function Governance(){
       if((proposals.length > 0 || dailyDistributionSnapshots.length > 0) && state.request){
         let length = dailyDistributionSnapshots.length - 1
         let { active, inactive, delegated, voters } = dailyDistributionSnapshots[length]
-        let recentBlock = await state.web3.rinkeby.eth.getBlock('latest')
+        let recentBlock = await state.web3[process.env.REACT_APP_ETH_NETWORK].eth.getBlock('latest')
 
         setMetadata({
           snapshots: dailyDistributionSnapshots,

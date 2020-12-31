@@ -46,8 +46,7 @@ export default function Propose(){
   let { state, dispatch } = useContext(store)
 
   const parseAbi = (abi) => {
-    let { rinkeby } = state.web3
-    let { encodeFunctionSignature } = rinkeby.eth.abi
+    let { encodeFunctionSignature } = state.web3[process.env.REACT_APP_ETH_NETWORK].eth.abi
     const functionList = []
     const functions = {}
 
