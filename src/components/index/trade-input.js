@@ -20,12 +20,7 @@ export default function TradeInput(props) {
     {`BALANCE: ${token.displayBalance}`}
   </span>;
 
-  let endAdornment;
-  if (!token.isPoolToken) {
-    endAdornment = <WhitelistSelect whitelistSymbols={props.whitelistSymbols} selectedSymbol={token.symbol} onSelect={props.selectWhitelistToken} />
-  } else {
-    endAdornment = <InputAdornment style={{ paddingRight: 5 }} position="end">{token.symbol}</InputAdornment>
-  }
+  let endAdornment = <InputAdornment style={{ paddingRight: 5 }} position="end">{token.symbol}</InputAdornment>;
 
   let label = token.isPoolToken ? 'inputs' : 'altInputs'
 
