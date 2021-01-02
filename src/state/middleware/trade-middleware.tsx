@@ -198,7 +198,10 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
       let perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
       let perciseInput = input.amount.div(toBN(10).pow(input.decimals));
       let price = perciseOutput.div(perciseInput);
-      // let notANumber = isNaN(parseFloat(formatBalance(price, 1, 4)));
+      let notANumber = isNaN(parseFloat(formatBalance(price, 1, 4)));
+      if (notANumber || input.amount.eq(0) || output.amount.eq(0)) {
+        price = toBN(1).div(state.price);
+      }
 
       // if(notANumber || input.amount.eq(0) || output.amount.eq(0)) {
       //   const oneToken = toBN(10).pow(input.decimals);
