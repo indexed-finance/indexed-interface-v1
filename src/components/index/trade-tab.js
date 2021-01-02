@@ -17,10 +17,24 @@ import Input from '../inputs/input';
 import { toContract } from '../../lib/util/contracts';
 import { getETHPrice } from '../../api/gql';
 import { SlippgeExceedsTrueValue } from '../helper-tooltip';
+import { useTimeout } from '../../hooks/useTimeout';
 
 const routerABI = require('../../assets/constants/abi/UniswapV2Router.json')
 
 const useStyles = getStyles(style);
+
+function SwitchButton({ switchTokens }) {
+  const [ disabled, setDisabled ] = useState(false);
+  const { startTimer } = useTimeout(() => setDisabled(false));
+
+  function doSwitch() {
+    setDisabled(true);
+    switchTokens();
+    startTimer(2000);
+  }
+
+  return <IconButton disabled={disabled} onClick={doSwitch}> <Swap /> </IconButton>;
+}
 
 export default function TradeTab({ metadata }) {
   const { useInput, usdRate, isWethPair, feeString, priceString, useOutput, tradeState, setHelper, updatePool, whitelistTokens, selectWhitelistToken, switchTokens } = useTradeState();
@@ -172,14 +186,16 @@ export default function TradeTab({ metadata }) {
         }
       </Grid >
       <Grid item xs={12} md={12} lg={12} xl={12} key='1'>
-        <div className={classes.swap}>
-          <p>{priceString}</p>
-          <IconButton onClick={!tradeState.helper ? () => {} : switchTokens}> <Swap /> </IconButton>
-          <p style={{ color: exceedsTrueUSDValue ? '#f44336' : '#00e79a' }}>
-            1 {metadata.symbol} = ${parseFloat((usdPricePerToken).toFixed(2)).toLocaleString()}
-            &nbsp;{exceedsTrueUSDValue ? <SlippgeExceedsTrueValue isWethPair={isWethPair} /> : <></> }
-          </p>
-        </div>
+        {
+          tradeState.helper && <div className={classes.swap}>
+            <p>{priceString}</p>
+            <SwitchButton switchTokens={switchTokens} />
+            <p style={{ color: exceedsTrueUSDValue ? '#f44336' : '#00e79a' }}>
+              1 {metadata.symbol} = ${parseFloat((usdPricePerToken).toFixed(2)).toLocaleString()}
+              &nbsp;{exceedsTrueUSDValue ? <SlippgeExceedsTrueValue isWethPair={isWethPair} /> : <></> }
+            </p>
+          </div>
+        }
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} key='2'>
         {
