@@ -10,6 +10,8 @@ import Tab from '@material-ui/core/Tab'
 import { Link } from 'react-router-dom'
 
 import { formatBalance, BigNumber, toBN } from '@indexed-finance/indexed.js'
+import moment from 'moment';
+
 import ButtonSecondary from '../buttons/secondary'
 import ButtonPrimary from '../buttons/primary'
 import ButtonTransaction from '../buttons/transaction'
@@ -108,12 +110,13 @@ export default function VerticalTabs({ data }) {
       let input = helper.getTokenByAddress(tokenIn);
       let output = helper.getTokenByAddress(tokenOut);
       let transactionHash = id.split('-')[0];
+      let time = moment(timestamp * 1000).fromNow();
 
       book.push({
         input: `${formatBalance(toBN(tokenAmountIn), input.decimals, 2)} ${input.symbol}`,
         output: `${formatBalance(toBN(tokenAmountOut), output.decimals, 2)} ${output.symbol}`,
         tx: <ButtonTransaction value={transactionHash} />,
-        time: `${timestamp}`,
+        time,
       })
     }
     return book;
@@ -145,6 +148,7 @@ export default function VerticalTabs({ data }) {
         poolAmountIn = amount1In;
         poolAmountOut = amount1Out;
       }
+      let time = moment(timestamp * 1000).fromNow();
 
       // let orderType = parseFloat(amount0In) === 0 ? 'SELL' : 'BUY'
 
@@ -153,7 +157,7 @@ export default function VerticalTabs({ data }) {
           input: `${parseFloat(poolAmountIn).toFixed(2)} ${data.symbol}`,
           output: `${parseFloat(wethAmountOut).toFixed(2)} ETH`,
           tx: <ButtonTransaction value={transaction.id} />,
-          time: `${timestamp}`,
+          time,
           type: 'SELL'
         })
       } else {
@@ -161,7 +165,7 @@ export default function VerticalTabs({ data }) {
           input: `${parseFloat(wethAmountIn).toFixed(2)} ETH`,
           output: `${parseFloat(poolAmountOut).toFixed(2)} ${data.symbol}`,
           tx: <ButtonTransaction value={transaction.id} />,
-          time: `${timestamp}`,
+          time,
           type: 'BUY'
         })
       }
