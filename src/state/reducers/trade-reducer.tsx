@@ -3,7 +3,6 @@ import { UniswapHelper, toBN } from '@indexed-finance/indexed.js';
 import { useEffect, useReducer } from "react";
 import { TradeMiddlewareAction, TradeDispatchAction, SetInputToken, SetOutputToken, SetUniswapHelper } from "../actions/trade-actions";
 import { withTradeMiddleware } from "../middleware/trade-middleware";
-import Web3 from 'web3'
 import useDebounce from "../../hooks/useDebounce";
 import { UNISWAP_ROUTER } from '../../assets/constants/addresses';
 
@@ -110,6 +109,7 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
     const isPoolToken = isInput ? newState.input.isPoolToken : newState.output.isPoolToken;
     const otherToken = isInput ? newState.output.address : newState.input.address;
     const pair = isPoolToken ? newState.helper.getPairForToken(otherToken) : newState.helper.getPairForToken(tokenAddress);
+    if (!pair) return BN_ZERO;
     if (isPoolToken) return pair.allowanceA || BN_ZERO;
     return pair.allowanceB || BN_ZERO;
   }
@@ -119,6 +119,7 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
     const isPoolToken = isInput ? newState.input.isPoolToken : newState.output.isPoolToken;
     const otherToken = isInput ? newState.output.address : newState.input.address;
     const pair = isPoolToken ? newState.helper.getPairForToken(otherToken) : newState.helper.getPairForToken(tokenAddress);
+    if (!pair) return BN_ZERO;
     if (isPoolToken) return pair.reservesA || BN_ZERO;
     return pair.reservesB || BN_ZERO;
   }
@@ -165,9 +166,9 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
     checkOutputToken();
     newState.getAllowanceForPair = getAllowanceForPair;
     newState.getBalance = getBalance;
-    newState.pairAddress = newState.input.isPoolToken
-      ? newState.helper.getPairForToken(newState.output.address).pairAddress
-      : newState.helper.getPairForToken(newState.input.address).pairAddress;
+    // newState.pairAddress = newState.input.isPoolToken
+    //   ? newState.helper.getPairForToken(newState.output.address).pairAddress
+    //   : newState.helper.getPairForToken(newState.input.address).pairAddress;
   }
   newState.ready = isReady;
   return newState;

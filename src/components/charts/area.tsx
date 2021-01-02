@@ -41,12 +41,14 @@ export type AreaProps = {
   width: number;
   height: number;
   color: string;
+  children?: any;
   margin?: { top: number; right: number; bottom: number; left: number },
   data: AppleStock[];
 };
 
 export default withTooltip<AreaProps, TooltipData>(
   ({
+    children,
     data,
     width,
     height,
@@ -62,8 +64,9 @@ export default withTooltip<AreaProps, TooltipData>(
     // bounds
     const xMax = width - margin.left - margin.right;
     const yMax = height - margin.top - margin.bottom;
-    const maximum = max(data, getStockValue)
-    const minimum = min(data, getStockValue)
+
+    const maximum = useMemo(() => max(data, getStockValue), [data])
+    const minimum = useMemo(() => min(data, getStockValue), [data])
     const lowerBound =  minimum * 0.875
     const upperBound =  maximum * 1.05
 
@@ -74,16 +77,16 @@ export default withTooltip<AreaProps, TooltipData>(
           range: [0, xMax],
           domain: extent(data, getDate) as [Date, Date],
         }),
-      [xMax],
+      [xMax, minimum, maximum],
     );
     const stockValueScale = useMemo(
       () =>
         scaleLinear({
-          range: [yMax, lowerBound],
+          range: [yMax, 0],
           domain: [lowerBound, upperBound],
           nice: true,
         }),
-      [yMax],
+      [yMax, minimum, maximum],
     );
 
     // tooltip handler
@@ -110,6 +113,7 @@ export default withTooltip<AreaProps, TooltipData>(
 
     return (
       <div className="market-area">
+        {children}
         <svg width={width} height={height}>
           <rect
             x={0}
