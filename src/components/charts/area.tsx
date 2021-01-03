@@ -40,7 +40,6 @@ const bisectDate = bisector(d => new Date(d.date)).left;
 export type AreaProps = {
   width: number;
   height: number;
-  color: string;
   children?: any;
   margin?: { top: number; right: number; bottom: number; left: number },
   data: AppleStock[];
@@ -61,7 +60,6 @@ export default withTooltip<AreaProps, TooltipData>(
   }: AreaProps & WithTooltipProvidedProps<TooltipData>) => {
     if (width < 10) return null;
 
-    // bounds
     const xMax = width - margin.left - margin.right;
     const yMax = height - margin.top - margin.bottom;
 

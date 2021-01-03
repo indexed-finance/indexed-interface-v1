@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { PoolDailySnapshot } from "@indexed-finance/indexed.js/dist/types";
-import { Button } from '@material-ui/core';
 import Area from './area'
+import Button from '../buttons/market'
+import ButtonGroup from '@material-ui/core/ButtonGroup'
 
 export type IndexChartContainerProps = {
   width: number;
   height: number;
-  color: string;
+  native: boolean;
   margin?: { top: number; right: number; bottom: number; left: number };
   snapshots: PoolDailySnapshot[];
   duration: 'day' | 'week';
@@ -32,37 +33,58 @@ function convertSnapshotsToAreaProps(snapshots: PoolDailySnapshot[], duration: '
 }
 
 export default function IndexChartContainer(props: IndexChartContainerProps) {
-  const {yAxisKey, setYAxisKey} = props;
-  // const data = ;
-  function DurationButtons() {
-    return <div style={{ position: 'absolute', right: 0, display: 'flex', flexDirection: 'row' }}>
-      <Button variant={props.duration === 'day' ? 'contained' : 'outlined'} onClick={() => props.setDuration('day')}>
-        D
-      </Button>
-      <Button variant={props.duration === 'day' ? 'outlined' : 'contained'} onClick={() => props.setDuration('week')}>
-        W
-      </Button>
-    </div>
-  }
-  function KeyButtons() {
-    return <div style={{ position: 'absolute', right: 0, display: 'flex', flexDirection: 'row', marginTop: 50 }}>
-      <Button variant={yAxisKey === 'value' ? 'contained' : 'outlined'} onClick={() => setYAxisKey('value')}>
-        VALUE
-      </Button>
-      <Button variant={yAxisKey === 'totalValueLockedUSD' ? 'contained' : 'outlined'} onClick={() => setYAxisKey('totalValueLockedUSD')}>
-        TVL
-      </Button>
-    </div>
-  }
+  const { yAxisKey, setYAxisKey, duration } = props;
+  const { color, background } = document.body.style;
+
   const data = convertSnapshotsToAreaProps(props.snapshots, props.duration, yAxisKey)
   return <Area
     width={props.width}
     height={props.height}
     margin={props.margin}
     data={data}
-    color={props.color}
   >
-    <DurationButtons />
-    <KeyButtons />
+   <ButtonGroup style={{ position: 'absolute', display: 'inline-block' }}>
+    <Button variant='outlined'
+      style={{
+        backgroundColor: yAxisKey === 'value' ? '#666666' : background,
+        color: yAxisKey === 'value' ? 'white' : color,
+        borderTop: 'none',
+        borderLeft: 'none',
+        borderRadius: 0
+      }}
+      onClick={() => setYAxisKey('value')}>
+      VALUE
+    </Button>
+    <Button variant='outlined'
+       style={{
+         backgroundColor: yAxisKey === 'totalValueLockedUSD' ? '#666666' : background,
+         color: yAxisKey === 'totalValueLockedUSD' ? 'white' : color,
+         borderTop: 'none',
+         borderRadius: 0
+       }}
+       onClick={() => setYAxisKey('totalValueLockedUSD')}>
+       TVL
+     </Button>
+     <Button variant='outlined'
+       style={{
+          backgroundColor: duration === 'day' ? '#666666' : background,
+          color: duration === 'day' ? 'white' : color,
+          borderTop: 'none',
+          borderRadius: 0
+        }}
+      onClick={() => props.setDuration('day')}>
+        D
+     </Button>
+     <Button variant='outlined'
+        style={{
+          backgroundColor: duration === 'week' ? '#666666' : background,
+          color: duration === 'week' ? 'white' : color,
+          borderTop: 'none',
+          borderRadius: 0
+        }}
+      onClick={() => props.setDuration('week')}>
+      W
+     </Button>
+    </ButtonGroup>
   </Area>
 }

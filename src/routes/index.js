@@ -191,7 +191,6 @@ export default function Index(){
               {!state.request && !metadata.history && (<Loader paddingTop={paddingTop} width={width} height={height} color={state.background}/> )}
               {state.request && metadata.active && metadata.history &&
               <IndexChartContainer
-                color={state.background}
                 width={width}
                 height={height}
                 duration={duration}
