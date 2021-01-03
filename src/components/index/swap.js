@@ -16,6 +16,7 @@ import { store } from '../../state'
 import { getERC20 } from '../../lib/erc20';
 import { toContract } from '../../lib/util/contracts';
 import { bdiv } from '@indexed-finance/indexed.js/dist/bmath';
+import Web3RequiredPrimaryButton from '../buttons/web3-required-primary';
 
 const useStyles = getStyles(style)
 
@@ -152,8 +153,23 @@ export default function Swap({ metadata }){
         </div>
       </Grid>
       <Grid item>
-        { !approvalNeeded && <ButtonPrimary onClick={swapTokens} disabled={!swapState.ready} variant='outlined' margin={{  margin: 25, marginLeft: 150 }}> SWAP </ButtonPrimary>}
-        { approvalNeeded && <ButtonPrimary onClick={approvePool} variant='outlined' margin={{  margin: 25, marginLeft: 150 }}> APPROVE </ButtonPrimary>}
+        {
+          !approvalNeeded && <Web3RequiredPrimaryButton
+            onClick={swapTokens}
+            disabled={!swapState.ready}
+            variant='outlined'
+            margin={{  margin: 25, marginLeft: 150 }}
+            label='SWAP'
+          />
+        }
+        {
+          approvalNeeded && <Web3RequiredPrimaryButton
+            onClick={approvePool}
+            variant='outlined'
+            margin={{ margin: 25, marginLeft: 150 }}
+            label='APPROVE'
+          />
+        }
       </Grid>
     </Grid>
   )

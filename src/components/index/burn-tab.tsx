@@ -14,6 +14,7 @@ import { store } from '../../state'
 import { useBurnState } from '../../state/burn';
 import BurnForm from './burn-form';
 import style from '../../assets/css/components/mint'
+import Web3RequiredPrimaryButton from '../buttons/web3-required-primary';
 
 const ReceiveInput = styled(Input)({
   width: 300,
@@ -109,9 +110,12 @@ export default function BurnTab({ market, metadata }) {
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
-        <ButtonPrimary onClick={burn} disabled={!burnState.ready} margin={{ margin: 25, marginTop: 30, marginLeft: 150 }}>
-          BURN
-        </ButtonPrimary>
+        <Web3RequiredPrimaryButton
+          onClick={burn}
+          disabled={!burnState.ready}
+          margin={{ margin: 25, marginTop: 30, marginLeft: 150 }}
+          label='BURN'
+        />
       </Grid>
     </Grid>
     </div>

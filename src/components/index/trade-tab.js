@@ -18,6 +18,7 @@ import { toContract } from '../../lib/util/contracts';
 import { getETHPrice } from '../../api/gql';
 import { SlippgeExceedsTrueValue } from '../helper-tooltip';
 import { useTimeout } from '../../hooks/useTimeout';
+import Web3RequiredPrimaryButton from '../buttons/web3-required-primary';
 
 const routerABI = require('../../assets/constants/abi/UniswapV2Router.json')
 
@@ -212,8 +213,17 @@ export default function TradeTab({ metadata }) {
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} key='4'>
-        {!approvalNeeded && <ButtonPrimary disabled={!tradeState.ready} margin={{ margin: 25, marginLeft: 150 }} onClick={executeSwap}> SWAP </ButtonPrimary> }
-        {approvalNeeded && <ButtonPrimary margin={{ margin: 25, marginLeft: 150 }} onClick={approveRouter}> APPROVE </ButtonPrimary> }
+        {!approvalNeeded && <Web3RequiredPrimaryButton
+          disabled={!tradeState.ready}
+          margin={{ margin: 25, marginLeft: 150 }}
+          onClick={executeSwap}
+          label='SWAP'
+        /> }
+        {approvalNeeded && <Web3RequiredPrimaryButton
+          margin={{ margin: 25, marginLeft: 150 }}
+          onClick={approveRouter}
+          label='APPROVE'
+        />}
       </Grid>
     </Grid>
   )
