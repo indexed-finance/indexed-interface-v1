@@ -25,15 +25,18 @@ import { getCachedWeb3, getWeb3, clearCachedWeb3 } from '../utils/getWeb3'
 import getStyles from '../assets/css'
 
 import { store } from '../state'
+import { useWeb3 } from '../hooks/useWeb3'
 
 const useStyles = getStyles(style)
 
 export default function Navigation({ mode }) {
-  const [ component, setComponent ] = useState(<Fragment/>)
-  const [ login, setLogin ] = useState(false)
+  // const [ component, setComponent ] = useState(<Fragment/>)
+  // const [ login, setLogin ] = useState(false)
   const [ anchorEl, setAnchorEl ] = useState(null)
   const [didCheckCache, setDidCheckCache] = useState(false);
-  const classes = useStyles()
+  const classes = useStyles();
+
+  const { loggedIn, account, handleSetWeb3, connectWeb3, disconnectWeb3 } = useWeb3();
 
   let { state, dispatch } = useContext(store)
 
@@ -43,60 +46,6 @@ export default function Navigation({ mode }) {
 
   const handleClose = () => {
     setAnchorEl(null)
-  }
-
-  const handleSetWeb3 = async (web3) => {
-    let accounts = await web3.eth.getAccounts();
-    let account = toChecksumAddress(accounts[0]);
-    let network = await web3.eth.net.getId();
-
-    const expectedID = process.env.REACT_APP_ETH_NETWORK === 'mainnet' ? 1 : 4
-    if((+network) !== expectedID){
-      dispatch({ type: 'MODAL', payload: INCORRECT_NETWORK })
-    } else {
-      await dispatch({ type: 'WEB3', payload: { web3, account, network } });
-      setComponent(<Blockie address={account} />)
-      setAnchorEl(null)
-      setLogin(true)
-    }
-  }
-
-  useEffect(() => {
-    (async () => {
-      if (didCheckCache) return;
-      const web3 = await getCachedWeb3();
-
-      console.log('PROVIDER', web3)
-
-      setDidCheckCache(true);
-      if (!web3) return;
-      await handleSetWeb3(web3);
-    })();
-  }, [])
-
-  const connectWeb3 = async() => {
-    try {
-      const web3 = await getWeb3();
-
-      console.log(web3)
-
-      await handleSetWeb3(web3);
-    } catch (e) {
-      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
-    }
-  }
-
-  const disconnectWeb3 = () => {
-    clearCachedWeb3();
-    setComponent(<Fragment />)
-    dispatch({
-      type: 'WEB3', payload: {
-        helper: state.helper,
-        web3: false,
-        account: null,
-        network: 0,
-      }
-    })
   }
 
   function Blockie({ address }) {
@@ -126,6 +75,23 @@ export default function Navigation({ mode }) {
      </Fragment>
     )
   }
+
+  function ProfileIcon() {
+    if (loggedIn) {
+      return <Blockie address={account} />
+    }
+    return <></>
+  }
+
+  useEffect(() => {
+    if (didCheckCache) return;
+    (async () => {
+      const web3 = await getCachedWeb3();
+      setDidCheckCache(true);
+      if (!web3) return;
+      await handleSetWeb3(web3);
+    })();
+  });
 
   const changeTheme = () => {
     state.changeTheme(mode)
@@ -248,8 +214,8 @@ export default function Navigation({ mode }) {
                         horizontal: "right",
                       }}
                      >
-                      {login && (<LoggedIn />)}
-                      {!login && (<LoggedOut />)}
+                      {loggedIn && (<LoggedIn />)}
+                      {!loggedIn && (<LoggedOut />)}
                     </Menu>
                   </div>
                   <IconButton
@@ -264,7 +230,7 @@ export default function Navigation({ mode }) {
                       <AccountBalanceWalletIcon color='secondary' />
                     </IconButton>
                   )}
-                  {component}
+                  <ProfileIcon />
                 </div>
             </Grid>
           </Grid>
