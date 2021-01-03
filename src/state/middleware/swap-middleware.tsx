@@ -1,5 +1,4 @@
 import { BigNumber, formatBalance, toBN, toTokenAmount, toWei } from "@indexed-finance/indexed.js";
-import { TokenAmount } from '@indexed-finance/indexed.js/dist/pool-helper'
 import { calcSpotPrice } from "@indexed-finance/indexed.js/dist/bmath";
 import { withMiddleware } from ".";
 import {
@@ -127,7 +126,6 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
     async function switchTokens(): Promise<void> {
       let input = { ...state.output };
       let output = { ...state.input };
-      let quote: TokenAmount;
       let isError = false;
 
       const outputList = state.tokenList.filter(i =>
@@ -137,7 +135,7 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
       const { usedBalance } = pool.tokens.find(i => i.address == input.address);
 
       if (input.amount.lte(usedBalance.div(2))) {
-        quote = await state.pool.calcOutGivenIn(input.address, output.address, input.amount);
+        let quote = await state.pool.calcOutGivenIn(input.address, output.address, input.amount);
 
         output.displayAmount = quote.displayAmount;
         output.amount = toBN(quote.amount);
