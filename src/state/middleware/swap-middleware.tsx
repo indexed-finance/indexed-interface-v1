@@ -1,4 +1,5 @@
 import { BigNumber, formatBalance, toBN, toTokenAmount, toWei } from "@indexed-finance/indexed.js";
+import { TokenAmount } from '@indexed-finance/indexed.js/dist/pool-helper'
 import { calcSpotPrice } from "@indexed-finance/indexed.js/dist/bmath";
 import { withMiddleware } from ".";
 import {
@@ -126,17 +127,29 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
     async function switchTokens(): Promise<void> {
       let input = { ...state.output };
       let output = { ...state.input };
+      let quote: TokenAmount;
+      let isError = false;
 
       const outputList = state.tokenList.filter(i =>
         input.address.toLowerCase() !== i.address.toLowerCase()
         && i.pool === input.pool
       );
+      const { usedBalance } = pool.tokens.find(i => i.address == input.address);
+
+      if (input.amount.lte(usedBalance.div(2))) {
+        quote = await state.pool.calcOutGivenIn(input.address, output.address, input.amount);
+
+        output.displayAmount = quote.displayAmount;
+        output.amount = toBN(quote.amount);
+      } else {
+        isError = true;
+      }
 
       const perciseInput = input.amount.div(toBN(10).pow(input.decimals));
       let perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
       let price = perciseOutput.div(perciseInput);
 
-      if(output.amount.eq(0) || input.amount.eq(0)){
+      if(isError || output.amount.eq(0) || input.amount.eq(0)){
         const oneToken = toBN(10).pow(input.decimals);
         const { amount } = await pool.calcOutGivenIn(input.address, output.address, oneToken)
 
