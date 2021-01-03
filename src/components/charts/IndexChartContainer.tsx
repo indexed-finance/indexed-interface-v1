@@ -33,7 +33,7 @@ function convertSnapshotsToAreaProps(snapshots: PoolDailySnapshot[], duration: '
 }
 
 export default function IndexChartContainer(props: IndexChartContainerProps) {
-  const { yAxisKey, setYAxisKey, duration } = props;
+  const { yAxisKey, setYAxisKey, setDuration, duration } = props;
   const { color, background } = document.body.style;
 
   const data = convertSnapshotsToAreaProps(props.snapshots, props.duration, yAxisKey)
@@ -72,7 +72,7 @@ export default function IndexChartContainer(props: IndexChartContainerProps) {
           borderTop: 'none',
           borderRadius: 0
         }}
-      onClick={() => props.setDuration('day')}>
+      onClick={() => setDuration('day')}>
         D
      </Button>
      <Button variant='outlined'
@@ -82,7 +82,7 @@ export default function IndexChartContainer(props: IndexChartContainerProps) {
           borderTop: 'none',
           borderRadius: 0
         }}
-      onClick={() => props.setDuration('week')}>
+      onClick={() => setDuration('week')}>
       W
      </Button>
     </ButtonGroup>

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import HelpIcon from '@material-ui/icons/Help';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -29,9 +30,19 @@ export function MaximumSupplyTooltip() {
 }
 
 export default function HelperTooltip({ text }) {
+  const [ isOpen, setOpen ] = useState(false)
   const classes = useStyles();
 
-  return <Tooltip title={text} classes={{ tooltip: classes.customWidth }}>
-    <HelpIcon fontSize='inherit' style={{ marginRight: 0 }} />
-  </Tooltip>
+  const handleTooltip = () => {
+    setOpen(!isOpen)
+  }
+
+  return (
+    <ClickAwayListener onClickAway={handleTooltip}>
+      <Tooltip onClose={handleTooltip} onMouseEnter={handleTooltip} onMouseLeave={handleTooltip}
+      	 open={isOpen} title={text} classes={{ tooltip: classes.customWidth }}>
+        <HelpIcon onClick={handleTooltip} fontSize='inherit' style={{ marginRight: 0 }} />
+      </Tooltip>
+    </ClickAwayListener>
+  )
 }
