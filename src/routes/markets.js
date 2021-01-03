@@ -16,7 +16,7 @@ import Table from '../components/table'
 import Loader from '../components/loader'
 import Copyable from '../components/copyable'
 
-import { initialPoolState } from '../assets/constants/parameters'
+import { initialPoolState, categoryMetadata } from '../assets/constants/parameters'
 import style from '../assets/css/routes/markets'
 import getStyles from '../assets/css'
 import { store } from '../state'
@@ -79,6 +79,7 @@ export default function Markets(){
   let {
     resolution, top, margin, height, pre, pre2, paddingLeft, width, marginTop, canvasMargin, canvasWidth
   } = style.getFormatting({ request, native, active })
+  let mode = theme.palette.primary.main === '#ffffff' ? 'light' : 'dark'
 
   return (
     <Fragment>
@@ -93,36 +94,46 @@ export default function Markets(){
             <div className={classes.market} style={{ paddingLeft, width: canvasWidth }}>
               {!native && (
                 <Fragment>
-                  <h2> {market.name} [{market.symbol}]</h2>
-                  {state.request && !active && (
-                    <h3 style={{ color: 'orange' }}> UNINITIALISED </h3>
-                  )}
-                  {active && (
-                    <h3 style={{ color: '#999999' }}> ${market.price}
-                      <span style={{ color: market.delta > 0 ? '#00e79a': '#ff005a'}}>
-                        &nbsp;({market.delta > 0 ? '+' : ''}{market.delta}%)
-                      </span>
-                    </h3>
-                  )}
-                </Fragment>
-              )}
-              {native && (
-                 <Fragment>
-                  <h3 style={{ fontSize: '4.75vw'}}> {market.name.replace('Index', '')}</h3>
-                  {request && !active && (
-                    <h3 style={{ color: 'orange' }}> UNINITIALISED </h3>
-                  )}
-                  {active && (
-                    <Fragment>
-                      <h4 style={{ marginTop: 7.5, color: '#999999' }}> ${market.price}
+                  <div style={{ float: 'left', marginRight: 20, marginTop: 25 }}>
+                    <img src={categoryMetadata[market.category][mode]} style={{ width: 50 }} />
+                  </div>
+                  <div style={{ float: 'right' }}>
+                    <h2> {market.name} [{market.symbol}]</h2>
+                    {state.request && !active && (
+                      <h3 style={{ color: 'orange' }}> UNINITIALISED </h3>
+                    )}
+                    {active && (
+                      <h3 style={{ color: '#999999' }}> ${market.price}
                         <span style={{ color: market.delta > 0 ? '#00e79a': '#ff005a'}}>
                           &nbsp;({market.delta > 0 ? '+' : ''}{market.delta}%)
                         </span>
-                      </h4>
-                    </Fragment>
-                  )}
+                      </h3>
+                    )}
+                  </div>
                 </Fragment>
               )}
+              {native && (
+                <Fragment>
+                  <div style={{ float: 'left', marginRight: 10, marginTop: 15 }}>
+                    <img src={categoryMetadata[market.category][mode]} style={{ width: 40 }} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: '4.675vw'}}> {market.name.replace(' Top', '')}</h3>
+                    {request && !active && (
+                      <h3 style={{ color: 'orange' }}> UNINITIALISED </h3>
+                    )}
+                    {active && (
+                      <Fragment>
+                        <h4 style={{ marginTop: 7.5, color: '#999999' }}> ${market.price}
+                          <span style={{ color: market.delta > 0 ? '#00e79a': '#ff005a'}}>
+                            &nbsp;({market.delta > 0 ? '+' : ''}{market.delta}%)
+                          </span>
+                        </h4>
+                      </Fragment>
+                    )}
+                  </div>
+              </Fragment>
+            )}
             </div>
             {!native && (
               <Wrapper style={{ background: theme.palette.primary.main }}>
@@ -136,7 +147,7 @@ export default function Markets(){
                       </Copyable>
                     </span>
                   </li>
-                  <li>SUPPLY: <span>{market.supply} {market.symbol}</span> </li>
+                  <li>SUPPLY: <span>{market.supply.toLocaleString()} {market.symbol}</span> </li>
                   <li>VOLUME: <span>${market.volume.toLocaleString()}</span></li>
                   <li>TVL: <span>${market.marketcap.toLocaleString()}</span></li>
                   <li>&nbsp;<span></span></li>
