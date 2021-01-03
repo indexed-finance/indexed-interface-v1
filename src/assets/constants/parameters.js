@@ -23,6 +23,10 @@ import zrx from '../images/zrx.png'
 import uma from '../images/uma.png'
 import omg from '../images/omg.png'
 import ren from '../images/ren.png'
+import ccLight from '../images/cc-light.png'
+import ccDark from '../images/cc-dark.png'
+import defiLight from '../images/defi-light.png'
+import defiDark from '../images/defi-dark.png'
 
 import { isNative } from './functions'
 
@@ -95,25 +99,6 @@ export const initialState = {
   },
   account: null,
   network: null,
-  balances: {
-    'ETH': { amount: 0, address: null },
-    'YFI': { amount: 0, address: null },
-    'COMP': { amount: 0, address: null },
-    'DAI': { amount: 0, address: null },
-    'USDC': { amount: 0, address: null },
-    'USDT': { amount: 0, address: null },
-    'YFI': { amount: 0, address: null },
-    'BAT': { amount: 0, address: null },
-    'MKR': { amount: 0, address: null },
-    'LINK': { amount: 0, address: null },
-    'BUSD': { amount: 0, address: null },
-    'UNI': { amount: 0, address: null },
-    'CRV': { amount: 0, address: null },
-    'BAL': { amount: 0, address: null },
-    'KNC': { amount: 0, address: null },
-    'NDX': { amount: 0, address: null },
-    'WBTC': { amount: 0, address: null }
-  },
   indexes: {},
   proposals: {}
 }
@@ -127,6 +112,7 @@ export const initialPoolState = {
     supply: '',
     marketcap: '',
     liquidity: [],
+    category: null,
     volume: '',
     active: null,
     credit: 0,
@@ -151,6 +137,21 @@ export const initialProposalState = {
 
 // Image size formatting over-ride w/ IMAGE_INLINE_SIZE_LIMIT
 // be weary of it causing future trouble w/images
+
+export const categoryMetadata = {
+  1: {
+    light: ccLight,
+    dark: ccDark
+  },
+  2: {
+    light: defiLight,
+    dark: defiDark
+  },
+  null: {
+    light: null,
+    dark: null
+  }
+}
 
 export const tokenMetadata = {
   "BAT": {
