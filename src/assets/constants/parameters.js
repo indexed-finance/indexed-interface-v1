@@ -273,7 +273,7 @@ export const marketColumns = [
   {
     id: 'type',
     label: 'TYPE',
-    minWidth: 25,
+    minWidth: 15,
     align: 'center',
     format: (value) => `${value.toLocaleString('en-US')}%`,
   },
@@ -510,7 +510,7 @@ const PREFIX = window.innerWidth > 600 ? 'TRANSACTION' : 'TX'
 
 export const TX_CONFIRM = { show: true, message: `${PREFIX} CONFIRMED`, opcode: 'success' }
 export const TX_REVERT = { show: true, message:  `${PREFIX} REVERTED`, opcode: 'error' }
-export const WEB3_PROVIDER = { show: true, message: 'NO WEB3 PROVIDER DETECTED', opcode: 'info' }
+export const WEB3_PROVIDER = { show: true, message: 'NO PROVIDER DETECTED', opcode: 'info' }
 
 const envNetwork = process.env.REACT_APP_ETH_NETWORK;
 
@@ -539,5 +539,5 @@ export const UNCLAIMED_CREDITS = (f) => ({
   message: `You have unclaimed credits for this pool, would you like to redeem your share?`,
   actions: [{ label: 'CONFIRM', f: f }, { label: 'REJECT', f: null }]
 })
-export const INCORRECT_NETWORK = { show: true, title: 'INCORRECT NETWORK', message: `The current network is not supported please change to ${envNetwork}.`, actions: [ ] }
+export const INCORRECT_NETWORK = { show: true, title: 'INCORRECT NETWORK', message: `The current network is not supported, please change to your provider's network to ${envNetwork}.`, actions: [ ] }
 export const DISCLAIMER = { show: true, title: 'DISCLAIMER', message: <>This is experimental software in the beta stage of it's development. Use it at your own risk.</>, actions: [ ] }

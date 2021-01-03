@@ -3,7 +3,6 @@ import HelpIcon from '@material-ui/icons/Help';
 import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -33,16 +32,16 @@ export default function HelperTooltip({ text }) {
   const [ isOpen, setOpen ] = useState(false)
   const classes = useStyles();
 
-  const handleTooltip = () => {
-    setOpen(!isOpen)
-  }
+  const closeTooltip = () => setOpen(false)
+  const openTooltip = () => setOpen(true)
+  const toggleTooltip = () => setOpen(!isOpen)
 
   return (
-    <ClickAwayListener onClickAway={handleTooltip}>
-      <Tooltip onClose={handleTooltip} onMouseEnter={handleTooltip} onMouseLeave={handleTooltip}
-      	 open={isOpen} title={text} classes={{ tooltip: classes.customWidth }}>
-        <HelpIcon onClick={handleTooltip} fontSize='inherit' style={{ marginRight: 0 }} />
+      <Tooltip onClose={closeTooltip} open={isOpen} title={text} classes={{ tooltip: classes.customWidth }}>
+        <HelpIcon
+          onMouseEnter={openTooltip} onMouseLeave={closeTooltip} onClick={toggleTooltip}
+          fontSize='inherit' style={{ marginRight: 0 }}
+        />
       </Tooltip>
-    </ClickAwayListener>
   )
 }

@@ -65,6 +65,9 @@ export default function Navigation({ mode }) {
     (async () => {
       if (didCheckCache) return;
       const web3 = await getCachedWeb3();
+
+      console.log('PROVIDER', web3)
+
       setDidCheckCache(true);
       if (!web3) return;
       await handleSetWeb3(web3);
