@@ -26,6 +26,7 @@ import getStyles from '../assets/css'
 import { store } from '../state'
 import { useStakingState } from '../state/staking/context';
 import EtherScanLink from '../components/buttons/etherscan-link';
+import Web3RequiredPrimaryButton from '../components/buttons/web3-required-primary';
 const dateFormat = require("dateformat");
 
 const useStyles = getStyles(style)
@@ -335,32 +336,20 @@ export default function Supply() {
       const inputWei = !!input && toTokenAmount(input, 18);
       const sufficientApproval = userAllowanceStakingToken && userAllowanceStakingToken.gte(inputWei);
       const sufficientBalance = (userBalanceStakingToken && inputWei) && userBalanceStakingToken.gte(inputWei);
-      if (!sufficientBalance) {
-        return <ButtonPrimary
-          disabled={true}
-          variant='outlined'
-          margin={{ ...button }}
-        >
-          STAKE
-        </ButtonPrimary>
-      }
-      if (!sufficientApproval) {
-        return <ButtonPrimary
-          disabled={!state.web3.injected}
-          onClick={approve}
-          variant='outlined'
-          margin={{ ...button }}
-        >
-          APPROVE
-        </ButtonPrimary>
-      }
-      return <ButtonPrimary
-        onClick={stake}
+      let [disabled, label, onClick] =
+        !sufficientBalance
+          ? [true, 'STAKE', () => {}]
+          : !sufficientApproval
+            ? [!state.web3.injected, 'APPROVE', approve]
+            : [false, 'STAKE', stake];
+
+      return <Web3RequiredPrimaryButton
+        disabled={disabled}
+        label={label}
+        onClick={onClick}
         variant='outlined'
         margin={{ ...button }}
-      >
-        STAKE
-      </ButtonPrimary>
+      />
     }
   }
 
