@@ -230,13 +230,10 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         amount: BN_ZERO
       }
 
-      let price = toBN(0);
-      if (state.pool) {
-        const oneToken = toBN(10).pow(state.input.decimals);
-        const { amount } = await state.pool.calcOutGivenIn(input.address, output.address, oneToken)
-        const perciseOutput = toBN(amount).div(toBN(10).pow(state.output.decimals));
-        price = perciseOutput.div(toBN(1));
-      }
+      const oneToken = toBN(10).pow(input.decimals);
+      const { amount } = await action.pool.calcOutGivenIn(input.address, output.address, oneToken)
+      const perciseOutput = toBN(amount).div(toBN(10).pow(state.output.decimals));
+      const price = perciseOutput.div(toBN(1));
 
       dispatch([
         { type: 'SET_HELPER', pool: action.pool },
