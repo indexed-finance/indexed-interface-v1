@@ -276,6 +276,24 @@ function Application(){
   }, [])
 
   useEffect(() => {
+    const initialise = async() => {
+      let { web3, account, helper } = state
+
+      if(web3.injected){
+        let helper = await getAllHelpers(web3.injected, account);
+
+        dispatch({ type: 'GENERIC',
+         payload: {
+            didLoadHelper: true,
+            helper
+          }
+        })
+      }
+    }
+    initialise()
+  }, [ state.web3.injected ])
+
+  useEffect(() => {
     let isFirstVisit = localStorage.getItem('isFirstVisit')
 
     if(isFirstVisit == null && state.request) {

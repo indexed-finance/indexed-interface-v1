@@ -54,10 +54,10 @@ export default function Navigation({ mode }) {
     if((+network) !== expectedID){
       dispatch({ type: 'MODAL', payload: INCORRECT_NETWORK })
     } else {
+      await dispatch({ type: 'WEB3', payload: { web3, account, network } });
       setComponent(<Blockie address={account} />)
       setAnchorEl(null)
       setLogin(true)
-      dispatch({ type: 'WEB3', payload: { web3, account, network } });
     }
   }
 
@@ -77,6 +77,9 @@ export default function Navigation({ mode }) {
   const connectWeb3 = async() => {
     try {
       const web3 = await getWeb3();
+
+      console.log(web3)
+
       await handleSetWeb3(web3);
     } catch (e) {
       dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
