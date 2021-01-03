@@ -50,6 +50,9 @@ export function useWeb3(): Web3Hook {
     if (!web3) {
       return false
     }
+    if (typeof web3 === 'string') {
+      return false;
+    }
     return handleSetWeb3(web3);
   }
 
