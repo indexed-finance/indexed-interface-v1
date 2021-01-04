@@ -59,6 +59,7 @@ export default function IndexChartContainer(props: IndexChartContainerProps) {
        style={{
          backgroundColor: yAxisKey === 'totalValueLockedUSD' ? '#666666' : background,
          color: yAxisKey === 'totalValueLockedUSD' ? 'white' : color,
+         borderRight: 'solid 2px #666666',
          borderTop: 'none',
          borderRadius: 0
        }}
@@ -70,6 +71,7 @@ export default function IndexChartContainer(props: IndexChartContainerProps) {
           backgroundColor: duration === 'day' ? '#666666' : background,
           color: duration === 'day' ? 'white' : color,
           borderTop: 'none',
+          marginLeft: 45,
           borderRadius: 0
         }}
       onClick={() => setDuration('day')}>

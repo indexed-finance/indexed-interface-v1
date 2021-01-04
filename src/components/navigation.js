@@ -16,7 +16,7 @@ import RemoveCircleOutlinedIcon from '@material-ui/icons/RemoveCircleOutlined';
 
 import jazzicon from '@metamask/jazzicon'
 
-import { toChecksumAddress } from '../assets/constants/functions'
+import { toChecksumAddress, isAddress } from '../assets/constants/functions'
 import { WEB3_PROVIDER, INCORRECT_NETWORK } from '../assets/constants/parameters'
 import ndxLight from '../assets/images/indexed-light.png'
 import ndxDark from '../assets/images/indexed-dark.png'
@@ -30,8 +30,7 @@ import { useWeb3 } from '../hooks/useWeb3'
 const useStyles = getStyles(style)
 
 export default function Navigation({ mode }) {
-  // const [ component, setComponent ] = useState(<Fragment/>)
-  // const [ login, setLogin ] = useState(false)
+  const [ component, setComponent ] = useState(<Fragment/>)
   const [ anchorEl, setAnchorEl ] = useState(null)
   const [didCheckCache, setDidCheckCache] = useState(false);
   const classes = useStyles();
@@ -74,13 +73,6 @@ export default function Navigation({ mode }) {
         </IconButton>
      </Fragment>
     )
-  }
-
-  function ProfileIcon() {
-    if (loggedIn) {
-      return <Blockie address={account} />
-    }
-    return <></>
   }
 
   useEffect(() => {
@@ -156,6 +148,14 @@ export default function Navigation({ mode }) {
     )
   }
 
+  useEffect(() => {
+    if(account && isAddress(account)){
+      setComponent(<Blockie address={account} />)
+    } else {
+      setComponent(<Fragment />)
+    }
+  }, [ account ])
+
   let { marginLeft, display, width, paddingTop, padding, logoMargin, titleMargin, marginBottom } = style.getFormatting(state.native)
 
   return (
@@ -230,7 +230,7 @@ export default function Navigation({ mode }) {
                       <AccountBalanceWalletIcon color='secondary' />
                     </IconButton>
                   )}
-                  <ProfileIcon />
+                  {component}
                 </div>
             </Grid>
           </Grid>

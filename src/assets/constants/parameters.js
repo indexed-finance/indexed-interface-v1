@@ -92,6 +92,9 @@ export const initialState = {
     messageCode: 0,
     actions: []
   },
+  balances: {
+    'NDX': 0
+  },
   flag: {
     show: false,
     message: null,
