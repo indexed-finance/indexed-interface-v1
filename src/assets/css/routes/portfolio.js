@@ -101,7 +101,7 @@ const mapping = {
     margin: '3em 3em',
     height: 110,
     width: '100%',
-    tableHeight: 'calc(40vh - 100px)'
+    tableHeight: 375,
   },
   [DESKTOP_NORMAL]: {
     wallet: 100,
@@ -109,7 +109,7 @@ const mapping = {
     margin: '3em 3em',
     height: 110,
     width: '100%',
-    tableHeight: 'calc(50vh - 167.5px)'
+    tableHeight: 375,
   },
   [DESKTOP_LARGE]: {
     wallet: 100,
@@ -117,7 +117,7 @@ const mapping = {
     margin: '3em 3em',
     height: 110,
     width: '100%',
-    tableHeight: 'calc(50vh - 167.5px)'
+    tableHeight: 375,
   },
   [DESKTOP_WIDE]: {
     wallet: 100,

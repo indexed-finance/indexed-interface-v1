@@ -9,6 +9,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import { useHistory, Link } from "react-router-dom";
 import { BigNumber, formatBalance } from '@indexed-finance/indexed.js'
+import { useTheme } from '@material-ui/core/styles'
 
 import Ndx from '../assets/constants/abi/Ndx.json'
 import ButtonPrimary from '../components/buttons/primary'
@@ -21,12 +22,14 @@ import Delta from '../components/utils/delta'
 
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../assets/constants/parameters'
 import { isAddress } from '../assets/constants/functions'
+import { categoryMetadata, tokenMetadata } from '../assets/constants/parameters'
 import { NDX, ZERO_ADDRESS } from '../assets/constants/addresses'
 import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
 
 import style from '../assets/css/routes/portfolio'
 import getStyles from '../assets/css'
+
 
 const ListWrapper = styled(List)({
   flex: '1 1 auto',
@@ -49,12 +52,35 @@ const SecondaryAction = styled(ListItemSecondaryAction)({
 
 const useStyles = getStyles(style)
 
-export default function Governance(){
-  const [ metadata, setMetadata ] = useState({})
+export default function Portfolio(){
+  const [ pools, setPools ] = useState([])
   const history = useHistory()
   const classes = useStyles()
+  const theme = useTheme()
 
   let { dispatch, state } = useContext(store)
+
+  useEffect(() => {
+    let availableAssets = []
+    let indices = Object.entries(state.indexes)
+
+    console.log(indices)
+
+    if(state.request && pools.length == 0){
+      for(let x = 0; x < indices.length; x++){
+        let pool = indices[x][1]
+        let lp = pool
+
+        availableAssets.push(pool)
+        availableAssets.push({
+          ...pool,
+          symbol: `UNIV2-ETH-${lp.symbol}`
+        })
+      }
+
+      setPools(availableAssets)
+    }
+  }, [ state.request, state.indexes ])
 
   useEffect(() => {
     if(!state.load){
@@ -65,6 +91,7 @@ export default function Governance(){
   }, [])
 
   let { height, margin, width, wallet, paddingLeft, tableHeight } = style.getFormatting({ native: state.native })
+  let mode = theme.palette.primary.main === '#ffffff' ? 'light' : 'dark'
 
   return (
     <Fragment>
@@ -74,7 +101,7 @@ export default function Governance(){
             <Canvas native={state.native}>
               <div className={classes.wallet} style={{ height: wallet }}>
                 <p> PORTFOLIO VALUE </p>
-                <h2> $10,053.53<Delta value={5.55} /> </h2>
+                <h2> $1,053,423.53<Delta value={5.55} /> </h2>
               </div>
             </Canvas>
           </Grid>
@@ -87,25 +114,34 @@ export default function Governance(){
           </Grid>
         </Grid>
         <Grid item xs={12} md={12} lg={12} xl={12} className={classes.root}>
-          <Container margin={margin} padding="1em 0em" title='PORTFOLIO' >
+          <Container margin={margin} padding="1em 0em 0em 0em" title='PORTFOLIO' >
            <div className={classes.proposals} style={{ height: tableHeight }}>
             <ListWrapper dense style={{ width }}>
-              {[0].map((p, index) => {
+              {pools.map((value, index) => {
 
                 return (
                   <Item key={index} button>
-                    <ListItemText primary={''}
-                      secondary={
-                        <> </>
-                      }
+                    <ListItemText style={{ width: 87.5 }} primary={
+                      <span>
+                        <div style={{ width: 67.5, float: 'left' }}>
+                          {value.symbol.includes('UNI') && <img src={tokenMetadata['UNI'].image} style={{ width: 25 }} />}
+                          <img src={categoryMetadata[value.category][mode]} style={{ width: 25 }}/>
+                        </div>
+                        <span style={{ marginLeft: 15, width: 25 }}> {value.name} </span>
+                      </span>
+                    }
                     />
                     <ListItemText
-                      primary={
-                        <> </>
-                      }
+                      primary={<>
+                        <span style={{ float: 'left', marginRight: 25, width: 200 }}>
+                          {Math.floor(Math.random() * 300).toLocaleString()} {value.symbol}
+                        </span>
+                        <Progress values={{ for: Math.floor(Math.random() * 100), against: Math.floor(Math.random() * 100) }} width={150} color='#00e79a' option='for'/>
+                        <span style={{ marginLeft: 50, color: '#666666'}}>${Math.floor(Math.random() * 10000).toLocaleString()} </span>
+                      </>}
                     />
                     <SecondaryAction>
-                      <ButtonPrimary variant='outlined'>
+                      <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
                         CLAIM
                       </ButtonPrimary>
                     </SecondaryAction>
