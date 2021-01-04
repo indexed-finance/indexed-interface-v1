@@ -52,6 +52,8 @@ export const parseTimeString = timestamp => {
   let time = moment(timestamp * 1000).fromNow()
 
   time = time.toUpperCase()
+  time = time.replace(/^AN /g, '1 ')
+  time = time.replace(/^A /g, '1 ')
   time = time.replace(' HOUR', ' HR')
   time = time.replace(' HOURS', ' HRS')
   time = time.replace(' MINUTES', ' MINS')
