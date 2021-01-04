@@ -93,8 +93,9 @@ const proposalStates = {
 };
 
 export function getProposalState(proposal: any, latestBlock: number): ProposalState {
+  console.log(`getProposalState::: ${proposal.expiry} :: ${latestBlock}`)
   const state = proposalStates[proposal.state];
-  if (state === 'active' && proposal.expiry >= latestBlock) {
+  if (state === 'active' && proposal.expiry <= latestBlock) {
     return 'expired';
   }
   return state;
