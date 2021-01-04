@@ -16,7 +16,7 @@ import ButtonPrimary from '../buttons/primary';
 import Input from '../inputs/input';
 import { toContract } from '../../lib/util/contracts';
 import { getETHPrice } from '../../api/gql';
-import { SlippgeExceedsTrueValue } from '../helper-tooltip';
+import { SlippgeExceedsTrueValue } from '../utils/popper';
 import { useTimeout } from '../../hooks/useTimeout';
 import Web3RequiredPrimaryButton from '../buttons/web3-required-primary';
 

@@ -23,6 +23,7 @@ import './assets/css/root.css'
 const Governance = lazy(() => import('./routes/governance'))
 const Categories = lazy(() => import('./routes/categories'))
 const Proposal = lazy(() => import('./routes/proposal'))
+const Portfolio = lazy(() => import('./routes/portfolio'))
 const Propose = lazy(() => import('./routes/propose'))
 const Markets = lazy(() => import('./routes/markets'))
 const Index = lazy(() => import('./routes/index'))
@@ -319,6 +320,9 @@ function Application(){
                 </Route>
                 <Route path='/propose'>
                   <Propose />
+                </Route>
+                <Route path='/portfolio'>
+                  <Portfolio />
                 </Route>
                 <Route path='/pool/:address'>
                   <Pool />

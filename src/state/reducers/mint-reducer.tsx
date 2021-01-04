@@ -13,7 +13,7 @@ import {
   SetSpecifiedSide, SetSlippage
 } from "../actions/mint-actions";
 import { withMintMiddleware } from "../middleware";
-import { MaximumAmountToolTip, MaximumSupplyTooltip, MinimumAmountToolTip } from "../../components/helper-tooltip";
+import { MaximumAmountToolTip, MaximumSupplyTooltip, MinimumAmountToolTip } from "../../components/utils/popper";
 
 const BN_ZERO = new BigNumber(0);
 

@@ -14,7 +14,8 @@ import Banner from '../components/banner'
 import Wrapper from '../components/wrapper'
 import Table from '../components/table'
 import Loader from '../components/loader'
-import Copyable from '../components/copyable'
+import Copyable from '../components/utils/copyable'
+import Delta from '../components/utils/delta'
 
 import { initialPoolState, categoryMetadata } from '../assets/constants/parameters'
 import style from '../assets/css/routes/markets'
@@ -103,10 +104,8 @@ export default function Markets(){
                       <h3 style={{ color: 'orange' }}> UNINITIALISED </h3>
                     )}
                     {active && (
-                      <h3 style={{ color: '#999999' }}> ${market.price}
-                        <span style={{ color: market.delta > 0 ? '#00e79a': '#ff005a'}}>
-                          &nbsp;({market.delta > 0 ? '+' : ''}{market.delta}%)
-                        </span>
+                      <h3 style={{ color: '#999999' }}>
+                        ${market.price}<Delta value={market.delta} />
                       </h3>
                     )}
                   </div>
@@ -124,10 +123,8 @@ export default function Markets(){
                     )}
                     {active && (
                       <Fragment>
-                        <h4 style={{ marginTop: 7.5, color: '#999999' }}> ${market.price}
-                          <span style={{ color: market.delta > 0 ? '#00e79a': '#ff005a'}}>
-                            &nbsp;({market.delta > 0 ? '+' : ''}{market.delta}%)
-                          </span>
+                        <h4 style={{ marginTop: 7.5, color: '#999999' }}>
+                          ${market.price} <Delta value={market.delta} />
                         </h4>
                       </Fragment>
                     )}
