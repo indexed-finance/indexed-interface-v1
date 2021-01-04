@@ -198,7 +198,7 @@ export default function Supply() {
     button, height, reward, buttonPos, secondary,
     containerPadding, fontSize,
     infoWidth
-  } = style.getFormatting({ ticker, native: native });
+  } = style.getFormatting({ ticker, native: state.native });
 
   const imgStyles = [
     { width, marginRight, marginBottom },
@@ -458,6 +458,8 @@ export default function Supply() {
     sortDisplayImages()
   }, [ , pool.metadata ])
 
+  console.log(state.native)
+
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
     <Grid item xs={10} md={6}>
@@ -469,16 +471,14 @@ export default function Supply() {
         <Container margin='1em 0em 1em 0em' padding={containerPadding} title={ticker}>
           <div className={classes.modal} style={{ padding, height }}>
             <Grid container direction='row' alignItems='center' justify={positioning} spacing={4}>
-                <Fragment>
-                  <Grid item>
-                    {tokens.map(
-                      (symbol, i) => <img alt={`asset-${i}`} src={tokenMetadata[symbol].image} style={imgStyles[i]} />
-                    )}
-                  </Grid>
-                  <Grid item>
-                    { FormInput() }
-                  </Grid>
-                </Fragment>
+              <Grid item>
+                {tokens.map(
+                  (symbol, i) => <img alt={`asset-${i}`} src={tokenMetadata[symbol].image} style={imgStyles[i]} />
+                )}
+              </Grid>
+              <Grid item>
+                { FormInput() }
+              </Grid>
             </Grid>
             {pool.pool && pool.pool.pool.isReady && (
               <ul className={classes.estimation} style={{ fontSize, padding: listPadding }}>
