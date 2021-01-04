@@ -30,7 +30,7 @@ import { useWeb3 } from '../hooks/useWeb3'
 const useStyles = getStyles(style)
 
 export default function Navigation({ mode }) {
-  const [ component, setComponent ] = useState(<Fragment/>)
+  const [ component, setComponent ] = useState(null)
   const [ anchorEl, setAnchorEl ] = useState(null)
   const [didCheckCache, setDidCheckCache] = useState(false);
   const classes = useStyles();
@@ -68,11 +68,9 @@ export default function Navigation({ mode }) {
         <a target='_blank' rel="noopener noreferrer" href={`https://etherscan.io/address/${address}`}>
           <div id='profile-blockie' />
         </a>
-        {isAddress(address) && (
-          <IconButton onClick={disconnectWeb3} className={classes.logout}>
-            <RemoveCircleOutlinedIcon color='secondary' />
-          </IconButton>
-        )}
+        <IconButton onClick={disconnectWeb3} className={classes.logout}>
+          <RemoveCircleOutlinedIcon color='secondary' />
+        </IconButton>
      </Fragment>
     )
   }
@@ -151,10 +149,10 @@ export default function Navigation({ mode }) {
   }
 
   useEffect(() => {
-    if(account && isAddress(account)){
+    if(account && isAddress(account) && !component){
       setComponent(<Blockie address={account} />)
     } else {
-      setComponent(<Fragment />)
+      setComponent(null)
     }
   }, [ account ])
 
@@ -227,7 +225,7 @@ export default function Navigation({ mode }) {
                 </Fragment>
                 )}
                 <div className={classes.profile} style={{ marginLeft }}>
-                  {!state.web3.injected && (
+                  {(!state.web3.injected || !account) && (
                     <IconButton onClick={connectWeb3}>
                       <AccountBalanceWalletIcon color='secondary' />
                     </IconButton>
