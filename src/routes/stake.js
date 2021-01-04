@@ -85,7 +85,7 @@ export default function Stake() {
             name = meta.indexPoolName
           }
 
-          let formattedName = name.replace(/Tokens|Index/g, ' ')
+          let formattedName = name.replace(/Tokens/g, ' ')
           let { mainWidth, width, color, marginRight, showUni } = getPoolStyles(symbol)
           let label = isReady ? 'STAKE' : 'INITIALIZE'
 
