@@ -13,8 +13,6 @@ import CountDown from 'react-countdown';
 import { useParams } from 'react-router-dom'
 import { toBN, formatBalance } from '@indexed-finance/indexed.js'
 
-import { Interface } from 'ethers/lib/utils';
-
 import GovernorAlpha from '../assets/constants/abi/GovernorAlpha.json'
 import Ndx from '../assets/constants/abi/Ndx.json'
 
@@ -24,35 +22,18 @@ import Radio from '../components/inputs/radio'
 import Progress from '../components/progress'
 import Canvas from '../components/canvas'
 
+import { getProposalState, parseProposalCalls } from '../utils/proposal';
+
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING, initialProposalState } from '../assets/constants/parameters'
-import { NDX, DAO, CONTROLLER, STAKING_FACTORY } from '../assets/constants/addresses'
+import { NDX, DAO } from '../assets/constants/addresses'
 import { toContract } from '../lib/util/contracts'
 import style from '../assets/css/routes/proposal'
 import getStyles from '../assets/css'
 import { store } from '../state'
+import { EtherscanUrl } from '../components/buttons/etherscan-link'
 const dateFormat = require("dateformat");
 
 const govABI = require('../assets/constants/abi/GovernorAlpha.json');
-
-function getAbiForContract(address) {
-  switch (address.toLowerCase()) {
-    case CONTROLLER.toLowerCase(): {
-      return require('../assets/constants/abi/MarketCapSqrtController.json').abi;
-    }
-    case STAKING_FACTORY.toLowerCase(): {
-      return require('../assets/constants/abi/StakingRewardsFactory.json');
-    }
-    default: return null;
-  }
-}
-
-// TODO, add enum state values + configure subgraph
-const proposalState = {
-  0: 'active',
-  1: 'canceled',
-  2: 'queued',
-  3: 'executed'
-}
 
 const useStyles = getStyles(style)
 
@@ -91,14 +72,9 @@ export default function Proposal(){
   const [ metadata, setMetadata ] = useState(initialProposalState)
   const [ weight, setWeight ] = useState(null)
   const [ input, setInput ] = useState(1);
+  const [latestBlock, setLatestBlock] = useState(null);
 
   const classes = useStyles()
-
-  const getProposalState = (proposal) => {
-    let _state = proposalState[proposal.state];
-    if(proposal.block >= proposal.expiry && _state === 'active') return 'expired'
-    else return _state;
-  }
 
   const handleInput = (event) => {
     let target = event.target.value == 1 ? metadata.against : metadata.for
@@ -166,6 +142,33 @@ export default function Proposal(){
     )
   }
 
+  function DisplayProposalCalls() {
+    const calls = parseProposalCalls(metadata);
+    return calls.map((propCall, i) => {
+      const {
+        target,
+        targetName,
+        signature,
+        value,
+        paramsDisplay
+      } = propCall;
+      console.log(propCall)
+      const etherscanUrl = EtherscanUrl({ type: 'account', entity: target });
+      return (
+        <Fragment>
+          <span> {i + 1}. </span>
+            <li>
+              Call <ReactMarkdown source={" `" + signature + "` "}/> on {" "}
+              <a target="_blank" href={etherscanUrl} rel='noreferrer'>{targetName}</a>
+              {" "} with parameters:
+              <ReactMarkdown source={" `" + paramsDisplay + "` "}/>
+              { value > 0 && <ReactMarkdown source={" and `" + value + "ether ` "}/> }
+            </li>
+        </Fragment>
+      )
+    })
+  }
+
   useEffect(() => {
     const getAccountMetadata = async() => {
       let { web3 } = state
@@ -188,17 +191,17 @@ export default function Proposal(){
   }, [ state.web3.injected ])
 
   useEffect(() => {
-    if (state.governance.proposals.length == 0) return;
+    if (state.governance.proposals.length === 0) return;
     const retrieveProposal = async() => {
       let proposal = state.governance.proposals.find(p => p.id == id)
-      let recentBlock = await state.web3[process.env.REACT_APP_ETH_NETWORK].eth.getBlock('latest')
+      let recentBlock = await state.web3[process.env.REACT_APP_ETH_NETWORK].eth.getBlock('latest');
+
+      setLatestBlock(recentBlock);
 
       setComponent({
         blockie: <Blockie border='5px' width={radius} id='blockie' address={proposal.proposer} />,
         list: <Votes logs={proposal.votes} />
       })
-
-      proposal.block = recentBlock.number
 
       setMetadata(proposal)
     }
@@ -206,22 +209,8 @@ export default function Proposal(){
   }, [ , state.governance ]);
 
   useEffect(() => {
-    if (!metadata.id || metadata.eta || proposalState[metadata.state] !== 'queued') {
-      return;
-    }
-    async function getEta() {
-      const dao = toContract(state.web3[process.env.REACT_APP_ETH_NETWORK], govABI.abi, DAO);
-      const prop = await dao.methods.proposals(metadata.id).call();
-      metadata.eta = prop.eta;
-    }
-    getEta();
-  }, [ metadata ]);
-
-  useEffect(() => {
     if(!state.load) {
-      dispatch({
-        type: 'LOAD', payload: true
-      })
+      dispatch({ type: 'LOAD', payload: true })
     }
   }, []);
 
@@ -374,38 +363,7 @@ export default function Proposal(){
             <div className={classes.body}>
               <div className={classes.metadata}>
                 <ul>
-                  {metadata.targets.map((contract, i) => {
-                    const abi = getAbiForContract(contract);
-                    let sig = metadata.signatures[i];
-                    let data = metadata.calldatas[i];
-
-                    let params = [];
-                    if (abi) {
-                      const iface = new Interface(abi);
-                      // let fn = interface.functions[sig];
-                      try {
-                        let sigHash = iface.getSighash(sig);
-
-                        let fn = iface.getFunction(sigHash);
-                        console.log(fn)
-                        let params = iface.decodeFunctionData(fn, sigHash.concat(data.slice(2)));
-                        data = params.join(', ')
-                      } catch (err) {
-                        console.log(err)
-                      }
-                    }
-                    return (
-                      <Fragment>
-                        <span> {i}. </span>
-                          <li>
-                            Call <ReactMarkdown source={" `" + metadata.signatures[i] + "` "}/> in
-                            <ReactMarkdown source={" [" + contract + "] "}/>
-                            with parameters;
-                            <ReactMarkdown source={" `" + data + "` "}/>
-                          </li>
-                      </Fragment>
-                    )
-                  })}
+                  <DisplayProposalCalls />
                 </ul>
               </div>
               <div className={classes.markdown}>
