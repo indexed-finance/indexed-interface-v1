@@ -75,7 +75,7 @@ export default function StickyHeadTable(props) {
             {request && Object.values(indexes).map((row, index) => {
 
               return (
-                <Row selected={market === row.symbol} onClick={() => triggerMarket(row.symbol)} onMouseEnter={() => { if (market === row.symbol) return; triggerMarket(row.symbol) }} hover tabIndex={-1} key={index}>
+                <Row selected={market === row.symbol} onClick={() => triggerMarket(row.symbol)} onMouseEnter={() => { if (market === row.symbol || state.native) return; triggerMarket(row.symbol) }} hover tabIndex={-1} key={index}>
                 {(state.native ? (window.innerWidth > 320 ? poolNativeColumns : poolNativeColumns.filter((i) => i.id !== 'delta')) : poolDesktopColumns)
                     .map((column, i) => {
                     const value = row[column.id];

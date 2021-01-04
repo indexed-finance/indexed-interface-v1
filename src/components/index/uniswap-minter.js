@@ -18,6 +18,7 @@ import { getERC20 } from '../../lib/erc20';
 import { ZERO_ADDRESS } from '../../assets/constants/addresses';
 import { useMintState } from '../../state/mint';
 import { toContract } from '../../lib/util/contracts';
+import Web3RequiredPrimaryButton from '../buttons/web3-required-primary';
 
 const MinterABI = require('../../assets/constants/abi/IndexedUniswapRouterMinter.json');
 
@@ -48,9 +49,9 @@ export default function UniswapMinter({ metadata }){
 
   let { state, dispatch, handleTransaction} = useContext(store)
 
-  async function approvMinter() {
+  async function approveMinter() {
     let { amount, address } = minterState.input;
-    if (address != ZERO_ADDRESS) {
+    if (address !== ZERO_ADDRESS) {
       const erc20 = getERC20(state.web3.injected, address);
       let fn = erc20.methods.approve(minterState.minter.minterAddress, toHex(amount))
       handleTransaction(fn.send({ from: state.account }))
@@ -190,13 +191,17 @@ export default function UniswapMinter({ metadata }){
         </Grid>
         <Grid item>
           {
-            approvalNeeded
-            ? <ButtonPrimary onClick={approvMinter} style={{ margin: 0 }} variant='filled' color="secondary">
-                Approve Minter
-              </ButtonPrimary>
-            : <ButtonPrimary onClick={mintTokens} disabled={!minterState.ready} style={{ margin: 0, marginBottom: 25 }} variant='filled' color="primary">
+            <Web3RequiredPrimaryButton
+              onClick={approvalNeeded ? approveMinter : mintTokens}
+              style={approvalNeeded ? { margin: 0 } : { margin: 0, marginBottom: 25 }}
+              variant='filled'
+              color={approvalNeeded ? 'secondary' : 'primary'}
+              label={approvalNeeded ? 'Approve Minter' : 'Mint'}
+              disabled={approvalNeeded ? false : !minterState.ready}
+            />
+      /*       : <ButtonPrimary onClick={mintTokens} disabled={!minterState.ready} style={{ margin: 0, marginBottom: 25 }} variant='filled' color="primary">
               Mint
-            </ButtonPrimary>
+            </ButtonPrimary> */
           }
         </Grid>
       </Grid>

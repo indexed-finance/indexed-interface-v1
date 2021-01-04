@@ -26,20 +26,17 @@ import getStyles from '../assets/css'
 import { store } from '../state'
 import { useStakingState } from '../state/staking/context';
 import EtherScanLink from '../components/buttons/etherscan-link';
+import Web3RequiredPrimaryButton from '../components/buttons/web3-required-primary';
 const dateFormat = require("dateformat");
 
 const useStyles = getStyles(style)
 
 export default function Supply() {
-  const [ execution, setExecution ] = useState({ f: () => {}, label: 'STAKE' })
-  const [ stats, setStats ] = useState({ claim: 0, deposit: 0, balance: 0 })
-  const [ metadata, setMetadata ] = useState({ supply: 0, rate: 0 })
   const [ input, setInput ] = useState(null)
-  const [ shouldQuery, setQuery ] = useState(false)
   const [ tokens, setTokens ] = useState([])
   const { useStakingPool } = useStakingState();
 
-  let { state, dispatch, handleTransaction } = useContext(store)
+  let { state, native, dispatch } = useContext(store)
   let { asset } = useParams()
   let classes = useStyles()
   let ticker = asset.toUpperCase()
@@ -48,22 +45,11 @@ export default function Supply() {
   const initializePool = async(addr) => {
     let { web3, account } = state
 
-    let contract = toContract(web3.injected, StakingRewardsFactory, STAKING_FACTORY)
-    const fn = contract.methods.notifyRewardAmount(pool.pool.stakingToken);
+    try {
+      let tokenAddress = pool.pool.stakingToken
+      let contract = toContract(web3.injected, StakingRewardsFactory, STAKING_FACTORY)
 
-    await handleTransaction(fn.send({ from: account }))
-      .then(async () => {
-        await pool.pool.updatePool();
-      }).catch(() => {});
-  }
-
-  const approve = async() => {
-    let { web3, account } = state
-
-    try{
-      let contract = getERC20(web3.injected, pool.pool.pool.stakingToken);
-
-      await contract.methods.approve(pool.pool.rewardsAddress, toHex(toTokenAmount(input, 18)))
+      await contract.methods.notifyRewardAmount(tokenAddress)
       .send({ from: account })
       .on('transactionHash', (transactionHash) =>
         dispatch(TX_PENDING(transactionHash))
@@ -77,53 +63,103 @@ export default function Supply() {
           }
         }
       })
-    } catch(e) {}
+    } catch (e) {}
+  }
+
+  const approve = async() => {
+    let { web3, account } = state
+
+    try{
+      let rewardsAddress = pool.pool.rewardsAddress
+      let stakingToken = pool.pool.pool.stakingToken
+      let contract = getERC20(web3.injected, stakingToken)
+      let value = toTokenAmount(input, 18)
+
+      await contract.methods.approve(rewardsAddress, toHex(value))
+      .send({ from: account })
+      .on('transactionHash', (transactionHash) =>
+        dispatch(TX_PENDING(transactionHash))
+      ).on('confirmation', async(conf, receipt) => {
+        if(conf === 0){
+          if(receipt.status == 1) {
+            await pool.pool.updatePool();
+            await dispatch(TX_CONFIRMED(receipt.transactionHash))
+          } else {
+            dispatch(TX_REVERTED(receipt.transactionHash))
+          }
+        }
+      })
+    } catch(e) { console.log(e) }
   }
 
   const stake = async() => {
     let { web3, account } = state
 
     try {
-      let contract = toContract(web3.injected, IStakingRewards, pool.pool.rewardsAddress);
-
+      let { rewardsAddress } = pool.pool
+      let contract = toContract(web3.injected, IStakingRewards, rewardsAddress)
       let amount = toTokenAmount(input, 18)
-      const fn = contract.methods.stake(toHex(amount));
-      await handleTransaction(fn.send({ from: account }))
-        .then(async () => {
-          await pool.pool.updatePool();
-          await setInput(null)
-        })
-    } catch (e) { console.log(e)}
+
+      await contract.methods.stake(toHex(amount)).send({ from: account })
+      .on('transactionHash', (transactionHash) =>
+        dispatch(TX_PENDING(transactionHash))
+      ).on('confirmation', async(conf, receipt) => {
+        if(conf === 0){
+          if(receipt.status == 1) {
+            await pool.pool.updatePool();
+            await dispatch(TX_CONFIRMED(receipt.transactionHash))
+            await setInput(null)
+          } else {
+            dispatch(TX_REVERTED(receipt.transactionHash))
+          }
+        }
+      })
+    } catch (e) { }
   }
 
   const claimReward = async() => {
-    let { web3 } = state
-    let poolAddress = pool.pool.pool.address
-
-    setQuery(false)
+    let { web3, account } = state
 
     try {
+      let poolAddress = pool.pool.pool.address
       let contract = toContract(web3.injected, IStakingRewards, poolAddress)
-      const fn = contract.methods.getReward();
-      await handleTransaction(fn.send({ from: state.account }))
-      .then(async () => {
-        await pool.pool.updatePool();
+
+      await contract.methods.getReward().send({ from: account })
+      .on('transactionHash', (transactionHash) =>
+        dispatch(TX_PENDING(transactionHash))
+      ).on('confirmation', async(conf, receipt) => {
+        if(conf === 0){
+          if(receipt.status == 1) {
+            await pool.pool.updatePool();
+            await dispatch(TX_CONFIRMED(receipt.transactionHash))
+            await setInput(null)
+          } else {
+            dispatch(TX_REVERTED(receipt.transactionHash))
+          }
+        }
       })
     } catch(e) {}
   }
 
   const exit = async () => {
-    let { web3 } = state
-    let poolAddress = pool.pool.pool.address
-
-    setQuery(false)
+    let { web3, account } = state
 
     try {
+      let poolAddress = pool.pool.pool.address
       let contract = toContract(web3.injected, IStakingRewards, poolAddress)
-      const fn = contract.methods.exit();
-      await handleTransaction(fn.send({ from: state.account }))
-      .then(async () => {
-        await pool.pool.updatePool();
+
+      await contract.methods.exit().send({ from: account })
+      .on('transactionHash', (transactionHash) =>
+        dispatch(TX_PENDING(transactionHash))
+      ).on('confirmation', async(conf, receipt) => {
+        if(conf === 0){
+          if(receipt.status == 1) {
+            await pool.pool.updatePool();
+            await dispatch(TX_CONFIRMED(receipt.transactionHash))
+          } else {
+            dispatch(TX_REVERTED(receipt.transactionHash))
+          }
+        }
       })
     } catch(e) {}
   }
@@ -192,30 +228,29 @@ export default function Supply() {
     const supplyDisplay = formatBalance(totalSupply, 18, 6);
 
     return (
-      <Canvas native={state.native} /* padding={containerPadding} */ style={{ overflowX: 'hidden', margin }}  title={state.native ? 'Rewards' : 'User Rewards'}>
+      <Canvas native={native} /* padding={containerPadding} */ style={{ overflowX: 'hidden', margin }}  title={native ? 'REWARDS' : 'USER REWARDS'}>
         <div className={classes.rewards} style={{ width: reward }}>
-          {/* <p> USER REWARDS </p> */}
-          <p>Earned Rewards</p>
+          <p>EARNED REWARDS</p>
           <div>
-            <h3>{earnedDisplay} NDX</h3>
-            {/* {!state.native && (
+            {!native ? <h2>{earnedDisplay} NDX</h2> : <h3>{earnedDisplay} NDX</h3> }
+            {/* {!native && (
               <h3 style={{ marginLeft: claimMargin }}>
                 <CountUp useEasing={false} redraw decimals={6} perserveValue separator="," start={earnedDisplay} end={returnsDisplay} duration={86400} /> NDX
               </h3>
             )}
-            {state.native && (
+            {native && (
               <h4 style={{ marginLeft: claimMargin }}>
                 <CountUp useEasing={false} redraw decimals={5} perserveValue separator="," start={earnedDisplay} end={returnsDisplay} duration={86400} /> NDX
               </h4>
             )} */}
-            
+
           </div>
           <ul className={classes.list}>
             {
               relativeWeight.gt(0) && <li>WEIGHT: {parseFloat((relativeWeight.toNumber() * 100).toFixed(4))}%</li>
             }
-            
-            <li> STAKED: {stakedDisplay} {!state.native && (<>{ticker}</>)}</li>
+
+            <li> STAKED: {stakedDisplay} {!native && (<>{ticker}</>)}</li>
             <li> RATE: {rateDisplay} NDX/DAY</li>
           </ul>
           <div className={classes.buttonBox}>
@@ -301,32 +336,20 @@ export default function Supply() {
       const inputWei = !!input && toTokenAmount(input, 18);
       const sufficientApproval = userAllowanceStakingToken && userAllowanceStakingToken.gte(inputWei);
       const sufficientBalance = (userBalanceStakingToken && inputWei) && userBalanceStakingToken.gte(inputWei);
-      if (!sufficientBalance) {
-        return <ButtonPrimary
-          disabled={true}
-          variant='outlined'
-          margin={{ ...button }}
-        >
-          STAKE
-        </ButtonPrimary>
-      }
-      if (!sufficientApproval) {
-        return <ButtonPrimary
-          disabled={!state.web3.injected}
-          onClick={approve}
-          variant='outlined'
-          margin={{ ...button }}
-        >
-          APPROVE
-        </ButtonPrimary>
-      }
-      return <ButtonPrimary
-        onClick={stake}
+      let [disabled, label, onClick] =
+        !sufficientBalance
+          ? [true, 'STAKE', () => {}]
+          : !sufficientApproval
+            ? [!state.web3.injected, 'APPROVE', approve]
+            : [false, 'STAKE', stake];
+
+      return <Web3RequiredPrimaryButton
+        disabled={disabled}
+        label={label}
+        onClick={onClick}
         variant='outlined'
         margin={{ ...button }}
-      >
-        STAKE
-      </ButtonPrimary>
+      />
     }
   }
 
@@ -355,7 +378,7 @@ export default function Supply() {
     } else {
       const { pool: { totalSupply, claimedRewards, rewardRate, totalRewards, periodFinish } } = pool.pool;
       const endDate = new Date(periodFinish * 1000);
-      if (state.native) {
+      if (native) {
         dateEnd = dateFormat(endDate, 'mm-dd-yy h:mm') + ' UTC';
       } else {
         dateEnd = dateFormat(endDate, 'mmm d, yyyy, h:MM TT') + ' UTC';
@@ -390,7 +413,7 @@ export default function Supply() {
           </span>
         </li>
         {
-          !state.native &&
+          !native &&
           <Fragment>
             <li> TOTAL NDX: <span>
                 {rewards.toLocaleString()}
@@ -435,6 +458,8 @@ export default function Supply() {
     sortDisplayImages()
   }, [ , pool.metadata ])
 
+  console.log(state.native)
+
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
     <Grid item xs={10} md={6}>
@@ -443,19 +468,17 @@ export default function Supply() {
       </div>
     </Grid>
       <Grid item xs={10} md={6}>
-        <Container margin='1em 0em 1em 0em' padding={containerPadding} title={state.native ? ticker : `${ticker} Rewards`}>
+        <Container margin='1em 0em 1em 0em' padding={containerPadding} title={ticker}>
           <div className={classes.modal} style={{ padding, height }}>
             <Grid container direction='row' alignItems='center' justify={positioning} spacing={4}>
-                <Fragment>
-                  <Grid item>
-                    {tokens.map(
-                      (symbol, i) => <img alt={`asset-${i}`} src={tokenMetadata[symbol].image} style={imgStyles[i]} />
-                    )}
-                  </Grid>
-                  <Grid item>
-                    { FormInput() }
-                  </Grid>
-                </Fragment>
+              <Grid item>
+                {tokens.map(
+                  (symbol, i) => <img alt={`asset-${i}`} src={tokenMetadata[symbol].image} style={imgStyles[i]} />
+                )}
+              </Grid>
+              <Grid item>
+                { FormInput() }
+              </Grid>
             </Grid>
             {pool.pool && pool.pool.pool.isReady && (
               <ul className={classes.estimation} style={{ fontSize, padding: listPadding }}>
@@ -469,7 +492,7 @@ export default function Supply() {
       </Grid>
       <Grid item xs={10} md={6}>
         <Canvas>
-          <div className={classes.rewards} style={{ width: !state.native ? reward : infoWidth }}>
+          <div className={classes.rewards} style={{ width: !native ? reward : infoWidth }}>
           	{ DisplayMetadata() }
           </div>
         </Canvas>

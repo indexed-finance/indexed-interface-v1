@@ -10,7 +10,6 @@ import Tab from '@material-ui/core/Tab'
 import { Link } from 'react-router-dom'
 
 import { formatBalance, BigNumber, toBN } from '@indexed-finance/indexed.js'
-import moment from 'moment';
 
 import ButtonSecondary from '../buttons/secondary'
 import ButtonPrimary from '../buttons/primary'
@@ -28,6 +27,7 @@ import { store } from '../../state'
 import getStyles from '../../assets/css'
 
 import { marketColumns } from '../../assets/constants/parameters'
+import { parseTimeString } from '../../assets/constants/functions'
 import { computeUniswapPairAddress } from '@indexed-finance/indexed.js/dist/utils/address'
 
 const BN_ZERO = new BigNumber(0)
@@ -109,12 +109,14 @@ export default function VerticalTabs({ data }) {
 
       let input = helper.getTokenByAddress(tokenIn);
       let output = helper.getTokenByAddress(tokenOut);
+      let inputDisplay = formatBalance(toBN(tokenAmountIn), input.decimals, 2)
+      let outputDisplay = formatBalance(toBN(tokenAmountOut), output.decimals, 2)
       let transactionHash = id.split('-')[0];
-      let time = moment(timestamp * 1000).fromNow();
+      let time = parseTimeString(timestamp)
 
       book.push({
-        input: `${formatBalance(toBN(tokenAmountIn), input.decimals, 2)} ${input.symbol}`,
-        output: `${formatBalance(toBN(tokenAmountOut), output.decimals, 2)} ${output.symbol}`,
+        input: `${parseFloat(inputDisplay).toLocaleString()} ${input.symbol}`,
+        output: `${parseFloat(outputDisplay).toLocaleString()} ${output.symbol}`,
         tx: <ButtonTransaction value={transactionHash} />,
         time,
       })
@@ -148,22 +150,26 @@ export default function VerticalTabs({ data }) {
         poolAmountIn = amount1In;
         poolAmountOut = amount1Out;
       }
-      let time = moment(timestamp * 1000).fromNow();
-
-      // let orderType = parseFloat(amount0In) === 0 ? 'SELL' : 'BUY'
+      let time = parseTimeString(timestamp)
 
       if (parseFloat(wethAmountIn) === 0) {
+        let inputDisplay = parseFloat(poolAmountIn).toFixed(2)
+        let outputDisplay = parseFloat(wethAmountOut).toFixed(2)
+
         history.push({
-          input: `${parseFloat(poolAmountIn).toFixed(2)} ${data.symbol}`,
-          output: `${parseFloat(wethAmountOut).toFixed(2)} ETH`,
+          input: `${parseFloat(inputDisplay).toLocaleString()} ${data.symbol}`,
+          output: `${parseFloat(outputDisplay).toLocaleString()} ETH`,
           tx: <ButtonTransaction value={transaction.id} />,
           time,
           type: 'SELL'
         })
       } else {
+        let inputDisplay = parseFloat(wethAmountIn).toFixed(2)
+        let outputDisplay = parseFloat(poolAmountOut).toFixed(2)
+
         history.push({
-          input: `${parseFloat(wethAmountIn).toFixed(2)} ETH`,
-          output: `${parseFloat(poolAmountOut).toFixed(2)} ${data.symbol}`,
+          input: `${parseFloat(inputDisplay).toLocaleString()} ETH`,
+          output: `${parseFloat(outputDisplay).toLocaleString()} ${data.symbol}`,
           tx: <ButtonTransaction value={transaction.id} />,
           time,
           type: 'BUY'

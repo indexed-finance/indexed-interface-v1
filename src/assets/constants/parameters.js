@@ -23,6 +23,10 @@ import zrx from '../images/zrx.png'
 import uma from '../images/uma.png'
 import omg from '../images/omg.png'
 import ren from '../images/ren.png'
+import ccLight from '../images/cc-light.png'
+import ccDark from '../images/cc-dark.png'
+import defiLight from '../images/defi-light.png'
+import defiDark from '../images/defi-dark.png'
 
 import { isNative } from './functions'
 
@@ -88,6 +92,9 @@ export const initialState = {
     messageCode: 0,
     actions: []
   },
+  balances: {
+    'NDX': 0
+  },
   flag: {
     show: false,
     message: null,
@@ -95,25 +102,6 @@ export const initialState = {
   },
   account: null,
   network: null,
-  balances: {
-    'ETH': { amount: 0, address: null },
-    'YFI': { amount: 0, address: null },
-    'COMP': { amount: 0, address: null },
-    'DAI': { amount: 0, address: null },
-    'USDC': { amount: 0, address: null },
-    'USDT': { amount: 0, address: null },
-    'YFI': { amount: 0, address: null },
-    'BAT': { amount: 0, address: null },
-    'MKR': { amount: 0, address: null },
-    'LINK': { amount: 0, address: null },
-    'BUSD': { amount: 0, address: null },
-    'UNI': { amount: 0, address: null },
-    'CRV': { amount: 0, address: null },
-    'BAL': { amount: 0, address: null },
-    'KNC': { amount: 0, address: null },
-    'NDX': { amount: 0, address: null },
-    'WBTC': { amount: 0, address: null }
-  },
   indexes: {},
   proposals: {}
 }
@@ -127,6 +115,7 @@ export const initialPoolState = {
     supply: '',
     marketcap: '',
     liquidity: [],
+    category: null,
     volume: '',
     active: null,
     credit: 0,
@@ -151,6 +140,21 @@ export const initialProposalState = {
 
 // Image size formatting over-ride w/ IMAGE_INLINE_SIZE_LIMIT
 // be weary of it causing future trouble w/images
+
+export const categoryMetadata = {
+  1: {
+    light: ccLight,
+    dark: ccDark
+  },
+  2: {
+    light: defiLight,
+    dark: defiDark
+  },
+  null: {
+    light: null,
+    dark: null
+  }
+}
 
 export const tokenMetadata = {
   "BAT": {
@@ -273,7 +277,7 @@ export const marketColumns = [
   {
     id: 'type',
     label: 'TYPE',
-    minWidth: 25,
+    minWidth: 15,
     align: 'center',
     format: (value) => `${value.toLocaleString('en-US')}%`,
   },
@@ -510,7 +514,7 @@ const PREFIX = window.innerWidth > 600 ? 'TRANSACTION' : 'TX'
 
 export const TX_CONFIRM = { show: true, message: `${PREFIX} CONFIRMED`, opcode: 'success' }
 export const TX_REVERT = { show: true, message:  `${PREFIX} REVERTED`, opcode: 'error' }
-export const WEB3_PROVIDER = { show: true, message: 'NO WEB3 PROVIDER DETECTED', opcode: 'info' }
+export const WEB3_PROVIDER = { show: true, message: 'NO PROVIDER DETECTED', opcode: 'info' }
 
 const envNetwork = process.env.REACT_APP_ETH_NETWORK;
 
@@ -539,5 +543,5 @@ export const UNCLAIMED_CREDITS = (f) => ({
   message: `You have unclaimed credits for this pool, would you like to redeem your share?`,
   actions: [{ label: 'CONFIRM', f: f }, { label: 'REJECT', f: null }]
 })
-export const INCORRECT_NETWORK = { show: true, title: 'INCORRECT NETWORK', message: `The current network is not supported please change to ${envNetwork}.`, actions: [ ] }
-export const DISCLAIMER = { show: true, title: 'DISCLAIMER', message: <>This project is in beta. Use it at your own risk.</>, actions: [ ] }
+export const INCORRECT_NETWORK = { show: true, title: 'INCORRECT NETWORK', message: `The current network is not supported, please change to your provider's network to ${envNetwork}.`, actions: [ ] }
+export const DISCLAIMER = { show: true, title: 'DISCLAIMER', message: <>This is experimental software in the beta stage of it's development. Use it at your own risk.</>, actions: [ ] }

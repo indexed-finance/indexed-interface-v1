@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import HelpIcon from '@material-ui/icons/Help';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 
 const useStyles = makeStyles((theme) => ({
@@ -29,9 +29,19 @@ export function MaximumSupplyTooltip() {
 }
 
 export default function HelperTooltip({ text }) {
+  const [ isOpen, setOpen ] = useState(false)
   const classes = useStyles();
 
-  return <Tooltip title={text} classes={{ tooltip: classes.customWidth }}>
-    <HelpIcon fontSize='inherit' style={{ marginRight: 0 }} />
-  </Tooltip>
+  const closeTooltip = () => setOpen(false)
+  const openTooltip = () => setOpen(true)
+  const toggleTooltip = () => setOpen(!isOpen)
+
+  return (
+      <Tooltip onClose={closeTooltip} open={isOpen} title={text} classes={{ tooltip: classes.customWidth }}>
+        <HelpIcon
+          onMouseEnter={openTooltip} onMouseLeave={closeTooltip} onClick={toggleTooltip}
+          fontSize='inherit' style={{ marginRight: 0 }}
+        />
+      </Tooltip>
+  )
 }

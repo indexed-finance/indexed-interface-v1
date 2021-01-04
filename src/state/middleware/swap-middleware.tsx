@@ -126,17 +126,28 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
     async function switchTokens(): Promise<void> {
       let input = { ...state.output };
       let output = { ...state.input };
+      let isError = false;
 
       const outputList = state.tokenList.filter(i =>
         input.address.toLowerCase() !== i.address.toLowerCase()
         && i.pool === input.pool
       );
+      const { usedBalance } = pool.tokens.find(i => i.address == input.address);
+
+      if (input.amount.lte(usedBalance.div(2))) {
+        let quote = await state.pool.calcOutGivenIn(input.address, output.address, input.amount);
+
+        output.displayAmount = quote.displayAmount;
+        output.amount = toBN(quote.amount);
+      } else {
+        isError = true;
+      }
 
       const perciseInput = input.amount.div(toBN(10).pow(input.decimals));
       let perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
       let price = perciseOutput.div(perciseInput);
 
-      if(output.amount.eq(0) || input.amount.eq(0)){
+      if(isError || output.amount.eq(0) || input.amount.eq(0)){
         const oneToken = toBN(10).pow(input.decimals);
         const { amount } = await pool.calcOutGivenIn(input.address, output.address, oneToken)
 
@@ -219,13 +230,10 @@ function swapDispatchMiddleware(dispatch: SwapDispatch, state: SwapState) {
         amount: BN_ZERO
       }
 
-      let price = toBN(0);
-      if (state.pool) {
-        const oneToken = toBN(10).pow(state.input.decimals);
-        const { amount } = await state.pool.calcOutGivenIn(input.address, output.address, oneToken)
-        const perciseOutput = toBN(amount).div(toBN(10).pow(state.output.decimals));
-        price = perciseOutput.div(toBN(1));
-      }
+      const oneToken = toBN(10).pow(input.decimals);
+      const { amount } = await action.pool.calcOutGivenIn(input.address, output.address, oneToken)
+      const perciseOutput = toBN(amount).div(toBN(10).pow(state.output.decimals));
+      const price = perciseOutput.div(toBN(1));
 
       dispatch([
         { type: 'SET_HELPER', pool: action.pool },

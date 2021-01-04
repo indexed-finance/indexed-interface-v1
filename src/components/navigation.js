@@ -16,7 +16,7 @@ import RemoveCircleOutlinedIcon from '@material-ui/icons/RemoveCircleOutlined';
 
 import jazzicon from '@metamask/jazzicon'
 
-import { toChecksumAddress } from '../assets/constants/functions'
+import { toChecksumAddress, isAddress } from '../assets/constants/functions'
 import { WEB3_PROVIDER, INCORRECT_NETWORK } from '../assets/constants/parameters'
 import ndxLight from '../assets/images/indexed-light.png'
 import ndxDark from '../assets/images/indexed-dark.png'
@@ -25,15 +25,17 @@ import { getCachedWeb3, getWeb3, clearCachedWeb3 } from '../utils/getWeb3'
 import getStyles from '../assets/css'
 
 import { store } from '../state'
+import { useWeb3 } from '../hooks/useWeb3'
 
 const useStyles = getStyles(style)
 
 export default function Navigation({ mode }) {
-  const [ component, setComponent ] = useState(<Fragment/>)
-  const [ login, setLogin ] = useState(false)
+  const [ component, setComponent ] = useState(null)
   const [ anchorEl, setAnchorEl ] = useState(null)
   const [didCheckCache, setDidCheckCache] = useState(false);
-  const classes = useStyles()
+  const classes = useStyles();
+
+  const { loggedIn, account, handleSetWeb3, connectWeb3, disconnectWeb3 } = useWeb3();
 
   let { state, dispatch } = useContext(store)
 
@@ -43,54 +45,6 @@ export default function Navigation({ mode }) {
 
   const handleClose = () => {
     setAnchorEl(null)
-  }
-
-  const handleSetWeb3 = async (web3) => {
-    let accounts = await web3.eth.getAccounts();
-    let account = toChecksumAddress(accounts[0]);
-    let network = await web3.eth.net.getId();
-
-    const expectedID = process.env.REACT_APP_ETH_NETWORK === 'mainnet' ? 1 : 4
-    if((+network) !== expectedID){
-      dispatch({ type: 'MODAL', payload: INCORRECT_NETWORK })
-    } else {
-      setComponent(<Blockie address={account} />)
-      setAnchorEl(null)
-      setLogin(true)
-      dispatch({ type: 'WEB3', payload: { web3, account, network } });
-    }
-  }
-
-  useEffect(() => {
-    (async () => {
-      if (didCheckCache) return;
-      const web3 = await getCachedWeb3();
-      setDidCheckCache(true);
-      if (!web3) return;
-      await handleSetWeb3(web3);
-    })();
-  }, [])
-
-  const connectWeb3 = async() => {
-    try {
-      const web3 = await getWeb3();
-      await handleSetWeb3(web3);
-    } catch (e) {
-      dispatch({ type: 'FLAG', payload: WEB3_PROVIDER })
-    }
-  }
-
-  const disconnectWeb3 = () => {
-    clearCachedWeb3();
-    setComponent(<Fragment />)
-    dispatch({
-      type: 'WEB3', payload: {
-        helper: state.helper,
-        web3: false,
-        account: null,
-        network: 0,
-      }
-    })
   }
 
   function Blockie({ address }) {
@@ -107,7 +61,7 @@ export default function Navigation({ mode }) {
       blockie.style.marginTop = '5px'
 
       element.appendChild(blockie)
-    }, [ address ])
+    }, [ ])
 
     return(
       <Fragment>
@@ -120,6 +74,16 @@ export default function Navigation({ mode }) {
      </Fragment>
     )
   }
+
+  useEffect(() => {
+    if (didCheckCache) return;
+    (async () => {
+      const web3 = await getCachedWeb3();
+      setDidCheckCache(true);
+      if (!web3) return;
+      await handleSetWeb3(web3);
+    })();
+  });
 
   const changeTheme = () => {
     state.changeTheme(mode)
@@ -184,6 +148,14 @@ export default function Navigation({ mode }) {
     )
   }
 
+  useEffect(() => {
+    if(account && isAddress(account) && !component){
+      setComponent(<Blockie address={account} />)
+    } else {
+      setComponent(null)
+    }
+  }, [ account ])
+
   let { marginLeft, display, width, paddingTop, padding, logoMargin, titleMargin, marginBottom } = style.getFormatting(state.native)
 
   return (
@@ -242,8 +214,8 @@ export default function Navigation({ mode }) {
                         horizontal: "right",
                       }}
                      >
-                      {login && (<LoggedIn />)}
-                      {!login && (<LoggedOut />)}
+                      {loggedIn && (<LoggedIn />)}
+                      {!loggedIn && (<LoggedOut />)}
                     </Menu>
                   </div>
                   <IconButton
@@ -253,12 +225,12 @@ export default function Navigation({ mode }) {
                 </Fragment>
                 )}
                 <div className={classes.profile} style={{ marginLeft }}>
-                  {!state.web3.injected && (
+                  {(!state.web3.injected || !account) && (
                     <IconButton onClick={connectWeb3}>
                       <AccountBalanceWalletIcon color='secondary' />
                     </IconButton>
                   )}
-                  {component}
+                  {account && component}
                 </div>
             </Grid>
           </Grid>

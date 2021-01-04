@@ -29,6 +29,7 @@ import { store } from '../state'
 
 import style from '../assets/css/routes/governance'
 import getStyles from '../assets/css'
+import { getProposalState } from "../utils/proposal";
 
 const proposalState = {
   0: 'active',
@@ -124,12 +125,6 @@ export default function Governance(){
       })
     } catch(e) {}
   }
-
-  const getProposalState = (proposal) => {
-    if(metadata.block >= proposal.expiry) return 'expired'
-    else return proposalState[proposal.state]
-  }
-
 
   const goBack = () => {
     setPhase(<Activate trigger={renderDelegation} />)
@@ -317,12 +312,7 @@ export default function Governance(){
                 let f = () => history.push(`/proposal/${p.id.toLowerCase()}`)
                 let againstVotes = formatBalance(new BigNumber(p.against), 18, 4)
                 let forVotes = formatBalance(new BigNumber(p.for), 18, 4)
-                let proposalState = getProposalState(p)
-                let stateLabel ='active'
-
-                if(parseInt(p.state) > 0) {
-                  stateLabel = 'rejected'
-                }
+                let proposalState = getProposalState(p, metadata.block)
 
                 let values = { for: parseInt(p.for), against: parseInt(p.against) }
 

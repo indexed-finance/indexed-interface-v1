@@ -15,6 +15,7 @@ import Tabs from '../components/index/tabs'
 import Swap from '../components/index/swap'
 
 import style from '../assets/css/routes/index'
+import { categoryMetadata } from '../assets/constants/parameters'
 import getStyles from '../assets/css'
 import { store } from '../state'
 import { MintStateProvider } from '../state/mint'
@@ -24,10 +25,6 @@ import { TradeStateProvider } from '../state/trade'
 import TitleLoader from '../components/loaders/title'
 import Loader from '../components/loaders/area'
 import IndexChartContainer from '../components/charts/IndexChartContainer'
-
-function uncapitalizeNth(text, n) {
-    return (n > 0 ? text.slice(0, n) : '') + text.charAt(n).toLowerCase() + (n < text.length - 1 ? text.slice(n+1) : '')
-}
 
 const selected = {
   color: 'white',
@@ -40,7 +37,7 @@ export default function Index(){
   let { state, dispatch } = useContext(store)
   let { name } = useParams()
 
-  name = uncapitalizeNth(name.toUpperCase(), name.length-1)
+  name = name.toUpperCase()
 
   const [ styles, setStyles ] = useState({ trade: selected, mint: {}, burn: {}, swap: {}})
   const [ metadata, setMetadata ] = useState({})
@@ -135,12 +132,16 @@ export default function Index(){
 
   const usedPriceOrTVL = metadata && Object.keys(metadata).length ?
   (yAxisKey === 'value' ? metadata.price : metadata.marketcap) : 0;
+  const mode = theme.palette.primary.main === '#ffffff' ? 'light' : 'dark'
 
   return (
     <div className={classes.root} style={{ maxWidth, ...border }}>
       <div className={classes.header} style={{ width }}>
-          {state.request && (
+          {state.request && metadata.category && (
             <ul style={{ padding: 0, listStyle: 'none', display: 'inline-block' }}>
+              <li style={{ float: 'left', marginRight: 17.5 }}>
+                <img src={categoryMetadata[metadata.category][mode]} style={{ width: 17.5 }} />
+              </li>
               <li style={{ float: 'left', marginRight }}>
                 <h3 className={classes.title}> {metadata.name}  [{metadata.symbol}]</h3>
               </li>
@@ -191,7 +192,6 @@ export default function Index(){
               {!state.request && !metadata.history && (<Loader paddingTop={paddingTop} width={width} height={height} color={state.background}/> )}
               {state.request && metadata.active && metadata.history &&
               <IndexChartContainer
-                color={state.background}
                 width={width}
                 height={height}
                 duration={duration}

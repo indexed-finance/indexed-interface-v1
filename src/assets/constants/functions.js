@@ -1,10 +1,10 @@
 import { keccak_256, sha3_256 } from 'js-sha3'
 import { formatBalance } from '@indexed-finance/indexed.js'
+import moment from 'moment';
 
 import {
   DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, DESKTOP_MASSIVE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL, tokenMetadata
 } from './parameters'
-
 
 export function getHelperData(arr) {
   if(!arr || arr.length == 0) return []
@@ -46,6 +46,20 @@ export function getCategoryImages(category, state) {
   )
 
   return categoryImages
+}
+
+export const parseTimeString = timestamp => {
+  let time = moment(timestamp * 1000).fromNow()
+
+  time = time.toUpperCase()
+  time = time.replace(/^AN /g, '1 ')
+  time = time.replace(/^A /g, '1 ')
+  time = time.replace(' HOUR', ' HR')
+  time = time.replace(' HOURS', ' HRS')
+  time = time.replace(' MINUTES', ' MINS')
+  time = time.replace(' MINUTE', ' MIN')
+
+  return time
 }
 
 export const toChecksumAddress = (address) => {

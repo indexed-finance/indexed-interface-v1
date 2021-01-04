@@ -227,14 +227,14 @@ const mapping = {
   },
   [NATIVE_SMALL]: {
     margin: '2em 0em 1.5em 0em',
-    padding: '0em 0em 1em',
+    padding: '0em 0em 1em 0em',
     positioning: 'flex-start',
     containerPadding: '1em 1.25em',
     inputWidth: 112.5,
     listPadding: 10,
     claimMargin: 0,
     height: '12.75em',
-    reward: 200,
+    reward: 'auto',
     buttonPos:  {
       marginTop: 10,
       marginBottom: 0,
@@ -256,14 +256,14 @@ const mapping = {
   },
   [NATIVE_NORMAL]: {
     margin: '2em 0em 1.5em 0em',
-    padding: '0em 0em 1em',
+    padding: '0em 0em 1em 0em',
     positioning: 'flex-start',
     inputWidth: 125,
     containerPadding: '1em 1.5em',
     claimMargin: 0,
     listPadding: 0,
     height: '12.5em',
-    reward: 'calc(22.5em - 64px)',
+    reward: 'auto',
     buttonPos:  {
       marginTop: 10,
       marginBottom: 0,
@@ -285,7 +285,7 @@ const mapping = {
   },
   [NATIVE_WIDE]: {
     margin: '2em 0em 1.5em 0em',
-    padding: '0em 0em 1em',
+    padding: '0em 0em 1em 0em',
     positioning: 'flex-start',
     containerPadding: '1em 2em',
     fontSize: '.875em',
@@ -293,7 +293,7 @@ const mapping = {
     claimMargin: 0,
     listPadding: 0,
     height: '12.5em',
-    reward: 'calc(22.5em - 64px)',
+    reward: 'auto',
     infoWidth: 270,
     buttonPos:  {
       marginTop: 10,

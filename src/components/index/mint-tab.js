@@ -17,6 +17,7 @@ import { store } from '../../state'
 import { useMintState } from '../../state/mint';
 import Slippage from '../inputs/slippage';
 import UniswapMinter from './uniswap-minter';
+import Web3RequiredPrimaryButton from '../buttons/web3-required-primary';
 
 const ReceiveInput = styled(Input)({
   width: 300,
@@ -115,9 +116,12 @@ export default function Mint({ market, metadata }) {
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
-        <ButtonPrimary onClick={mint} disabled={!mintState.ready} margin={buttonMargin.mint}>
-          MINT
-        </ButtonPrimary>
+        <Web3RequiredPrimaryButton
+          onClick={mint}
+          disabled={!mintState.ready}
+          margin={buttonMargin.mint}
+          label='MINT'
+        />
         {
           uniswapMinter.display && <UniswapMinter metadata={metadata} />
         }

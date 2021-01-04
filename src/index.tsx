@@ -29,6 +29,7 @@ const Index = lazy(() => import('./routes/index'))
 const Pool = lazy(() => import('./routes/pool'))
 const Stake = lazy(() => import('./routes/stake'))
 const Supply = lazy(() => import('./routes/supply'))
+const Portfolio = lazy(() => import('./routes/portfolio'))
 // const Root = lazy(() => import('./routes/root'))
 const Error404 = lazy(() => import('./routes/404'))
 const Category = lazy(() => import('./routes/category'))
@@ -149,11 +150,10 @@ function Application(){
 
           let supply = pool.pool.totalSupply;
           if (typeof supply !== 'number' && typeof supply != 'string') {
-            supply = formatBalance(supply, 18, 4);
+            supply = parseFloat(formatBalance(supply, 18, 2));
           }
           let history = snapshots.map(h => ({ close: +(h.value.toFixed(2)), date: new Date(h.date * 1000) }));
           let liquidity = snapshots.map(l => ({ close: +(l.totalValueLockedUSD).toFixed(2), date: new Date(l.date * 1000) }))
-
 
           snapshots.sort((a, b) => a.date - b.date);
           const latest = snapshots[snapshots.length - 1];
@@ -166,7 +166,7 @@ function Application(){
           stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
           stats.dailyVolume += parseFloat(volume);
 
-          let formattedName = name.replace(' Tokens', '')
+          let formattedName = name.replace(/Tokens/g, '')
 
           pool.pool.snapshots.sort((a, b) => a.date - b.date);
 
@@ -218,7 +218,7 @@ function Application(){
             finalValueEstimate = finalValueEstimate.plus(price.times(token.targetBalance));
           });
 
-          let formattedName = name.replace(' Tokens', '')
+          let formattedName = name.replace(/Tokens/g, '')
 
           const index = {
             marketcap: 0,
@@ -274,6 +274,24 @@ function Application(){
     }
     initialise()
   }, [])
+
+  useEffect(() => {
+    const initialise = async() => {
+      let { web3, account, helper } = state
+
+      if(web3.injected){
+        let helper = await getAllHelpers(web3.injected, account);
+
+        dispatch({ type: 'GENERIC',
+         payload: {
+            didLoadHelper: true,
+            helper
+          }
+        })
+      }
+    }
+    initialise()
+  }, [ state.web3.injected ])
 
   useEffect(() => {
     let isFirstVisit = localStorage.getItem('isFirstVisit')
