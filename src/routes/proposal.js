@@ -196,7 +196,7 @@ export default function Proposal(){
       let proposal = state.governance.proposals.find(p => p.id == id)
       let recentBlock = await state.web3[process.env.REACT_APP_ETH_NETWORK].eth.getBlock('latest');
 
-      setLatestBlock(recentBlock);
+      setLatestBlock(parseInt(recentBlock.number));
 
       setComponent({
         blockie: <Blockie border='5px' width={radius} id='blockie' address={proposal.proposer} />,
