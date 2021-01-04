@@ -104,14 +104,13 @@ const mapping = {
       text: 'MINT WITH UNISWAP',
       mint: {
         margin: 0,
-        marginLeft: 50,
+        marginLeft: 30,
         marginTop: 7.5
       },
       uniswap: {
         float: 'left',
-        margin: 25,
-        marginTop: 7.5,
-        marginLeft: 0
+        marginTop: 7.75,
+        marginLeft: 7.5
       }
     }
   },
@@ -123,14 +122,13 @@ const mapping = {
       text: 'MINT WITH UNISWAP',
       mint: {
         margin: 0,
-        marginLeft: 50,
+        marginLeft: 30,
         marginTop: 7.5
       },
       uniswap: {
         float: 'left',
-        margin: 25,
-        marginTop: 7.5,
-        marginLeft: 0
+        marginTop: 7.75,
+        marginLeft: 7.5
       }
     }
   },
@@ -142,14 +140,13 @@ const mapping = {
       text: 'MINT WITH UNISWAP',
       mint: {
         margin: 0,
-        marginLeft: 50,
+        marginLeft: 30,
         marginTop: 7.5
       },
       uniswap: {
         float: 'left',
-        margin: 25,
-        marginTop: 7.5,
-        marginLeft: 0
+        marginTop: 7.75,
+        marginLeft: 7.5
       }
     }
   },
@@ -161,14 +158,13 @@ const mapping = {
       text: 'MINT WITH UNISWAP',
       mint: {
         margin: 0,
-        marginLeft: 50,
+        marginLeft: 30,
         marginTop: 7.5
       },
       uniswap: {
         float: 'left',
-        margin: 25,
-        marginTop: 7.5,
-        marginLeft: 0
+        marginTop: 7.75,
+        marginLeft: 7.5
       }
     }
   },
@@ -180,14 +176,13 @@ const mapping = {
       text: 'MINT WITH UNISWAP',
       mint: {
         margin: 0,
-        marginLeft: 50,
+        marginLeft: 30,
         marginTop: 7.5
       },
       uniswap: {
         float: 'left',
-        margin: 25,
-        marginTop: 7.5,
-        marginLeft: 0
+        marginTop: 7.75,
+        marginLeft: 7.5
       }
     }
   },
@@ -199,14 +194,13 @@ const mapping = {
       text: 'MINT WITH UNISWAP',
       mint: {
         margin: 0,
-        marginLeft: 50,
+        marginLeft: 30,
         marginTop: 7.5
       },
       uniswap: {
         float: 'left',
-        margin: 25,
-        marginTop: 7.5,
-        marginLeft: 0
+        marginTop: 7.75,
+        marginLeft: 7.5
       }
     }
   },
@@ -215,13 +209,14 @@ const mapping = {
     height: '32.5vh',
     inputWidth: 275,
     buttonMargin: {
-      text: 'UNISWAP MINT',
+      text: 'UNI MINT',
       mint: {
         float: 'right',
         margin: 0,
-        marginLeft: 10
+        marginLeft: 15
       },
       uniswap: {
+        float: 'left',
         margin: 0
       }
     }
@@ -231,10 +226,11 @@ const mapping = {
     height: '37.5vh',
     inputWidth: 300,
     buttonMargin: {
-      text: 'MINT WITH UNISWAP',
+      text: 'MINT W/ UNISWAP',
       mint: {
         margin: 0,
-        marginLeft: 15
+        marginLeft: 10,
+        float: 'right'
       },
       uniswap: {
         float: 'left',
@@ -247,10 +243,10 @@ const mapping = {
     height: '37.5vh',
     inputWidth: 300,
     buttonMargin: {
-      text: 'MINT WITH UNISWAP',
+      text: 'MINT W/ UNISWAP',
       mint: {
         margin: 0,
-        marginLeft: 25
+        marginLeft: 25,
       },
       uniswap: {
         float: 'left',

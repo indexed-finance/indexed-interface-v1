@@ -16,6 +16,6 @@ export default function Web3RequiredPrimaryButton(props) {
     onClick={hooks.connectWeb3}
     {...rest}
   >
-    Connect Wallet
+    Connect 
   </ButtonPrimary>
 }

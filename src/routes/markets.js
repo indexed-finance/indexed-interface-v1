@@ -114,7 +114,7 @@ export default function Markets(){
               )}
               {native && (
                 <Fragment>
-                  <div style={{ float: 'left', marginRight: 10, marginTop: 15 }}>
+                  <div style={{ float: 'left', marginRight: 15, marginTop: 15 }}>
                     <img src={categoryMetadata[market.category][mode]} style={{ width: 40 }} />
                   </div>
                   <div>
