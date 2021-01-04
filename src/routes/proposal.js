@@ -224,7 +224,7 @@ export default function Proposal(){
   }
 
   function DisplayActionBox() {
-    const propState = getProposalState(metadata);
+    const propState = getProposalState(metadata, latestBlock);
     if (propState === 'active') {
       return <div className={classes.modal}>
         <label>
@@ -305,8 +305,8 @@ export default function Proposal(){
                   {component.blockie}
                   <div className={classes.title} style={{ width }}>
                     <div className={classes.lozenge}>
-                      <div id={getProposalState(metadata)}>
-                        <Lozenge isBold> {getProposalState(metadata)} </Lozenge>
+                      <div id={getProposalState(metadata, latestBlock)}>
+                        <Lozenge isBold> {getProposalState(metadata, latestBlock)} </Lozenge>
                       </div>
                     </div>
                     <h3> {metadata.title}</h3>
