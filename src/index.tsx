@@ -29,6 +29,7 @@ const Index = lazy(() => import('./routes/index'))
 const Pool = lazy(() => import('./routes/pool'))
 const Stake = lazy(() => import('./routes/stake'))
 const Supply = lazy(() => import('./routes/supply'))
+const Portfolio = lazy(() => import('./routes/portfolio'))
 // const Root = lazy(() => import('./routes/root'))
 const Error404 = lazy(() => import('./routes/404'))
 const Category = lazy(() => import('./routes/category'))
@@ -165,7 +166,7 @@ function Application(){
           stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
           stats.dailyVolume += parseFloat(volume);
 
-          let formattedName = name.replace(/Tokens|Index/g, ' ')
+          let formattedName = name.replace(/Tokens/g, '')
 
           pool.pool.snapshots.sort((a, b) => a.date - b.date);
 
@@ -217,7 +218,7 @@ function Application(){
             finalValueEstimate = finalValueEstimate.plus(price.times(token.targetBalance));
           });
 
-          let formattedName = name.replace(/Tokens|Index/g, ' ')
+          let formattedName = name.replace(/Tokens/g, '')
 
           const index = {
             marketcap: 0,
