@@ -230,7 +230,7 @@ export default function Navigation({ mode }) {
                       <AccountBalanceWalletIcon color='secondary' />
                     </IconButton>
                   )}
-                  {component}
+                  {account && component}
                 </div>
             </Grid>
           </Grid>
