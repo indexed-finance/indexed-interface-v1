@@ -4,8 +4,9 @@ import IconButton from '@material-ui/core/IconButton';
 import LaunchIcon from '@material-ui/icons/Launch';
 import Link from '@material-ui/core/Link';
 
-export default function EtherScanLink(props) {
-  const { network, type, entity } = props;
+export function EtherscanUrl(props) {
+  const { type, entity } = props;
+  const network = process.env.REACT_APP_ETH_NETWORK
   let subdomain = network === 'mainnet' ? '' : `${network}.`;
   let relPath = '';
   switch (type) {
@@ -22,7 +23,11 @@ export default function EtherScanLink(props) {
     default: break
   }
 
-  const etherscanUrl = `https://${subdomain}etherscan.io/${relPath}`;
+  return `https://${subdomain}etherscan.io/${relPath}`;
+}
+
+export default function EtherScanLink(props) {
+  const etherscanUrl = EtherscanUrl(props);
   return <IconButton
     style={{ padding: 0, margin: 0, marginLeft: 10 }}
     component={(props) =>
