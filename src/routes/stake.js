@@ -85,6 +85,7 @@ export default function Stake() {
             name = meta.indexPoolName
           }
 
+          let formattedName = name.replace(/Tokens|Index/g, ' ')
           let { mainWidth, width, color, marginRight, showUni } = getPoolStyles(symbol)
           let label = isReady ? 'STAKE' : 'INITIALIZE'
 
@@ -165,7 +166,7 @@ export default function Stake() {
                     </div>
                     <div className={classes.information}>
                       <Fragment>
-                        <h4> {!state.native ? `${name} [${symbol}]` : symbol} </h4>
+                        <h4> {!state.native ? `${formattedName} [${symbol}]` : symbol} </h4>
                         { Status() }
                       </Fragment>
                     </div>

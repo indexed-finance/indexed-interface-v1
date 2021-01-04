@@ -61,16 +61,18 @@ export default function Navigation({ mode }) {
       blockie.style.marginTop = '5px'
 
       element.appendChild(blockie)
-    }, [ address ])
+    }, [ ])
 
     return(
       <Fragment>
         <a target='_blank' rel="noopener noreferrer" href={`https://etherscan.io/address/${address}`}>
           <div id='profile-blockie' />
         </a>
-        <IconButton onClick={disconnectWeb3} className={classes.logout}>
-          <RemoveCircleOutlinedIcon color='secondary' />
-        </IconButton>
+        {isAddress(address) && (
+          <IconButton onClick={disconnectWeb3} className={classes.logout}>
+            <RemoveCircleOutlinedIcon color='secondary' />
+          </IconButton>
+        )}
      </Fragment>
     )
   }
