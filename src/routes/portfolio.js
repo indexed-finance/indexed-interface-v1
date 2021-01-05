@@ -172,6 +172,13 @@ export default function Portfolio(){
                         {Math.floor(Math.random() * 555).toLocaleString()} NDX
                       </span>}
                     />
+                    <ListItemText
+                      primary={
+                        <span style={{ float: 'left'}}>
+                          {Math.floor(Math.random() * 555).toLocaleString()} NDX
+                        </span>
+                      }
+                    />
                     <SecondaryAction>
                       <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
                         CLAIM
