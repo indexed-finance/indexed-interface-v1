@@ -162,8 +162,8 @@ export const categoryMetadata = {
       dark: defiDark
     },
     circular: {
-      light: ccLightCircular,
-      dark: ccDarkCircular
+      light: defiDarkCircular,
+      dark: defiLightCircular
     }
   },
   null: {

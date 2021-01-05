@@ -72,10 +72,11 @@ export default function Portfolio(){
 
         availableAssets.push(pool)
         availableAssets.push({
-          ...pool,
+          ...lp,
           symbol: `UNIV2-ETH-${lp.symbol}`
         })
       }
+
 
       setPools(availableAssets)
     }
@@ -102,14 +103,18 @@ export default function Portfolio(){
             <Canvas native={state.native}>
               <div className={classes.wallet} style={{ height: wallet }}>
                 <p> PORTFOLIO VALUE </p>
-                <h2> $1,053,423.53<Delta value={5.55} /> </h2>
+                <h1> $1,053,423.53</h1>
               </div>
             </Canvas>
           </Grid>
           <Grid item xs={12} md={7} lg={7} xl={7}>
             <Canvas native={state.native}>
               <div className={classes.account} style={{ height: wallet }}>
-
+                <p> REWARDS </p>
+                <h1> 10,341.054135 NDX </h1>
+                <ButtonPrimary variant='outlined' margin={{ margin: 0, marginTop: -37.5 }}>
+                  CLAIM
+                </ButtonPrimary>
               </div>
             </Canvas>
           </Grid>
@@ -118,14 +123,12 @@ export default function Portfolio(){
           <Container margin={margin} padding="1em 0em 0em 0em" title='PORTFOLIO' >
            <div className={classes.proposals} style={{ height: tableHeight }}>
             <ListWrapper dense style={{ width }}>
-              {pools.map((value, index) => {
-
-                console.log(categoryMetadata[value.category].circular[mode])
+              {pools && pools.map((value, index) => {
 
                 return (
-                  <Item key={index} button>
-                    <ListItemText style={{ width: 87.5 }} primary={
-                      <span>
+                  <Item key={index + 1} button>
+                    <ListItemText style={{ width: 200, display: 'inline-block' }} primary={
+                      <div>
                         <div style={{ width: 75, float: 'left' }}>
                           <img src={categoryMetadata[value.category].circular[mode]}
                             style={{ marginBottom: value.symbol.includes('UNI') ? 10 : 0, width: 30 }}
@@ -136,18 +139,31 @@ export default function Portfolio(){
                             </span>
                           )}
                         </div>
-                        <span style={{ marginLeft: 15, width: 25 }}> {value.name} </span>
-                      </span>
+                        <div style={{ marginLeft: 15, paddingTop: value.symbol.includes('UNI') ? 10 : 5 }}>
+                          <label> {value.symbol} </label>
+                        </div>
+                      </div>
                     }
                     />
                     <ListItemText
-                      primary={<>
-                        <span style={{ float: 'left', marginRight: 25, width: 200 }}>
-                          {Math.floor(Math.random() * 300).toLocaleString()} {value.symbol}
+                      style={{  width: 100 }}
+                      primary={
+                        <span>
+                          BALANCE: {Math.floor(Math.random() * 300).toLocaleString()}
                         </span>
-                        <Progress values={{ for: Math.floor(Math.random() * 100), against: Math.floor(Math.random() * 100) }} width={150} color='#00e79a' option='for'/>
+                      }
+                      secondary={
+                        <span>
+                          STAKING: {Math.floor(Math.random() * 300).toLocaleString()}
+                        </span>
+                      }
+                    />
+                    <ListItemText
+                      primary={<>
+                        <Progress values={{ for: Math.floor(Math.random() * 100), against: Math.floor(Math.random() * 100) }} width={200} color='#00e79a' option='for'/>
                         <span style={{ marginLeft: 50, color: '#666666'}}>${Math.floor(Math.random() * 10000).toLocaleString()} </span>
-                      </>}
+                      </>
+                      }
                     />
                     <SecondaryAction>
                       <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
