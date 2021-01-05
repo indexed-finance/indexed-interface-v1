@@ -30,7 +30,6 @@ import { store } from '../state'
 import style from '../assets/css/routes/portfolio'
 import getStyles from '../assets/css'
 
-
 const ListWrapper = styled(List)({
   flex: '1 1 auto',
   overflowY: 'scroll'
@@ -91,7 +90,9 @@ export default function Portfolio(){
   }, [])
 
   let { height, margin, width, wallet, paddingLeft, tableHeight } = style.getFormatting({ native: state.native })
-  let mode = theme.palette.primary.main === '#ffffff' ? 'light' : 'dark'
+  let mode = theme.palette.primary.main !== '#ffffff' ? 'light' : 'dark'
+
+  console.log(mode)
 
   return (
     <Fragment>
@@ -119,13 +120,21 @@ export default function Portfolio(){
             <ListWrapper dense style={{ width }}>
               {pools.map((value, index) => {
 
+                console.log(categoryMetadata[value.category].circular[mode])
+
                 return (
                   <Item key={index} button>
                     <ListItemText style={{ width: 87.5 }} primary={
                       <span>
-                        <div style={{ width: 67.5, float: 'left' }}>
-                          {value.symbol.includes('UNI') && <img src={tokenMetadata['UNI'].image} style={{ width: 25 }} />}
-                          <img src={categoryMetadata[value.category][mode]} style={{ width: 25 }}/>
+                        <div style={{ width: 75, float: 'left' }}>
+                          <img src={categoryMetadata[value.category].circular[mode]}
+                            style={{ marginBottom: value.symbol.includes('UNI') ? 10 : 0, width: 30 }}
+                          />
+                          {value.symbol.includes('UNI') && (
+                            <span style={{ marginLeft: -5 }}>
+                              <img src={tokenMetadata['UNI'].image} style={{ width: 30 }} />
+                            </span>
+                          )}
                         </div>
                         <span style={{ marginLeft: 15, width: 25 }}> {value.name} </span>
                       </span>

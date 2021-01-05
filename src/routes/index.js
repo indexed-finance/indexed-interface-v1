@@ -141,7 +141,7 @@ export default function Index(){
           {state.request && metadata.category && (
             <ul style={{ padding: 0, listStyle: 'none', display: 'inline-block' }}>
               <li style={{ float: 'left', marginRight: 17.5 }}>
-                <img src={categoryMetadata[metadata.category][mode]} style={{ width: 17.5 }} />
+                <img src={categoryMetadata[metadata.category].normal[mode]} style={{ width: 17.5 }} />
               </li>
               <li style={{ float: 'left', marginRight }}>
                 <h3 className={classes.title}> {metadata.name}  [{metadata.symbol}]</h3>

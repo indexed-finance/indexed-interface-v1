@@ -96,7 +96,7 @@ export default function Markets(){
               {!native && (
                 <Fragment>
                   <div style={{ float: 'left', marginRight: 20, marginTop: 25 }}>
-                    <img src={categoryMetadata[market.category][mode]} style={{ width: 50 }} />
+                    <img src={categoryMetadata[market.category].normal[mode]} style={{ width: 50 }} />
                   </div>
                   <div style={{ float: 'right' }}>
                     <h2> {market.name} [{market.symbol}]</h2>
@@ -114,7 +114,7 @@ export default function Markets(){
               {native && (
                 <Fragment>
                   <div style={{ float: 'left', marginRight: 15, marginTop: 15 }}>
-                    <img src={categoryMetadata[market.category][mode]} style={{ width: 40 }} />
+                    <img src={categoryMetadata[market.category].normal[mode]} style={{ width: 40 }} />
                   </div>
                   <div>
                     <h3 style={{ fontSize: '4.675vw'}}> {market.name.replace(' Top', '')}</h3>
