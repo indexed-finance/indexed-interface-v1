@@ -63,8 +63,6 @@ export default function Portfolio(){
     let availableAssets = []
     let indices = Object.entries(state.indexes)
 
-    console.log(indices)
-
     if(state.request && pools.length == 0){
       for(let x = 0; x < indices.length; x++){
         let pool = indices[x][1]
@@ -76,8 +74,6 @@ export default function Portfolio(){
           symbol: `UNIV2-ETH-${lp.symbol}`
         })
       }
-
-
       setPools(availableAssets)
     }
   }, [ state.request, state.indexes ])
@@ -90,10 +86,8 @@ export default function Portfolio(){
     }
   }, [])
 
-  let { height, margin, width, wallet, paddingLeft, tableHeight } = style.getFormatting({ native: state.native })
+  let { margin, width, wallet, tableHeight } = style.getFormatting({ native: state.native })
   let mode = theme.palette.primary.main !== '#ffffff' ? 'light' : 'dark'
-
-  console.log(mode)
 
   return (
     <Fragment>
@@ -103,7 +97,7 @@ export default function Portfolio(){
             <Canvas native={state.native}>
               <div className={classes.wallet} style={{ height: wallet }}>
                 <p> PORTFOLIO VALUE </p>
-                <h1> $1,053,423.53</h1>
+                <h1> $1,000,053,423.53</h1>
               </div>
             </Canvas>
           </Grid>
@@ -115,6 +109,7 @@ export default function Portfolio(){
                 <ButtonPrimary variant='outlined' margin={{ margin: 0, marginTop: -37.5 }}>
                   CLAIM
                 </ButtonPrimary>
+                <p> BALANCE: 2,510.34 NDX </p>
               </div>
             </Canvas>
           </Grid>
@@ -124,29 +119,33 @@ export default function Portfolio(){
            <div className={classes.proposals} style={{ height: tableHeight }}>
             <ListWrapper dense style={{ width }}>
               {pools && pools.map((value, index) => {
+                let image = categoryMetadata[value.category].circular[mode]
+                let lpImage = tokenMetadata['UNI'].image
 
                 return (
                   <Item key={index + 1} button>
-                    <ListItemText style={{ width: 200, display: 'inline-block' }} primary={
+                    <ListItemText className={classes.item} primary={
                       <div>
-                        <div style={{ width: 75, float: 'left' }}>
-                          <img src={categoryMetadata[value.category].circular[mode]}
-                            style={{ marginBottom: value.symbol.includes('UNI') ? 10 : 0, width: 30 }}
+                        <div className={classes.box}>
+                          <img src={image}
+                            className={classes.logo}
+                            style={{ marginBottom: value.symbol.includes('UNI') ? 10 : 0 }}
                           />
                           {value.symbol.includes('UNI') && (
-                            <span style={{ marginLeft: -5 }}>
-                              <img src={tokenMetadata['UNI'].image} style={{ width: 30 }} />
+                            <span style={{ marginLeft: -7.5 }}>
+                              <img src={lpImage} className={classes.logo} />
                             </span>
                           )}
                         </div>
-                        <div style={{ marginLeft: 15, paddingTop: value.symbol.includes('UNI') ? 10 : 5 }}>
+                        <div className={classes.symbol}
+                          style={{ paddingTop: value.symbol.includes('UNI') ? 10 : 5 }}>
                           <label> {value.symbol} </label>
                         </div>
                       </div>
                     }
                     />
                     <ListItemText
-                      style={{  width: 100 }}
+                      className={classes.holdings}
                       primary={
                         <span>
                           BALANCE: {Math.floor(Math.random() * 300).toLocaleString()}
@@ -159,10 +158,18 @@ export default function Portfolio(){
                       }
                     />
                     <ListItemText
+                      className={classes.weight}
                       primary={<>
-                        <Progress values={{ for: Math.floor(Math.random() * 100), against: Math.floor(Math.random() * 100) }} width={200} color='#00e79a' option='for'/>
-                        <span style={{ marginLeft: 50, color: '#666666'}}>${Math.floor(Math.random() * 10000).toLocaleString()} </span>
+                        <Progress values={{ for: Math.floor(Math.random() * 100), against: Math.floor(Math.random() * 100) }} width={150} color='#00e79a' option='for'/>
+                        <span className={classes.usd}>${Math.floor(Math.random() * 10000).toLocaleString()} </span>
                       </>
+                      }
+                    />
+                    <ListItemText
+                      primary={
+                        <span style={{ float: 'left'}}>
+                          {Math.floor(Math.random() * 555).toLocaleString()} NDX
+                        </span>
                       }
                     />
                     <SecondaryAction>
