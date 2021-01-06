@@ -110,7 +110,7 @@ export default function Navigation({ mode }) {
           <MenuItem>DOCS</MenuItem>
         </a>
         <Link className={classes.href} to='/' onClick={handleClose}>
-          <MenuItem>POOLS</MenuItem>
+          <MenuItem>PORTFOLIO</MenuItem>
         </Link>
         <Link className={classes.href} to='/stake' onClick={handleClose}>
           <MenuItem>STAKE</MenuItem>
@@ -135,10 +135,10 @@ export default function Navigation({ mode }) {
         <Link className={classes.href} to='/governance' onClick={handleClose}>
           <MenuItem>GOVERNANCE</MenuItem>
         </Link>
-        <Link className={classes.href} to='/' onClick={handleClose}>
-          <MenuItem>POOLS</MenuItem>
+        <Link className={classes.href} to='/portfolio' onClick={handleClose}>
+            <MenuItem>PORTFOLIO</MenuItem>
         </Link>
-        <a href='https://docs.indexed.finance' className={classes.href}>
+          <a href='https://docs.indexed.finance' className={classes.href}>
           <MenuItem>DOCS</MenuItem>
         </a>
         <Link className={classes.href} to='/stake' onClick={handleClose}>
@@ -182,9 +182,16 @@ export default function Navigation({ mode }) {
                   <Link to='/stake' className={classes.href}>
                     <h3> STAKE </h3>
                   </Link>
-                  <Link to='/' className={classes.href}>
-                    <h3> POOLS </h3>
-                  </Link>
+                  {!state.account && (
+                        <Link to='/' className={classes.href}>
+                            <h3> PORTFOLIO </h3>
+                        </Link>
+                  )}
+                  {state.account && (
+                        <Link to='/portfolio' className={classes.href}>
+                            <h3> PORTFOLIO </h3>
+                        </Link>
+                  )}
                   <a href='https://docs.indexed.finance' className={classes.href}>
                     <h3> DOCS </h3>
                   </a>
