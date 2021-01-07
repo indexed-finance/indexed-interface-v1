@@ -18,17 +18,19 @@ import Input from '../components/inputs/input'
 import Canvas from '../components/canvas'
 import LineProgress from '../components/lineprogress'
 import Delta from '../components/utils/delta'
-
+import { getETHPrice } from '../api/gql';
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../assets/constants/parameters'
 import { isAddress } from '../assets/constants/functions'
 import { categoryMetadata, tokenMetadata } from '../assets/constants/parameters'
 import { NDX, ZERO_ADDRESS } from '../assets/constants/addresses'
 import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
-
+import { getPair } from '../lib/markets'
 import style from '../assets/css/routes/portfolio'
 import getStyles from '../assets/css'
 import {useStaking} from "../state/staking/hooks";
+import UniV2PairABI from '@uniswap/v2-periphery/build/IUniswapV2Pair.json';
+
 
 const ListWrapper = styled(List)({
   flex: '1 1 auto',
@@ -94,55 +96,89 @@ export default function Portfolio(){
 
   // effect hook for calculating the  totals
   useEffect(() => {
-    let totalValueTemp = 0;
-    let totalRewardsTemp = new BigNumber(0);
-    let tempPrice = 0;
-    let tempUserBalance = 0;
-    let tempRewards = new BigNumber(0);
 
-    console.log(totalRewardsTemp)
+    // helper for getting the univ2 prices
+    async function getETH(unipairaddress){
+      let { web3, account } = state
+      const quoteEthUSD = await getETHPrice();
 
-    if (state.account)
-    {
-      for(let x = 0; x < pools.length; x++){
-        let pool = pools[x]
-        tempPrice = pool && pool.price
+      if(web3.injected) {
 
-        //TODO get uni price here too
-        if (pool.symbol.includes("UNI"))
-        {
-          tempPrice = 0
+        const contract = toContract(web3.injected, UniV2PairABI.abi, unipairaddress)
+
+        try {
+          let supply = await contract.methods.totalSupply().call()
+          let supplybn = new toBN(supply)
+
+          let reserves = await contract.methods.getReserves().call()
+          let reservebn = toBN(reserves.reserve1)
+
+          let univ2price = (reservebn * quoteEthUSD * 2) / supplybn;
+          return univ2price;
         }
-
-        for (let i = 0; i < staking.pools.length; i++)
+        catch (e)
         {
-          if (staking.pools[i].pool.indexPool === pool.address)
-          {
-            tempRewards = staking.pools[i].userEarnedRewards ? staking.pools[i].userEarnedRewards : toBN(0)
-          }
+          return 0
         }
-
-        tempUserBalance = pool.poolHelper && pool.poolHelper.userPoolBalance ? pool.poolHelper.userPoolBalance : toBN(0)
-        totalValueTemp += tempPrice * tempUserBalance
-
-        totalRewardsTemp = tempRewards
       }
 
-      console.log(totalValueTemp)
+      return 0;
+    }
 
-      setTotalValue(totalValueTemp)
-      setTotalRewards(totalRewardsTemp)
-    }
-    else
+    // calculate the total values
+    async function calculateTotals()
     {
-      setTotalValue(toBN(0))
-      setTotalRewards(toBN(0))
-      setndxbalance('0')
+      let totalValueTemp = 0;
+      let totalRewardsTemp = new BigNumber(0);
+      let tempPrice = 0;
+      let tempUserBalance = 0;
+      let tempRewards = new BigNumber(0);
+
+      if (state.account)
+      {
+        for(let x = 0; x < pools.length; x++){
+          let pool = pools[x]
+          tempPrice = pool && pool.price
+          tempUserBalance = pool.poolHelper && pool.poolHelper.userPoolBalance ? pool.poolHelper.userPoolBalance : toBN(0)
+
+          if (pool.symbol.includes('UNI'))
+          {
+            tempUserBalance = toBN(0)
+          }
+
+          for (let i = 0; i < staking.pools.length; i++)
+          {
+            if (staking.pools[i].pool.indexPool === pool.address)
+            {
+              tempRewards = staking.pools[i].userEarnedRewards ? staking.pools[i].userEarnedRewards : toBN(0)
+
+              // Get price of the uni vs pair for calculating total
+              if (pool.symbol.includes('UNI') && staking.pools[i].pool.isWethPair)
+              {
+                tempPrice = await getETH(staking.pools[i].stakingToken)
+                tempUserBalance = staking.pools[i].userBalanceStakingToken ? staking.pools[i].userBalanceStakingToken : toBN(0)
+              }
+            }
+          }
+
+          totalValueTemp += tempPrice * tempUserBalance
+          totalRewardsTemp = tempRewards
+        }
+
+        setTotalValue(totalValueTemp)
+        setTotalRewards(totalRewardsTemp)
+      }
+      else
+      {
+        setTotalValue(toBN(0))
+        setTotalRewards(toBN(0))
+        setndxbalance('0')
+      }
     }
+
+    calculateTotals();
 
   }, [state.account, pools])
-
-
 
   const getAccountMetadata = async() => {
     let { web3, account } = state
@@ -154,7 +190,6 @@ export default function Portfolio(){
           .toLocaleString({ minimumFractionDigits: 2 })
 
       setndxbalance(amount)
-      console.log(amount)
     }
   }
 
@@ -221,17 +256,21 @@ export default function Portfolio(){
                 let rewards = '0.00';
 
 
+                console.log(value.symbol)
                 // look for the corresponding staking pool
                 for (let i = 0; i < staking.pools.length; i++)
                 {
                   // check if we find a match of index pool and staking pool
                   if (staking.pools[i].pool.indexPool === value.address)
                   {
+                    console.log(staking.pools[i])
 
                     // check the uni v2 pairing if available - otherwise we have the user balance of the original token from before
                     if (value.symbol.includes('UNI') && staking.pools[i].pool.isWethPair)
                     {
-                      userpoolbalance = staking.pools[i].pool.userBalanceStakingToken ? formatBalance(staking.pools[i].pool.userBalanceStakingToken, 18, 4) : '0.00';
+                      console.log('univ2pair')
+                      userpoolbalance = staking.pools[i].userBalanceStakingToken ? formatBalance(staking.pools[i].userBalanceStakingToken, 18, 4) : '0.00';
+                      console.log(userpoolbalance)
 
                       //TODO update with real price
                       tokenprice = 0
