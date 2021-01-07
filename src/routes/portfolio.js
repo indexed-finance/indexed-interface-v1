@@ -55,13 +55,15 @@ export default function Portfolio(){
   const [ pools, setPools ] = useState([])
   const [totalValue, setTotalValue] = useState(toBN(0))
   const [totalRewards, setTotalRewards] = useState(toBN(0))
-  const [ndxbalance, setndxbalance] = useState(0)
+  const [ndxbalance, setndxbalance] = useState('0')
   const history = useHistory()
   const classes = useStyles()
   const theme = useTheme()
   const staking = useStaking()
 
   let { dispatch, state } = useContext(store)
+
+  console.log(state)
 
   useEffect(() => {
     let availableAssets = []
@@ -93,10 +95,12 @@ export default function Portfolio(){
   // effect hook for calculating the  totals
   useEffect(() => {
     let totalValueTemp = 0;
-    let totalRewardsTemp = 0;
+    let totalRewardsTemp = new BigNumber(0);
     let tempPrice = 0;
     let tempUserBalance = 0;
-    let tempRewards = 0;
+    let tempRewards = new BigNumber(0);
+
+    console.log(totalRewardsTemp)
 
     if (state.account)
     {
@@ -104,31 +108,59 @@ export default function Portfolio(){
         let pool = pools[x]
         tempPrice = pool && pool.price
 
+        //TODO get uni price here too
+        if (pool.symbol.includes("UNI"))
+        {
+          tempPrice = 0
+        }
+
         for (let i = 0; i < staking.pools.length; i++)
         {
           if (staking.pools[i].pool.indexPool === pool.address)
           {
-            tempRewards = staking.pools[i].pool.userEarnedRewards ? staking.pools[i].pool.userEarnedRewards : toBN(0);
+            tempRewards = staking.pools[i].userEarnedRewards ? staking.pools[i].userEarnedRewards : toBN(0)
           }
         }
 
         tempUserBalance = pool.poolHelper && pool.poolHelper.userPoolBalance ? pool.poolHelper.userPoolBalance : toBN(0)
         totalValueTemp += tempPrice * tempUserBalance
 
-        totalRewardsTemp = tempRewards * tempUserBalance
+        totalRewardsTemp = tempRewards
       }
+
+      console.log(totalValueTemp)
+
       setTotalValue(totalValueTemp)
       setTotalRewards(totalRewardsTemp)
-      setndxbalance(state.balances['NDX'])
     }
     else
     {
       setTotalValue(toBN(0))
       setTotalRewards(toBN(0))
-      setndxbalance(0)
+      setndxbalance('0')
     }
 
   }, [state.account, pools])
+
+
+
+  const getAccountMetadata = async() => {
+    let { web3, account } = state
+
+    if(web3.injected) {
+      let contract = toContract(web3.injected, Ndx.abi, NDX)
+      let balance = await contract.methods.balanceOf(account).call()
+      let amount = (parseFloat(balance)/Math.pow(10, 18))
+          .toLocaleString({ minimumFractionDigits: 2 })
+
+      setndxbalance(amount)
+      console.log(amount)
+    }
+  }
+
+  useEffect(() => {
+    getAccountMetadata()
+  }, [ state.web3.injected ])
 
   let { margin, width, wallet, tableHeight } = style.getFormatting({ native: state.native })
   let mode = theme.palette.primary.main !== '#ffffff' ? 'light' : 'dark'
@@ -172,23 +204,56 @@ export default function Portfolio(){
                 }
 
                 // define the display variables
-                let userpoolbalance = value.poolHelper.userPoolBalance ? formatBalance(value.poolHelper.userPoolBalance, 18, 4) : '0';
-                let tokenprice = value.price;
-                let tokenvalue = value.poolHelper.userPoolBalance ? formatBalance(toBN(value.poolHelper.userPoolBalance *(value.price)), 18, 4) : '0';
 
-                let stakingbalance = '0';
-                let rewards = '0';
+                // get the pool balance from the poolhelper check for staking pool later
+                let userpoolbalance = value.poolHelper.userPoolBalance ? formatBalance(value.poolHelper.userPoolBalance, 18, 4) : '0.00';
+                let tokenprice = value.price;
+
+
+                // set user balance to 0 initially for univ2 tokens
+                if (value.symbol.includes('UNI'))
+                {
+                  userpoolbalance = '0.00';
+                  tokenprice = 0;
+                }
+
+                let stakingbalance = '0.00';
+                let rewards = '0.00';
 
 
                 // look for the corresponding staking pool
                 for (let i = 0; i < staking.pools.length; i++)
                 {
+                  // check if we find a match of index pool and staking pool
                   if (staking.pools[i].pool.indexPool === value.address)
                   {
-                    rewards = staking.pools[i].pool.userEarnedRewards ? formatBalance(staking.pools[i].pool.userEarnedRewards, 18, 4) : '0';
-                    stakingbalance = staking.pools[i].pool.userBalanceRewards ? formatBalance(staking.pools[i].pool.userBalanceRewards, 18, 4) : '0';
+
+                    // check the uni v2 pairing if available - otherwise we have the user balance of the original token from before
+                    if (value.symbol.includes('UNI') && staking.pools[i].pool.isWethPair)
+                    {
+                      userpoolbalance = staking.pools[i].pool.userBalanceStakingToken ? formatBalance(staking.pools[i].pool.userBalanceStakingToken, 18, 4) : '0.00';
+
+                      //TODO update with real price
+                      tokenprice = 0
+
+                      rewards = staking.pools[i].userEarnedRewards ? formatBalance(staking.pools[i].userEarnedRewards, 18, 4) : '0.00';
+                      stakingbalance = staking.pools[i].userBalanceRewards ? formatBalance(staking.pools[i].userBalanceRewards, 18, 4) : '0.00';
+                    }
+
+                    // check the uni v2 pairing if available - otherwise we have the user balance of the original token from before
+                    if (!value.symbol.includes('UNI') && !staking.pools[i].pool.isWethPair)
+                    {
+                      rewards = staking.pools[i].userEarnedRewards ? formatBalance(staking.pools[i].userEarnedRewards, 18, 4) : '0.00';
+                      stakingbalance = staking.pools[i].userBalanceRewards ? formatBalance(staking.pools[i].userBalanceRewards, 18, 4) : '0.00';
+                    }
+
+
+                    console.log(stakingbalance)
+
                   }
                 }
+
+                let tokenvalue = value.poolHelper.userPoolBalance ? formatBalance(toBN(value.poolHelper.userPoolBalance *(tokenprice)), 18, 4) : '0';
 
                 // calculate portion of total token of token balance
                 let pooltokenweight = 0;
@@ -196,6 +261,7 @@ export default function Portfolio(){
                 {
                   pooltokenweight = value.poolHelper.userPoolBalance * tokenprice / totalValue;
                 }
+
 
                 return (
                   <Item key={index + 1} button>
