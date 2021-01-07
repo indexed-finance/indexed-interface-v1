@@ -8,16 +8,15 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import { useHistory, Link } from "react-router-dom";
-import { BigNumber, formatBalance } from '@indexed-finance/indexed.js'
+import { BigNumber, formatBalance, toBN } from '@indexed-finance/indexed.js'
 import { useTheme } from '@material-ui/core/styles'
-
 import Ndx from '../assets/constants/abi/Ndx.json'
 import ButtonPrimary from '../components/buttons/primary'
 import ButtonSecondary from '../components/buttons/secondary'
 import Container from '../components/container'
 import Input from '../components/inputs/input'
 import Canvas from '../components/canvas'
-import Progress from '../components/progress'
+import LineProgress from '../components/lineprogress'
 import Delta from '../components/utils/delta'
 
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../assets/constants/parameters'
@@ -29,6 +28,7 @@ import { store } from '../state'
 
 import style from '../assets/css/routes/portfolio'
 import getStyles from '../assets/css'
+import {useStaking} from "../state/staking/hooks";
 
 const ListWrapper = styled(List)({
   flex: '1 1 auto',
@@ -53,9 +53,13 @@ const useStyles = getStyles(style)
 
 export default function Portfolio(){
   const [ pools, setPools ] = useState([])
+  const [totalValue, setTotalValue] = useState(toBN(0))
+  const [totalRewards, setTotalRewards] = useState(toBN(0))
+  const [ndxbalance, setndxbalance] = useState(0)
   const history = useHistory()
   const classes = useStyles()
   const theme = useTheme()
+  const staking = useStaking()
 
   let { dispatch, state } = useContext(store)
 
@@ -86,6 +90,46 @@ export default function Portfolio(){
     }
   }, [])
 
+  // effect hook for calculating the  totals
+  useEffect(() => {
+    let totalValueTemp = 0;
+    let totalRewardsTemp = 0;
+    let tempPrice = 0;
+    let tempUserBalance = 0;
+    let tempRewards = 0;
+
+    if (state.account)
+    {
+      for(let x = 0; x < pools.length; x++){
+        let pool = pools[x]
+        tempPrice = pool && pool.price
+
+        for (let i = 0; i < staking.pools.length; i++)
+        {
+          if (staking.pools[i].pool.indexPool === pool.address)
+          {
+            tempRewards = staking.pools[i].pool.userEarnedRewards ? staking.pools[i].pool.userEarnedRewards : toBN(0);
+          }
+        }
+
+        tempUserBalance = pool.poolHelper && pool.poolHelper.userPoolBalance ? pool.poolHelper.userPoolBalance : toBN(0)
+        totalValueTemp += tempPrice * tempUserBalance
+
+        totalRewardsTemp = tempRewards * tempUserBalance
+      }
+      setTotalValue(totalValueTemp)
+      setTotalRewards(totalRewardsTemp)
+      setndxbalance(state.balances['NDX'])
+    }
+    else
+    {
+      setTotalValue(toBN(0))
+      setTotalRewards(toBN(0))
+      setndxbalance(0)
+    }
+
+  }, [state.account, pools])
+
   let { margin, width, wallet, tableHeight } = style.getFormatting({ native: state.native })
   let mode = theme.palette.primary.main !== '#ffffff' ? 'light' : 'dark'
 
@@ -97,7 +141,7 @@ export default function Portfolio(){
             <Canvas native={state.native}>
               <div className={classes.wallet} style={{ height: wallet }}>
                 <p> PORTFOLIO VALUE </p>
-                <h1> $1,000,053,423.53</h1>
+                <h1> ${formatBalance(toBN(totalValue), 18, 4)}</h1>
               </div>
             </Canvas>
           </Grid>
@@ -105,11 +149,11 @@ export default function Portfolio(){
             <Canvas native={state.native}>
               <div className={classes.account} style={{ height: wallet }}>
                 <p> REWARDS </p>
-                <h1> 10,341.054135 NDX </h1>
+                <h1> {formatBalance(toBN(totalRewards), 18, 4)} NDX </h1>
                 <ButtonPrimary variant='outlined' margin={{ margin: 0, marginTop: -37.5 }}>
                   CLAIM
                 </ButtonPrimary>
-                <p> BALANCE: 2,510.34 NDX </p>
+                <p> BALANCE: {ndxbalance} NDX </p>
               </div>
             </Canvas>
           </Grid>
@@ -125,6 +169,32 @@ export default function Portfolio(){
                 let { marginBottom, paddingTop } = {
                   marginBottom: isLPToken ? 10 : 0,
                   paddingtop: isLPToken ? 10 : 5
+                }
+
+                // define the display variables
+                let userpoolbalance = value.poolHelper.userPoolBalance ? formatBalance(value.poolHelper.userPoolBalance, 18, 4) : '0';
+                let tokenprice = value.price;
+                let tokenvalue = value.poolHelper.userPoolBalance ? formatBalance(toBN(value.poolHelper.userPoolBalance *(value.price)), 18, 4) : '0';
+
+                let stakingbalance = '0';
+                let rewards = '0';
+
+
+                // look for the corresponding staking pool
+                for (let i = 0; i < staking.pools.length; i++)
+                {
+                  if (staking.pools[i].pool.indexPool === value.address)
+                  {
+                    rewards = staking.pools[i].pool.userEarnedRewards ? formatBalance(staking.pools[i].pool.userEarnedRewards, 18, 4) : '0';
+                    stakingbalance = staking.pools[i].pool.userBalanceRewards ? formatBalance(staking.pools[i].pool.userBalanceRewards, 18, 4) : '0';
+                  }
+                }
+
+                // calculate portion of total token of token balance
+                let pooltokenweight = 0;
+                if (value.poolHelper.userPoolBalance && totalValue > 0)
+                {
+                  pooltokenweight = value.poolHelper.userPoolBalance * tokenprice / totalValue;
                 }
 
                 return (
@@ -146,36 +216,31 @@ export default function Portfolio(){
                     <ListItemText
                       className={classes.holdings}
                       primary={<span>
-                        BALANCE: {Math.floor(Math.random() * 300).toLocaleString()}
+                        BALANCE: {userpoolbalance}
                       </span>}
                       secondary={<span>
-                        STAKING: {Math.floor(Math.random() * 300).toLocaleString()}
+                        STAKING: {stakingbalance}
                       </span>}
                     />
                     <ListItemText
                       className={classes.weight}
                       primary={<>
-                        <Progress
-                          width={150} color='#00e79a' option='for'
+                        <LineProgress
+                          width={150} color='#00e79a'
                           values={{
-                            for: Math.floor(Math.random() * 100),
-                            against: Math.floor(Math.random() * 100)
+                            value: pooltokenweight
                           }}
                         />
                         <span className={classes.usd}>
-                          ${Math.floor(Math.random() * 10000).toLocaleString()}
+                          ${tokenvalue}
                         </span>
                      </>}
                     />
-                    <ListItemText
-                      primary={<span>
-                        {Math.floor(Math.random() * 555).toLocaleString()} NDX
-                      </span>}
-                    />
+
                     <ListItemText
                       primary={
                         <span style={{ float: 'left'}}>
-                          {Math.floor(Math.random() * 555).toLocaleString()} NDX
+                          {rewards} NDX
                         </span>
                       }
                     />
