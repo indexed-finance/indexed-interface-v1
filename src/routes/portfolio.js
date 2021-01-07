@@ -234,6 +234,11 @@ export default function Portfolio(){
   let { margin, width, wallet, tableHeight } = style.getFormatting({ native: state.native })
   let mode = theme.palette.primary.main !== '#ffffff' ? 'light' : 'dark'
 
+  // insert claim button later on again
+  //<ButtonPrimary variant='outlined' margin={{ margin: 0, marginTop: -37.5 }}>
+  //  CLAIM
+  //</ButtonPrimary>
+
   return (
     <Fragment>
       <Grid container direction='column' alignItems='flex-start' justify='space-between'>
@@ -251,9 +256,9 @@ export default function Portfolio(){
               <div className={classes.account} style={{ height: wallet }}>
                 <p> REWARDS </p>
                 <h1> {formatBalance(toBN(totalRewards), 18, 4)} NDX </h1>
-                <ButtonPrimary variant='outlined' margin={{ margin: 0, marginTop: -37.5 }}>
-                  CLAIM
-                </ButtonPrimary>
+
+
+
                 <p> BALANCE: {ndxbalance} NDX </p>
               </div>
             </Canvas>
@@ -288,8 +293,6 @@ export default function Portfolio(){
 
                 let stakingbalance = '0.00';
                 let rewards = '0.00';
-
-                console.log(staking)
 
                 // look for the corresponding staking pool
                 for (let i = 0; i < staking.pools.length; i++)
