@@ -11,6 +11,7 @@ import { useHistory, Link } from "react-router-dom";
 import { BigNumber, formatBalance, toBN } from '@indexed-finance/indexed.js'
 import { useTheme } from '@material-ui/core/styles'
 import Ndx from '../assets/constants/abi/Ndx.json'
+import StakingRewards from "../assets/constants/abi/IStakingRewards.json"
 import ButtonPrimary from '../components/buttons/primary'
 import ButtonSecondary from '../components/buttons/secondary'
 import Container from '../components/container'
@@ -22,7 +23,7 @@ import { getETHPrice } from '../api/gql';
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../assets/constants/parameters'
 import { isAddress } from '../assets/constants/functions'
 import { categoryMetadata, tokenMetadata } from '../assets/constants/parameters'
-import { NDX, ZERO_ADDRESS } from '../assets/constants/addresses'
+import {NDX, ZERO_ADDRESS} from '../assets/constants/addresses'
 import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
 import { getPair } from '../lib/markets'
@@ -65,13 +66,11 @@ export default function Portfolio(){
 
   let { dispatch, state } = useContext(store)
 
-  console.log(state)
-
   useEffect(() => {
     let availableAssets = []
     let indices = Object.entries(state.indexes)
 
-    if(state.request && pools.length == 0){
+    if(state.request && state.account && pools.length == 0){
       for(let x = 0; x < indices.length; x++){
         let pool = indices[x][1]
         let lp = pool
@@ -84,7 +83,7 @@ export default function Portfolio(){
       }
       setPools(availableAssets)
     }
-  }, [ state.request, state.indexes ])
+  }, [ state.request, state.indexes, state.account ])
 
   useEffect(() => {
     if(!state.load){
@@ -133,6 +132,10 @@ export default function Portfolio(){
       let tempPrice = 0;
       let tempUserBalance = 0;
       let tempRewards = new BigNumber(0);
+
+      console.log('state')
+      console.log(state)
+      console.log(pools)
 
       if (state.account)
       {
@@ -197,6 +200,37 @@ export default function Portfolio(){
     getAccountMetadata()
   }, [ state.web3.injected ])
 
+  async function callClaim(pool)
+  {
+    console.log('clicked')
+    console.log(pool)
+
+    let { web3, account } = state
+
+    if(web3.injected) {
+
+      try {
+        let contract = toContract(web3.injected, StakingRewards, pool)
+
+        await contract.methods.getReward(
+        ).send({ from: account })
+            .on('transactionHash', (transactionHash) =>
+                dispatch(TX_PENDING(transactionHash))
+            ).on('confirmation', (conf, receipt) => {
+              if(conf === 0){
+                if(parseInt(receipt.status) == 1) {
+                  dispatch(TX_CONFIRMED(receipt.transactionHash))
+                } else {
+                  dispatch(TX_REVERTED(receipt.transactionHash))
+                }
+              }
+            })
+      } catch(e){}
+
+    }
+
+  }
+
   let { margin, width, wallet, tableHeight } = style.getFormatting({ native: state.native })
   let mode = theme.palette.primary.main !== '#ffffff' ? 'light' : 'dark'
 
@@ -243,7 +277,7 @@ export default function Portfolio(){
                 // get the pool balance from the poolhelper check for staking pool later
                 let userpoolbalance = value.poolHelper.userPoolBalance ? formatBalance(value.poolHelper.userPoolBalance, 18, 4) : '0.00';
                 let tokenprice = value.price;
-
+                let stakingpooladdress;
 
                 // set user balance to 0 initially for univ2 tokens
                 if (value.symbol.includes('UNI'))
@@ -255,40 +289,35 @@ export default function Portfolio(){
                 let stakingbalance = '0.00';
                 let rewards = '0.00';
 
+                console.log(staking)
 
-                console.log(value.symbol)
                 // look for the corresponding staking pool
                 for (let i = 0; i < staking.pools.length; i++)
                 {
                   // check if we find a match of index pool and staking pool
                   if (staking.pools[i].pool.indexPool === value.address)
                   {
-                    console.log(staking.pools[i])
 
                     // check the uni v2 pairing if available - otherwise we have the user balance of the original token from before
                     if (value.symbol.includes('UNI') && staking.pools[i].pool.isWethPair)
                     {
-                      console.log('univ2pair')
                       userpoolbalance = staking.pools[i].userBalanceStakingToken ? formatBalance(staking.pools[i].userBalanceStakingToken, 18, 4) : '0.00';
-                      console.log(userpoolbalance)
 
                       //TODO update with real price
                       tokenprice = 0
 
                       rewards = staking.pools[i].userEarnedRewards ? formatBalance(staking.pools[i].userEarnedRewards, 18, 4) : '0.00';
                       stakingbalance = staking.pools[i].userBalanceRewards ? formatBalance(staking.pools[i].userBalanceRewards, 18, 4) : '0.00';
+                      stakingpooladdress = staking.pools[i].pool.address;
                     }
 
                     // check the uni v2 pairing if available - otherwise we have the user balance of the original token from before
                     if (!value.symbol.includes('UNI') && !staking.pools[i].pool.isWethPair)
                     {
+                      stakingpooladdress = staking.pools[i].pool.address;
                       rewards = staking.pools[i].userEarnedRewards ? formatBalance(staking.pools[i].userEarnedRewards, 18, 4) : '0.00';
                       stakingbalance = staking.pools[i].userBalanceRewards ? formatBalance(staking.pools[i].userBalanceRewards, 18, 4) : '0.00';
                     }
-
-
-                    console.log(stakingbalance)
-
                   }
                 }
 
@@ -350,7 +379,7 @@ export default function Portfolio(){
                       }
                     />
                     <SecondaryAction>
-                      <ButtonPrimary variant='outlined' margin={{ margin: 0 }}>
+                      <ButtonPrimary variant='outlined' margin={{ margin: 0 }} onClick={() => { callClaim(stakingpooladdress) }}>
                         CLAIM
                       </ButtonPrimary>
                     </SecondaryAction>
