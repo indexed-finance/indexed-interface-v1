@@ -59,6 +59,7 @@ export default function Portfolio(){
   const [totalValue, setTotalValue] = useState(toBN(0))
   const [totalRewards, setTotalRewards] = useState(toBN(0))
   const [ndxbalance, setndxbalance] = useState('0')
+  const [univ2prices, setuniv2prices] = useState([])
   const history = useHistory()
   const classes = useStyles()
   const theme = useTheme()
@@ -72,7 +73,6 @@ export default function Portfolio(){
     {
 
       if(state.request && state.account && pools.length === 0 && state.indexes !== {}){
-        console.log('now setting')
         for(let x = 0; x < indices.length; x++){
           let pool = indices[x][1]
           let lp = pool
@@ -92,7 +92,6 @@ export default function Portfolio(){
 
     let availableAssets = []
     let indicescalc = Object.entries(state.indexes)
-    console.log(state)
 
     setinidices(indicescalc)
 
@@ -146,6 +145,7 @@ export default function Portfolio(){
       let tempPrice = 0;
       let tempUserBalance = 0;
       let tempRewards = new BigNumber(0);
+      let temp_array = [];
 
       if (state.account)
       {
@@ -169,6 +169,8 @@ export default function Portfolio(){
               if (pool.symbol.includes('UNI') && staking.pools[i].pool.isWethPair)
               {
                 tempPrice = await getETH(staking.pools[i].stakingToken)
+                let temp_price_obj = {symbol: pool.symbol, price: tempPrice}
+                temp_array.push(temp_price_obj)
                 tempUserBalance = staking.pools[i].userBalanceStakingToken ? staking.pools[i].userBalanceStakingToken : toBN(0)
               }
             }
@@ -180,12 +182,14 @@ export default function Portfolio(){
 
         setTotalValue(totalValueTemp)
         setTotalRewards(totalRewardsTemp)
+        setuniv2prices(temp_array)
       }
       else
       {
         setTotalValue(toBN(0))
         setTotalRewards(toBN(0))
         setndxbalance('0')
+        setuniv2prices([])
       }
     }
 
@@ -262,6 +266,7 @@ export default function Portfolio(){
     let userpoolbalance = value.poolHelper.userPoolBalance ? formatBalance(value.poolHelper.userPoolBalance, 18, 4) : '0.00';
     let tokenprice = value.price;
     let stakingpooladdress;
+    let univ2balance = 0;
 
     // set user balance to 0 initially for univ2 tokens
     if (value.symbol.includes('UNI'))
@@ -284,9 +289,15 @@ export default function Portfolio(){
         if (value.symbol.includes('UNI') && staking.pools[i].pool.isWethPair)
         {
           userpoolbalance = staking.pools[i].userBalanceStakingToken ? formatBalance(staking.pools[i].userBalanceStakingToken, 18, 4) : '0.00';
+          univ2balance = staking.pools[i].userBalanceStakingToken ? staking.pools[i].userBalanceStakingToken : 0;
 
-          //TODO update with real price
-          tokenprice = 0
+          for (let j = 0; j < univ2prices.length; j++)
+          {
+            if (value.symbol === univ2prices[j].symbol)
+            {
+              tokenprice = univ2prices[j].price
+            }
+          }
 
           rewards = staking.pools[i].userEarnedRewards ? formatBalance(staking.pools[i].userEarnedRewards, 18, 4) : '0.00';
           stakingbalance = staking.pools[i].userBalanceRewards ? formatBalance(staking.pools[i].userBalanceRewards, 18, 4) : '0.00';
@@ -307,11 +318,15 @@ export default function Portfolio(){
 
     // calculate portion of total token of token balance
     let pooltokenweight = 0;
-    if (value.poolHelper.userPoolBalance && totalValue > 0)
+    if (value.poolHelper.userPoolBalance && totalValue > 0 && !value.symbol.includes('UNI'))
     {
       pooltokenweight = value.poolHelper.userPoolBalance * tokenprice / totalValue;
     }
-
+    if (value.poolHelper.userPoolBalance && totalValue > 0 && value.symbol.includes('UNI'))
+    {
+      pooltokenweight = univ2balance * tokenprice / totalValue;
+      tokenvalue = formatBalance(toBN(univ2balance *(tokenprice)), 18, 4);
+    }
 
     return (
         <Item key={index + 1} button>
