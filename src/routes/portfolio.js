@@ -77,7 +77,17 @@ export default function Portfolio(){
           let pool = indices[x][1]
           let lp = pool
 
-          await pool.poolHelper.waitForUpdate
+          console.log(state)
+
+          if (!pool.poolHelper.userPoolBalance && state.helper && state.helper.initialized)
+          {
+            for(let y = 0; y < state.helper.initialized.length; y++){
+              if (state.helper.initialized[y].pool.address === pool.address)
+              {
+                pool.userPoolBalance = state.helper.initialized[y].userPoolBalance
+              }
+            }
+          }
 
           availableAssets.push(pool)
           availableAssets.push({
