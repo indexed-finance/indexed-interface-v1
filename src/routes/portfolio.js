@@ -67,31 +67,36 @@ export default function Portfolio(){
   let { dispatch, state } = useContext(store)
 
   useEffect(() => {
-    let availableAssets = []
-    let indices = Object.entries(state.indexes)
-    console.log(state)
-    console.log(state.indexes)
 
+    async function setinidices(indices)
+    {
 
-    for(let x = 0; x < indices.length; x++){
-      let pool = indices[x][1]
+      if(state.request && state.account && pools.length === 0 && state.indexes !== {}){
+        console.log('now setting')
+        for(let x = 0; x < indices.length; x++){
+          let pool = indices[x][1]
+          let lp = pool
 
-    }
+          await pool.poolHelper.waitForUpdate
 
-    if(state.request && state.account && pools.length === 0 && state.indexes !== {}){
-      console.log('now setting')
-      for(let x = 0; x < indices.length; x++){
-        let pool = indices[x][1]
-        let lp = pool
-
-        availableAssets.push(pool)
-        availableAssets.push({
-          ...lp,
-          symbol: `UNIV2-ETH-${lp.symbol}`
-        })
+          availableAssets.push(pool)
+          availableAssets.push({
+            ...lp,
+            symbol: `UNIV2-ETH-${lp.symbol}`
+          })
+        }
+        setPools(availableAssets)
       }
-      setPools(availableAssets)
+
     }
+
+    let availableAssets = []
+    let indicescalc = Object.entries(state.indexes)
+    console.log(state)
+
+    setinidices(indicescalc)
+
+
   }, [ state.request, state.indexes, state.account ])
 
   useEffect(() => {
@@ -307,6 +312,7 @@ export default function Portfolio(){
       pooltokenweight = value.poolHelper.userPoolBalance * tokenprice / totalValue;
     }
 
+
     return (
         <Item key={index + 1} button>
           <ListItemText className={classes.item} primary={<>
@@ -393,7 +399,7 @@ export default function Portfolio(){
           <Container margin={margin} padding="1em 0em 0em 0em" title='PORTFOLIO' >
            <div className={classes.proposals} style={{ height: tableHeight }}>
             <ListWrapper dense style={{ width }}>
-              {pools && pools.map((value, index) => {
+              {state.account && pools && pools.map((value, index) => {
                 return DisplayDetails(value, index)
               })}
             </ListWrapper>
