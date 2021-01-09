@@ -79,15 +79,18 @@ export default function Portfolio(){
 
           console.log(state)
 
-          if (!pool.poolHelper.userPoolBalance && state.helper && state.helper.initialized)
+          if (state.helper && state.helper.initialized)
           {
             for(let y = 0; y < state.helper.initialized.length; y++){
               if (state.helper.initialized[y].pool.address === pool.address)
               {
-                pool.userPoolBalance = state.helper.initialized[y].userPoolBalance
+                console.log('pusing')
+                pool.poolHelper.userPoolBalance = state.helper.initialized[y].userPoolBalance
               }
             }
           }
+
+        console.log(pool)
 
           availableAssets.push(pool)
           availableAssets.push({
@@ -153,16 +156,18 @@ export default function Portfolio(){
       let totalValueTemp = 0;
       let totalRewardsTemp = new BigNumber(0);
       let tempPrice = 0;
-      let tempUserBalance = 0;
+      let tempUserBalance = new BigNumber(0);
       let tempRewards = new BigNumber(0);
       let temp_array = [];
+      let bigzero = new BigNumber(0);
+      let stakingbalancenumber = new BigNumber(0);
 
       if (state.account)
       {
         for(let x = 0; x < pools.length; x++){
           let pool = pools[x]
           tempPrice = pool && pool.price
-          tempUserBalance = pool.poolHelper && pool.poolHelper.userPoolBalance ? pool.poolHelper.userPoolBalance : toBN(0)
+          tempUserBalance = pool.poolHelper && pool.poolHelper.userPoolBalance ? pool.poolHelper.userPoolBalance : bigzero
 
           if (pool.symbol.includes('UNI'))
           {
@@ -173,21 +178,26 @@ export default function Portfolio(){
           {
             if (staking.pools[i].pool.indexPool === pool.address)
             {
-              tempRewards = staking.pools[i].userEarnedRewards ? staking.pools[i].userEarnedRewards : toBN(0)
-
               // Get price of the uni vs pair for calculating total
               if (pool.symbol.includes('UNI') && staking.pools[i].pool.isWethPair)
               {
                 tempPrice = await getETH(staking.pools[i].stakingToken)
                 let temp_price_obj = {symbol: pool.symbol, price: tempPrice}
                 temp_array.push(temp_price_obj)
-                tempUserBalance = staking.pools[i].userBalanceStakingToken ? staking.pools[i].userBalanceStakingToken : toBN(0)
+                tempUserBalance = staking.pools[i].userBalanceStakingToken ? staking.pools[i].userBalanceStakingToken : bigzero
+                tempRewards = staking.pools[i].userEarnedRewards ? staking.pools[i].userEarnedRewards : bigzero
+                stakingbalancenumber = staking.pools[i].userBalanceRewards ? staking.pools[i].userBalanceRewards : bigzero;
+              }
+              if (!pool.symbol.includes('UNI') && !staking.pools[i].pool.isWethPair)
+              {
+                tempRewards = staking.pools[i].userEarnedRewards ? staking.pools[i].userEarnedRewards : bigzero
+                stakingbalancenumber = staking.pools[i].userBalanceRewards ? staking.pools[i].userBalanceRewards : bigzero;
               }
             }
           }
 
-          totalValueTemp += tempPrice * tempUserBalance
-          totalRewardsTemp = tempRewards
+          totalValueTemp += tempPrice * (tempUserBalance.plus(stakingbalancenumber))
+          totalRewardsTemp = totalRewardsTemp.plus(tempRewards)
         }
 
         setTotalValue(totalValueTemp)
@@ -273,10 +283,12 @@ export default function Portfolio(){
     // define the display variables
 
     // get the pool balance from the poolhelper check for staking pool later
+    let bigzero = new BigNumber(0);
     let userpoolbalance = value.poolHelper.userPoolBalance ? formatBalance(value.poolHelper.userPoolBalance, 18, 4) : '0.00';
     let tokenprice = value.price;
     let stakingpooladdress;
-    let univ2balance = 0;
+    let univ2balance = new BigNumber(0);
+    let stakingbalancenumber = 0;
 
     // set user balance to 0 initially for univ2 tokens
     if (value.symbol.includes('UNI'))
@@ -299,7 +311,7 @@ export default function Portfolio(){
         if (value.symbol.includes('UNI') && staking.pools[i].pool.isWethPair)
         {
           userpoolbalance = staking.pools[i].userBalanceStakingToken ? formatBalance(staking.pools[i].userBalanceStakingToken, 18, 4) : '0.00';
-          univ2balance = staking.pools[i].userBalanceStakingToken ? staking.pools[i].userBalanceStakingToken : 0;
+          univ2balance = staking.pools[i].userBalanceStakingToken ? staking.pools[i].userBalanceStakingToken : bigzero;
 
           for (let j = 0; j < univ2prices.length; j++)
           {
@@ -311,6 +323,7 @@ export default function Portfolio(){
 
           rewards = staking.pools[i].userEarnedRewards ? formatBalance(staking.pools[i].userEarnedRewards, 18, 4) : '0.00';
           stakingbalance = staking.pools[i].userBalanceRewards ? formatBalance(staking.pools[i].userBalanceRewards, 18, 4) : '0.00';
+          stakingbalancenumber = staking.pools[i].userBalanceRewards ? staking.pools[i].userBalanceRewards : bigzero;
           stakingpooladdress = staking.pools[i].pool.address;
         }
 
@@ -320,22 +333,23 @@ export default function Portfolio(){
           stakingpooladdress = staking.pools[i].pool.address;
           rewards = staking.pools[i].userEarnedRewards ? formatBalance(staking.pools[i].userEarnedRewards, 18, 4) : '0.00';
           stakingbalance = staking.pools[i].userBalanceRewards ? formatBalance(staking.pools[i].userBalanceRewards, 18, 4) : '0.00';
+          stakingbalancenumber = staking.pools[i].userBalanceRewards ? staking.pools[i].userBalanceRewards : bigzero;
         }
       }
     }
 
-    let tokenvalue = value.poolHelper.userPoolBalance ? formatBalance(toBN(value.poolHelper.userPoolBalance *(tokenprice)), 18, 4) : '0';
+    let tokenvalue = (value.poolHelper.userPoolBalance && value.poolHelper.userPoolBalance.plus(stakingbalancenumber)) ? formatBalance(toBN((value.poolHelper.userPoolBalance.plus(stakingbalancenumber)) *(tokenprice)), 18, 4) : '0';
 
     // calculate portion of total token of token balance
     let pooltokenweight = 0;
     if (value.poolHelper.userPoolBalance && totalValue > 0 && !value.symbol.includes('UNI'))
     {
-      pooltokenweight = value.poolHelper.userPoolBalance * tokenprice / totalValue;
+      pooltokenweight = (value.poolHelper.userPoolBalance.plus(stakingbalancenumber)) * tokenprice / totalValue;
     }
     if (value.poolHelper.userPoolBalance && totalValue > 0 && value.symbol.includes('UNI'))
     {
-      pooltokenweight = univ2balance * tokenprice / totalValue;
-      tokenvalue = formatBalance(toBN(univ2balance *(tokenprice)), 18, 4);
+      pooltokenweight = (univ2balance.plus(stakingbalancenumber)) * tokenprice / totalValue;
+      tokenvalue = formatBalance(toBN((univ2balance.plus(stakingbalancenumber)) *(tokenprice)), 18, 4);
     }
 
     return (
