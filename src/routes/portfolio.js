@@ -72,7 +72,7 @@ export default function Portfolio(){
     async function setinidices(indices)
     {
 
-      if(state.request && state.account && pools.length === 0 && state.indexes !== {}){
+      if(state.request && state.account  && state.indexes !== {}){
         for(let x = 0; x < indices.length; x++){
           let pool = indices[x][1]
           let lp = pool
@@ -174,6 +174,7 @@ export default function Portfolio(){
             tempUserBalance = toBN(0)
           }
 
+          console.log(staking)
           for (let i = 0; i < staking.pools.length; i++)
           {
             if (staking.pools[i].pool.indexPool === pool.address)
@@ -197,6 +198,7 @@ export default function Portfolio(){
           }
 
           totalValueTemp += tempPrice * (tempUserBalance.plus(stakingbalancenumber))
+          console.log(tempRewards)
           totalRewardsTemp = totalRewardsTemp.plus(tempRewards)
         }
 

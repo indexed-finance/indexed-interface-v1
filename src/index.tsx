@@ -139,6 +139,10 @@ function Application(){
       }
 
       async function setInitializedPools() {
+
+        console.log('setting helpers')
+        console.log(state)
+
         for (let pool of state.helper.initialized) {
           const { category, name, symbol, address, tokens } = pool;
 
@@ -259,17 +263,20 @@ function Application(){
       })
     }
     if(!state.request) retrieveCategories()
-  }, [ state.didLoadHelper ])
+  }, [ state ])
 
   useEffect(() => {
     const initialise = async() => {
       let { background, color, web3 } = state
 
+      console.log('first effect')
+      console.log(state)
+
       onResize()
       setBackground(background, color)
       window.addEventListener("resize", onResize)
       let helper = await getAllHelpers(web3[process.env.REACT_APP_ETH_NETWORK]);
-
+      console.log(helper)
       dispatch({ type: 'GENERIC', payload: { changeTheme, helper, didLoadHelper: true } })
     }
     initialise()
@@ -280,8 +287,12 @@ function Application(){
       let { web3, account, helper } = state
 
       if(web3.injected){
-        let helper = await getAllHelpers(web3.injected, account);
 
+        console.log('second effect')
+        console.log(state)
+
+        let helper = await getAllHelpers(web3.injected, account);
+        console.log(helper)
         dispatch({ type: 'GENERIC',
          payload: {
             didLoadHelper: true,
