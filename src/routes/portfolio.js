@@ -29,7 +29,7 @@ import { store } from '../state'
 import { getPair } from '../lib/markets'
 import style from '../assets/css/routes/portfolio'
 import getStyles from '../assets/css'
-import {useStaking} from "../state/staking/hooks";
+import { useStakingState} from "../state/staking/context";
 import UniV2PairABI from '@uniswap/v2-periphery/build/IUniswapV2Pair.json';
 
 
@@ -60,19 +60,49 @@ export default function Portfolio(){
   const [totalRewards, setTotalRewards] = useState(toBN(0))
   const [ndxbalance, setndxbalance] = useState('0')
   const [univ2prices, setuniv2prices] = useState([])
+  const [staking, setstaking] = useState()
+
   const history = useHistory()
   const classes = useStyles()
   const theme = useTheme()
-  const staking = useStaking()
+  const { useStakingPool } = useStakingState();
 
   let { dispatch, state } = useContext(store)
+
+  const gov5pool = useStakingPool('GOV5')
+  const univ2gov5 = useStakingPool('UNIV2:ETH-GOV5')
+  const dfi5pool = useStakingPool('DFI5')
+  const dfi5unipool = useStakingPool('UNIV2:ETH-GOV5')
+
+  const [poolarray, setpoolarray] = useState([])
+
+
+  useEffect(() => {
+    console.log('getting stakign state')
+    console.log(poolarray)
+
+    if (gov5pool.pool && poolarray.length === 0)
+    {
+      let temp_array = []
+      temp_array.push(gov5pool)
+      temp_array.push(univ2gov5)
+      temp_array.push(dfi5pool)
+      temp_array.push(dfi5unipool)
+
+      console.log('setting pool array')
+      console.log(temp_array)
+
+      setpoolarray(temp_array)
+    }
+
+  }, [gov5pool, univ2gov5, dfi5pool, dfi5unipool])
 
   useEffect(() => {
 
     async function setinidices(indices)
     {
 
-      if(state.request && state.account  && state.indexes !== {}){
+      if(state.request && state.account  && state.indexes !== {} && state.helper && state.helper.initialized[0] && state.helper.initialized[0].userPoolBalance){
         for(let x = 0; x < indices.length; x++){
           let pool = indices[x][1]
           let lp = pool
@@ -84,7 +114,7 @@ export default function Portfolio(){
             for(let y = 0; y < state.helper.initialized.length; y++){
               if (state.helper.initialized[y].pool.address === pool.address)
               {
-                console.log('pusing')
+                console.log('pushing')
                 pool.poolHelper.userPoolBalance = state.helper.initialized[y].userPoolBalance
               }
             }
@@ -162,7 +192,9 @@ export default function Portfolio(){
       let bigzero = new BigNumber(0);
       let stakingbalancenumber = new BigNumber(0);
 
-      if (state.account)
+      console.log('my stake')
+
+      if (state.account && poolarray && poolarray.length !== 0)
       {
         for(let x = 0; x < pools.length; x++){
           let pool = pools[x]
@@ -174,29 +206,33 @@ export default function Portfolio(){
             tempUserBalance = toBN(0)
           }
 
-          console.log(staking)
-          for (let i = 0; i < staking.pools.length; i++)
+          console.log(poolarray)
+          console.log(pool.symbol)
+          for (let i = 0; i < poolarray.length; i++)
           {
-            if (staking.pools[i].pool.indexPool === pool.address)
+            if (poolarray[i].pool.pool.indexPool === pool.address)
             {
               // Get price of the uni vs pair for calculating total
-              if (pool.symbol.includes('UNI') && staking.pools[i].pool.isWethPair)
+              if (pool.symbol.includes('UNI') && poolarray[i].pool.pool.isWethPair)
               {
-                tempPrice = await getETH(staking.pools[i].stakingToken)
+                tempPrice = await getETH(poolarray[i].pool.stakingToken)
                 let temp_price_obj = {symbol: pool.symbol, price: tempPrice}
                 temp_array.push(temp_price_obj)
-                tempUserBalance = staking.pools[i].userBalanceStakingToken ? staking.pools[i].userBalanceStakingToken : bigzero
-                tempRewards = staking.pools[i].userEarnedRewards ? staking.pools[i].userEarnedRewards : bigzero
-                stakingbalancenumber = staking.pools[i].userBalanceRewards ? staking.pools[i].userBalanceRewards : bigzero;
+                tempUserBalance = poolarray[i].pool.userBalanceStakingToken ? poolarray[i].pool.userBalanceStakingToken : bigzero
+                tempRewards = poolarray[i].pool.userEarnedRewards ? poolarray[i].pool.userEarnedRewards : bigzero
+                stakingbalancenumber = poolarray[i].pool.userBalanceRewards ? poolarray[i].pool.userBalanceRewards : bigzero;
               }
-              if (!pool.symbol.includes('UNI') && !staking.pools[i].pool.isWethPair)
+              if (!pool.symbol.includes('UNI') && !poolarray[i].pool.pool.isWethPair)
               {
-                tempRewards = staking.pools[i].userEarnedRewards ? staking.pools[i].userEarnedRewards : bigzero
-                stakingbalancenumber = staking.pools[i].userBalanceRewards ? staking.pools[i].userBalanceRewards : bigzero;
+                tempRewards = poolarray[i].pool.userEarnedRewards ? poolarray[i].pool.userEarnedRewards : bigzero
+                stakingbalancenumber = poolarray[i].pool.userBalanceRewards ? poolarray[i].pool.userBalanceRewards : bigzero;
               }
             }
           }
 
+          console.log(tempPrice)
+          console.log(tempUserBalance)
+          console.log(stakingbalancenumber)
           totalValueTemp += tempPrice * (tempUserBalance.plus(stakingbalancenumber))
           console.log(tempRewards)
           totalRewardsTemp = totalRewardsTemp.plus(tempRewards)
@@ -217,7 +253,7 @@ export default function Portfolio(){
 
     calculateTotals();
 
-  }, [state.account, pools])
+  }, [state.account, pools, poolarray])
 
   const getAccountMetadata = async() => {
     let { web3, account } = state
@@ -303,17 +339,17 @@ export default function Portfolio(){
     let rewards = '0.00';
 
     // look for the corresponding staking pool
-    for (let i = 0; i < staking.pools.length; i++)
+    for (let i = 0; i < poolarray.length; i++)
     {
       // check if we find a match of index pool and staking pool
-      if (staking.pools[i].pool.indexPool === value.address)
+      if (poolarray[i].pool.pool.indexPool === value.address)
       {
 
         // check the uni v2 pairing if available - otherwise we have the user balance of the original token from before
-        if (value.symbol.includes('UNI') && staking.pools[i].pool.isWethPair)
+        if (value.symbol.includes('UNI') && poolarray[i].pool.pool.isWethPair)
         {
-          userpoolbalance = staking.pools[i].userBalanceStakingToken ? formatBalance(staking.pools[i].userBalanceStakingToken, 18, 4) : '0.00';
-          univ2balance = staking.pools[i].userBalanceStakingToken ? staking.pools[i].userBalanceStakingToken : bigzero;
+          userpoolbalance = poolarray[i].pool.userBalanceStakingToken ? formatBalance(poolarray[i].pool.userBalanceStakingToken, 18, 4) : '0.00';
+          univ2balance = poolarray[i].pool.userBalanceStakingToken ? poolarray[i].pool.userBalanceStakingToken : bigzero;
 
           for (let j = 0; j < univ2prices.length; j++)
           {
@@ -323,19 +359,19 @@ export default function Portfolio(){
             }
           }
 
-          rewards = staking.pools[i].userEarnedRewards ? formatBalance(staking.pools[i].userEarnedRewards, 18, 4) : '0.00';
-          stakingbalance = staking.pools[i].userBalanceRewards ? formatBalance(staking.pools[i].userBalanceRewards, 18, 4) : '0.00';
-          stakingbalancenumber = staking.pools[i].userBalanceRewards ? staking.pools[i].userBalanceRewards : bigzero;
-          stakingpooladdress = staking.pools[i].pool.address;
+          rewards = poolarray[i].pool.userEarnedRewards ? formatBalance(poolarray[i].pool.userEarnedRewards, 18, 4) : '0.00';
+          stakingbalance = poolarray[i].pool.userBalanceRewards ? formatBalance(poolarray[i].pool.userBalanceRewards, 18, 4) : '0.00';
+          stakingbalancenumber = poolarray[i].pool.userBalanceRewards ? poolarray[i].pool.userBalanceRewards : bigzero;
+          stakingpooladdress = poolarray[i].pool.address;
         }
 
         // check the uni v2 pairing if available - otherwise we have the user balance of the original token from before
-        if (!value.symbol.includes('UNI') && !staking.pools[i].pool.isWethPair)
+        if (!value.symbol.includes('UNI') && !poolarray[i].pool.pool.isWethPair)
         {
-          stakingpooladdress = staking.pools[i].pool.address;
-          rewards = staking.pools[i].userEarnedRewards ? formatBalance(staking.pools[i].userEarnedRewards, 18, 4) : '0.00';
-          stakingbalance = staking.pools[i].userBalanceRewards ? formatBalance(staking.pools[i].userBalanceRewards, 18, 4) : '0.00';
-          stakingbalancenumber = staking.pools[i].userBalanceRewards ? staking.pools[i].userBalanceRewards : bigzero;
+          stakingpooladdress = poolarray[i].pool.address;
+          rewards = poolarray[i].pool.userEarnedRewards ? formatBalance(poolarray[i].pool.userEarnedRewards, 18, 4) : '0.00';
+          stakingbalance = poolarray[i].pool.userBalanceRewards ? formatBalance(poolarray[i].pool.userBalanceRewards, 18, 4) : '0.00';
+          stakingbalancenumber = poolarray[i].pool.userBalanceRewards ? poolarray[i].pool.userBalanceRewards : bigzero;
         }
       }
     }
@@ -440,7 +476,9 @@ export default function Portfolio(){
           <Container margin={margin} padding="1em 0em 0em 0em" title='PORTFOLIO' >
            <div className={classes.proposals} style={{ height: tableHeight }}>
             <ListWrapper dense style={{ width }}>
-              {state.account && pools && pools.map((value, index) => {
+              {
+                state.account && pools && pools.map((value, index) => {
+                console.log('going in')
                 return DisplayDetails(value, index)
               })}
             </ListWrapper>
