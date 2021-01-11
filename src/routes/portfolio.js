@@ -23,7 +23,7 @@ import { getETHPrice } from '../api/gql';
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../assets/constants/parameters'
 import { isAddress } from '../assets/constants/functions'
 import { categoryMetadata, tokenMetadata } from '../assets/constants/parameters'
-import {NDX, ZERO_ADDRESS} from '../assets/constants/addresses'
+import {NDX, ZERO_ADDRESS, WETH} from '../assets/constants/addresses'
 import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
 import { getPair } from '../lib/markets'
@@ -31,7 +31,6 @@ import style from '../assets/css/routes/portfolio'
 import getStyles from '../assets/css'
 import { useStakingState} from "../state/staking/context";
 import UniV2PairABI from '@uniswap/v2-periphery/build/IUniswapV2Pair.json';
-
 
 const ListWrapper = styled(List)({
   flex: '1 1 auto',
@@ -84,7 +83,7 @@ export default function Portfolio(){
     }
 
   }, [reducerState])
-  
+
   useEffect(() => {
 
     async function setinidices(indices)
@@ -150,12 +149,30 @@ export default function Portfolio(){
 
         try {
           let supply = await contract.methods.totalSupply().call()
-          let supplybn = new toBN(supply)
+          let supplybn = new toBN(supply).dividedBy(10 ** 18)
 
           let reserves = await contract.methods.getReserves().call()
-          let reservebn = toBN(reserves.reserve1)
+          let reservebn = 0;
+
+          let token0 = await contract.methods.token0().call()
+          let token1 = await contract.methods.token1().call()
+
+          if (token0.toUpperCase() === WETH.toUpperCase())
+          {
+            reservebn = toBN(reserves.reserve0).dividedBy(10**18)
+          }
+          if (token1.toUpperCase() === WETH.toUpperCase())
+          {
+            reservebn = toBN(reserves.reserve1).dividedBy(10**18)
+          }
 
           let univ2price = (reservebn * quoteEthUSD * 2) / supplybn;
+
+          console.log('calc the price')
+          console.log(unipairaddress)
+          console.log(quoteEthUSD)
+          console.log(univ2price)
+
           return univ2price;
         }
         catch (e)
