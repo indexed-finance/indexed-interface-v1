@@ -25,6 +25,7 @@ import { TradeStateProvider } from '../state/trade'
 import TitleLoader from '../components/loaders/title'
 import Loader from '../components/loaders/area'
 import IndexChartContainer from '../components/charts/IndexChartContainer'
+import Delta from '../components/utils/delta'
 
 const selected = {
   color: 'white',
@@ -140,16 +141,14 @@ export default function Index(){
           {state.request && metadata.category && (
             <ul style={{ padding: 0, listStyle: 'none', display: 'inline-block' }}>
               <li style={{ float: 'left', marginRight: 17.5 }}>
-                <img src={categoryMetadata[metadata.category][mode]} style={{ width: 17.5 }} />
+                <img src={categoryMetadata[metadata.category].normal[mode]} style={{ width: 17.5 }} />
               </li>
               <li style={{ float: 'left', marginRight }}>
                 <h3 className={classes.title}> {metadata.name}  [{metadata.symbol}]</h3>
               </li>
               <li style={{ float: 'left', marginRight }}>
-                <h4 className={classes.price}> ${usedPriceOrTVL.toLocaleString()}
-                  <span style={{ color: usedDelta > 0 ? '#00e79a': '#ff005a' }}>
-                  &nbsp;({ usedDelta > 0 ? '+' : ''}{usedDelta}%)
-                  </span>
+                <h4 className={classes.price}>
+                  ${usedPriceOrTVL.toLocaleString()}<Delta value={usedDelta} />
                 </h4>
               </li>
               {showVolume && (

@@ -34,7 +34,7 @@ export default function Footer() {
     state.load && <div className={classes.root} style={{ marginTop: margin }} >
       <Grid container direction='row' alignItems='flex-start' justify='space-between'>
         <Grid item style={{ marginBottom: state.native ? 15 : 0 }}>
-         <div className={classes.copyright}> ALL RIGHTS RESERVED. INDEXED 2020 </div>
+         <div className={classes.copyright}> ALL RIGHTS RESERVED. INDEXED 2021 </div>
         </Grid>
         <Grid item>
           <a className={classes.logo}  rel="noopener noreferrer" href="https://twitter.com/ndxfi" target='_blank'>

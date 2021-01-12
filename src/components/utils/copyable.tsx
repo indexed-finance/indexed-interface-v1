@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import copyToClipboard from "../lib/copyToClipboard";
+import copyToClipboard from "../../lib/copyToClipboard";
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 
 import { styled } from '@material-ui/core/styles'

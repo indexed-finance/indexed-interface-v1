@@ -25,7 +25,7 @@ import { getPair } from '../../lib/markets'
 import getStyles from '../../assets/css'
 
 import { store } from '../../state'
-import Copyable from '../copyable';
+import Copyable from '../utils/copyable';
 
 const useStyles = getStyles(style)
 

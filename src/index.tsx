@@ -23,6 +23,7 @@ import './assets/css/root.css'
 const Governance = lazy(() => import('./routes/governance'))
 const Categories = lazy(() => import('./routes/categories'))
 const Proposal = lazy(() => import('./routes/proposal'))
+const Portfolio = lazy(() => import('./routes/portfolio'))
 const Propose = lazy(() => import('./routes/propose'))
 const Markets = lazy(() => import('./routes/markets'))
 const Index = lazy(() => import('./routes/index'))
@@ -138,7 +139,7 @@ function Application(){
       }
 
       async function setInitializedPools() {
-        for (let pool of state.helper.initialized) {
+                for (let pool of state.helper.initialized) {
           const { category, name, symbol, address, tokens } = pool;
 
           let snapshots = pool.pool.snapshots;
@@ -258,7 +259,7 @@ function Application(){
       })
     }
     if(!state.request) retrieveCategories()
-  }, [ state.didLoadHelper ])
+  }, [ state ])
 
   useEffect(() => {
     const initialise = async() => {
@@ -268,7 +269,6 @@ function Application(){
       setBackground(background, color)
       window.addEventListener("resize", onResize)
       let helper = await getAllHelpers(web3[process.env.REACT_APP_ETH_NETWORK]);
-
       dispatch({ type: 'GENERIC', payload: { changeTheme, helper, didLoadHelper: true } })
     }
     initialise()
@@ -280,7 +280,6 @@ function Application(){
 
       if(web3.injected){
         let helper = await getAllHelpers(web3.injected, account);
-
         dispatch({ type: 'GENERIC',
          payload: {
             didLoadHelper: true,
@@ -319,6 +318,9 @@ function Application(){
                 </Route>
                 <Route path='/propose'>
                   <Propose />
+                </Route>
+                <Route path='/portfolio'>
+                  <Portfolio />
                 </Route>
                 <Route path='/pool/:address'>
                   <Pool />

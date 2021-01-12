@@ -15,7 +15,7 @@ import { store } from '../../state'
 
 import style from '../../assets/css/routes/pool'
 import getStyles from '../../assets/css'
-import Copyable from '../copyable';
+import Copyable from '../utils/copyable';
 
 const useStyles = getStyles(style);
 
