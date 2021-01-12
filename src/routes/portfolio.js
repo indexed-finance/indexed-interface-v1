@@ -8,27 +8,19 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText'
 import { Redirect } from 'react-router-dom'
 import { useTheme } from '@material-ui/core/styles'
-import Ndx from '../assets/constants/abi/Ndx.json'
 import StakingRewards from "../assets/constants/abi/IStakingRewards.json"
 import ButtonPrimary from '../components/buttons/primary'
-import ButtonSecondary from '../components/buttons/secondary'
+
 import Container from '../components/container'
-import Input from '../components/inputs/input'
 import Canvas from '../components/canvas'
 import LineProgress from '../components/lineprogress'
-import Delta from '../components/utils/delta'
-import { getETHPrice } from '../api/gql';
 import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../assets/constants/parameters'
-import { isAddress } from '../assets/constants/functions'
 import { categoryMetadata, tokenMetadata } from '../assets/constants/parameters'
-import {NDX, ZERO_ADDRESS, WETH} from '../assets/constants/addresses'
 import { toContract } from '../lib/util/contracts'
 import { store } from '../state'
-import { getPair } from '../lib/markets'
 import style from '../assets/css/routes/portfolio'
 import getStyles from '../assets/css'
-import { useStakingState} from "../state/staking/context";
-import UniV2PairABI from '@uniswap/v2-periphery/build/IUniswapV2Pair.json';
+
 import { usePortfolioValue, useUserRewards } from "../hooks/useRewards";
 import { useWeb3 } from "../hooks/useWeb3";
 
@@ -159,8 +151,8 @@ export default function Portfolio(){
 
           <ListItemText
             primary={
-              <span style={{ float: 'left', width: '120px'}}>
-                {earned} NDX
+              <span style={{ float: 'left', width: '150px'}}>
+                {earned ? `${earned} NDX` : ''}
               </span>
             }
           />
@@ -202,7 +194,6 @@ export default function Portfolio(){
           <Container margin={margin} padding="1em 0em 0em 0em" title='PORTFOLIO' >
            <div className={classes.proposals} style={{ height: tableHeight }}>
             <ListWrapper dense style={{ width }}>
-
               {
                 tokens && tokens.map((token, index) => {
                 return DisplayDetails(token, index)
