@@ -27,6 +27,10 @@ import ccLight from '../images/cc-light.png'
 import ccDark from '../images/cc-dark.png'
 import defiLight from '../images/defi-light.png'
 import defiDark from '../images/defi-dark.png'
+import defiDarkCircular from '../images/defi-dark-circular.png'
+import defiLightCircular from '../images/defi-light-circular.png'
+import ccDarkCircular from '../images/cc-dark-circular.png'
+import ccLightCircular from '../images/cc-light-circular.png'
 
 import { isNative } from './functions'
 
@@ -143,16 +147,34 @@ export const initialProposalState = {
 
 export const categoryMetadata = {
   1: {
-    light: ccLight,
-    dark: ccDark
+    normal: {
+      light: ccLight,
+      dark: ccDark
+    },
+    circular: {
+      light: ccLightCircular,
+      dark: ccDarkCircular
+    }
   },
   2: {
-    light: defiLight,
-    dark: defiDark
+    normal: {
+      light: defiLight,
+      dark: defiDark
+    },
+    circular: {
+      light: defiDarkCircular,
+      dark: defiLightCircular
+    }
   },
   null: {
-    light: null,
-    dark: null
+    circular: {
+      light: null,
+      dark: null
+    },
+    normal: {
+      light: null,
+      dark: null
+    }
   }
 }
 

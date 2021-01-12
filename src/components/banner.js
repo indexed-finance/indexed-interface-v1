@@ -3,6 +3,8 @@ import React, { useContext, useState, useEffect, Fragment } from 'react'
 import { motion, useAnimation } from 'framer-motion'
 import { Link } from 'react-router-dom'
 
+import Delta from './utils/delta'
+
 import { getResolutionThresholds } from '../assets/constants/functions'
 import style from '../assets/css/components/banner'
 import getStyles from '../assets/css'
@@ -168,19 +170,15 @@ export default function Banner() {
         <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
           {messages.indexes.length >= 1 && (
             <Fragment>
-              {messages.indexes.map((value, i) => {
-                let color = value.delta > 0 ? '#00e79a': '#ff005a'
-                let symbol = value.delta > 0 ? '+' : ''
-
-                return(
-                  <Fragment key={i}>
-                    <Link to={`/index/${value.symbol}`} className={classes.href}>
-                      <motion.span>{value.symbol} ${value.price} <motion.span style={{ color }}>({symbol}{value.delta}%)</motion.span></motion.span>
-                    </Link>
-                    <motion.span>&nbsp;&nbsp;&nbsp;</motion.span>
-                  </Fragment>
+              {messages.indexes.map((value, i) => (
+                <Fragment key={i}>
+                  <Link to={`/index/${value.symbol}`} className={classes.href}>
+                    <motion.span>{value.symbol} ${value.price}<Delta value={value.delta}/></motion.span>
+                  </Link>
+                  <motion.span>&nbsp;&nbsp;&nbsp;</motion.span>
+                </Fragment>
                 )
-             })}
+             )}
            </Fragment>
           )}
         </motion.li>

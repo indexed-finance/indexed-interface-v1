@@ -28,7 +28,7 @@ export function useWeb3(): Web3Hook {
       dispatch({ type: 'MODAL', payload: INCORRECT_NETWORK });
       return false;
     }
-    dispatch({ type: 'WEB3', payload: { web3, account, network } });
+    await dispatch({ type: 'WEB3', payload: { web3, account, network } });
     return true;
   }
 
