@@ -6,7 +6,7 @@ import {
 const setStyle = (theme) => ({
   proposals: {
    backgroundColor: theme.palette.background.paper,
-   overflow: 'scroll'
+  //  overflow: 'scroll'
  },
  root: {
    width: '100%',
@@ -71,37 +71,37 @@ const setStyle = (theme) => ({
 
 const mapping = {
   [DESKTOP_SMALL]: {
-    wallet: 100,
+    wallet: 150,
     margin: '3em 3em',
     width: '100%',
     tableHeight: 375,
   },
   [DESKTOP_NORMAL]: {
-    wallet: 100,
+    wallet: 150,
     margin: '3em 3em',
     width: '100%',
     tableHeight: 375,
   },
   [DESKTOP_LARGE]: {
-    wallet: 100,
+    wallet: 150,
     margin: '3em 3em',
     width: '100%',
     tableHeight: 375,
   },
   [DESKTOP_WIDE]: {
-    wallet: 100,
+    wallet: 150,
     margin: '3em 3em',
     width: '100%',
     tableHeight: 'calc(35vh - 167.5px)'
   },
   [DESKTOP_HUGE]: {
-    wallet: 100,
+    wallet: 150,
     margin: '3em 3em',
     width: '100%',
     tableHeight: 'calc(35vh - 150px)'
   },
   [DESKTOP_MASSIVE]: {
-    wallet: 100,
+    wallet: 150,
     margin: '3em 3em',
     width: '100%',
     tableHeight: 'calc(20vh - 150px)'
