@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useContext } from "react"
+import React, { Fragment, useContext } from "react"
 
 import { styled } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
@@ -6,9 +6,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText'
-import ListItemAvatar from '@material-ui/core/ListItemAvatar'
-import { useHistory, Link } from "react-router-dom";
-import { BigNumber, formatBalance, toBN } from '@indexed-finance/indexed.js'
+import { Redirect } from 'react-router-dom'
 import { useTheme } from '@material-ui/core/styles'
 import Ndx from '../assets/constants/abi/Ndx.json'
 import StakingRewards from "../assets/constants/abi/IStakingRewards.json"
@@ -31,6 +29,8 @@ import style from '../assets/css/routes/portfolio'
 import getStyles from '../assets/css'
 import { useStakingState} from "../state/staking/context";
 import UniV2PairABI from '@uniswap/v2-periphery/build/IUniswapV2Pair.json';
+import { usePortfolioValue, useUserRewards } from "../hooks/useRewards";
+import { useWeb3 } from "../hooks/useWeb3";
 
 const ListWrapper = styled(List)({
   flex: '1 1 auto',
@@ -54,227 +54,15 @@ const SecondaryAction = styled(ListItemSecondaryAction)({
 const useStyles = getStyles(style)
 
 export default function Portfolio(){
-  const [ pools, setPools ] = useState([])
-  const [totalValue, setTotalValue] = useState(toBN(0))
-  const [totalRewards, setTotalRewards] = useState(toBN(0))
-  const [ndxbalance, setndxbalance] = useState('0')
-  const [univ2prices, setuniv2prices] = useState([])
-
-  const history = useHistory()
   const classes = useStyles()
   const theme = useTheme()
-  let reducerState = useStakingState();
+  const { loggedIn } = useWeb3();
 
   let { dispatch, state } = useContext(store)
-  const [poolarray, setpoolarray] = useState([])
 
-  useEffect(() => {
-    console.log('getting stakign state')
-    console.log(poolarray)
-    if (reducerState.pools && reducerState.pools.length !== 0 && poolarray.length === 0)
-    {
-      let temp_array = reducerState.pools
-
-
-      console.log('setting pool array')
-      console.log(temp_array)
-
-      setpoolarray(temp_array)
-    }
-
-  }, [reducerState])
-
-  useEffect(() => {
-
-    async function setinidices(indices)
-    {
-      if(state.request && state.account  && state.indexes !== {} && state.helper && state.helper.initialized[0] && state.helper.initialized[0].userPoolBalance){
-        for(let x = 0; x < indices.length; x++){
-          let pool = indices[x][1]
-          let lp = pool
-
-          console.log(state)
-
-          if (state.helper && state.helper.initialized)
-          {
-            for(let y = 0; y < state.helper.initialized.length; y++){
-              if (state.helper.initialized[y].pool.address === pool.address)
-              {
-                console.log('pushing')
-                pool.poolHelper.userPoolBalance = state.helper.initialized[y].userPoolBalance
-              }
-            }
-          }
-
-        console.log(pool)
-
-          availableAssets.push(pool)
-          availableAssets.push({
-            ...lp,
-            symbol: `UNIV2-ETH-${lp.symbol}`
-          })
-        }
-        setPools(availableAssets)
-      }
-
-    }
-
-    let availableAssets = []
-    let indicescalc = Object.entries(state.indexes)
-
-    setinidices(indicescalc)
-
-
-  }, [ state.request, state.indexes, state.account ])
-
-  useEffect(() => {
-    if(!state.load){
-      dispatch({
-        type: 'LOAD', payload: true
-      })
-    }
-  }, [])
-
-  // effect hook for calculating the  totals
-  useEffect(() => {
-
-    // helper for getting the univ2 prices
-    async function getETH(unipairaddress){
-      let { web3, account } = state
-      const quoteEthUSD = await getETHPrice();
-
-      if(web3.injected) {
-
-        const contract = toContract(web3.injected, UniV2PairABI.abi, unipairaddress)
-
-        try {
-          let supply = await contract.methods.totalSupply().call()
-          let supplybn = new toBN(supply).dividedBy(10 ** 18)
-
-          let reserves = await contract.methods.getReserves().call()
-          let reservebn = 0;
-
-          let token0 = await contract.methods.token0().call()
-          let token1 = await contract.methods.token1().call()
-
-          if (token0.toUpperCase() === WETH.toUpperCase())
-          {
-            reservebn = toBN(reserves.reserve0).dividedBy(10**18)
-          }
-          if (token1.toUpperCase() === WETH.toUpperCase())
-          {
-            reservebn = toBN(reserves.reserve1).dividedBy(10**18)
-          }
-
-          let univ2price = (reservebn * quoteEthUSD * 2) / supplybn;
-
-          console.log('calc the price')
-          console.log(unipairaddress)
-          console.log(quoteEthUSD)
-          console.log(univ2price)
-
-          return univ2price;
-        }
-        catch (e)
-        {
-          return 0
-        }
-      }
-
-      return 0;
-    }
-
-    // calculate the total values
-    async function calculateTotals()
-    {
-      let totalValueTemp = 0;
-      let totalRewardsTemp = new BigNumber(0);
-      let tempPrice = 0;
-      let tempUserBalance = new BigNumber(0);
-      let tempRewards = new BigNumber(0);
-      let temp_array = [];
-      let bigzero = new BigNumber(0);
-      let stakingbalancenumber = new BigNumber(0);
-
-      console.log('my stake')
-
-      if (state.account && poolarray && poolarray.length !== 0)
-      {
-        for(let x = 0; x < pools.length; x++){
-          let pool = pools[x]
-          tempPrice = pool && pool.price
-          tempUserBalance = pool.poolHelper && pool.poolHelper.userPoolBalance ? pool.poolHelper.userPoolBalance : bigzero
-
-          if (pool.symbol.includes('UNI'))
-          {
-            tempUserBalance = toBN(0)
-          }
-
-          console.log(poolarray)
-          console.log(pool.symbol)
-          for (let i = 0; i < poolarray.length; i++)
-          {
-            if (poolarray[i].pool.indexPool === pool.address)
-            {
-              // Get price of the uni vs pair for calculating total
-              if (pool.symbol.includes('UNI') && poolarray[i].pool.isWethPair)
-              {
-                tempPrice = await getETH(poolarray[i].pool.stakingToken)
-                let temp_price_obj = {symbol: pool.symbol, price: tempPrice}
-                temp_array.push(temp_price_obj)
-                tempUserBalance = poolarray[i].userBalanceStakingToken ? poolarray[i].userBalanceStakingToken : bigzero
-                tempRewards = poolarray[i].userEarnedRewards ? poolarray[i].userEarnedRewards : bigzero
-                stakingbalancenumber = poolarray[i].userBalanceRewards ? poolarray[i].userBalanceRewards : bigzero;
-              }
-              if (!pool.symbol.includes('UNI') && !poolarray[i].pool.isWethPair)
-              {
-                tempRewards = poolarray[i].userEarnedRewards ? poolarray[i].userEarnedRewards : bigzero
-                stakingbalancenumber = poolarray[i].userBalanceRewards ? poolarray[i].userBalanceRewards : bigzero;
-              }
-            }
-          }
-
-          console.log(tempPrice)
-          console.log(tempUserBalance)
-          console.log(stakingbalancenumber)
-          totalValueTemp += tempPrice * (tempUserBalance.plus(stakingbalancenumber))
-          console.log(tempRewards)
-          totalRewardsTemp = totalRewardsTemp.plus(tempRewards)
-        }
-
-        setTotalValue(totalValueTemp)
-        setTotalRewards(totalRewardsTemp)
-        setuniv2prices(temp_array)
-      }
-      else
-      {
-        setTotalValue(toBN(0))
-        setTotalRewards(toBN(0))
-        setndxbalance('0')
-        setuniv2prices([])
-      }
-    }
-
-    calculateTotals();
-
-  }, [state.account, pools, poolarray])
-
-  const getAccountMetadata = async() => {
-    let { web3, account } = state
-
-    if(web3.injected) {
-      let contract = toContract(web3.injected, Ndx.abi, NDX)
-      let balance = await contract.methods.balanceOf(account).call()
-      let amount = (parseFloat(balance)/Math.pow(10, 18))
-          .toLocaleString({ minimumFractionDigits: 2 })
-
-      setndxbalance(amount)
-    }
-  }
-
-  useEffect(() => {
-    getAccountMetadata()
-  }, [ state.web3.injected ])
+  const rewardsData = useUserRewards();
+  const { ndxBalance, earned, total } = rewardsData || {};
+  const { totalValue, tokens } = usePortfolioValue()
 
   async function callClaim(pool)
   {
@@ -307,149 +95,85 @@ export default function Portfolio(){
   let { margin, width, wallet, tableHeight } = style.getFormatting({ native: state.native })
   let mode = theme.palette.primary.main !== '#ffffff' ? 'light' : 'dark'
 
-  // insert claim button later on again
-  //<ButtonPrimary variant='outlined' margin={{ margin: 0, marginTop: -37.5 }}>
-  //  CLAIM
-  //</ButtonPrimary>
+  if (!loggedIn) {
+    return <Redirect to='/' />
+  }
 
-  function DisplayDetails(value, index)
-  {
-    let image = categoryMetadata[value.category].circular[mode]
-    let isLPToken = value.symbol.includes('UNI')
+  function DisplayDetails(token, index) {
+    const {
+      symbol,
+      balance,
+      staked,
+      value,
+      earned,
+      category,
+      stakingPoolAddress
+    } = token;
+    let image = categoryMetadata[category].circular[mode]
+    let isLPToken = symbol.includes('UNI')
     let lpImage = tokenMetadata['UNI'].image
     let { marginBottom, paddingTop } = {
       marginBottom: isLPToken ? 10 : 0,
       paddingtop: isLPToken ? 10 : 5
     }
 
-    // define the display variables
-
-    // get the pool balance from the poolhelper check for staking pool later
-    let bigzero = new BigNumber(0);
-    let userpoolbalance = value.poolHelper.userPoolBalance ? formatBalance(value.poolHelper.userPoolBalance, 18, 4) : '0.00';
-    let tokenprice = value.price;
-    let stakingpooladdress;
-    let univ2balance = new BigNumber(0);
-    let stakingbalancenumber = 0;
-
-    // set user balance to 0 initially for univ2 tokens
-    if (value.symbol.includes('UNI'))
-    {
-      userpoolbalance = '0.00';
-      tokenprice = 0;
-    }
-
-    let stakingbalance = '0.00';
-    let rewards = '0.00';
-
-    // look for the corresponding staking pool
-    for (let i = 0; i < poolarray.length; i++)
-    {
-      // check if we find a match of index pool and staking pool
-      if (poolarray[i].pool.indexPool === value.address)
-      {
-
-        // check the uni v2 pairing if available - otherwise we have the user balance of the original token from before
-        if (value.symbol.includes('UNI') && poolarray[i].pool.isWethPair)
-        {
-          userpoolbalance = poolarray[i].userBalanceStakingToken ? formatBalance(poolarray[i].userBalanceStakingToken, 18, 4) : '0.00';
-          univ2balance = poolarray[i].userBalanceStakingToken ? poolarray[i].userBalanceStakingToken : bigzero;
-
-          for (let j = 0; j < univ2prices.length; j++)
-          {
-            if (value.symbol === univ2prices[j].symbol)
-            {
-              tokenprice = univ2prices[j].price
-            }
-          }
-
-          rewards = poolarray[i].userEarnedRewards ? formatBalance(poolarray[i].userEarnedRewards, 18, 4) : '0.00';
-          stakingbalance = poolarray[i].userBalanceRewards ? formatBalance(poolarray[i].userBalanceRewards, 18, 4) : '0.00';
-          stakingbalancenumber = poolarray[i].userBalanceRewards ? poolarray[i].userBalanceRewards : bigzero;
-          stakingpooladdress = poolarray[i].pool.address;
-        }
-
-        // check the uni v2 pairing if available - otherwise we have the user balance of the original token from before
-        if (!value.symbol.includes('UNI') && !poolarray[i].pool.isWethPair)
-        {
-          stakingpooladdress = poolarray[i].pool.address;
-          rewards = poolarray[i].userEarnedRewards ? formatBalance(poolarray[i].userEarnedRewards, 18, 4) : '0.00';
-          stakingbalance = poolarray[i].userBalanceRewards ? formatBalance(poolarray[i].userBalanceRewards, 18, 4) : '0.00';
-          stakingbalancenumber = poolarray[i].userBalanceRewards ? poolarray[i].userBalanceRewards : bigzero;
-        }
-      }
-    }
-
-    let tokenvalue = (value.poolHelper.userPoolBalance && value.poolHelper.userPoolBalance.plus(stakingbalancenumber)) ? formatBalance(toBN((value.poolHelper.userPoolBalance.plus(stakingbalancenumber)) *(tokenprice)), 18, 4) : '0';
-
-    // calculate portion of total token of token balance
-    let pooltokenweight = 0;
-    if (value.poolHelper.userPoolBalance && totalValue > 0 && !value.symbol.includes('UNI'))
-    {
-      pooltokenweight = (value.poolHelper.userPoolBalance.plus(stakingbalancenumber)) * tokenprice / totalValue;
-    }
-    if (value.poolHelper.userPoolBalance && totalValue > 0 && value.symbol.includes('UNI'))
-    {
-      pooltokenweight = (univ2balance.plus(stakingbalancenumber)) * tokenprice / totalValue;
-      tokenvalue = formatBalance(toBN((univ2balance.plus(stakingbalancenumber)) *(tokenprice)), 18, 4);
-    }
-
     return (
-        <Item key={index + 1} button>
+        <Item key={index + 1}>
           <ListItemText className={classes.item} primary={<>
             <div className={classes.box}>
               <img src={image} className={classes.logo} style={{ marginBottom }} />
               {isLPToken && (
-                  <span style={{ marginLeft: -7.5 }}>
-                              <img src={lpImage} className={classes.logo} />
-                            </span>
+                <span style={{ marginLeft: -7.5 }}>
+                  <img src={lpImage} className={classes.logo} />
+                </span>
               )}
             </div>
             <div className={classes.symbol} style={{ paddingTop }}>
-              <label> {value.symbol} </label>
+              <label> {symbol} </label>
             </div>
           </>}
           />
           <ListItemText
               className={classes.holdings}
               primary={<span>
-                        BALANCE: {userpoolbalance}
-                      </span>}
+                BALANCE: {balance}
+              </span>}
               secondary={<span>
-                        STAKING: {stakingbalance}
-                      </span>}
+                STAKING: {staked}
+              </span>}
           />
           <ListItemText
-              className={classes.weight}
-              primary={<>
-                <LineProgress
-                    width={150} color='#00e79a'
-                    values={{
-                      value: pooltokenweight
-                    }}
-                />
-                <span className={classes.usd} >
-                          ${tokenvalue}
-                        </span>
-              </>}
+            className={classes.weight}
+            primary={<>
+              <LineProgress
+                width={150} color='#00e79a'
+                values={{
+                  value: value / totalValue
+                }}
+              />
+              <span className={classes.usd} >
+                ${value}
+              </span>
+            </>}
           />
 
           <ListItemText
-              primary={
-                <span style={{ float: 'left', width: '120px'}}>
-                          {rewards} NDX
-                        </span>
-              }
+            primary={
+              <span style={{ float: 'left', width: '120px'}}>
+                {earned} NDX
+              </span>
+            }
           />
           <SecondaryAction>
-            <ButtonPrimary  variant='outlined' margin={{ margin: 0 }} onClick={() => { callClaim(stakingpooladdress) }}>
-              CLAIM
-            </ButtonPrimary>
+            {
+              earned > 0 && <ButtonPrimary  variant='outlined' margin={{ margin: 0 }} onClick={() => { callClaim(stakingPoolAddress) }}>
+                CLAIM
+              </ButtonPrimary>
+            }
           </SecondaryAction>
         </Item>
     )
   }
-
 
   return (
     <Fragment>
@@ -459,19 +183,17 @@ export default function Portfolio(){
             <Canvas native={state.native}>
               <div className={classes.wallet} style={{ height: wallet }}>
                 <p> PORTFOLIO VALUE </p>
-                <h1> ${formatBalance(toBN(totalValue), 18, 4)}</h1>
+                <h1> ${totalValue} </h1>
               </div>
             </Canvas>
           </Grid>
           <Grid item xs={12} md={7} lg={7} xl={7}>
             <Canvas native={state.native}>
               <div className={classes.account} style={{ height: wallet }}>
-                <p> REWARDS </p>
-                <h1> {formatBalance(toBN(totalRewards), 18, 4)} NDX </h1>
-
-
-
-                <p> BALANCE: {ndxbalance} NDX </p>
+                <p> NDX </p>
+                <h1> TOTAL: { total } NDX </h1>
+                <p> BALANCE: {ndxBalance} NDX </p>
+                <p> EARNED: {earned} NDX </p>
               </div>
             </Canvas>
           </Grid>
@@ -480,10 +202,10 @@ export default function Portfolio(){
           <Container margin={margin} padding="1em 0em 0em 0em" title='PORTFOLIO' >
            <div className={classes.proposals} style={{ height: tableHeight }}>
             <ListWrapper dense style={{ width }}>
+
               {
-                state.account && pools && pools.map((value, index) => {
-                console.log('going in')
-                return DisplayDetails(value, index)
+                tokens && tokens.map((token, index) => {
+                return DisplayDetails(token, index)
               })}
             </ListWrapper>
            </div>
