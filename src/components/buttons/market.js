@@ -2,9 +2,11 @@ import React from 'react'
 
 import { styled, useTheme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
+import { Tooltip } from '@material-ui/core'
 
 export default function ButtonMarket(props){
   const theme = useTheme()
+  const { title, ...buttonProps } = props;
   let { primary, secondary } = theme.palette
 
   const Restyled = styled(Button)({
@@ -17,5 +19,12 @@ export default function ButtonMarket(props){
     },
   })
 
-  return <Restyled {...props} />
+  return (
+    title
+      ?
+      <Tooltip title={title}>
+        <Restyled {...buttonProps} />
+      </Tooltip>
+      : <Restyled {...buttonProps} />
+  )
 }
