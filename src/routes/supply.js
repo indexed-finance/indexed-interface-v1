@@ -27,6 +27,7 @@ import { store } from '../state'
 import { useStakingState } from '../state/staking/context';
 import EtherScanLink from '../components/buttons/etherscan-link';
 import Web3RequiredPrimaryButton from '../components/buttons/web3-required-primary';
+import { BigNumber } from 'ethers';
 const dateFormat = require("dateformat");
 
 const useStyles = getStyles(style)
@@ -73,9 +74,8 @@ export default function Supply() {
       let rewardsAddress = pool.pool.rewardsAddress
       let stakingToken = pool.pool.pool.stakingToken
       let contract = getERC20(web3.injected, stakingToken)
-      let value = toTokenAmount(input, 18)
-
-      await contract.methods.approve(rewardsAddress, toHex(value))
+      let value = BigNumber.from(2).pow(128).toHexString();
+      await contract.methods.approve(rewardsAddress, value)
       .send({ from: account })
       .on('transactionHash', (transactionHash) =>
         dispatch(TX_PENDING(transactionHash))
