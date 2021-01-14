@@ -7,7 +7,6 @@ import { useParams } from 'react-router-dom'
 import Grid from '@material-ui/core/Grid'
 
 import ButtonMarket from '../components/buttons/market'
-import Area from '../components/charts/area'
 import TradeTab from '../components/index/trade-tab'
 import Mint from '../components/index/mint-tab'
 import Burn from '../components/index/burn-tab'
@@ -110,9 +109,9 @@ export default function Index(){
           <div className={classes.nav}>
             <ButtonGroup disableElevation variant='outlined'>
               <ButtonMarket style={styles.trade} onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
-              <ButtonMarket style={styles.swap} onClick={() => changeExecution('swap')}> Swap </ButtonMarket>
               <ButtonMarket style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
               <ButtonMarket style={styles.burn} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
+              <ButtonMarket style={styles.swap} onClick={() => changeExecution('swap')}> Swap </ButtonMarket>
             </ButtonGroup>
           </div>
         </Grid>
@@ -167,10 +166,10 @@ export default function Index(){
           <Grid item>
             <header className={classes.selections}>
               <ButtonGroup disableElevation variant='outlined'>
-                <ButtonMarket style={styles.trade} onClick={() => changeExecution('trade')}> Buy/Sell </ButtonMarket>
-                <ButtonMarket style={styles.swap} onClick={() => changeExecution('swap')}> Swap </ButtonMarket>
-                <ButtonMarket style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
-                <ButtonMarket style={styles.burn} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
+                <ButtonMarket title={`Trade ${metadata.symbol} on Uniswap`} style={styles.trade} onClick={() => changeExecution('trade')}> Buy {metadata.symbol} </ButtonMarket>
+                <ButtonMarket title={`Provide liquidity to mint ${metadata.symbol}`} style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
+                <ButtonMarket title={`Burn ${metadata.symbol} to claim underlying assets`} style={styles.burn} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
+                <ButtonMarket title={`Swap the underlying tokens in the pool`} style={styles.swap} onClick={() => changeExecution('swap')}> Swap </ButtonMarket>
               </ButtonGroup>
             </header>
           </Grid>
