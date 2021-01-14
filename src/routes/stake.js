@@ -1,4 +1,4 @@
-import React, { Fragment, useContext } from 'react'
+import React, { Fragment, useContext, useMemo } from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import { Link } from  'react-router-dom'
@@ -63,6 +63,7 @@ export default function Stake() {
             <p>
               Stake index tokens or their associated Uniswap liquidity tokens to earn NDX, the governance token for Indexed Finance.
             </p>
+            <a href='https://ndxfi.medium.com/how-to-mint-and-stake-index-pool-tokens-5c21a08706ce' target='_blank' >Read More</a>
           </div>
         </Container>
       </Grid>
@@ -70,11 +71,20 @@ export default function Stake() {
         reducerState.pools.length > 0 &&
         reducerState.pools.map((pool) => {
           const { isReady, hasBegun, active, address, totalSupply, claimedRewards, rewardRate, periodStart, totalRewards } = pool.pool;
-          const meta = reducerState.metadata[address];
-          let supply = totalSupply.eq(0) ? toWei(1) : totalSupply
-          let rate = formatBalance(rewardRate.times(86400), 18, 0);
+          
           const displaySupply = parseFloat(formatBalance(totalSupply, 18, 4));
-          // const claimed = parseFloat(formatBalance(claimedRewards, 18, 4));
+          const meta = reducerState.metadata[address];
+          function getAPY() {
+            const tokenPrice = reducerState.stakingTokenPrices && reducerState.stakingTokenPrices[pool.stakingToken];
+            const ndxPrice = reducerState.ndxPrice;
+            if (!tokenPrice || !ndxPrice) return undefined;
+            const ndxMinedPerDay = parseFloat(formatBalance(pool.pool.rewardRate.times(86400), 18, 4));
+            const valueNdxPerYear = ndxMinedPerDay * 365 * ndxPrice;
+            const totalStakedValue = displaySupply * tokenPrice;
+            return ((valueNdxPerYear / totalStakedValue) * 100).toFixed(2);
+          }
+          const apy = getAPY()
+          let rate = formatBalance(rewardRate.times(86400), 18, 0);
 
           let total = parseFloat(formatBalance(totalRewards, 18, 4));
           let symbol = '', name = '', tokens = [];
@@ -87,10 +97,9 @@ export default function Stake() {
 
           let formattedName = name.replace(/Tokens/g, ' ')
           let { mainWidth, width, color, marginRight, showUni } = getPoolStyles(symbol)
-          let label = isReady ? 'STAKE' : 'INITIALIZE'
 
           if(showUni) {
-            let findExisting = tokens.find(i => i == 'UNI')
+            let findExisting = tokens.find(i => i === 'UNI')
 
             if(findExisting) {
               tokens[tokens.indexOf(findExisting)] = tokens[0]
@@ -120,7 +129,10 @@ export default function Stake() {
               return <h5>BEGINS IN <Countdown data={periodStart * 1000} /></h5>
             }
             if (active) {
-              return <h5>STAKED: {displaySupply.toLocaleString()} {state.native ? '' : symbol}</h5>
+              return <div className={classes.status}>
+                <h5>STAKED: {displaySupply.toLocaleString()} {state.native ? '' : symbol}</h5>
+                <h5 style={{ color: '#00e79a' }}>APY: {apy}%</h5>
+              </div>
             }
             if (hasBegun) {
               return <h5>STAKING FINISHED</h5>
@@ -144,7 +156,6 @@ export default function Stake() {
             if (hasBegun) {
               return <ul className={classes.list}>
                 <li> RATE: {rate.toLocaleString()} NDX/DAY </li>
-                {/* <li> CLAIMED: {claimed.toLocaleString()} NDX </li> */}
                 <li> TOTAL: {total.toLocaleString()} NDX </li>
               </ul>
             }

@@ -1,9 +1,15 @@
 import { formatBalance, getStakingHelpers, PoolHelper, StakingPoolHelper } from '@indexed-finance/indexed.js'
-import { useContext, useEffect, useReducer, useState } from 'react';
+import { useContext, useEffect, useMemo, useReducer, useState } from 'react';
 import { AddPools, SetMetadata, StakingAction } from './actions';
 import { store } from '../index'
 
 import { StakingState, stakingInitialState, stakingReducer, StakingPoolMetadata } from './reducer';
+import { useEtherPrice } from '../../hooks/useRewards';
+import { useUniswapPairsWithLoadingIndicator } from '../../hooks/useUniswapPairs';
+import { computeUniswapPairAddress } from '@indexed-finance/indexed.js/dist/utils/address';
+import { NDX, WETH } from '../../assets/constants/addresses';
+
+const WETH_NDX_PAIR = computeUniswapPairAddress(WETH, NDX);
 
 interface StakingPoolHook {
   pool?: StakingPoolHelper;
@@ -32,6 +38,9 @@ export function useStakingPool(state: StakingState, indexOrSymbol: number | stri
 }
 
 export interface StakingContextType {
+  ndxPrice: number | undefined;
+  ethPrice: number | undefined;
+  stakingTokenPrices: { [token: string]: number } | undefined;
   pools: StakingPoolHelper[];
   metadata: { [key: string]: StakingPoolMetadata };
   useStakingPool(indexOrSymbol: number | string): StakingPoolHook;
@@ -40,6 +49,25 @@ export interface StakingContextType {
 export function useStaking(): StakingContextType {
   const [state, dispatch] = useReducer(stakingReducer, stakingInitialState);
   const { state: globalState } = useContext(store);
+  const pairAddresses = useMemo(() => [
+    ...state.pools.filter(p => p.pool.isWethPair).map(p => p.stakingToken),
+    WETH_NDX_PAIR
+  ], [state.pools]);
+  const [pairsData, loadingPairs] = useUniswapPairsWithLoadingIndicator(pairAddresses);
+  const indexPoolHelpers: PoolHelper[] | undefined = useMemo(
+    () => globalState.helper && globalState.helper.initialized,
+    [globalState.helper, globalState.didLoadHelper]
+  );
+
+  const ethPrice = useEtherPrice();
+  const ndxPrice = useMemo(() => {
+    if (loadingPairs || !ethPrice || !pairsData || !pairsData[WETH_NDX_PAIR]) return undefined;
+    const pair = pairsData[WETH_NDX_PAIR];
+    if (NDX.toLowerCase() === pair.token0.toLowerCase()) {
+      return pair.reserve1.div(pair.reserve0).toNumber() * ethPrice;
+    }
+    return pair.reserve0.div(pair.reserve1).toNumber() * ethPrice;
+  }, [pairsData, loadingPairs, ethPrice])
 
   useEffect(() => {
     const provider = globalState.web3[process.env.REACT_APP_ETH_NETWORK];
@@ -57,14 +85,12 @@ export function useStaking(): StakingContextType {
       for (let pool of state.pools) {
         if (pool.userAddress) return;
         pool.setUserAddress(account);
-        // await pool.waitForUpdate()
       }
     }
     setAccount();
   }, [ globalState.account, state.pools.length ])
 
   useEffect(() => {
-    const indexPoolHelpers: undefined | PoolHelper[] = globalState.didLoadHelper && globalState.helper.initialized;
     if (
       Object.keys(state.metadata).length ||
       !state.pools.length ||
@@ -75,7 +101,7 @@ export function useStaking(): StakingContextType {
       const actions: StakingAction[] = [];
       for (let pool of state.pools) {
         const { indexPool } = pool.pool;
-        const helper = indexPoolHelpers.find(h => h.address.toLowerCase() == indexPool.toLowerCase());
+        const helper = indexPoolHelpers.find(h => h.address.toLowerCase() === indexPool.toLowerCase());
         if (globalState.account && !pool.userAddress) {
           pool.setUserAddress(globalState.account)
         }
@@ -98,9 +124,42 @@ export function useStaking(): StakingContextType {
     setMetadata();
   }, [ globalState.didLoadHelper, state.pools.length ]);
 
+  const stakingTokenPrices: { [address: string]: number } = useMemo(
+    () => {
+      if (
+        !ethPrice || !indexPoolHelpers || !state.pools ||
+        !state.pools.length || !indexPoolHelpers.length || loadingPairs ||
+        !pairsData || Object.keys(pairsData).length === 0
+      ) {
+        return undefined;
+      }
+      return state.pools.reduce((obj, pool) => {
+        let price: number;
+        if (pool.pool.isWethPair) {
+          const pair = pairsData[pool.stakingToken];
+          if (!pair) return { ...obj, [pool.stakingToken]: 0 };
+          if (pair.token0.toLowerCase() === WETH.toLowerCase()) {
+            price = pair.reserve0.times(2).div(pair.totalSupply).toNumber() * ethPrice;
+          } else {
+            price = pair.reserve1.times(2).div(pair.totalSupply).toNumber() * ethPrice;
+          }
+        } else {
+          const { indexPool } = pool.pool;
+          const helper = indexPoolHelpers.find(h => h.address.toLowerCase() === indexPool.toLowerCase());
+          ({ price } = globalState.indexes[helper.symbol]);
+        }
+        return {...obj, [pool.stakingToken]: price }
+      }, {})
+    },
+    [loadingPairs, state.pools, indexPoolHelpers, globalState.indexes, pairsData, ethPrice]
+  );
+
   return {
     pools: state.pools,
     metadata: state.metadata,
-    useStakingPool: (indexOrSymbol: string | number) => useStakingPool(state, indexOrSymbol)
+    useStakingPool: (indexOrSymbol: string | number) => useStakingPool(state, indexOrSymbol),
+    ndxPrice,
+    ethPrice,
+    stakingTokenPrices
   }
 }

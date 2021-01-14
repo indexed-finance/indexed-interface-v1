@@ -23,9 +23,12 @@ const setStyle = (theme) => ({
       marginBottom: 0,
       paddingRight: 0
     },
-    '& h5': {
-      marginTop: 10
-    }
+  },
+  status: {
+    width: '60%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   list: {
     float: 'left',

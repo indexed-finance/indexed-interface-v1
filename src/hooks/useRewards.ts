@@ -86,17 +86,13 @@ export function useEtherPrice(): number | undefined {
 }
 
 export function usePortfolioValue(): UserPortfolioData {
-  const { account } = useWeb3();
   const { state } = useContext(store);
-  const { pools: stakingPools } = useStakingState();
-  const pairAddresses = useMemo(() => stakingPools.filter(p => p.pool.isWethPair).map(p => p.stakingToken), [stakingPools]);
-  const ethPrice = useEtherPrice();
-  const [pairsData, loadingPairs] = useUniswapPairsWithLoadingIndicator(pairAddresses);
+  const { pools: stakingPools, stakingTokenPrices } = useStakingState();
 
   const pools: PoolHelper[] | undefined = useMemo(() => state.helper && state.helper.initialized, [state]);
 
   return useMemo(() => {
-    if (!pools || !stakingPools || !pools.length || !stakingPools.length || loadingPairs || !ethPrice) {
+    if (!pools || !stakingPools || !pools.length || !stakingPools.length || !stakingTokenPrices) {
       return {
         totalValue: 0,
         tokens: []
@@ -106,17 +102,7 @@ export function usePortfolioValue(): UserPortfolioData {
     let tokens: PortfolioToken[] = [];
     stakingPools.forEach((stakingPool) => {
       const pool = pools.find(p => p.address.toLowerCase() === stakingPool.pool.indexPool.toLowerCase());
-      let price: number;
-      if (stakingPool.pool.isWethPair) {
-        const pair = pairsData[stakingPool.stakingToken];
-        if (pair.token0.toLowerCase() === WETH.toLowerCase()) {
-          price = pair.reserve0.times(2).div(pair.totalSupply).toNumber() * ethPrice;
-        } else {
-          price = pair.reserve1.times(2).div(pair.totalSupply).toNumber() * ethPrice;
-        }
-      } else {
-        ({ price } = state.indexes[pool.symbol]);
-      }
+      const price = stakingTokenPrices[stakingPool.stakingToken]
 
       const balanceExact = stakingPool.userBalanceStakingToken || toBN(0);
       const balance = parseFloat(formatBalance(balanceExact, 18, 3));
@@ -143,5 +129,5 @@ export function usePortfolioValue(): UserPortfolioData {
       totalValue: parseFloat(totalValue.toFixed(2)),
       tokens
     }
-  }, [stakingPools, pools, pairsData, account, loadingPairs, ethPrice, state])
+  }, [stakingPools, pools, stakingTokenPrices])
 }
