@@ -18,6 +18,7 @@ import { DISCLAIMER } from './assets/constants/parameters'
 import { getCategoryMetadata, getProposals } from './api/gql'
 import { store } from './state'
 
+import './i18n'
 import './assets/css/root.css'
 
 const Governance = lazy(() => import('./routes/governance'))
@@ -358,10 +359,12 @@ function Application(){
 }
 
 ReactDOM.render(
-  <StateProvider>
-    <StakingContextProvider>
-      <Application />
-    </StakingContextProvider>
-  </StateProvider>,
+  <Suspense fallback={null}>
+    <StateProvider>
+      <StakingContextProvider>
+        <Application />
+      </StakingContextProvider>
+    </StateProvider>
+  </Suspense>,
   document.getElementById('root')
 )
