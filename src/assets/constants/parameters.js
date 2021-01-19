@@ -566,4 +566,4 @@ export const UNCLAIMED_CREDITS = (f) => ({
   actions: [{ label: 'CONFIRM', f: f }, { label: 'REJECT', f: null }]
 })
 export const INCORRECT_NETWORK = { show: true, title: 'INCORRECT NETWORK', message: `The current network is not supported, please change to your provider's network to ${envNetwork}.`, actions: [ ] }
-export const DISCLAIMER = { show: true, title: 'DISCLAIMER', message: <>This is experimental software in the beta stage of it's development. Use it at your own risk.</>, actions: [ ] }
+export const DISCLAIMER = { show: true, title: 'DISCLAIMER', message: <>This project is in beta. Use it at your own risk, and do not put in more than you are prepared to lose.</>, actions: [ ] }
