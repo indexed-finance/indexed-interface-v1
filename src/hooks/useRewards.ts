@@ -31,21 +31,26 @@ export function useUserBalance(token: string): BigNumber | undefined {
 
 interface UserRewards {
   ndxBalance: number;
+  ndxPrice: number;
+  ndxValue: number;
   earned: number;
   total: number;
 }
 
 export function useUserRewards(): UserRewards | undefined {
   const { loggedIn } = useWeb3();
-  const { pools } = useStakingState();
+  const { pools, ndxPrice } = useStakingState();
   const balanceExact = useUserBalance(NDX);
   return useMemo(() => {
-    if (!loggedIn || !pools.length || !balanceExact) return undefined;
+    if (!loggedIn || !pools.length || !balanceExact || !ndxPrice) return undefined;
     const earnedExact = pools.reduce((t, p) => t.plus(p.userEarnedRewards || toBN(0)), toBN(0));
     const ndxBalance = parseFloat(formatBalance(balanceExact, 18, 3));
     const earned = parseFloat(formatBalance(earnedExact, 18, 3));
+    const ndxValue = ndxPrice ? ndxPrice * ndxBalance : 0;
     return {
       ndxBalance,
+      ndxPrice,
+      ndxValue: parseFloat(ndxValue.toFixed(2)),
       earned,
       total: parseFloat((ndxBalance + earned).toFixed(2))
     }
