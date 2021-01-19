@@ -53,7 +53,7 @@ export default function Portfolio(){
   let { dispatch, state } = useContext(store)
 
   const rewardsData = useUserRewards();
-  const { ndxBalance, earned, total } = rewardsData || {};
+  const { ndxBalance, earned, total, ndxValue } = rewardsData || {};
   const { totalValue, tokens } = usePortfolioValue()
 
   async function callClaim(pool)
@@ -175,7 +175,7 @@ export default function Portfolio(){
             <Canvas native={state.native}>
               <div className={classes.wallet} style={{ height: wallet }}>
                 <p> PORTFOLIO VALUE </p>
-                <h1> ${totalValue} </h1>
+                <h1> ${(totalValue || 0) + (ndxValue || 0)} </h1>
               </div>
             </Canvas>
           </Grid>
@@ -183,7 +183,7 @@ export default function Portfolio(){
             <Canvas native={state.native}>
               <div className={classes.account} style={{ height: wallet }}>
                 <p> NDX </p>
-                <h1> TOTAL: { total } NDX </h1>
+                <h2> TOTAL: { total } NDX (${ndxValue}) </h2>
                 <p> BALANCE: {ndxBalance} NDX </p>
                 <p> EARNED: {earned} NDX </p>
               </div>
