@@ -9,6 +9,7 @@ import { getResolutionThresholds } from '../assets/constants/functions'
 import style from '../assets/css/components/banner'
 import getStyles from '../assets/css'
 import { store } from '../state'
+import { useTranslation } from 'react-i18next'
 
 const useStyles = getStyles(style)
 
@@ -24,6 +25,7 @@ export default function Banner() {
   const [ timer, setTimer ] = useState(null)
   const controls = useAnimation()
   const classes = useStyles()
+  const { t } = useTranslation()
 
   let { state } = useContext(store)
   let { indexes, stats, native } = state
@@ -134,7 +136,7 @@ export default function Banner() {
           <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
             <Link to={`/proposal/${messages.proposal.id}`} className={classes.href}>
               <motion.span><motion.span style={{ color: '#645eff' }}>
-                PROPOSAL {messages.proposal.id}</motion.span>: {messages.proposal.title.toUpperCase()}
+                {t('proposal')} {messages.proposal.id}</motion.span>: {messages.proposal.title.toUpperCase()}
               </motion.span>
             </Link>
           </motion.li>
@@ -146,7 +148,7 @@ export default function Banner() {
                 return(
                   <Link key={i} to={`/pool/${value.address}`} className={classes.href}>
                     <motion.span>
-                      NEW FUND: <motion.span style={{ color: 'orange'}}>{value.symbol}</motion.span>
+                      {t('newFund')}: <motion.span style={{ color: 'orange'}}>{value.symbol}</motion.span>
                     </motion.span>
                   </Link>
                 )
@@ -155,7 +157,7 @@ export default function Banner() {
           )}
           {messages.init.length > 1 && (
             <Fragment>
-              <span style={{ color: 'orange'}}>NEW FUNDS:</span>
+              <span style={{ color: 'orange'}}>{t('newFunds')}:</span>
               {messages.init.map((value, i) => (
                 <Fragment key={i}>&nbsp;
                   <Link to={`/pool/${value.address}`} className={classes.href} >
@@ -183,9 +185,9 @@ export default function Banner() {
           )}
         </motion.li>
         <motion.li>
-          <motion.span>TOTAL VALUE LOCKED: ${parseFloat(stats.totalLocked).toLocaleString()} </motion.span>
+          <motion.span>{t('totalValueLocked')}: ${parseFloat(stats.totalLocked).toLocaleString()} </motion.span>
           <motion.span>&nbsp;&nbsp;&nbsp;</motion.span>
-          <motion.span>24H VOLUME: ${parseFloat(stats.dailyVolume).toLocaleString()} </motion.span>
+          <motion.span>{t('dayVolume')}: ${parseFloat(stats.dailyVolume).toLocaleString()} </motion.span>
         </motion.li>
       </motion.ul>
      </motion.div>

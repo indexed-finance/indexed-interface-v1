@@ -4,6 +4,8 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import { styled, useTheme, makeStyles } from '@material-ui/core/styles'
 
+import { useTranslation } from 'react-i18next'
+
 const useStyles = makeStyles(theme => ({
   root: {
     border: '3px solid #666666',
@@ -24,11 +26,12 @@ const useStyles = makeStyles(theme => ({
 export default function Container({ padding, children, margin, title }){
   let marginLeft = padding == '1em 0em' ? 25 : 0
   const classes = useStyles()
+  const { t } = useTranslation()
 
   return(
     <Paper className={classes.root} style={{ marginLeft, padding, margin }}>
       <header>
-        <Typography variant='h5'> {title} </Typography>
+        <Typography variant='h5'> {t('indexPool', {msg:title})} </Typography>
       </header>
       {children}
     </Paper>
