@@ -18,6 +18,8 @@ import { DISCLAIMER } from './assets/constants/parameters'
 import { getCategoryMetadata, getProposals } from './api/gql'
 import { store } from './state'
 
+import { PoolsUpdater } from './state/PoolsUpdater'
+
 import './assets/css/root.css'
 
 const Governance = lazy(() => import('./routes/governance'))
@@ -309,6 +311,7 @@ function Application(){
         <Navigation mode={mode}/>
           <Main>
             <Suspense fallback={<Loader />}>
+              <PoolsUpdater />
               <Switch>
                 <Route path='/proposal/:id'>
                   <Proposal />
