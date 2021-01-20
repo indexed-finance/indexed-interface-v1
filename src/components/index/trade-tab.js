@@ -25,11 +25,7 @@ const routerABI = require('../../assets/constants/abi/UniswapV2Router.json')
 const useStyles = getStyles(style);
 
 function SwitchButton({ switchTokens, loading }) {
-  function doSwitch() {
-    switchTokens();
-  }
-
-  return <IconButton disabled={loading} onClick={doSwitch}> <Swap /> </IconButton>;
+  return <IconButton disabled={loading} onClick={switchTokens}> <Swap /> </IconButton>;
 }
 
 export default function TradeTab({ metadata }) {
