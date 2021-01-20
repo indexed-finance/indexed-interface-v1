@@ -41,6 +41,7 @@ export type TradeState = {
   pairAddress?: string;
   price: BigNumber;
   side: 'input' | 'output';
+  loading: boolean
 };
 
 const initialState: TradeState = {
@@ -51,18 +52,19 @@ const initialState: TradeState = {
     decimals: 18,
     amount: BN_ZERO,
     displayAmount: '0',
-    isPoolToken: true
+    isPoolToken: true,
   },
   output: {
     address: '',
     decimals: 18,
     amount: BN_ZERO,
     displayAmount: '0',
-    isPoolToken: false
+    isPoolToken: false,
   },
   ready: false,
   price: BN_ZERO,
-  side: 'input'
+  side: 'input',
+  loading: false,
 };
 
 const compareAddresses = (a: string, b: string): boolean => {
@@ -131,7 +133,8 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
       case 'SET_INPUT_TOKEN': { setInput(action); break; }
       case 'SET_OUTPUT_TOKEN': { setOutput(action); break; }
       case 'SET_UNISWAP_HELPER': { setHelper(action); break; }
-      case 'SET_PRICE': { newState.price = action.price; break; }
+      case 'SET_PRICE': { newState.price = action.price; newState.loading = false; break; }
+      case 'SET_PRICE_LOADING': { newState.loading = true; break;}
       case 'SET_SIDE': { newState.side = action.side; break; }
     }
   }
@@ -272,6 +275,7 @@ export type TradeContextType = {
   feeString: string;
   usdRate: number;
   isWethPair: boolean;
+  loading: boolean;
 }
 
 export function useTrade(): TradeContextType {
@@ -314,6 +318,7 @@ export function useTrade(): TradeContextType {
     priceString: price || '',
     feeString: fee || '',
     usdRate: rate || 0,
-    isWethPair: isEth
+    isWethPair: isEth,
+    loading: tradeState.loading
   };
 }

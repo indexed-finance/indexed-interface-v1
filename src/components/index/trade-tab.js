@@ -24,17 +24,12 @@ const routerABI = require('../../assets/constants/abi/UniswapV2Router.json')
 
 const useStyles = getStyles(style);
 
-function SwitchButton({ switchTokens }) {
-  const [ disabled, setDisabled ] = useState(false);
-  const { startTimer } = useTimeout(() => setDisabled(false));
-
+function SwitchButton({ switchTokens, loading }) {
   function doSwitch() {
-    setDisabled(true);
     switchTokens();
-    startTimer(2000);
   }
 
-  return <IconButton disabled={disabled} onClick={doSwitch}> <Swap /> </IconButton>;
+  return <IconButton disabled={loading} onClick={doSwitch}> <Swap /> </IconButton>;
 }
 
 export default function TradeTab({ metadata }) {
@@ -189,8 +184,8 @@ export default function TradeTab({ metadata }) {
       <Grid item xs={12} md={12} lg={12} xl={12} key='1'>
         {
           tradeState.helper && <div className={classes.swap}>
-            <p>{priceString}</p>
-            <SwitchButton switchTokens={switchTokens} />
+            <p>{!tradeState.loading && priceString}</p>
+            <SwitchButton switchTokens={switchTokens} loading={tradeState.loading} />
             <p style={{ color: exceedsTrueUSDValue ? '#f44336' : '#00e79a' }}>
               1 {metadata.symbol} = ${parseFloat((usdPricePerToken).toFixed(2)).toLocaleString()}
               &nbsp;{exceedsTrueUSDValue ? <SlippgeExceedsTrueValue isWethPair={isWethPair} /> : <></> }

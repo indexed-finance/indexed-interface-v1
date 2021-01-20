@@ -119,6 +119,9 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
       const input = { ...state.input };
       const output = { ...state.output };
       if (state.side === 'input') {
+        dispatch([
+          {type: 'SET_PRICE_LOADING'}
+        ])
         const outputAmount = await state.helper.getAmountOut(input.address, output.address, input.amount);
         output.amount = outputAmount.amount.times(0.99);
         output.displayAmount = formatBalance(output.amount, output.decimals, 4);
@@ -171,8 +174,8 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
       output.amount = toTokenAmount(action.amount, output.decimals);
 
       dispatch([
+        { type: 'SET_SIDE', side: 'output' },
         { type: 'SET_OUTPUT_TOKEN', token: output },
-        { type: 'SET_SIDE', side: 'output' }
       ]);
     }
 
@@ -216,7 +219,6 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
       dispatch([
         { type: 'SET_INPUT_TOKEN', token: input },
         { type: 'SET_OUTPUT_TOKEN', token: output },
-        { type: 'SET_PRICE', price }
       ]);
     }
 

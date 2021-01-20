@@ -6,6 +6,7 @@ export type SetInputToken = { type: 'SET_INPUT_TOKEN', token: TradeToken };
 export type SetOutputToken = { type: 'SET_OUTPUT_TOKEN', token: TradeToken };
 export type SetUniswapHelper = { type: 'SET_UNISWAP_HELPER', helper: UniswapHelper };
 export type SetPrice = { type: 'SET_PRICE', price: BigNumber };
+export type SetPriceLoading = { type: 'SET_PRICE_LOADING' };
 export type SetSpecifiedSide = { type: 'SET_SIDE', side: 'input' | 'output' };
 
 // Middleware only
@@ -17,6 +18,6 @@ export type SetOutputAmount = { type: 'SET_OUTPUT_AMOUNT', amount: string };
 export type UpdatePrice = { type: 'UPDATE_PRICE' };
 export type SelectWhitelistToken = { type: 'SELECT_WHITELIST_TOKEN', index: number };
 
-export type TradeDispatchAction = SetInputToken | SetOutputToken | SetUniswapHelper | SetPrice | SetSpecifiedSide;
+export type TradeDispatchAction = SetInputToken | SetOutputToken | SetUniswapHelper | SetPrice | SetSpecifiedSide | SetPriceLoading;
 export type TradeMiddlewareAction = UpdateBalances | SwitchTokens | SetInputAmount | SetOutputAmount | SetUniswapHelper | SetInputExact | SelectWhitelistToken | UpdatePrice;
 export type TradeDispatch = (actions: TradeDispatchAction | TradeDispatchAction[]) => void;
