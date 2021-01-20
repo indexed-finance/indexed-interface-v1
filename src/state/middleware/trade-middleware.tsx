@@ -104,7 +104,7 @@ const BN_ZERO = toBN(0);
 function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
   return (action: TradeMiddlewareAction | TradeDispatchAction): Promise<void> => {
 
-    async function setInput(amount: BigNumber, displayAmount: string): Promise<void> {
+    function setInput(amount: BigNumber, displayAmount: string): void {
       const input = { ...state.input };
       input.amount = amount;
       input.displayAmount = displayAmount;

@@ -232,7 +232,10 @@ export function useTradeTokenActions(
 
   let debouncedAmount = useDebounce(displayAmount, 500);
   useEffect(() => {
-    dispatch({ type: 'UPDATE_PRICE' })
+    function actionDispatch() {
+      dispatch({ type: 'UPDATE_PRICE' })
+    }
+    actionDispatch();
   }, [debouncedAmount])
 
   let bindInput = {
