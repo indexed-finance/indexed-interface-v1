@@ -1,6 +1,8 @@
 import { BigNumber, toWei, formatBalance } from "@indexed-finance/indexed.js";
 import { UniswapHelper, toBN } from '@indexed-finance/indexed.js';
 import { useEffect, useReducer } from "react";
+import logger from 'use-reducer-logger';
+
 import { TradeMiddlewareAction, TradeDispatchAction, SetInputToken, SetOutputToken, SetUniswapHelper } from "../actions/trade-actions";
 import { withTradeMiddleware } from "../middleware/trade-middleware";
 import useDebounce from "../../hooks/useDebounce";
@@ -273,7 +275,7 @@ export type TradeContextType = {
 }
 
 export function useTrade(): TradeContextType {
-  const [tradeState, tradeDispatch] = useReducer(tradeReducer, initialState);
+  const [tradeState, tradeDispatch] = useReducer(logger(tradeReducer), initialState);
   const dispatch = withTradeMiddleware(tradeState, tradeDispatch);
   const selectWhitelistToken = (index: number) => dispatch({ type: 'SELECT_WHITELIST_TOKEN', index });
   const updatePool = (clearInputs?: boolean) => dispatch({ type: 'UPDATE_POOL', clearInputs });
