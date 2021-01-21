@@ -180,7 +180,7 @@ export default function TradeTab({ metadata }) {
       <Grid item xs={12} md={12} lg={12} xl={12} key='1'>
         {
           tradeState.helper && <div className={classes.swap}>
-            <p>{!tradeState.loading && priceString}</p>
+            <p>{ priceString }</p>
             <SwitchButton switchTokens={switchTokens} loading={tradeState.loading} />
             <p style={{ color: exceedsTrueUSDValue ? '#f44336' : '#00e79a' }}>
               1 {metadata.symbol} = ${parseFloat((usdPricePerToken).toFixed(2)).toLocaleString()}

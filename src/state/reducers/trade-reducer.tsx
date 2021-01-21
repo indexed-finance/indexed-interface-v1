@@ -37,6 +37,7 @@ export type TradeState = {
   ethBalance: BigNumber;
   getBalance?: (address: string) => BigNumber;
   getAllowanceForPair?: (address: string) => BigNumber;
+  relatedInputUpdated: string;
   ready: boolean;
   pairAddress?: string;
   price: BigNumber;
@@ -61,6 +62,7 @@ const initialState: TradeState = {
     displayAmount: '0',
     isPoolToken: false,
   },
+  relatedInputUpdated: null,  //  When Input A updated, Input B should be updated as well. updatePrice will be called when related input is updated
   ready: false,
   price: BN_ZERO,
   side: 'input',
@@ -135,6 +137,8 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
       case 'SET_UNISWAP_HELPER': { setHelper(action); break; }
       case 'SET_PRICE': { newState.price = action.price; newState.loading = false; break; }
       case 'SET_PRICE_LOADING': { newState.loading = true; break;}
+      case 'SET_PRICE_LOADING_SUCCESS': { newState.loading = false; break}
+      case 'SET_RELATED_INPUT_UPDATED': { newState.relatedInputUpdated = action.payload; break}
       case 'SET_SIDE': { newState.side = action.side; break; }
     }
   }
@@ -232,9 +236,10 @@ export function useTradeTokenActions(
 
   let debouncedAmount = useDebounce(displayAmount, 500);
   useEffect(() => {
-    function actionDispatch() {
-      dispatch({ type: 'UPDATE_PRICE' })
+    async function actionDispatch() {
+      await dispatch({ type: 'UPDATE_PRICE' })
     }
+    console.log('displayAmount', displayAmount)
     actionDispatch();
   }, [debouncedAmount])
 

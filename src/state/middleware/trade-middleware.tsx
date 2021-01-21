@@ -102,7 +102,7 @@ export const tradeMiddleware = (state: TradeState) => (next: TradeDispatch) => t
 const BN_ZERO = toBN(0);
 
 function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
-  return (action: TradeMiddlewareAction | TradeDispatchAction): Promise<void> => {
+  return (action: TradeMiddlewareAction | TradeDispatchAction): any => {
 
     function setInput(amount: BigNumber, displayAmount: string): void {
       const input = { ...state.input };
@@ -118,53 +118,64 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
     async function updatePrice(): Promise<void> {
       const input = { ...state.input };
       const output = { ...state.output };
+      console.log('updatePrice', state.side)
       if (state.side === 'input') {
-        dispatch([
-          {type: 'SET_PRICE_LOADING'}
-        ])
-        const outputAmount = await state.helper.getAmountOut(input.address, output.address, input.amount);
-        output.amount = outputAmount.amount.times(0.99);
-        output.displayAmount = formatBalance(output.amount, output.decimals, 4);
-
-        let perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
-        let perciseInput = input.amount.div(toBN(10).pow(input.decimals));
-        let price = perciseOutput.div(perciseInput);
-        let notANumber = isNaN(parseFloat(formatBalance(price, 1, 4)));
-
-        if(notANumber || input.amount.eq(0) || output.amount.eq(0)){
-          const oneToken = toBN(10).pow(input.decimals);
-          const standardRate = await state.helper.getAmountOut(input.address, output.address, oneToken);
-
-          perciseOutput = toBN(standardRate.amount).div(toBN(10).pow(output.decimals));
-          price = perciseOutput.div(toBN(1));
+        if (state.relatedInputUpdated === 'input') {
+          dispatch({type: 'SET_RELATED_INPUT_UPDATED', payload: null})
+        } else {
+          await dispatch({type: 'SET_PRICE_LOADING'})
+          const outputAmount = await state.helper.getAmountOut(input.address, output.address, input.amount);
+          output.amount = outputAmount.amount.times(0.99);
+          output.displayAmount = formatBalance(output.amount, output.decimals, 4);
+  
+          let perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
+          let perciseInput = input.amount.div(toBN(10).pow(input.decimals));
+          let price = perciseOutput.div(perciseInput);
+          let notANumber = isNaN(parseFloat(formatBalance(price, 1, 4)));
+  
+          if(notANumber || input.amount.eq(0) || output.amount.eq(0)){
+            const oneToken = toBN(10).pow(input.decimals);
+            const standardRate = await state.helper.getAmountOut(input.address, output.address, oneToken);
+  
+            perciseOutput = toBN(standardRate.amount).div(toBN(10).pow(output.decimals));
+            price = perciseOutput.div(toBN(1));
+          }
+          dispatch([
+            { type: 'SET_PRICE', price },
+            { type: 'SET_OUTPUT_TOKEN', token: output },
+            { type: 'SET_RELATED_INPUT_UPDATED', payload: 'input' }
+          ])
         }
-        dispatch([
-          { type: 'SET_OUTPUT_TOKEN', token: output },
-          { type: 'SET_PRICE', price }
-        ])
       } else {
-        const inputAmount = await state.helper.getAmountIn(input.address, output.address, output.amount);
-
-        input.amount = inputAmount.amount.lte(0) ? BN_ZERO : inputAmount.amount.times(1.01);
-        input.displayAmount = inputAmount.amount.lte(0) ? '0.00' : formatBalance(input.amount, input.decimals, 4);
+        console.log('state.relatedInputUpdated', state.relatedInputUpdated)
+        if (state.relatedInputUpdated === 'output') {
+          dispatch({type: 'SET_RELATED_INPUT_UPDATED', payload: null})
+        } else {
+          await dispatch({type: 'SET_PRICE_LOADING'})
+          const inputAmount = await state.helper.getAmountIn(input.address, output.address, output.amount);
   
-        let perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
-        let perciseInput = input.amount.div(toBN(10).pow(input.decimals));
-        let price = perciseOutput.div(perciseInput);
-        let notANumber = isNaN(parseFloat(formatBalance(price, 1, 4)));
+          input.amount = inputAmount.amount.lte(0) ? BN_ZERO : inputAmount.amount.times(1.01);
+          input.displayAmount = inputAmount.amount.lte(0) ? '0.00' : formatBalance(input.amount, input.decimals, 4);
+    
+          let perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
+          let perciseInput = input.amount.div(toBN(10).pow(input.decimals));
+          let price = perciseOutput.div(perciseInput);
+          let notANumber = isNaN(parseFloat(formatBalance(price, 1, 4)));
+    
+          if(notANumber || input.amount.eq(0) || output.amount.eq(0)){
+            const oneToken = toBN(10).pow(input.decimals);
+            const standardRate = await state.helper.getAmountOut(input.address, output.address, oneToken);
+    
+            perciseOutput = toBN(standardRate.amount).div(toBN(10).pow(output.decimals));
+            price = perciseOutput.div(toBN(1));
+          }
   
-        if(notANumber || input.amount.eq(0) || output.amount.eq(0)){
-          const oneToken = toBN(10).pow(input.decimals);
-          const standardRate = await state.helper.getAmountOut(input.address, output.address, oneToken);
-  
-          perciseOutput = toBN(standardRate.amount).div(toBN(10).pow(output.decimals));
-          price = perciseOutput.div(toBN(1));
+          dispatch([
+            { type: 'SET_INPUT_TOKEN', token: input },
+            { type: 'SET_PRICE', price },
+            { type: 'SET_RELATED_INPUT_UPDATED', payload: 'output' }
+          ]);
         }
-
-        dispatch([
-          { type: 'SET_INPUT_TOKEN', token: input },
-          { type: 'SET_PRICE', price }
-        ]);
       }
     }
 
@@ -179,7 +190,7 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
       ]);
     }
 
-    async function setInputAmount(action: SetInputAmount): Promise<void> {
+    function setInputAmount(action: SetInputAmount): void {
       const { decimals } = state.input;
       const amount = toTokenAmount(action.amount, decimals);
       return setInput(amount, action.amount);
