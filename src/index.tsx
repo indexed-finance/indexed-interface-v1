@@ -31,7 +31,7 @@ const Pool = lazy(() => import('./routes/pool'))
 const Stake = lazy(() => import('./routes/stake'))
 const Supply = lazy(() => import('./routes/supply'))
 // const Root = lazy(() => import('./routes/root'))
-const Error404 = lazy(() => import('./routes/404'))
+const Error404 = lazy(() => import('./routes/404.tsx'))
 const Category = lazy(() => import('./routes/category'))
 
 const clearTimeDiscrepancies = date => {
