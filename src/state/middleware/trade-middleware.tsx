@@ -229,6 +229,7 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
       // output.isPoolToken = !output.isPoolToken;
       dispatch([
         { type: 'SET_INPUT_TOKEN', token: input },
+        { type: 'SET_PRICE_LOADING' },
         { type: 'SET_OUTPUT_TOKEN', token: output },
       ]);
     }
