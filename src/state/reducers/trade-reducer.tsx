@@ -239,7 +239,6 @@ export function useTradeTokenActions(
     async function actionDispatch() {
       await dispatch({ type: 'UPDATE_PRICE' })
     }
-    console.log('displayAmount', displayAmount)
     actionDispatch();
   }, [debouncedAmount])
 

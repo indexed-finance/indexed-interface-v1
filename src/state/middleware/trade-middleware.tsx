@@ -118,7 +118,6 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
     async function updatePrice(): Promise<void> {
       const input = { ...state.input };
       const output = { ...state.output };
-      console.log('updatePrice', state.side)
       if (state.side === 'input') {
         if (state.relatedInputUpdated === 'input') {
           dispatch({type: 'SET_RELATED_INPUT_UPDATED', payload: null})
@@ -147,7 +146,6 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
           ])
         }
       } else {
-        console.log('state.relatedInputUpdated', state.relatedInputUpdated)
         if (state.relatedInputUpdated === 'output') {
           dispatch({type: 'SET_RELATED_INPUT_UPDATED', payload: null})
         } else {
