@@ -5,6 +5,7 @@ import { renderCanvas, stopRender } from '../utils/canvas'
 import { styled } from '@material-ui/core/styles'
 import { store } from '../state'
 import Grid from '@material-ui/core/Grid'
+import { useTranslation } from 'react-i18next'
 
 import ButtonPrimary from '../components/buttons/primary'
 import ndxDark from '../assets/images/indexed-dark.png'
@@ -21,6 +22,7 @@ const Button = styled(ButtonPrimary)({
 export default function Root(){
   let { state } = useContext(store)
   const classes = useStyles()
+  const { t } = useTranslation()
 
   useEffect(() => {
     renderCanvas()
@@ -36,18 +38,18 @@ export default function Root(){
       <nav style={{ position: 'absolute' }}>
         <ul style={{ display: 'inline-block', listStyleType: 'none', margin: 0, padding: 25, fontSize: nav }}>
           <Link onClick={stopRender} to='/markets'>
-            <li className={classes.item}> MARKETS </li>
+            <li className={classes.item}> {t('markets')} </li>
           </Link>
           {!state.native && (
             <Link onClick={stopRender} to='/governance'>
-              <li className={classes.item}> GOVERNANCE </li>
+              <li className={classes.item}> {t('governance')} </li>
             </Link >
           )}
           <a onClick={stopRender} href="https://docs.indexed.finance/" target="_blank">
-            <li className={classes.item}> DOCS </li>
+            <li className={classes.item}> {t('docs')} </li>
           </a >
           <Link onClick={stopRender} to='/stake'>
-            <li style={{ float: 'left' }}> STAKE </li>
+            <li style={{ float: 'left' }}> {t('stakePools')} </li>
           </Link>
         </ul>
       </nav>
@@ -60,10 +62,10 @@ export default function Root(){
           <span style={{ letterSpacing, float, fontSize }}> INDEXED </span>
         </div>
         <p className={classes.subtext} style={{ width: textWidth }}>
-          A FINANCIAL MANAGEMENT PROTOCOL.
+          {t('IndexDeclaration')}
         </p>
         <Link onClick={stopRender} style={{ float: 'right' }} to='/markets'>
-          <ButtonPrimary id='landing-button'> ENTER </ButtonPrimary>
+          <ButtonPrimary id='landing-button'> {t('enter')} </ButtonPrimary>
         </Link>
       </div>
         {/* <-- SCROLL DOWN INDICATOR -->

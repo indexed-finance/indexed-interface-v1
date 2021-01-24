@@ -6,6 +6,7 @@ import Countdown from 'react-countdown'
 import { useTheme } from '@material-ui/core/styles'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
 import { formatBalance, toWei } from '@indexed-finance/indexed.js'
+import { useTranslation } from 'react-i18next'
 
 import style from '../assets/css/routes/stake'
 import Card from '../components/card'
@@ -23,6 +24,7 @@ const useStyles = getStyles(style)
 export default function Stake() {
   const theme =  useTheme()
   const classes = useStyles()
+  const { t } = useTranslation()
 
   let reducerState = useStakingState();
   let { state } = useContext(store);
@@ -49,21 +51,21 @@ export default function Stake() {
   }
 
   const getPoolLabel = (a, b, c) => {
-    if(a) return 'STAKE'
-    else if(b) return 'VIEW'
-    else if(c) return 'INITIALIZE'
+    if(a) return 'stake'
+    else if(b) return 'preview'
+    else if(c) return 'initialize'
     return ''
   }
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
       <Grid item xs={10} md={6} lg={6} xl={6} >
-        <Container margin={margin} padding="1em 2em" title='LIQUIDITY MINING'>
+        <Container margin={margin} padding="1em 2em" title={t('liquidityMint')}>
           <div className={classes.header}>
             <p>
-              Stake index tokens or their associated Uniswap liquidity tokens to earn NDX, the governance token for Indexed Finance.
+              {t('mintingContents')}
             </p>
-            <a href='https://ndxfi.medium.com/how-to-mint-and-stake-index-pool-tokens-5c21a08706ce' target='_blank' >Read More</a>
+            <a href='https://ndxfi.medium.com/how-to-mint-and-stake-index-pool-tokens-5c21a08706ce' target='_blank' >{t('readMore')}</a>
           </div>
         </Container>
       </Grid>
@@ -71,7 +73,7 @@ export default function Stake() {
         reducerState.pools.length > 0 &&
         reducerState.pools.map((pool) => {
           const { isReady, hasBegun, active, address, totalSupply, claimedRewards, rewardRate, periodStart, totalRewards } = pool.pool;
-          
+
           const displaySupply = parseFloat(formatBalance(totalSupply, 18, 4));
           const meta = reducerState.metadata[address];
           function getAPY() {
@@ -119,49 +121,49 @@ export default function Stake() {
           function Button() {
             return (
               <ButtonPrimary variant='outlined' margin={buttonMargin}>
-               {getPoolLabel(active, hasBegun, isReady)}
-             </ButtonPrimary>
+                {t(getPoolLabel(active, hasBegun, isReady))}
+              </ButtonPrimary>
             )
           }
 
           function Status() {
             if (!isReady) {
-              return <h5>BEGINS IN <Countdown data={periodStart * 1000} /></h5>
+              return <h5>{t('beginIn')} <Countdown data={periodStart * 1000} /></h5>
             }
             if (active) {
               return <div className={classes.status}>
-                <h5>STAKED: {displaySupply.toLocaleString()} {state.native ? '' : symbol}</h5>
+                <h5>{t('staked')}: {displaySupply.toLocaleString()} {state.native ? '' : symbol}</h5>
                 <h5 style={{ color: '#00e79a' }}>APY: {apy}%</h5>
               </div>
             }
             if (hasBegun) {
-              return <h5>STAKING FINISHED</h5>
+              return <h5>{t('stakingFinished')}</h5>
             }
-            return state.native ? <h5>READY TO BEGIN</h5> : <h5>READY</h5>
+            return state.native ? <h5>{t('readyToBegin')}</h5> : <h5>{t('ready')}</h5>
           }
 
           function Content() {
             if (!isReady) {
               return <ul className={classes.list}>
-                <li> BEGINS IN <Countdown data={periodStart * 1000} /> </li>
-                <li> TOTAL: {total.toLocaleString()} NDX </li>
+                <li> {t('beginsIn')} <Countdown data={periodStart * 1000} /> </li>
+                <li> {t('total')}: {total.toLocaleString()} NDX </li>
               </ul>
             }
             if (active) {
               return <ul className={classes.list}>
-                <li> RATE: {rate.toLocaleString()} NDX/DAY </li>
-                <li> TOTAL: {total.toLocaleString()} NDX </li>
+                <li> {t('distributeRate')}: {rate.toLocaleString()} NDX/DAY </li>
+                <li> {t('total')}: {total.toLocaleString()} NDX </li>
               </ul>
             }
             if (hasBegun) {
               return <ul className={classes.list}>
-                <li> RATE: {rate.toLocaleString()} NDX/DAY </li>
-                <li> TOTAL: {total.toLocaleString()} NDX </li>
+                <li> {t('distributeRate')}: {rate.toLocaleString()} NDX/DAY </li>
+                <li> {t('total')}: {total.toLocaleString()} NDX </li>
               </ul>
             }
             return <ul className={classes.list}>
-              <li> CAN BE INITIALIZED </li>
-              <li> AVAILABLE: {total.toLocaleString()} NDX </li>
+              <li> {t('canBeInitialized')} </li>
+              <li> {t('available')}: {total.toLocaleString()} NDX </li>
             </ul>
           }
 

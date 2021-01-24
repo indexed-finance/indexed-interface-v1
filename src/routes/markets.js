@@ -151,7 +151,7 @@ export default function Markets(){
                   <li>{t('tvl')}: <span>${market.marketcap.toLocaleString()}</span></li>
                   <li>&nbsp;<span></span></li>
                   <ButtonPrimary margin={{ marginTop }} onClick={exploreMarket}>
-                    {t('moreDetails')}
+                    {t('enterMarket')}
                   </ButtonPrimary>
                 </ul>
                 <div className={classes.pie} style={{ width }}>

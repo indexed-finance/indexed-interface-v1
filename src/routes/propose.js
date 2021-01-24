@@ -10,6 +10,7 @@ import IconButton from '@material-ui/core/IconButton'
 import Clear from '@material-ui/icons/Clear'
 import ReactMarkdown from 'react-markdown'
 import { ethers } from "ethers"
+import { useTranslation } from 'react-i18next'
 
 import ButtonPrimary from '../components/buttons/primary'
 import Select from '../components/inputs/select'
@@ -44,6 +45,7 @@ export default function Propose(){
   const classes = useStyles()
 
   let { state, dispatch } = useContext(store)
+  const { t } = useTranslation()
 
   const parseAbi = (abi) => {
     let { encodeFunctionSignature } = state.web3[process.env.REACT_APP_ETH_NETWORK].eth.abi
@@ -215,9 +217,9 @@ export default function Propose(){
         <Grid item >
           <div className={classes.select}>
             <Select
-               selections={mapping.abi.functionList}
-               onChange={(e) => onFunctionChange(pair, e)}
-               label='Function'
+              selections={mapping.abi.functionList}
+              onChange={(e) => onFunctionChange(pair, e)}
+              label='Function'
             />
           </div>
         </Grid>
@@ -237,7 +239,7 @@ export default function Propose(){
                   />
                 </Grid>
               ))}
-           </Fragment>
+            </Fragment>
           ))}
         </div>
       </Fragment>
@@ -256,7 +258,7 @@ export default function Propose(){
             <Entries pair={key} data={value} />
           </Fragment>
         ))}
-     </div>
+      </div>
     )
   }
 
@@ -302,14 +304,14 @@ export default function Propose(){
   return (
     <Fragment>
       <Grid container direction='column' alignItems='center' justify='center' >
-        <Container margin={margin} padding="1em 2em" title="CREATE PROPOSAL">
+        <Container margin={margin} padding="1em 2em" title={t('createProposal')}>
           <div className={classes.form}>
             <Grid item>
-              <p> PREVIEW: </p>
+              <p> {t('preview')}: </p>
               <div className={classes.preview} id='preview' />
             </Grid>
             <Grid item>
-              <Entry name='propose-description' onChange={handleDescription} multiline variant='outlined' label="Description" rows={4} />
+              <Entry name='propose-description' onChange={handleDescription} multiline variant='outlined' label={t('description')} rows={4} />
             </Grid>
             <Grid item>
               <div className={classes.select}>
@@ -324,7 +326,7 @@ export default function Propose(){
             {entries}
             <Grid item>
               <ButtonPrimary variant='outlined' onClick={submitProposal}>
-                SUBMIT
+                {t('submit')}
               </ButtonPrimary>
             </Grid>
           </div>
