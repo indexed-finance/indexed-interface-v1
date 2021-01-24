@@ -168,7 +168,7 @@ function uniswapMinterReducer(
       let balance = getBalance(newState.input.address);
       if (balance.lt(amount)) {
         isReady = false;
-        newState.input.errorMessage = 'EXCEEDS BALANCE';
+        newState.input.errorMessage = 'exceedsBalance';
       }
       if (isReady && newState.input.address !== ZERO_ADDRESS) {
         let allowance = getAllowance(newState.input.address);

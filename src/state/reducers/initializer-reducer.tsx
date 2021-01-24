@@ -167,9 +167,9 @@ export function useInitializerToken(
 
   let errorMessage: string = '';
   if (amount.gt(balance)) {
-    errorMessage = 'EXCEEDS BALANCE';
+    errorMessage = 'exceedsBalance';
   } else if (amount.gt(amountRemaining)) {
-    errorMessage = 'EXCEEDS REMAINDER';
+    errorMessage = 'exceedsRemainer';
   }
 
   return {
