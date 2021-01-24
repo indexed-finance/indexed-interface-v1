@@ -15,11 +15,10 @@
     "totalSupply": "SUPPLY",
     "volume": "VOLUME",
     "tvl": "TVL",
-    "moreDetails": "EXPAND",
+    "enterMarket": "EXPAND",
     "indexPool": "{{msg}}",
-    "NAME": "NAME",
-    "SYMBOL": "SYMBOL",
-    "VALUE": "VALUE",
-    "MARKET CAP": "MARKET CAP",
-    "VOLUME": "VOLUME"
+    "name": "NAME",
+    "symbol": "SYMBOL",
+    "value": "VALUE",
+    "marketCap": "MARKET CAP",
 }
