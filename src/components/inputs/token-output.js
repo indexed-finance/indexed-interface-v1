@@ -8,6 +8,7 @@ import ListItem from '@material-ui/core/ListItem'
 import Avatar from '@material-ui/core/Avatar'
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Checkbox from '@material-ui/core/Checkbox';
+import { useTranslation } from 'react-i18next';
 
 import Input from './input';
 
@@ -44,9 +45,10 @@ const useStyles = getStyles(style)
 export default function TokenOutput(props) {
   const classes = useStyles();
   let token = props.useToken(props.index);
+  const { t } = useTranslation();
 
   let { state } = useContext(store);
-  let errorMsg = token.errorMessage;
+  let errorMsg = t(token.errorMessage);
   let error = !!errorMsg;
 
   let { show, fieldWidth } = style.getFormatting(state.native)
@@ -77,7 +79,7 @@ export default function TokenOutput(props) {
           error={error}
           helperText={errorMsg}
           variant='outlined'
-          label='AMOUNT'
+          label={t('amount')}
           type='number'
           style={{ width: fieldWidth }}
           InputLabelProps={{ shrink: true }}

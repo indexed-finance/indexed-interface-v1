@@ -89,7 +89,7 @@ export default function StickyHeadTable(props) {
                             ({value > 0 ? '+' : ''}{value}%)
                           </span>
                         </TableCell>
-                       )
+                      )
                     } else {
                       return (
                         <TableCell key={column.id + row.symbol + i} align={column.align} style={{ padding }}>

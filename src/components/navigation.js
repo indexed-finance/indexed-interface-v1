@@ -214,7 +214,7 @@ export default function Navigation({ mode }) {
                         vertical: "top",
                         horizontal: "right",
                       }}
-                     >
+                    >
                       {loggedIn && (<LoggedIn />)}
                       {!loggedIn && (<LoggedOut />)}
                     </Menu>

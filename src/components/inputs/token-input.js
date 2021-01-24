@@ -20,6 +20,7 @@ import { store } from '../../state'
 
 import { tokenMetadata } from '../../assets/constants/parameters';
 import { getERC20 } from '../../lib/erc20';
+import { useTranslation } from 'react-i18next';
 
 const ApproveButton = styled(ButtonTransaction)({
   fontSize: 10,
@@ -72,7 +73,8 @@ export default function TokenInput(props) {
 
   // Set `amount` to `balance`
   const setAmountToBalance = () => token.setAmountToBalance();
-  const [ label, setLabel ] = useState('DESIRED:')
+  const [label, setLabel] = useState('DESIRED:')
+  const { t } = useTranslation();
 
   async function approveTarget() {
     const erc20 = getERC20(web3.injected, token.address);
@@ -85,8 +87,8 @@ export default function TokenInput(props) {
   let errorMsg = token.errorMessage;
   let error = !!errorMsg;
 
-  let helperText = (error) ? errorMsg : <span className={classes.helper} onClick={() => setAmountToBalance()}>
-    {`BALANCE: ${parseFloat(token.displayBalance).toLocaleString()}`}
+  let helperText = (error) ? t(errorMsg) : <span className={classes.helper} onClick={() => setAmountToBalance()}>
+    {t('balanceMsg', {balance:parseFloat(token.displayBalance).toLocaleString()})}
   </span>;
 
   useEffect(() => {
@@ -104,15 +106,15 @@ export default function TokenInput(props) {
       onClick={token.toggleSelect}
       key={token.address}
     >
-        <Tick>
-          <Checkbox
-            edge="start"
-            {...(token.bindSelectButton)}
-            tabIndex={-1}
-            disableRipple
-          />
-        </Tick>
-       {show && (
+      <Tick>
+        <Checkbox
+          edge="start"
+          {...(token.bindSelectButton)}
+          tabIndex={-1}
+          disableRipple
+        />
+      </Tick>
+      {show && (
         <ListItemAvatar className={classes.wrapper}>
           <Avatar alt={classes.avatar} className={classes.avatar} src={tokenMetadata[token.symbol].image} />
         </ListItemAvatar>
@@ -121,14 +123,14 @@ export default function TokenInput(props) {
       {
         token.bindSetRemainderButton && !native &&
         <RemainderButton {...token.bindSetRemainderButton}>
-         {label}
+          {label}
         </RemainderButton>
       }
       <SecondaryActionAlt>
         <AmountInput
           error={error}
           variant='outlined'
-          label='AMOUNT'
+          label={t('amount')}
           type='number'
           helperText={helperText}
           style={{ width: fieldWidth }}
@@ -137,9 +139,9 @@ export default function TokenInput(props) {
           InputProps={{
             endAdornment:
             <ApproveButton onClick={approveTarget} disabled={!(token.approvalNeeded) || error}>
-              APPROVE
-           </ApproveButton>
-         }}
+              {t('approve')}
+            </ApproveButton>
+          }}
         />
       </SecondaryActionAlt>
     </ListItem>

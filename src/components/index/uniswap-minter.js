@@ -19,6 +19,7 @@ import { ZERO_ADDRESS } from '../../assets/constants/addresses';
 import { useMintState } from '../../state/mint';
 import { toContract } from '../../lib/util/contracts';
 import Web3RequiredPrimaryButton from '../buttons/web3-required-primary';
+import { useTranslation } from 'react-i18next';
 
 const MinterABI = require('../../assets/constants/abi/IndexedUniswapRouterMinter.json');
 
@@ -46,6 +47,7 @@ export default function UniswapMinter({ metadata }){
 
   const [ isInit, setInit ] = useState(false)
   const classes = useStyles()
+  const { t } = useTranslation()
 
   let { state, dispatch, handleTransaction} = useContext(store)
 
@@ -151,7 +153,7 @@ export default function UniswapMinter({ metadata }){
     onClose={toggleDisplay}
   >
     <DialogTitle disableTypography onClose={toggleDisplay}>
-      <Typography variant="h6">Uniswap Minter</Typography>
+      <Typography variant="h6">{t('UniswapMinter')}</Typography>
       {toggleDisplay ? (
         <IconButton aria-label="close" className={classes.closeButton} onClick={toggleDisplay}>
           <CloseIcon />
@@ -168,15 +170,15 @@ export default function UniswapMinter({ metadata }){
       >
         <Grid item>
           <DialogContentText>
-            Route swaps through Uniswap to mint pool tokens.
+            {t('UniswapMinterMSG')}
           </DialogContentText>
         </Grid>
         <Grid item>
-          {minterState.pool && <SwapInput inputWidth={inputWidth} onSelect={selectToken} tokens={tokenList} useToken={useInput} label='SEND' />}
+          {minterState.pool && <SwapInput inputWidth={inputWidth} onSelect={selectToken} tokens={tokenList} useToken={useInput} label={t('swap')} />}
         </Grid>
         <Grid item>
           <Input
-            label='RECEIVE'
+            label={t('receive')}
             type='number'
             variant='outlined'
             { ...(useOutput().bindInput) }
@@ -196,7 +198,7 @@ export default function UniswapMinter({ metadata }){
               style={approvalNeeded ? { margin: 0 } : { margin: 0, marginBottom: 25 }}
               variant='filled'
               color={approvalNeeded ? 'secondary' : 'primary'}
-              label={approvalNeeded ? 'Approve Minter' : 'Mint'}
+              label={approvalNeeded ? t('approveMinter') : t('mint')}
               disabled={approvalNeeded ? false : !minterState.ready}
             />
       /*       : <ButtonPrimary onClick={mintTokens} disabled={!minterState.ready} style={{ margin: 0, marginBottom: 25 }} variant='filled' color="primary">

@@ -17,6 +17,7 @@ import { getERC20 } from '../../lib/erc20';
 import { toContract } from '../../lib/util/contracts';
 import { bdiv } from '@indexed-finance/indexed.js/dist/bmath';
 import Web3RequiredPrimaryButton from '../buttons/web3-required-primary';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = getStyles(style)
 
@@ -27,6 +28,7 @@ export default function Swap({ metadata }){
   const [ approvalNeeded, setApprovalNeeded ] = useState(false)
   const [ isInit, setInit ] = useState(false)
   const classes = useStyles()
+  const { t } = useTranslation()
 
   let { state, dispatch, handleTransaction} = useContext(store)
 
@@ -134,8 +136,8 @@ export default function Swap({ metadata }){
   return (
     <Grid container direction='column' justify='space-between' alignItems='center' style={{ width }}>
       <Grid item>
-        {swapState.pool && <SwapInput inputWidth={inputWidth} onSelect={selectToken} tokens={tokenList} useToken={useInput} label='SEND' />}
-        {!swapState.pool && <Input label='SEND' variant='outlined' style={{ width: inputWidth }} InputProps={{ endAdornment: ' ' }} />}
+        {swapState.pool && <SwapInput inputWidth={inputWidth} onSelect={selectToken} tokens={tokenList} useToken={useInput} label={t('send')} />}
+        {!swapState.pool && <Input label={t('send')} variant='outlined' style={{ width: inputWidth }} InputProps={{ endAdornment: ' ' }} />}
       </Grid>
       <Grid item>
         <div className={classes.swap}>
@@ -144,12 +146,12 @@ export default function Swap({ metadata }){
         </div>
       </Grid>
       <Grid item>
-        {swapState.pool && <SwapInput inputWidth={inputWidth} onSelect={selectOutput} tokens={outputList} useToken={useOutput} label='RECEIVE' />}
-        {!swapState.pool && <Input label='RECEIVE' variant='outlined' style={{ width: inputWidth }} InputProps={{ endAdornment: ' ' }} />}
+        {swapState.pool && <SwapInput inputWidth={inputWidth} onSelect={selectOutput} tokens={outputList} useToken={useOutput} label={t('receive')} />}
+        {!swapState.pool && <Input label={t('receive')} variant='outlined' style={{ width: inputWidth }} InputProps={{ endAdornment: ' ' }} />}
       </Grid>
       <Grid item style={{ width: '100%'}}>
         <div className={classes.market} >
-          <p> FEE: <span style={{ marginRight }}> {feeString} </span> </p>
+          <p> {t('fee')}: <span style={{ marginRight }}> {feeString} </span> </p>
         </div>
       </Grid>
       <Grid item>
@@ -159,7 +161,7 @@ export default function Swap({ metadata }){
             disabled={!swapState.ready}
             variant='outlined'
             margin={{  margin: 25, marginLeft: 150 }}
-            label='SWAP'
+            label={t('swap')}
           />
         }
         {
@@ -167,7 +169,7 @@ export default function Swap({ metadata }){
             onClick={approvePool}
             variant='outlined'
             margin={{ margin: 25, marginLeft: 150 }}
-            label='APPROVE'
+            label={t('approve')}
           />
         }
       </Grid>

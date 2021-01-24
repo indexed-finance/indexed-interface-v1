@@ -15,6 +15,7 @@ import { useBurnState } from '../../state/burn';
 import BurnForm from './burn-form';
 import style from '../../assets/css/components/mint'
 import Web3RequiredPrimaryButton from '../buttons/web3-required-primary';
+import { useTranslation } from 'react-i18next';
 
 const ReceiveInput = styled(Input)({
   width: 300,
@@ -22,7 +23,9 @@ const ReceiveInput = styled(Input)({
 
 export default function BurnTab({ market, metadata }) {
   const { useToken, burnState, bindPoolAmountInput, setHelper, updatePool, displayBalance, setAmountToBalance } = useBurnState();
-  const [ isInit, setInit ] = useState(false)
+  const [isInit, setInit] = useState(false)
+  const { t } = useTranslation()
+  console.log("u r in burn-tab.tsx", bindPoolAmountInput)
 
   let { state, handleTransaction } = useContext(store);
 
@@ -87,7 +90,7 @@ export default function BurnTab({ market, metadata }) {
     <Grid container direction='column' alignItems='center' justify='space-around' style={{ width }}>
       <Grid item xs={12} md={12} lg={12} xl={12}>
         <ReceiveInput
-          label="DESTROY"
+          label={t('destroy')}
           variant='outlined'
           type='number'
           {
@@ -111,10 +114,10 @@ export default function BurnTab({ market, metadata }) {
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12}>
         <Web3RequiredPrimaryButton
-          onClick={burn}
-          disabled={!burnState.ready}
-          margin={{ margin: 25, marginTop: 30, marginLeft: 150 }}
-          label='BURN'
+            onClick={burn}
+            disabled={!burnState.ready}
+            margin={{ margin: 25, marginTop: 30, marginLeft: 150 }}
+            label={t('burn')}
         />
       </Grid>
     </Grid>

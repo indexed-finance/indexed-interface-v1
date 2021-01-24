@@ -3,6 +3,7 @@ import React, { Fragment, useState } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import { purple } from '@material-ui/core/colors'
 import Switch from '@material-ui/core/Switch'
+import { useTranslation } from 'react-i18next'
 
 const IOSSwitch = withStyles((theme) => ({
   root: {
@@ -58,11 +59,12 @@ const IOSSwitch = withStyles((theme) => ({
 });
 
 export default function Toggle({ selected, triggerChange }) {
+  const { t } = useTranslation()
   return (
     <div style={{ 'font-family': 'San Francisco Bold'}}>
-      <span> SINGLE </span>
+      <span> {t('slippage')} </span>
       <IOSSwitch checked={selected} onChange={triggerChange} name="checkedB" />
-      <span> MULTI </span>
+      <span> {t('multi')} </span>
     </div>
   );
 }

@@ -131,66 +131,66 @@ export default function Banner() {
         initial={{ translateX: thresholds[0] }}
         animate={controls}
       >
-      <motion.ul className={classes.carosuel} style={{ ...marginBlock }}>
-        {messages.proposal.id && (
+        <motion.ul className={classes.carosuel} style={{ ...marginBlock }}>
+          {messages.proposal.id && (
+            <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
+              <Link to={`/proposal/${messages.proposal.id}`} className={classes.href}>
+                <motion.span><motion.span style={{ color: '#645eff' }}>
+                  {t('proposal')} {messages.proposal.id}</motion.span>: {messages.proposal.title.toUpperCase()}
+                </motion.span>
+              </Link>
+            </motion.li>
+          )}
           <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
-            <Link to={`/proposal/${messages.proposal.id}`} className={classes.href}>
-              <motion.span><motion.span style={{ color: '#645eff' }}>
-                {t('proposal')} {messages.proposal.id}</motion.span>: {messages.proposal.title.toUpperCase()}
-              </motion.span>
-            </Link>
+            {messages.init.length == 1 && (
+              <Fragment>
+                {messages.init.map((value, i) => {
+                  return(
+                    <Link key={i} to={`/pool/${value.address}`} className={classes.href}>
+                      <motion.span>
+                        {t('newFund')}: <motion.span style={{ color: 'orange'}}>{value.symbol}</motion.span>
+                      </motion.span>
+                    </Link>
+                  )
+                })}
+              </Fragment>
+            )}
+            {messages.init.length > 1 && (
+              <Fragment>
+                <span style={{ color: 'orange'}}>{t('newFunds')}:</span>
+                {messages.init.map((value, i) => (
+                  <Fragment key={i}>&nbsp;
+                    <Link to={`/pool/${value.address}`} className={classes.href} >
+                      <motion.span>{value.symbol}</motion.span>
+                    </Link>
+                    <motion.span>{i == messages.init.length-1 ? '' : ','}</motion.span>
+                  </Fragment>
+                ))}
+              </Fragment>
+            )}
           </motion.li>
-        )}
-        <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
-          {messages.init.length == 1 && (
-            <Fragment>
-              {messages.init.map((value, i) => {
-                return(
-                  <Link key={i} to={`/pool/${value.address}`} className={classes.href}>
-                    <motion.span>
-                      {t('newFund')}: <motion.span style={{ color: 'orange'}}>{value.symbol}</motion.span>
-                    </motion.span>
-                  </Link>
-                )
-              })}
-            </Fragment>
-          )}
-          {messages.init.length > 1 && (
-            <Fragment>
-              <span style={{ color: 'orange'}}>{t('newFunds')}:</span>
-              {messages.init.map((value, i) => (
-                <Fragment key={i}>&nbsp;
-                  <Link to={`/pool/${value.address}`} className={classes.href} >
-                    <motion.span>{value.symbol}</motion.span>
-                  </Link>
-                  <motion.span>{i == messages.init.length-1 ? '' : ','}</motion.span>
-                </Fragment>
-              ))}
-            </Fragment>
-          )}
-        </motion.li>
-        <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
-          {messages.indexes.length >= 1 && (
-            <Fragment>
-              {messages.indexes.map((value, i) => (
-                <Fragment key={i}>
-                  <Link to={`/index/${value.symbol}`} className={classes.href}>
-                    <motion.span>{value.symbol} ${value.price}<Delta value={value.delta}/></motion.span>
-                  </Link>
-                  <motion.span>&nbsp;&nbsp;&nbsp;</motion.span>
-                </Fragment>
-                )
-             )}
-           </Fragment>
-          )}
-        </motion.li>
-        <motion.li>
-          <motion.span>{t('totalValueLocked')}: ${parseFloat(stats.totalLocked).toLocaleString()} </motion.span>
-          <motion.span>&nbsp;&nbsp;&nbsp;</motion.span>
-          <motion.span>{t('dayVolume')}: ${parseFloat(stats.dailyVolume).toLocaleString()} </motion.span>
-        </motion.li>
-      </motion.ul>
-     </motion.div>
+          <motion.li style={{ marginRight: 250 }} onMouseEnter={stopAnimation} onMouseLeave={resumeAnimation}>
+            {messages.indexes.length >= 1 && (
+              <Fragment>
+                {messages.indexes.map((value, i) => (
+                  <Fragment key={i}>
+                    <Link to={`/index/${value.symbol}`} className={classes.href}>
+                      <motion.span>{value.symbol} ${value.price}<Delta value={value.delta}/></motion.span>
+                    </Link>
+                    <motion.span>&nbsp;&nbsp;&nbsp;</motion.span>
+                  </Fragment>
+                  )
+                )}
+              </Fragment>
+            )}
+          </motion.li>
+          <motion.li>
+            <motion.span>{t('totalValueLocked')}: ${parseFloat(stats.totalLocked).toLocaleString()} </motion.span>
+            <motion.span>&nbsp;&nbsp;&nbsp;</motion.span>
+            <motion.span>{t('dayVolume')}: ${parseFloat(stats.dailyVolume).toLocaleString()} </motion.span>
+          </motion.li>
+        </motion.ul>
+      </motion.div>
     </div>
   )
 }

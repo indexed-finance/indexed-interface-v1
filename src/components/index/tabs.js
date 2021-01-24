@@ -29,6 +29,7 @@ import getStyles from '../../assets/css'
 import { marketColumns } from '../../assets/constants/parameters'
 import { parseTimeString } from '../../assets/constants/functions'
 import { computeUniswapPairAddress } from '@indexed-finance/indexed.js/dist/utils/address'
+import { useTranslation } from 'react-i18next'
 
 const BN_ZERO = new BigNumber(0)
 
@@ -82,6 +83,7 @@ export default function VerticalTabs({ data }) {
   const [helper, setHelper] = useState(undefined);
 
   let { state } = useContext(store);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const setPool = async() => {
@@ -161,7 +163,7 @@ export default function VerticalTabs({ data }) {
           output: `${parseFloat(outputDisplay).toLocaleString()} ETH`,
           tx: <ButtonTransaction value={transaction.id} />,
           time,
-          type: 'SELL'
+          type: t('sell')
         })
       } else {
         let inputDisplay = parseFloat(wethAmountIn).toFixed(2)
@@ -172,7 +174,7 @@ export default function VerticalTabs({ data }) {
           output: `${parseFloat(outputDisplay).toLocaleString()} ${data.symbol}`,
           tx: <ButtonTransaction value={transaction.id} />,
           time,
-          type: 'BUY'
+          type: t('bought')
         })
       }
     }
@@ -206,10 +208,10 @@ export default function VerticalTabs({ data }) {
           value={value}
           onChange={handleChange}
         >
-          <Tab key='assets' label="ASSETS" {...a11yProps(0)} />
-          <Tab key='trades' label="TRADES" {...a11yProps(1)} />
-          <Tab key='assets' label="SWAPS" {...a11yProps(2)} />
-          <Tab key='info' label="INFO" {...a11yProps(3)} />
+          <Tab key='assets' label={t('assetList')} {...a11yProps(0)} />
+          <Tab key='trades' label={t('tradeRecords')} {...a11yProps(1)} />
+          <Tab key='assets' label={t('swapRecords')} {...a11yProps(2)} />
+          <Tab key='info' label={t('assetInfo')} {...a11yProps(3)} />
         </Tabs>
       </div>
 
@@ -220,7 +222,7 @@ export default function VerticalTabs({ data }) {
               <Grid item key={i}>
                 <WeightedToken token={token} />
               </Grid>
-           ))}
+            ))}
           {!state.request && (<Loader color={state.background} />)}
         </Grid>
       </TabPanel>
@@ -236,12 +238,12 @@ export default function VerticalTabs({ data }) {
             <div>
               <Link to={`/category/0x${data.category}`}>
                 <ButtonPrimary variant='outlined' margin={{ marginLeft: 20, marginTop: 12.5, marginBottom: 12.5 }}>
-                  CATEGORY
+                  {t('categoryDetails')}
                 </ButtonPrimary>
               </Link>
               <Link to={`/pool/${data.address}`}>
                 <ButtonSecondary variant='outlined' margin={{ marginLeft: 15, marginTop: 12.5, marginBottom: 12.5  }}>
-                  VIEW POOL
+                  {t('viewPool')}
                 </ButtonSecondary>
               </Link>
             </div>
@@ -259,11 +261,11 @@ export default function VerticalTabs({ data }) {
           <Grid item>
             <div className={classes.stats}>
               <ul>
-                <li> CUMULATIVE FEES: ${parseFloat(parseFloat(meta.pool.feesTotalUSD).toFixed(2)).toLocaleString()}</li>
-                <li> VOLUME: ${data.volume ? data.volume.toLocaleString() : '0.00'}</li>
-                <li> SWAP FEE: {formatBalance(meta.pool.swapFee, 18, 4) * 100}%</li>
-                <li> TVL: ${data.marketcap ? data.marketcap.toLocaleString() : '0.00'}</li>
-                <li> SUPPLY: {data.supply ? data.supply.toLocaleString() : '0.00'}</li>
+                <li> {t('cumulativeFee')}: ${parseFloat(parseFloat(meta.pool.feesTotalUSD).toFixed(2)).toLocaleString()}</li>
+                <li> {t('volume')}: ${data.volume ? data.volume.toLocaleString() : '0.00'}</li>
+                <li> {t('swapFee')}: {formatBalance(meta.pool.swapFee, 18, 4) * 100}%</li>
+                <li> {t('tvl')}: ${data.marketcap ? data.marketcap.toLocaleString() : '0.00'}</li>
+                <li> {t('supply')}: {data.supply ? data.supply.toLocaleString() : '0.00'}</li>
               </ul>
             </div>
           </Grid>

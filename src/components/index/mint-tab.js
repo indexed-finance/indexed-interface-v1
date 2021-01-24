@@ -18,6 +18,7 @@ import { useMintState } from '../../state/mint';
 import Slippage from '../inputs/slippage';
 import UniswapMinter from './uniswap-minter';
 import Web3RequiredPrimaryButton from '../buttons/web3-required-primary';
+import { useTranslation } from 'react-i18next';
 
 const ReceiveInput = styled(Input)({
   width: 300,
@@ -29,6 +30,7 @@ export default function Mint({ market, metadata }) {
   const [ isInit, setInit ] = useState(false)
   const classes = useStyles()
   const { useToken, mintState, bindPoolAmountInput, setHelper, updatePool, setSlippage, uniswapMinter } = useMintState();
+  const { t } = useTranslation();
 
   let { state, handleTransaction } = useContext(store);
 
@@ -93,7 +95,7 @@ export default function Mint({ market, metadata }) {
     <Grid container direction='column' alignItems='center' justify='space-around' style={{ width }}>
       <Grid item xs={12} md={12} lg={12} xl={12}>
         <ReceiveInput
-          label="RECEIVE"
+          label={t('receive')}
           variant='outlined'
           type='number'
           {
@@ -120,7 +122,7 @@ export default function Mint({ market, metadata }) {
           onClick={mint}
           disabled={!mintState.ready}
           margin={buttonMargin.mint}
-          label='MINT'
+          label={t('mintDirectly')}
         />
         {
           uniswapMinter.display && <UniswapMinter metadata={metadata} />
@@ -129,7 +131,7 @@ export default function Mint({ market, metadata }) {
           onClick={uniswapMinter.toggleDisplay}
           margin={buttonMargin.uniswap}
         >
-          {buttonMargin.text}
+          {t(buttonMargin.text)}
         </ButtonPrimary>
       </Grid>
     </Grid>

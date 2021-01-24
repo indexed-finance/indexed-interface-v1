@@ -7,6 +7,7 @@ import getStyles from '../../assets/css'
 import { InputAdornment } from '@material-ui/core';
 import WhitelistSelect from '../inputs/whitelist-select';
 import Input from '../inputs/input';
+import { useTranslation, Trans } from 'react-i18next';
 
 const useStyles = getStyles(style)
 
@@ -15,9 +16,10 @@ export default function TradeInput(props) {
   let token = props.useToken();
   let errorMsg = token.errorMessage;
   let error = !!errorMsg;
+  const { t } = useTranslation();
 
-  let helperText = (error) ? errorMsg : <span style={{ float: 'left', cursor: 'pointer'}} onClick={() => token.setAmountToBalance()}>
-    {`BALANCE: ${token.displayBalance}`}
+  let helperText = (error) ? t(errorMsg) : <span style={{ float: 'left', cursor: 'pointer'}} onClick={() => token.setAmountToBalance()}>
+    {t('balanceMsg', {balance: token.displayBalance})}
   </span>;
 
   let endAdornment = <InputAdornment style={{ paddingRight: 5 }} position="end">{token.symbol}</InputAdornment>;

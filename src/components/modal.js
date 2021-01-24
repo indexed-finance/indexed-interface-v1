@@ -14,6 +14,7 @@ import ButtonPrimary from './buttons/primary'
 import { store } from '../state'
 import style from '../assets/css/components/modal'
 import getStyles from '../assets/css'
+import { useTranslation } from 'react-i18next';
 
 const useStyles = getStyles(style)
 
@@ -25,6 +26,7 @@ export default function Modal() {
   const [open, setOpen] = useState(false);
   const classes = useStyles()
   let { state, dispatch } = useContext(store)
+  const { t } = useTranslation();
 
   const handleClose = () => {
     dispatch({ type: 'DISMISS' })
@@ -32,7 +34,6 @@ export default function Modal() {
 
   function DialogTitle(props) {
     let { children, onClose, ...other } = props;
-
     return (
       <MuiDialogTitle disableTypography className={classes.root} {...other}>
         <Typography variant="h6">{children}</Typography>
@@ -59,9 +60,9 @@ export default function Modal() {
         keepMounted
         onClose={handleClose}
       >
-        <DialogTitle onClose={handleClose}>{title}</DialogTitle>
+        <DialogTitle onClose={handleClose}>{t(title)}</DialogTitle>
         <DialogContent>
-          <DialogContentText style={{ whiteSpace: 'pre-line' }}>{message}</DialogContentText>
+          <DialogContentText style={{ whiteSpace: 'pre-line' }}>{t(message)}</DialogContentText>
         </DialogContent>
         <DialogActions>
           {actions && actions.map(act => {

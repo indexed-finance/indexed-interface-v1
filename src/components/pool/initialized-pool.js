@@ -3,6 +3,7 @@ import React, { Fragment, useState, useEffect, useContext } from 'react'
 import Grid from '@material-ui/core/Grid'
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
 import { fromWei, toWei, BigNumber, formatBalance } from '@indexed-finance/indexed.js';
+import { useTranslation } from 'react-i18next'
 
 import Container from '../container'
 import Spline from '../charts/spline'
@@ -34,6 +35,7 @@ function InitializedPoolPage({ address, metadata }){
   const [ showAlert, setAlert ] = useState(false)
   const [ events, setEvents ] = useState([])
   const classes = useStyles()
+  const { t } = useTranslation()
 
   let { state, dispatch } = useContext(store)
   let { native, request } = state
@@ -162,7 +164,7 @@ function InitializedPoolPage({ address, metadata }){
                     history: metadata.liquidity
                   }}
                   height={chartHeight}
-                  label='LIQUIDITY'
+                  label={t('liquidity')}
                   padding={padding}
                   absolute={false}
                   native={native}
@@ -172,8 +174,8 @@ function InitializedPoolPage({ address, metadata }){
               <div className={classes.stats} style={{ fontSize }}>
                 <ul>
                   <Fragment>
-                    <li style={{ paddingRight }}> MARKETCAP: ${metadata.marketcap.toLocaleString()} </li>
-                    <li> VOLUME: ${metadata.volume.toLocaleString()} </li>
+                    <li style={{ paddingRight }}> {t('marketCap')}: ${metadata.marketcap.toLocaleString()} </li>
+                    <li> {t('volume')}: ${metadata.volume.toLocaleString()} </li>
                   </Fragment>
                 </ul>
               </div>
@@ -182,19 +184,19 @@ function InitializedPoolPage({ address, metadata }){
           </ParentSize>
           </Grid>
           <Grid item xs={12} md={5} lg={5} xl={5}>
-            <Container margin={margin} title='BALANCES' padding="1em 0em">
+            <Container margin={margin} title={t('balances')} padding="1em 0em">
               <div className={classes.actions} style={{ height: balanceHeight }}>
                 <p> {metadata.symbol}: <span>{balances.native}</span></p>
                 <p> UNIV2-ETH-{metadata.symbol}: <span>{balances.lp}</span></p>
                 <a href={`https://app.uniswap.org/#/add/ETH/${address}`} style={{ float: 'left' }} rel="noopener noreferrer" target='_blank'>
-                  <ButtonPrimary margin={{ marginBottom: 15, padding: '.5em 1.25em' }}  variant='outlined'> ADD LIQUIDITY </ButtonPrimary>
+                  <ButtonPrimary margin={{ marginBottom: 15, padding: '.5em 1.25em' }}  variant='outlined'> {t('addLiquidity')} </ButtonPrimary>
                 </a>
                 <a href={`https://app.uniswap.org/#/remove/${address}/ETH`} style={{ float: 'right' }} rel="noopener noreferrer" target='_blank'>
-                  <ButtonPrimary margin={{ margin: 0, padding: '.5em 1.25em' }}  variant='outlined'> REMOVE LIQUIDITY </ButtonPrimary>
+                  <ButtonPrimary margin={{ margin: 0, padding: '.5em 1.25em' }}  variant='outlined'> {t('removeLiquidity')} </ButtonPrimary>
                 </a>
               </div>
             </Container>
-            <Container margin={margin} padding="1em 0em" title='ASSETS'>
+            <Container margin={margin} padding="1em 0em" title={t('assetList')}>
               <div className={classes.container} style={{ width }}>
                 <div className={classes.assets}>
                   <Grid container direction='column' alignItems='center' justify='space-around'>
@@ -214,7 +216,7 @@ function InitializedPoolPage({ address, metadata }){
         <Grid item xs={12} md={7} lg={7} xl={7} style={{ width: '100%' }}>
           <ParentSize>
             {({ width, height }) => (
-              <Container margin={marginX} padding="1em 0em" title="EVENTS">
+              <Container margin={marginX} padding="1em 0em" title={t('events')}>
                 <div className={classes.events}>
                   <List height={250} columns={state.native ? eventNativeColumns : eventDesktopColumns} data={events} />
                 </div>
