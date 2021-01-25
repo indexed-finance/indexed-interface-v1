@@ -146,7 +146,7 @@ export function useStaking(): StakingContextType {
         } else {
           const { indexPool } = pool.pool;
           const helper = indexPoolHelpers.find(h => h.address.toLowerCase() === indexPool.toLowerCase());
-          ({ price } = globalState.indexes[helper.symbol]);
+          ({ price } = globalState?.indexes[helper.symbol]);
         }
         return {...obj, [pool.stakingToken]: price }
       }, {})

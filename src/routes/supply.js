@@ -43,6 +43,13 @@ export default function Supply() {
   let ticker = asset.toUpperCase()
   const pool = useStakingPool(ticker);
 
+  useEffect(() => {
+    async function update() {
+      await pool.pool.updatePool();
+    }
+    if (pool && pool.pool) update();
+  }, [])
+
   const initializePool = async(addr) => {
     let { web3, account } = state
 
