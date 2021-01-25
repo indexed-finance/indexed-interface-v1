@@ -161,12 +161,12 @@ function Application(){
           const lastWeek = snapshots.filter(s => s.date >= latest.date - 604800);
 
           let volume24hr = last24hr.reduce((t, snap) => t + parseFloat(snap.totalVolumeUSD), 0);
-          let volume = volume24hr.toFixed(2)
+          let volume = parseFloat(volume24hr).toFixed(2);
 
-          stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD)
+          stats.totalLocked += parseFloat(pool.pool.totalValueLockedUSD);
           stats.dailyVolume += parseFloat(volume);
 
-          let formattedName = name.replace(/Tokens/g, '')
+          let formattedName = name.replace(/Tokens/g, '');
 
           pool.pool.snapshots.sort((a, b) => a.date - b.date);
 
@@ -194,7 +194,7 @@ function Application(){
             liquidity,
             active: true,
             poolHelper: pool,
-            volume: stats.dailyVolume,
+            volume: volume24hr,
             tvlDayDelta: parseFloat(tvlDayDelta.toFixed(2)),
             tvlWeekDelta: parseFloat(tvlWeekDelta.toFixed(2))
           };
