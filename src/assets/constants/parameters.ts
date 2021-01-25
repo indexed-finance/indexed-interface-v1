@@ -34,7 +34,60 @@ import ccLightCircular from '../images/cc-light-circular.png'
 
 import { isNative } from './functions'
 
-let dark = localStorage.getItem('dark');
+const rinkebyWhitelist = require('./whitelists/rinkeby-tokens.json');
+const mainnetWhitelist = require('./whitelists/limited-mainnet-tokens.json');
+
+type DarkType = string | boolean;
+
+export interface InitialStateType {
+  web3: {
+    mainnet: Web3 | null,
+    rinkeby: Web3 | null,
+    injected: boolean
+  },
+  didLoadHelper: boolean,
+  helper: any,
+  background: string,
+  color: string,
+  native: boolean,
+  request: false,
+  load: false,
+  dark: DarkType,
+  categories: {},
+  governance: {
+    dailyDistributionSnapshots: any[],
+    proposals: any[]
+  },
+  stats: {
+    totalLocked: number,
+    dailyVolume: number
+  },
+  width: number,
+  height: number,
+  modal: {
+    show: boolean,
+    title: string,
+    message: string,
+    messageCode: number,
+    actions: any[]
+  },
+  balances: {
+    'NDX': number
+  },
+  flag: {
+    show: boolean,
+    message: string,
+    opcode: string
+  },
+  account: any,
+  network: any,
+  indexes: {},
+  proposals: {},
+  state?: any,
+  handleTransaction?: (Promise) => Promise<string>
+}
+
+let dark: DarkType = localStorage.getItem('dark');
 if (dark === null) {
   let currentTime = (new Date()).getHours()
   let isNight = (currentTime >= 17 || currentTime < 6)
@@ -43,8 +96,6 @@ if (dark === null) {
   dark = JSON.parse(dark);
 }
 
-const rinkebyWhitelist = require('./whitelists/rinkeby-tokens.json');
-const mainnetWhitelist = require('./whitelists/limited-mainnet-tokens.json');
 
 export const whitelistTokens = process.env.REACT_APP_ETH_NETWORK == 'rinkeby'
   ? rinkebyWhitelist
@@ -64,7 +115,7 @@ export function getTokenImage(token) {
   return `${imageBaseUrl}${address.toLowerCase()}.png`;
 }
 
-export const initialState = {
+export const initialState: InitialStateType = {
   web3: {
     mainnet: process.env.REACT_APP_ETH_NETWORK === 'mainnet' ? new Web3('https://mainnet.infura.io/v3/442bad44b92344b7b5294e4329190fea') : null,
     rinkeby: process.env.REACT_APP_ETH_NETWORK === 'rinkeby' ? new Web3('https://rinkeby.infura.io/v3/442bad44b92344b7b5294e4329190fea') : null,
@@ -107,10 +158,10 @@ export const initialState = {
   account: null,
   network: null,
   indexes: {},
-  proposals: {}
+  proposals: {},
 }
 
-export const initialPoolState = {
+export const initialPoolState: any = {
     address: '0x0000000000000000000000000000000000000000',
     assets: [ ],
     name: '',
@@ -124,7 +175,7 @@ export const initialPoolState = {
     active: null,
     credit: 0,
     history: [],
-    type: <span> &nbsp;&nbsp;&nbsp;&nbsp;</span>
+    type: '<span> &nbsp;&nbsp;&nbsp;&nbsp;</span>'
 };
 
 export const initialProposalState = {
@@ -566,4 +617,4 @@ export const UNCLAIMED_CREDITS = (f) => ({
   actions: [{ label: 'CONFIRM', f: f }, { label: 'REJECT', f: null }]
 })
 export const INCORRECT_NETWORK = { show: true, title: 'INCORRECT NETWORK', message: `The current network is not supported, please change to your provider's network to ${envNetwork}.`, actions: [ ] }
-export const DISCLAIMER = { show: true, title: 'DISCLAIMER', message: <>This project is in beta. Use it at your own risk, and do not put in more than you are prepared to lose.</>, actions: [ ] }
+export const DISCLAIMER = { show: true, title: 'DISCLAIMER', message: '<>This project is in beta. Use it at your own risk, and do not put in more than you are prepared to lose.</>', actions: [ ] }

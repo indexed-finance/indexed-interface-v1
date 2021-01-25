@@ -34,13 +34,13 @@ export default function Categories(){
         type: 'LOAD', payload: true
       })
     }
-  }, [ ])
+  }, [])
 
   let { margin } = style.getFormatting(state)
 
   return (
     <Fragment>
-      <Grid container direction='column' alignItems='space-between' justify='center'>
+      <Grid container direction='column' justify='center'>
         <Grid item xs={12} md={12} lg={12} xl={12}>
           <Container margin={margin} padding="1em 0em" title='CATEGORIES'>
             <Fragment>

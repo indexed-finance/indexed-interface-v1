@@ -1,4 +1,14 @@
-const setStyle = (theme) => ({
+import { Theme } from '@material-ui/core/styles'
+import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+
+export interface  SetStyleType {
+ category: BaseCSSProperties,
+ title: BaseCSSProperties,
+ divider: BaseCSSProperties,
+ asset: BaseCSSProperties
+}
+
+const setStyle = (theme: Theme): SetStyleType => ({
   category: {
     width: '100%',
     marginBottom: '2.5em'

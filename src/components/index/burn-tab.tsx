@@ -15,7 +15,7 @@ import { useBurnState } from '../../state/burn';
 import BurnForm from './burn-form';
 import style from '../../assets/css/components/mint'
 import Web3RequiredPrimaryButton from '../buttons/web3-required-primary';
-
+import { InitialStateType } from '../../assets/constants/parameters'
 const ReceiveInput = styled(Input)({
   width: 300,
 })
@@ -24,7 +24,7 @@ export default function BurnTab({ market, metadata }) {
   const { useToken, burnState, bindPoolAmountInput, setHelper, updatePool, displayBalance, setAmountToBalance } = useBurnState();
   const [ isInit, setInit ] = useState(false)
 
-  let { state, handleTransaction } = useContext(store);
+  let { state, handleTransaction } = useContext<InitialStateType>(store);
 
   const burn = async () => {
     const abi = require('../../assets/constants/abi/BPool.json').abi;

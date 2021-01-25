@@ -21,7 +21,7 @@ import { store } from './state'
 import './assets/css/root.css'
 
 const Governance = lazy(() => import('./routes/governance'))
-const Categories = lazy(() => import('./routes/categories'))
+const Categories = lazy(() => import('./routes/categories.tsx'))
 const Proposal = lazy(() => import('./routes/proposal'))
 const Portfolio = lazy(() => import('./routes/portfolio'))
 const Propose = lazy(() => import('./routes/propose'))
