@@ -45,7 +45,8 @@ export default function Supply() {
 
   useEffect(() => {
     async function update() {
-      await pool.pool.updatePool();
+      pool.pool.updatePromise = pool.pool.updatePool();
+      await pool.pool.updatePromise;
     }
     if (pool && pool.pool) update();
   }, [])

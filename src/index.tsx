@@ -194,7 +194,7 @@ function Application(){
             liquidity,
             active: true,
             poolHelper: pool,
-            volume: stats.dailyVolume,
+            volume: parseFloat(volume),
             tvlDayDelta: parseFloat(tvlDayDelta.toFixed(2)),
             tvlWeekDelta: parseFloat(tvlWeekDelta.toFixed(2))
           };
