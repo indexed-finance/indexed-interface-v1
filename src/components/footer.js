@@ -9,6 +9,8 @@ import discord from '../assets/images/discord.png'
 import github from '../assets/images/github.png'
 import medium from '../assets/images/medium.png'
 import twitter from '../assets/images/twitter.png'
+import discourse from '../assets/images/discourse.png'
+import snapshot from '../assets/images/snapshot.png'
 import { store } from '../state'
 
 import getStyles from '../assets/css'
@@ -37,6 +39,12 @@ export default function Footer() {
          <div className={classes.copyright}> ALL RIGHTS RESERVED. INDEXED 2021 </div>
         </Grid>
         <Grid item>
+          <a className={classes.logo}  rel="noopener noreferrer" href="https://gov.indexed.finance" target='_blank'>
+            <img alt='snapshot' src={snapshot} />
+          </a>
+          <a className={classes.logo}  rel="noopener noreferrer" href="https://forum.indexed.finance" target='_blank'>
+            <img alt='discourse' src={discourse} />
+          </a>
           <a className={classes.logo}  rel="noopener noreferrer" href="https://twitter.com/ndxfi" target='_blank'>
             <img alt='twitter' src={twitter} />
           </a>
