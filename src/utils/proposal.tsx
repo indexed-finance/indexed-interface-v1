@@ -3,26 +3,29 @@ import { JsonFragment } from "@ethersproject/abi";
 
 import { Interface } from 'ethers/lib/utils';
 
-import { DAO, CONTROLLER, STAKING_FACTORY } from '../assets/constants/addresses'
+import { DAO, CONTROLLER, STAKING_FACTORY, PROXY_MANAGER } from '../assets/constants/addresses'
 
 const GovernorAlpha = require('../assets/constants/abi/GovernorAlpha.json').abi;
 const MarketCapSqrtController = require('../assets/constants/abi/MarketCapSqrtController.json').abi;
 const StakingRewardsFactory = require('../assets/constants/abi/StakingRewardsFactory.json');
+const DelegateCallProxyManager = require('../assets/constants/abi/DelegateCallProxyManager.json');
 
 const ContractNames = {
-  [CONTROLLER.toLowerCase()]: 'Index Pool Controller',
-  [STAKING_FACTORY.toLowerCase()]: 'Staking Factory',
+  [CONTROLLER.toLowerCase()]: 'MarketCapSqrtController',
+  [STAKING_FACTORY.toLowerCase()]: 'StakingRewardsFactory',
   '0x17ac188e09a7890a1844e5e65471fe8b0ccfadf3': 'CC10',
   '0xfa6de2697d59e88ed7fc4dfe5a33dac43565ea41': 'DEFI5',
   '0x8dcba0b75c1038c4babbdc0ff3bd9a8f6979dd13': 'ETH-DEFI5',
   '0x2701ea55b8b4f0fe46c15a0f560e9cf0c430f833': 'ETH-CC10',
-  [DAO.toLowerCase()]: 'Indexed Governor'
+  [DAO.toLowerCase()]: 'GovernorAlpha',
+  [PROXY_MANAGER.toLowerCase()]: 'DelegateCallProxyManager'
 };
 
 const ContractABIs = {
   [CONTROLLER.toLowerCase()]: MarketCapSqrtController,
   [STAKING_FACTORY.toLowerCase()]: StakingRewardsFactory,
-  [DAO.toLowerCase()]: GovernorAlpha
+  [DAO.toLowerCase()]: GovernorAlpha,
+  [PROXY_MANAGER.toLowerCase()]: DelegateCallProxyManager
 };
 
 interface ProposalCallData {

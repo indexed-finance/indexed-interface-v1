@@ -148,7 +148,7 @@ const setStyle = (theme) => ({
 
 const mapping = {
   [DESKTOP_SMALL]: {
-    margin:'-21em 3em 3em 3em',
+    margin:'-19em 3em 3em 3em',
     marginX:'3em 3em 3em 3em',
     width: 'auto',
     progress: 325,
@@ -156,7 +156,7 @@ const mapping = {
     paddingLeft: 30
   },
   [DESKTOP_NORMAL]: {
-    margin:'-21.5em 3em 3em 3em',
+    margin:'-18.5em 3em 3em 3em',
     marginX:'3em 3em 3em 3em',
     width: 'auto',
     progress: 325,
@@ -165,7 +165,7 @@ const mapping = {
     paddingLeft: 30
   },
   [DESKTOP_LARGE]: {
-    margin:'-21em 3em',
+    margin:'-18em 3em',
     marginX:'3em 3em 3em 3em',
     width: 'auto',
     progress: 325,
@@ -174,7 +174,7 @@ const mapping = {
     paddingLeft: 30
   },
   [DESKTOP_WIDE]: {
-    margin:'-21em 3em 3em 3em',
+    margin:'-18em 3em 3em 3em',
     marginX:'3em 3em 3em 3em',
     width: 'auto',
     progress: 325,
