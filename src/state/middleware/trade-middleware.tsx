@@ -118,6 +118,9 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
     async function updatePrice(): Promise<void> {
       const input = { ...state.input };
       const output = { ...state.output };
+
+      dispatch({ type: 'SET_SWITCHING', switching: true });
+
       if (state.side === 'input') {
         const outputAmount = await state.helper.getAmountOut(input.address, output.address, input.amount);
         output.amount = outputAmount.amount.times(0.99);
@@ -136,6 +139,7 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
           price = perciseOutput.div(toBN(1));
         }
         dispatch([
+          { type: 'SET_SWITCHING', switching: false },
           { type: 'SET_OUTPUT_TOKEN', token: output },
           { type: 'SET_PRICE', price }
         ])
@@ -159,6 +163,7 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
         }
 
         dispatch([
+          { type: 'SET_SWITCHING', switching: false },
           { type: 'SET_INPUT_TOKEN', token: input },
           { type: 'SET_PRICE', price }
         ]);
@@ -189,35 +194,30 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
     }
 
     async function switchTokens(): Promise<void> {
-      let input = { ...state.output };
-      let output = { ...state.input };
+      if (!state.isSwitching) {
+        let input = { ...state.output };
+        let output = { ...state.input };
 
-      // let outputAmount = await state.helper.getAmountOut(input.address, output.address, input.amount);
-      // output = { ...output, ...outputAmount };
+        let perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
+        let perciseInput = input.amount.div(toBN(10).pow(input.decimals));
+        let price = perciseOutput.div(perciseInput);
+        let notANumber = isNaN(parseFloat(formatBalance(price, 1, 4)));
 
-      let perciseOutput = output.amount.div(toBN(10).pow(output.decimals));
-      let perciseInput = input.amount.div(toBN(10).pow(input.decimals));
-      let price = perciseOutput.div(perciseInput);
-      let notANumber = isNaN(parseFloat(formatBalance(price, 1, 4)));
-      if (notANumber || input.amount.eq(0) || output.amount.eq(0)) {
-        price = toBN(1).div(state.price);
+        if (notANumber || input.amount.eq(0) || output.amount.eq(0)) {
+          price = toBN(1).div(state.price);
+        }
+
+        dispatch([
+          { type: 'SET_SWITCHING', switching: true },
+          { type: 'SET_INPUT_TOKEN', token: input },
+          { type: 'SET_OUTPUT_TOKEN', token: output },
+          { type: 'SET_PRICE', price }
+        ]);
+
+        setTimeout(() => {
+          dispatch({ type: 'SET_SWITCHING', switching: false });
+        }, 2000)
       }
-
-      // if(notANumber || input.amount.eq(0) || output.amount.eq(0)) {
-      //   const oneToken = toBN(10).pow(input.decimals);
-      //   const standardRate = await state.helper.getAmountOut(input.address, output.address, oneToken);
-
-      //   perciseOutput = toBN(standardRate.amount).div(toBN(10).pow(output.decimals));
-      //   price = perciseOutput.div(toBN(1));
-      // }
-
-      // input.isPoolToken = !input.isPoolToken;
-      // output.isPoolToken = !output.isPoolToken;
-      dispatch([
-        { type: 'SET_INPUT_TOKEN', token: input },
-        { type: 'SET_OUTPUT_TOKEN', token: output },
-        { type: 'SET_PRICE', price }
-      ]);
     }
 
     async function setHelper(action: SetUniswapHelper): Promise<void> {
