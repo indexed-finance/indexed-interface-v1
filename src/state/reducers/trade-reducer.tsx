@@ -1,7 +1,7 @@
 import { BigNumber, toWei, formatBalance } from "@indexed-finance/indexed.js";
 import { UniswapHelper, toBN } from '@indexed-finance/indexed.js';
 import { useEffect, useReducer } from "react";
-import { TradeMiddlewareAction, TradeDispatchAction, SetInputToken, SetOutputToken, SetUniswapHelper } from "../actions/trade-actions";
+import { TradeMiddlewareAction, TradeDispatchAction, SetInputToken, SetOutputToken, SetUniswapHelper, SetSwitching } from "../actions/trade-actions";
 import { withTradeMiddleware } from "../middleware/trade-middleware";
 import useDebounce from "../../hooks/useDebounce";
 import { UNISWAP_ROUTER } from '../../assets/constants/addresses';
@@ -39,6 +39,7 @@ export type TradeState = {
   pairAddress?: string;
   price: BigNumber;
   side: 'input' | 'output';
+  isSwitching: boolean;
 };
 
 const initialState: TradeState = {
@@ -60,7 +61,8 @@ const initialState: TradeState = {
   },
   ready: false,
   price: BN_ZERO,
-  side: 'input'
+  side: 'input',
+  isSwitching: false
 };
 
 const compareAddresses = (a: string, b: string): boolean => {
@@ -89,6 +91,10 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
 
   function setHelper(action: SetUniswapHelper) {
     newState.helper = action.helper;
+  }
+
+  function setSwitching(action: SetSwitching) {
+    newState.isSwitching = action.switching;
   }
 
   const getBalance = (tokenAddress: string): BigNumber => {
@@ -131,6 +137,7 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
       case 'SET_UNISWAP_HELPER': { setHelper(action); break; }
       case 'SET_PRICE': { newState.price = action.price; break; }
       case 'SET_SIDE': { newState.side = action.side; break; }
+      case 'SET_SWITCHING': { setSwitching(action); break; }
     }
   }
 
@@ -270,6 +277,7 @@ export type TradeContextType = {
   feeString: string;
   usdRate: number;
   isWethPair: boolean;
+  isSwitching: boolean;
 }
 
 export function useTrade(): TradeContextType {
@@ -312,6 +320,7 @@ export function useTrade(): TradeContextType {
     priceString: price || '',
     feeString: fee || '',
     usdRate: rate || 0,
-    isWethPair: isEth
+    isWethPair: isEth,
+    isSwitching: tradeState.isSwitching
   };
 }

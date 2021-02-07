@@ -24,7 +24,7 @@ const routerABI = require('../../assets/constants/abi/UniswapV2Router.json')
 
 const useStyles = getStyles(style);
 
-function SwitchButton({ switchTokens }) {
+function SwitchButton({ switchTokens, isSwitching }) {
   const [ disabled, setDisabled ] = useState(false);
   const { startTimer } = useTimeout(() => setDisabled(false));
 
@@ -34,11 +34,11 @@ function SwitchButton({ switchTokens }) {
     startTimer(2000);
   }
 
-  return <IconButton disabled={disabled} onClick={doSwitch}> <Swap /> </IconButton>;
+  return <IconButton disabled={isSwitching || disabled} onClick={doSwitch}> <Swap /> </IconButton>;
 }
 
 export default function TradeTab({ metadata }) {
-  const { useInput, usdRate, isWethPair, feeString, priceString, useOutput, tradeState, setHelper, updatePool, whitelistTokens, selectWhitelistToken, switchTokens } = useTradeState();
+  const { useInput, usdRate, isWethPair, feeString, priceString, useOutput, tradeState, setHelper, updatePool, whitelistTokens, selectWhitelistToken, switchTokens, isSwitching } = useTradeState();
   const [approvalNeeded, setApprovalNeeded] = useState(false);
   const [ isRendered, setRender ] = useState(false);
   const [ ethUSD, setPrice ] = useState(0)
@@ -190,7 +190,7 @@ export default function TradeTab({ metadata }) {
         {
           tradeState.helper && <div className={classes.swap}>
             <p>{priceString}</p>
-            <SwitchButton switchTokens={switchTokens} />
+            <SwitchButton switchTokens={switchTokens} isSwitching={isSwitching} />
             <p style={{ color: exceedsTrueUSDValue ? '#f44336' : '#00e79a' }}>
               1 {metadata.symbol} = ${parseFloat((usdPricePerToken).toFixed(2)).toLocaleString()}
               &nbsp;{exceedsTrueUSDValue ? <SlippgeExceedsTrueValue isWethPair={isWethPair} /> : <></> }
