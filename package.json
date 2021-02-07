@@ -47,6 +47,7 @@
     "framer-motion": "^2.9.4",
     "js-sha3": "^0.8.0",
     "loaders.css": "^0.1.2",
+    "lodash.clonedeep": "^4.5.0",
     "moment": "^2.29.1",
     "multihashing": "^0.3.3",
     "ramda": "^0.27.1",

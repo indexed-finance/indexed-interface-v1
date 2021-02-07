@@ -1,4 +1,5 @@
 import React, { Fragment, useContext, useMemo } from 'react'
+import cloneDeep from 'lodash.clonedeep'
 
 import Grid from '@material-ui/core/Grid'
 import { Link } from  'react-router-dom'
@@ -55,6 +56,9 @@ export default function Stake() {
     return ''
   }
 
+  const { pools } = reducerState;
+  const reversed = cloneDeep(pools).reverse();
+
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
       <Grid item xs={10} md={6} lg={6} xl={6} >
@@ -69,7 +73,7 @@ export default function Stake() {
       </Grid>
       {
         reducerState.pools.length > 0 &&
-        reducerState.pools.map((pool) => {
+        reversed.map((pool) => {
           const { isReady, hasBegun, active, address, totalSupply, claimedRewards, rewardRate, periodStart, totalRewards } = pool.pool;
           
           const displaySupply = parseFloat(formatBalance(totalSupply, 18, 4));
