@@ -7,6 +7,7 @@ import Grid from '@material-ui/core/Grid'
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { tokenMetadata } from '../assets/constants/parameters'
 import { getCategory } from '../api/gql'
@@ -68,6 +69,7 @@ export default function Category() {
   const [value, setValue] = useState(0);
   const { id } = useParams();
   const classes = useStyles();
+  const { t } = useTranslation();
 
   let { state } = useContext(store);
   const { categories } = state;
@@ -115,7 +117,7 @@ export default function Category() {
       <Grid item xs={10} md={8} lg={8} xl={8}>
         <ParentSize>
           {({ width, height }) => (
-            <Container margin={margin} padding="1em 0em" title='CATEGORY'>
+            <Container margin={margin} padding="1em 0em" title={t('category')}>
               <div className={classes.header} style={{ width }}>
                 <Tabs
                   value={value}
@@ -123,8 +125,8 @@ export default function Category() {
                   textColor="secondary"
                   className={classes.tab}
                 >
-                  <Tab label="DESCRIPTION" value={0} / >
-                  <Tab label="TOKENS" value={1} />
+                  <Tab label={t('discription')} value={0} / >
+                  <Tab label={t('tokens')} value={1} />
                 </Tabs>
              </div>
               <TabPanel value={value} index={0}>

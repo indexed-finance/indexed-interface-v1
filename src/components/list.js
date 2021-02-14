@@ -8,6 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { styled } from '@material-ui/core/styles'
 import { useHistory } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 import style from '../assets/css/components/list'
 import getStyles from '../assets/css'
@@ -30,6 +31,7 @@ const useStyles = getStyles(style)
 export default function StickyHeadTable({ width, height, action, data, columns, props, href }) {
   const classes = useStyles()
   const history = useHistory()
+  const { t } = useTranslation()
 
   return (
     <Fragment>
@@ -44,7 +46,7 @@ export default function StickyHeadTable({ width, height, action, data, columns, 
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                 >
-                  {column.label}
+                  {t(column.label)}
                 </TableCell>
               ))}
             </TableRow>

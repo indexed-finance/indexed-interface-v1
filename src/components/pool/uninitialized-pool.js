@@ -9,6 +9,7 @@ import Container from '../container'
 import Spline from '../charts/spline'
 import InitializerForm from './initializer-form';
 import Weights from '../weights';
+import { useTranslation } from 'react-i18next';
 
 import { InitializerStateProvider, useInitializerState } from "../../state/initializer";
 import { store } from '../../state'
@@ -43,6 +44,7 @@ function UninitializedPoolPage({ address, metadata }) {
   const [ shouldUpdate, setUpdate ] = useState(false);
   let { state } = useContext(store);
   const classes = useStyles()
+  const { t } = useTranslation()
 
   let { native, request } = state
 
@@ -127,8 +129,8 @@ function UninitializedPoolPage({ address, metadata }) {
               <ul>
                 <Fragment>
                   <li style={{ paddingRight }}><ExplainCredit /></li>
-                  <li style={{ paddingRight }}> TOTAL CREDIT: Ξ {displayPoolTotalCredit} </li>
-                  <li style={{ paddingRight }}> YOUR CREDIT: Ξ {displayUserCredit} </li>
+                  <li style={{ paddingRight }}> {t('totalCredit')}: Ξ {displayPoolTotalCredit} </li>
+                  <li style={{ paddingRight }}> {t('yourCredit')}: Ξ {displayUserCredit} </li>
                 </Fragment>
               </ul>
             </div>
@@ -137,10 +139,10 @@ function UninitializedPoolPage({ address, metadata }) {
         </ParentSize>
         </Grid>
         <Grid item xs={12} md={5} lg={5} xl={5}>
-          <Container margin={margin} padding="1em 0em" title='ASSETS'>
+          <Container margin={margin} padding="1em 0em" title={t('assets')}>
             <div className={classes.alert}>
               <Alert variant="outlined" severity={shouldUpdate ? 'info' : 'warning'} style={{  borderWidth: 2 }}>
-                {shouldUpdate ? 'THIS POOL IS READY FOR DEPLOYMENT' : 'THIS POOL IS UNINITIALIZED'}
+                {shouldUpdate ? t('readyToDeploy') : t('uninitialized')}
               </Alert>
               </div>
             <div className={classes.container}>
@@ -152,7 +154,7 @@ function UninitializedPoolPage({ address, metadata }) {
       <Grid item xs={12} md={7} lg={7} xl={7} style={{ width: '100%' }}>
         <ParentSize>
           {({ width }) => (
-            <Container margin={marginX} padding="1em 0em" title="TARGETS">
+            <Container margin={marginX} padding="1em 0em" title={t('targets')}>
               <Grid container direction='row' alignItems='flex-start' justify='space-evenly'>
                 <div className={classes.targets} style={{ width: !state.native ? width : 'auto' }}>
                   {initState.tokens.map((v, i) => {

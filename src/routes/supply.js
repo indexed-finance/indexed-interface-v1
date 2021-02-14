@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import Grid from '@material-ui/core/Grid'
 import { useParams } from  'react-router-dom'
 import CountUp from 'react-countup';
+import { useTranslation } from 'react-i18next'
 
 import StakingRewardsFactory from '../assets/constants/abi/StakingRewardsFactory.json'
 import IStakingRewards from '../assets/constants/abi/IStakingRewards.json'
@@ -36,6 +37,7 @@ export default function Supply() {
   const [ input, setInput ] = useState(null)
   const [ tokens, setTokens ] = useState([])
   const { useStakingPool } = useStakingState();
+  const { t } = useTranslation()
 
   let { state, native, dispatch } = useContext(store)
   let { asset } = useParams()
@@ -238,7 +240,7 @@ export default function Supply() {
     return (
       <Canvas native={native} /* padding={containerPadding} */ style={{ overflowX: 'hidden', margin }}  title={native ? 'REWARDS' : 'USER REWARDS'}>
         <div className={classes.rewards} style={{ width: reward }}>
-          <p>EARNED REWARDS</p>
+          <p>{t('earnedRewards')}</p>
           <div>
             {!native ? <h2>{earnedDisplay} NDX</h2> : <h3>{earnedDisplay} NDX</h3> }
             {/* {!native && (
@@ -255,11 +257,11 @@ export default function Supply() {
           </div>
           <ul className={classes.list}>
             {
-              relativeWeight.gt(0) && <li>WEIGHT: {parseFloat((relativeWeight.toNumber() * 100).toFixed(4))}%</li>
+              relativeWeight.gt(0) && <li>{t('relativeWeight')}: {parseFloat((relativeWeight.toNumber() * 100).toFixed(4))}%</li>
             }
 
-            <li> STAKED: {stakedDisplay} {!native && (<>{ticker}</>)}</li>
-            <li> RATE: {rateDisplay} NDX/DAY</li>
+            <li> {t('staked')}: {stakedDisplay} {!native && (<>{ticker}</>)}</li>
+            <li> {t('distributeRate')}: {rateDisplay} NDX/DAY</li>
           </ul>
           <div className={classes.buttonBox}>
             <ButtonPrimary
@@ -268,7 +270,7 @@ export default function Supply() {
               variant='outlined'
               margin={buttonPos}
             >
-              CLAIM
+              {t('claim')}
             </ButtonPrimary>
             <ButtonPrimary
               disabled={userBalanceRewards.eq(0)}
@@ -276,7 +278,7 @@ export default function Supply() {
               variant='outlined'
               margin={button2Pos}
             >
-              EXIT
+              {t('exit')}
             </ButtonPrimary>
           </div>
         </div>
@@ -303,8 +305,8 @@ export default function Supply() {
     const inputWei = !!input && toTokenAmount(input, 18);
     const sufficientBalance = (userBalanceStakingToken && inputWei) && userBalanceStakingToken.gte(inputWei);
     const error = inputWei && !!(state.web3.injected) && !sufficientBalance;
-    const helperText = error ? 'INSUFFICIENT BALANCE' : <o onClick={setAmountToBalance} className={classes.helper}> BALANCE: {displayBalance} </o>;
-    return <Input label="AMOUNT" variant='outlined'
+    const helperText = error ? t('insufficientBalance') : <o onClick={setAmountToBalance} className={classes.helper}> {t('balance')}: {displayBalance} </o>;
+    return <Input label={t('amount')} variant='outlined'
       onChange={handleInput}
       error={!!error}
       value={input}
@@ -321,7 +323,7 @@ export default function Supply() {
         variant='outlined'
         margin={{ ...button }}
       >
-        INITIALIZE
+        {t('initialize')}
       </ButtonPrimary>
     }
     const {
@@ -337,7 +339,7 @@ export default function Supply() {
         variant='outlined'
         margin={{ ...button }}
       >
-        INITIALIZE
+        {t('initialize')}
       </ButtonPrimary>
     }
     if (active) {
@@ -346,10 +348,10 @@ export default function Supply() {
       const sufficientBalance = (userBalanceStakingToken && inputWei) && userBalanceStakingToken.gte(inputWei);
       let [disabled, label, onClick] =
         !sufficientBalance
-          ? [true, 'STAKE', () => {}]
+          ? [true, t('stake'), () => {}]
           : !sufficientApproval
-            ? [!state.web3.injected, 'APPROVE', approve]
-            : [false, 'STAKE', stake];
+            ? [!state.web3.injected, t('approve'), approve]
+            : [false, t('stake'), stake];
 
       return <Web3RequiredPrimaryButton
         disabled={disabled}
@@ -406,28 +408,28 @@ export default function Supply() {
     return (
       <ul className={classes.stats}>
         <li>
-          REWARDS POOL: <span>
+          {t('rewardsPool')}: <span>
             {poolAddress.slice(0, 6)}...{poolAddress.slice(-4)}
             <EtherScanLink network={process.env.REACT_APP_ETH_NETWORK} type='account' entity={poolAddress} />
           </span>
         </li>
-        <li>STAKING ENDS: <span> {dateEnd} </span> </li>
-        <li> STAKED {ticker}: <span>
+        <li>{t('stakingEnds')}: <span> {dateEnd} </span> </li>
+        <li> {t('staked')} {ticker}: <span>
             {staked.toLocaleString()}
           </span>
         </li>
-        <li> NDX PER DAY: <span>
+        <li> NDX {t('perDay')}: <span>
             {rate.toLocaleString()}
           </span>
         </li>
         {
           !native &&
           <Fragment>
-            <li> TOTAL NDX: <span>
+            <li> NDX {t('total')}: <span>
                 {rewards.toLocaleString()}
               </span>
             </li>
-            <li> STAKING TOKEN: <span>
+            <li> {t('stakingToken')}: <span>
                 <StakingTokenLink />
               </span>
             </li>
@@ -490,8 +492,8 @@ export default function Supply() {
             </Grid>
             {pool.pool && pool.pool.pool.isReady && (
               <ul className={classes.estimation} style={{ fontSize, padding: listPadding }}>
-                <li> EST REWARD: <span id='est'>0</span> NDX/DAY </li>
-                <li> POOL WEIGHT: <span id='weight'>0</span>% </li>
+                <li> {t('estimateRewards')}: <span id='est'>0</span> NDX/DAY </li>
+                <li> {t('poolWeight')}: <span id='weight'>0</span>% </li>
               </ul>
             )}
           </div>
@@ -501,7 +503,7 @@ export default function Supply() {
       <Grid item xs={10} md={6}>
         <Canvas>
           <div className={classes.rewards} style={{ width: !native ? reward : infoWidth }}>
-          	{ DisplayMetadata() }
+            { DisplayMetadata() }
           </div>
         </Canvas>
       </Grid>

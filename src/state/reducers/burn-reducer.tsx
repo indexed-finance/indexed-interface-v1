@@ -1,6 +1,7 @@
 import { BigNumber, formatBalance, PoolHelper } from "@indexed-finance/indexed.js";
 import { PoolToken } from "@indexed-finance/indexed.js/dist/types";
 import React, { useReducer, ReactElement } from "react";
+import { useTranslation } from 'react-i18next';
 
 import {
   SetSingleAmount,
@@ -160,9 +161,9 @@ export function useBurnTokenActions(
   let errorMessage = '';
 
   if (state.isSingle && amount.gt(maximumOutput)) {
-    errorMessage = 'EXCEEDS MAX OUT';
+    errorMessage = 'exceedMaxOut';
   } else if (amount.gt(poolBalance)) {
-    errorMessage = 'EXCEEDS POOL BAL';
+    errorMessage = 'exceedsPoolBalance';
   }
 
   return {
@@ -235,6 +236,7 @@ export type BurnContextType = {
 
 export function useBurn(): BurnContextType {
   const [burnState, burnDispatch] = useReducer(burnReducer, initialState);
+  const { t } = useTranslation();
   const dispatch = withBurnMiddleware(burnState, burnDispatch);
   const balance = (burnState.pool && burnState.pool.userPoolBalance) || BN_ZERO;
   const displayBalance = formatBalance(balance, 18, 4);
@@ -248,13 +250,13 @@ export function useBurn(): BurnContextType {
   const setHelper = (helper: PoolHelper) => dispatch({ type: 'SET_POOL_HELPER', pool: helper });
   const updatePool = () => dispatch({ type: 'UPDATE_POOL' });
   const error = burnState.poolAmountIn.gt(balance);
-  let errorMessage = `BALANCE: ${displayBalance}`;
+  let errorMessage = 'balance';
 
   if(error){
-    errorMessage = 'EXCEEDS BALANCE'
+    errorMessage = 'insufficientBalanceToExecute'
   }
 
-  let helperText = <span style={{ float: 'left', cursor: 'pointer'}} onClick={setAmountToBalance}>{errorMessage}</span>
+  let helperText = <span style={{ float: 'left', cursor: 'pointer' }} onClick={setAmountToBalance}>{t(errorMessage)} {displayBalance}</span>
 
   return {
     balance,

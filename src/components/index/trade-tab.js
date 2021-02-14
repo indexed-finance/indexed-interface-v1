@@ -19,6 +19,7 @@ import { getETHPrice } from '../../api/gql';
 import { SlippgeExceedsTrueValue } from '../utils/popper';
 import { useTimeout } from '../../hooks/useTimeout';
 import Web3RequiredPrimaryButton from '../buttons/web3-required-primary';
+import { useTranslation } from 'react-i18next';
 
 const routerABI = require('../../assets/constants/abi/UniswapV2Router.json')
 
@@ -45,6 +46,7 @@ export default function TradeTab({ metadata }) {
 
   let { state, handleTransaction } = useContext(store);
   const classes = useStyles()
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (
@@ -180,10 +182,10 @@ export default function TradeTab({ metadata }) {
     <Grid container direction='column' alignItems='center' justify='space-around' style={{ width }}>
       <Grid item xs={12} md={12} lg={12} xl={12} key='0'>
         {
-          tradeState.helper && <TradeInput label='SEND' inputWidth={inputWidth} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useInput} />
+          tradeState.helper && <TradeInput label={t('send')} inputWidth={inputWidth} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useInput} />
         }
         {
-          !tradeState.helper  && <Input label='AMOUNT' variant='outlined' style={{ width: inputWidth }} InputProps={{ endAdornment: 'ETH' }} />
+          !tradeState.helper  && <Input label={t('amount')} variant='outlined' style={{ width: inputWidth }} InputProps={{ endAdornment: 'ETH' }} />
         }
       </Grid >
       <Grid item xs={12} md={12} lg={12} xl={12} key='1'>
@@ -200,16 +202,16 @@ export default function TradeTab({ metadata }) {
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} key='2'>
         {
-          tradeState.helper && <TradeInput label='RECEIVE' inputWidth={inputWidth} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useOutput} />
+          tradeState.helper && <TradeInput label={t('receive')} inputWidth={inputWidth} selectWhitelistToken={selectWhitelistToken} whitelistSymbols={whitelistSymbols} useToken={useOutput} />
         }
         {
-          !tradeState.helper  && <Input label='AMOUNT' variant='outlined' style={{ width: inputWidth }} InputProps={{ endAdornment: metadata.symbol }} />
+          !tradeState.helper  && <Input label={t('amount')} variant='outlined' style={{ width: inputWidth }} InputProps={{ endAdornment: metadata.symbol }} />
         }
       </Grid>
 
       <Grid item xs={12} md={12} lg={12} xl={12} key='3' style={{ width: '100%'}}>
         <div className={classes.market} >
-          <p> FEE: <span style={{ marginRight }}> {feeString} </span> </p>
+          <p> {t('fee')}: <span style={{ marginRight }}> {feeString} </span> </p>
         </div>
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} key='4'>
@@ -217,12 +219,12 @@ export default function TradeTab({ metadata }) {
           disabled={!tradeState.ready}
           margin={{ margin: 25, marginLeft: 150 }}
           onClick={executeSwap}
-          label='SWAP'
+          label={t('swapLabel')}
         /> }
         {approvalNeeded && <Web3RequiredPrimaryButton
           margin={{ margin: 25, marginLeft: 150 }}
           onClick={approveRouter}
-          label='APPROVE'
+          label={t('approve')}
         />}
       </Grid>
     </Grid>

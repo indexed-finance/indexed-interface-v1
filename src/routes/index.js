@@ -25,6 +25,7 @@ import TitleLoader from '../components/loaders/title'
 import Loader from '../components/loaders/area'
 import IndexChartContainer from '../components/charts/IndexChartContainer'
 import Delta from '../components/utils/delta'
+import { useTranslation } from 'react-i18next'
 
 const selected = {
   color: 'white',
@@ -47,7 +48,7 @@ export default function Index(){
 
   const classes = useStyles()
   const theme = useTheme()
-
+  const { t } = useTranslation()
   const changeExecution = (option) => {
     let newStyle = clearSelections()
 
@@ -63,7 +64,7 @@ export default function Index(){
 
     setStyles(newStyle)
     setExecution(option)
-   }
+  }
 
   const clearSelections = () => {
     return {
@@ -95,8 +96,8 @@ export default function Index(){
   useEffect(() => {
     if(!state.load){
       dispatch({
-         type: 'LOAD', payload: true
-       })
+        type: 'LOAD', payload: true
+      })
     }
   }, [ ])
 
@@ -108,10 +109,10 @@ export default function Index(){
         <Grid item>
           <div className={classes.nav}>
             <ButtonGroup disableElevation variant='outlined'>
-              <ButtonMarket style={styles.trade} onClick={() => changeExecution('trade')}> Trade </ButtonMarket>
-              <ButtonMarket style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
-              <ButtonMarket style={styles.burn} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
-              <ButtonMarket style={styles.swap} onClick={() => changeExecution('swap')}> Swap </ButtonMarket>
+              <ButtonMarket style={styles.trade} onClick={() => changeExecution('trade')}> {t('trade')} </ButtonMarket>
+              <ButtonMarket style={styles.mint} onClick={() => changeExecution('mint')}> {t('mint')} </ButtonMarket>
+              <ButtonMarket style={styles.burn} onClick={() => changeExecution('burn')}> {t('burn')} </ButtonMarket>
+              <ButtonMarket style={styles.swap} onClick={() => changeExecution('swap')}> {t('swap')} </ButtonMarket>
             </ButtonGroup>
           </div>
         </Grid>
@@ -152,7 +153,7 @@ export default function Index(){
               </li>
               {showVolume && (
                 <li style={{ float: 'right'}}>
-                  <span className={classes.alternative}>VOLUME: ${metadata.volume}</span>
+                  <span className={classes.alternative}>{t('volume')}: ${metadata.volume}</span>
                 </li>
               )}
             </ul>
@@ -166,10 +167,10 @@ export default function Index(){
           <Grid item>
             <header className={classes.selections}>
               <ButtonGroup disableElevation variant='outlined'>
-                <ButtonMarket title={`Trade ${metadata.symbol} on Uniswap`} style={styles.trade} onClick={() => changeExecution('trade')}> Buy {metadata.symbol} </ButtonMarket>
-                <ButtonMarket title={`Provide liquidity to mint ${metadata.symbol}`} style={styles.mint} onClick={() => changeExecution('mint')}> Mint </ButtonMarket>
-                <ButtonMarket title={`Burn ${metadata.symbol} to claim underlying assets`} style={styles.burn} onClick={() => changeExecution('burn')}> Burn </ButtonMarket>
-                <ButtonMarket title={`Swap the underlying tokens in the pool`} style={styles.swap} onClick={() => changeExecution('swap')}> Swap </ButtonMarket>
+                <ButtonMarket title={t('tradeMsg', {symbol:metadata.symbol})} style={styles.trade} onClick={() => changeExecution('trade')}> {t('buy')} {metadata.symbol} </ButtonMarket>
+                <ButtonMarket title={t('mintMsg', {symbol:metadata.symbol})} style={styles.mint} onClick={() => changeExecution('mint')}> {t('mint')} </ButtonMarket>
+                <ButtonMarket title={t('burnMsg', {symbol:metadata.symbol})} style={styles.burn} onClick={() => changeExecution('burn')}> {t('burn')} </ButtonMarket>
+                <ButtonMarket title={t('swapMsg')} style={styles.swap} onClick={() => changeExecution('swap')}> {t('swap')} </ButtonMarket>
               </ButtonGroup>
             </header>
           </Grid>

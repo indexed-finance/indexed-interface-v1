@@ -26,6 +26,7 @@ import getStyles from '../assets/css'
 
 import { store } from '../state'
 import { useWeb3 } from '../hooks/useWeb3'
+import { useTranslation } from 'react-i18next'
 
 const useStyles = getStyles(style)
 
@@ -34,6 +35,7 @@ export default function Navigation({ mode }) {
   const [ anchorEl, setAnchorEl ] = useState(null)
   const [didCheckCache, setDidCheckCache] = useState(false);
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const { loggedIn, account, handleSetWeb3, connectWeb3, disconnectWeb3 } = useWeb3();
 
@@ -97,20 +99,20 @@ export default function Navigation({ mode }) {
       <Fragment>
         {state.native && (
           <Link className={classes.href} onClick={changeTheme}>
-            <MenuItem>LIGHT/DARK MODE</MenuItem>
+            <MenuItem>{t('mode')}</MenuItem>
           </Link>
         )}
         <Link className={classes.href} to='/categories' onClick={handleClose}>
-          <MenuItem>CATEGORIES</MenuItem>
+          <MenuItem>{t('categories')}</MenuItem>
         </Link>
         <Link className={classes.href} to='/governance' onClick={handleClose}>
-          <MenuItem>GOVERNANCE</MenuItem>
+          <MenuItem>{t('governance')}</MenuItem>
         </Link>
         <a href='https://docs.indexed.finance' className={classes.href}>
-          <MenuItem>DOCS</MenuItem>
+          <MenuItem>{t('docs')}</MenuItem>
         </a>
         <Link className={classes.href} to='/stake' onClick={handleClose}>
-          <MenuItem>STAKE</MenuItem>
+          <MenuItem>{t('stakePools')}</MenuItem>
         </Link>
       </Fragment>
     )
@@ -123,23 +125,23 @@ export default function Navigation({ mode }) {
       <Fragment>
         {state.native && (
           <Link className={classes.href} onClick={changeTheme}>
-            <MenuItem>LIGHT/DARK MODE</MenuItem>
+            <MenuItem>{t('mode')}</MenuItem>
           </Link>
         )}
         <Link className={classes.href} to='/categories' onClick={handleClose}>
-          <MenuItem>CATEGORIES</MenuItem>
+          <MenuItem>{t('categories')}</MenuItem>
         </Link>
         <Link className={classes.href} to='/governance' onClick={handleClose}>
-          <MenuItem>GOVERNANCE</MenuItem>
+          <MenuItem>{t('governance')}</MenuItem>
         </Link>
         <Link className={classes.href} to='/portfolio' onClick={handleClose}>
-            <MenuItem>PORTFOLIO</MenuItem>
+            <MenuItem>{t('portfolio')}</MenuItem>
         </Link>
           <a href='https://docs.indexed.finance' className={classes.href}>
-          <MenuItem>DOCS</MenuItem>
+          <MenuItem>{t('docs')}</MenuItem>
         </a>
         <Link className={classes.href} to='/stake' onClick={handleClose}>
-          <MenuItem>STAKE</MenuItem>
+          <MenuItem>{t('stakePools')}</MenuItem>
         </Link>
       </Fragment>
     )
@@ -171,21 +173,21 @@ export default function Navigation({ mode }) {
               {!state.native && (
                 <Grid item className={classes.nav}>
                   <Link to='/governance' className={classes.href}>
-                    <h3> GOVERNANCE </h3>
+                    <h3> {t('governance')} </h3>
                   </Link>
                   <Link to='/categories' className={classes.href}>
-                    <h3> CATEGORIES </h3>
+                    <h3> {t('categories')} </h3>
                   </Link>
                   <Link to='/stake' className={classes.href}>
-                    <h3> STAKE </h3>
+                    <h3> {t('stakePools')} </h3>
                   </Link>
                   {state.account && (
                     <Link to='/portfolio' className={classes.href}>
-                        <h3> PORTFOLIO </h3>
+                        <h3> {t('portfolio')} </h3>
                     </Link>
                   )}
                   <a href='https://docs.indexed.finance' className={classes.href}>
-                    <h3> DOCS </h3>
+                    <h3> {t('docs')} </h3>
                   </a>
                 </Grid>
               )}
@@ -212,7 +214,7 @@ export default function Navigation({ mode }) {
                         vertical: "top",
                         horizontal: "right",
                       }}
-                     >
+                    >
                       {loggedIn && (<LoggedIn />)}
                       {!loggedIn && (<LoggedOut />)}
                     </Menu>

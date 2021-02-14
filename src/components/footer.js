@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import { useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import style from '../assets/css/components/footer'
 
@@ -21,6 +22,7 @@ export default function Footer() {
   const [ margin, setMargin ] = useState(0)
   const location = useLocation()
   const classes = useStyles()
+  const { t } = useTranslation()
 
   let { state } = useContext(store)
 
@@ -36,7 +38,7 @@ export default function Footer() {
     state.load && <div className={classes.root} style={{ marginTop: margin }} >
       <Grid container direction='row' alignItems='flex-start' justify='space-between'>
         <Grid item style={{ marginBottom: state.native ? 15 : 0 }}>
-         <div className={classes.copyright}> ALL RIGHTS RESERVED. INDEXED 2021 </div>
+          <div className={classes.copyright}> {t('rightsReserved')} </div>
         </Grid>
         <Grid item>
           <a className={classes.logo}  rel="noopener noreferrer" href="https://gov.indexed.finance" target='_blank'>

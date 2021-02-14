@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import { Line } from 'react-chartjs-2'
+import { useTranslation, Trans } from 'react-i18next'
 
 const options = {
   bezierCurve: true,
@@ -114,15 +115,15 @@ const getConfig = (metadata) => {
   }
 
 export default function Spline({ ready, metadata, height }){
-  const [ component, setComponent ] = useState(null)
+  const [component, setComponent] = useState(null)
 
-   useEffect(() => {
-      if(metadata.address !== '0x0000000000000000000000000000000000000000'){
-        setComponent(
-          <Line height={height} options={options} data={getConfig(metadata)} id='stacked' redraw />
-        )
-      }
-    }, [ metadata, height ])
+  useEffect(() => {
+    if(metadata.address !== '0x0000000000000000000000000000000000000000'){
+      setComponent(
+        <Line height={height} options={options} data={getConfig(metadata)} id='stacked' redraw />
+      )
+    }
+  }, [ metadata, height ])
 
   return (
     <div style={{ 'z-index': 1, float: 'left', width: '100%'}}>

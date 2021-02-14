@@ -21,6 +21,7 @@ import { initialPoolState, categoryMetadata } from '../assets/constants/paramete
 import style from '../assets/css/routes/markets'
 import getStyles from '../assets/css'
 import { store } from '../state'
+import { useTranslation } from 'react-i18next'
 
 const useStyles = getStyles(style)
 
@@ -30,6 +31,7 @@ export default function Markets(){
   const history = useHistory()
   const classes = useStyles()
   const theme = useTheme()
+  const { t } = useTranslation()
 
   let { state, dispatch } = useContext(store)
   let { request, native } = state
@@ -101,7 +103,7 @@ export default function Markets(){
                   <div style={{ float: 'right' }}>
                     <h2> {market.name} [{market.symbol}]</h2>
                     {state.request && !active && (
-                      <h3 style={{ color: 'orange' }}> UNINITIALISED </h3>
+                      <h3 style={{ color: 'orange' }}> {t('uninitialised')} </h3>
                     )}
                     {active && (
                       <h3 style={{ color: '#999999' }}>
@@ -119,7 +121,7 @@ export default function Markets(){
                   <div>
                     <h3 style={{ fontSize: '4.675vw'}}> {market.name.replace(' Top', '')}</h3>
                     {request && !active && (
-                      <h3 style={{ color: 'orange' }}> UNINITIALISED </h3>
+                      <h3 style={{ color: 'orange' }}> {t('uninitialised')} </h3>
                     )}
                     {active && (
                       <Fragment>
@@ -135,7 +137,7 @@ export default function Markets(){
             {!native && (
               <Wrapper style={{ background: theme.palette.primary.main }}>
                 <ul className={classes.options} style={{ width: pre, paddingRight: 20 }}>
-                  <li>ADDRESS:
+                  <li>{t('contractAddress')}:
                     <span>
                       <Copyable text={market.address} float='left'>
                         <label style={{ fontSize: 16 }}>
@@ -144,12 +146,12 @@ export default function Markets(){
                       </Copyable>
                     </span>
                   </li>
-                  <li>SUPPLY: <span>{market.supply.toLocaleString()} {market.symbol}</span> </li>
-                  <li>VOLUME: <span>${market.volume.toLocaleString()}</span></li>
-                  <li>TVL: <span>${market.marketcap.toLocaleString()}</span></li>
+                  <li>{t('totalSupply')}: <span>{market.supply.toLocaleString()} {market.symbol}</span> </li>
+                  <li>{t('volume')}: <span>${market.volume.toLocaleString()}</span></li>
+                  <li>{t('tvl')}: <span>${market.marketcap.toLocaleString()}</span></li>
                   <li>&nbsp;<span></span></li>
                   <ButtonPrimary margin={{ marginTop }} onClick={exploreMarket}>
-                    EXPAND
+                    {t('enterMarket')}
                   </ButtonPrimary>
                 </ul>
                 <div className={classes.pie} style={{ width }}>

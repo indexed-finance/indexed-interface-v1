@@ -13,6 +13,7 @@ import ContentLoader from "react-content-loader"
 import { poolNativeColumns, poolDesktopColumns } from '../assets/constants/parameters'
 import style from '../assets/css/components/table'
 import getStyles from '../assets/css'
+import { Trans } from 'react-i18next';
 
 const useStyles = getStyles(style)
 
@@ -66,7 +67,7 @@ export default function StickyHeadTable(props) {
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                 >
-                  {column.label}
+                    <Trans>{column.label}</Trans>
                 </TableCell>
               ))}
             </Row>
@@ -88,7 +89,7 @@ export default function StickyHeadTable(props) {
                             ({value > 0 ? '+' : ''}{value}%)
                           </span>
                         </TableCell>
-                       )
+                      )
                     } else {
                       return (
                         <TableCell key={column.id + row.symbol + i} align={column.align} style={{ padding }}>

@@ -14,6 +14,7 @@ import { TX_CONFIRMED, TX_REVERTED, TX_PENDING } from '../../assets/constants/pa
 import ParentSize from '@vx/responsive/lib/components/ParentSize'
 
 import ExplainCredit from './explain-credit';
+import { useTranslation } from 'react-i18next';
 
 export default function InitializerForm({ shouldUpdate, component, metadata, classes }) {
   const [ output, setOutput ] = useState(0)
@@ -21,13 +22,14 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
 
   const { useToken, initState, setHelper, updatePool, displayPoolTotalCredit, displayTotalCredit } = useInitializerState();
   let { dispatch, state, handleTransaction } = useContext(store);
+  const { t } = useTranslation();
 
   function Overlay ({ height, width, f }) {
     const background = state.dark ? 'rgba(0,0,0, .5)' : 'rgba(17, 17, 17, .25)'
 
     return(
       <div style={{ zIndex: 5, textAlign: 'center', height, background, width, position: 'absolute', clear: 'both' }}>
-        <ButtonPrimary onClick={f} margin={{ margin: '25% 27.5%' }}> DEPLOY INDEX </ButtonPrimary>
+        <ButtonPrimary onClick={f} margin={{ margin: '25% 27.5%' }}> {t('deployIndex')} </ButtonPrimary>
       </div>
     )
   }
@@ -148,11 +150,11 @@ export default function InitializerForm({ shouldUpdate, component, metadata, cla
       <TokenInputs isInitialiser={true} useToken={useToken} tokens={initState.tokens} width='100%' height={height} />
       <div className={classes.reciept}>
         <p>  EST TOKENS: <span>{output} {metadata.symbol}</span> </p>
-        <p>  <ExplainCredit /> CREDIT: <span id='credit'>Ξ {displayTotalCredit}</span> </p>
+        <p>  <ExplainCredit /> {t('credit')}: <span id='credit'>Ξ {displayTotalCredit}</span> </p>
       </div>
       <div className={classes.submit}>
         <ButtonPrimary variant='outlined' onClick={contributeTokens} disabled={!initState.ready} style={{ marginRight: 0 }}>
-          JOIN
+          {t('join')}
         </ButtonPrimary>
       </div>
     </Fragment>

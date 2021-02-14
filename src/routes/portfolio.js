@@ -10,6 +10,7 @@ import { Redirect } from 'react-router-dom'
 import { useTheme } from '@material-ui/core/styles'
 import StakingRewards from "../assets/constants/abi/IStakingRewards.json"
 import ButtonPrimary from '../components/buttons/primary'
+import { useTranslation } from 'react-i18next'
 
 import Container from '../components/container'
 import Canvas from '../components/canvas'
@@ -49,6 +50,7 @@ export default function Portfolio(){
   const classes = useStyles()
   const theme = useTheme()
   const { loggedIn } = useWeb3();
+  const { t } = useTranslation();
 
   let { dispatch, state } = useContext(store)
 
@@ -128,10 +130,10 @@ export default function Portfolio(){
           <ListItemText
               className={classes.holdings}
               primary={<span>
-                BALANCE: {balance}
+                {t('balance')}: {balance}
               </span>}
               secondary={<span>
-                STAKING: {staked}
+                {t('staking')}: {staked}
               </span>}
           />
           <ListItemText
@@ -159,7 +161,7 @@ export default function Portfolio(){
           <SecondaryAction>
             {
               earned > 0 && <ButtonPrimary  variant='outlined' margin={{ margin: 0 }} onClick={() => { callClaim(stakingPoolAddress) }}>
-                CLAIM
+                {t('claim')}
               </ButtonPrimary>
             }
           </SecondaryAction>
@@ -174,7 +176,7 @@ export default function Portfolio(){
           <Grid item xs={12} md={5} lg={5} xl={5}>
             <Canvas native={state.native}>
               <div className={classes.wallet} style={{ height: wallet }}>
-                <p> PORTFOLIO VALUE </p>
+                <p> {t('portfolioValue')} </p>
                 <h1> ${totalValue} </h1>
               </div>
             </Canvas>
@@ -183,23 +185,23 @@ export default function Portfolio(){
             <Canvas native={state.native}>
               <div className={classes.account} style={{ height: wallet }}>
                 <p> NDX </p>
-                <h1> TOTAL: { total } NDX </h1>
-                <p> BALANCE: {ndxBalance} NDX </p>
-                <p> EARNED: {earned} NDX </p>
+                <h1> {t('total')}: { total } NDX </h1>
+                <p> {t('balance')}: {ndxBalance} NDX </p>
+                <p> {t('earnedRewards')}: {earned} NDX </p>
               </div>
             </Canvas>
           </Grid>
         </Grid>
         <Grid item xs={12} md={12} lg={12} xl={12} className={classes.root}>
-          <Container margin={margin} padding="1em 0em 0em 0em" title='PORTFOLIO' >
-           <div className={classes.proposals} style={{ height: tableHeight }}>
-            <ListWrapper dense style={{ width }}>
-              {
-                tokens && tokens.map((token, index) => {
-                return DisplayDetails(token, index)
-              })}
-            </ListWrapper>
-           </div>
+          <Container margin={margin} padding="1em 0em 0em 0em" title={t('portfolioDetails')} >
+            <div className={classes.proposals} style={{ height: tableHeight }}>
+              <ListWrapper dense style={{ width }}>
+                {
+                  tokens && tokens.map((token, index) => {
+                  return DisplayDetails(token, index)
+                })}
+              </ListWrapper>
+            </div>
           </Container>
         </Grid>
       </Grid>

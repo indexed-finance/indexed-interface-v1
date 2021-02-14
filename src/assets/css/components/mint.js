@@ -101,7 +101,7 @@ const mapping = {
     height: '37.5vh',
     inputWidth: 300,
     buttonMargin: {
-      text: 'MINT WITH UNISWAP',
+      text: 'mintWithUniswap',
       mint: {
         margin: 0,
         marginLeft: 30,
@@ -119,7 +119,7 @@ const mapping = {
     height: '40vh',
     inputWidth: 300,
     buttonMargin: {
-      text: 'MINT WITH UNISWAP',
+      text: 'mintWithUniswap',
       mint: {
         margin: 0,
         marginLeft: 30,
@@ -137,7 +137,7 @@ const mapping = {
     height: '40vh',
     inputWidth: 300,
     buttonMargin: {
-      text: 'MINT WITH UNISWAP',
+      text: 'mintWithUniswap',
       mint: {
         margin: 0,
         marginLeft: 30,
@@ -155,7 +155,7 @@ const mapping = {
     height: '35vh',
     inputWidth: 300,
     buttonMargin: {
-      text: 'MINT WITH UNISWAP',
+      text: 'mintWithUniswap',
       mint: {
         margin: 0,
         marginLeft: 30,
@@ -173,7 +173,7 @@ const mapping = {
     height: '30vh',
     inputWidth: 300,
     buttonMargin: {
-      text: 'MINT WITH UNISWAP',
+      text: 'mintWithUniswap',
       mint: {
         margin: 0,
         marginLeft: 30,
@@ -191,7 +191,7 @@ const mapping = {
     height: '22.5vh',
     inputWidth: 300,
     buttonMargin: {
-      text: 'MINT WITH UNISWAP',
+      text: 'mintWithUniswap',
       mint: {
         margin: 0,
         marginLeft: 30,

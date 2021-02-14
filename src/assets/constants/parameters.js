@@ -288,31 +288,31 @@ export const tokenMetadata = {
 }
 
 export const marketColumns = [
-  { id: 'time', label: 'TIME', minWidth: 50 },
+  { id: 'time', label: 'time', minWidth: 50 },
   {
     id: 'input',
-    label: 'INPUT',
+    label: 'input',
     minWidth: 100,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
     id: 'type',
-    label: 'TYPE',
+    label: 'tradeType',
     minWidth: 15,
     align: 'center',
     format: (value) => `${value.toLocaleString('en-US')}%`,
   },
   {
     id: 'output',
-    label: 'OUTPUT',
+    label: 'output',
     minWidth: 100,
     align: 'center',
     format: (value) => `${value.toLocaleString('en-US')}%`,
   },
   {
     id: 'tx',
-    label: 'TRANSACTION',
+    label: 'transactionHash',
     minWidth: 75,
     align: 'center'
   }
@@ -321,7 +321,7 @@ export const marketColumns = [
 export const eventDesktopColumns = [
   {
     id: 'blockNumber',
-    label: 'BLOCK',
+    label: 'block',
     align: 'left',
     minWidth: 75,
     // format: (unixtime) => {
@@ -332,21 +332,21 @@ export const eventDesktopColumns = [
   },
   {
     id: 'event',
-    label: 'AMOUNT',
+    label: 'amount',
     minWidth: 175,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
     id: 'type',
-    label: 'TYPE',
+    label: 'eventType',
     minWidth: 50,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
     id: 'tx',
-    label: 'TRANSACTION',
+    label: 'transactionHash',
     minWidth: 75,
     align: 'center'
   },
@@ -355,21 +355,21 @@ export const eventDesktopColumns = [
 export const eventNativeColumns = [
   {
     id: 'event',
-    label: 'AMOUNT',
+    label: 'amount',
     minWidth: 25,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
     id: 'type',
-    label: 'TYPE',
+    label: 'eventType',
     minWidth: 25,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
     id: 'tx',
-    label: 'TRANSACTION',
+    label: 'transactionHash',
     minWidth: 50,
     align: 'center'
   },
@@ -378,56 +378,56 @@ export const eventNativeColumns = [
 export const categoryDesktopColumns = [
   {
     id: 'symbol',
-    label: 'SYMBOL',
+    label: 'symbol',
     minWidth: 50,
     align: 'center',
     format: (value) => `${value.toLocaleString('en-US')}`,
   },
   {
     id: 'size',
-    label: 'SIZE',
+    label: 'size',
     minWidth: 25,
     align: 'center',
     format: (value) => `${value.toLocaleString()}`,
   },
   {
     id: 'price',
-    label: 'PRICE',
+    label: 'price',
     minWidth: 75,
     align: 'center',
     format: (value) => `$${value.toLocaleString()}`,
   },
   {
     id: 'supply',
-    label: 'SUPPLY',
+    label: 'supply',
     minWidth: 100,
     align: 'center',
     format: (value) => `${value.toLocaleString()}`,
   },
   {
     id: 'marketcap',
-    label: 'MARKETCAP',
+    label: 'marketCap',
     minWidth: 150,
     align: 'center',
     format: (value) => `$${value.toLocaleString()}`,
   },
   {
     id: 'swapFeeUSD',
-    label: 'SWAP FEE',
+    label: 'swapFee',
     minWidth: 50,
     align: 'center',
     format: (value) => `%${value.pool.swapFeeUSD.toLocaleString()}`,
   },
   {
     id: 'feesTotalUSD',
-    label: 'CUMULATIVE FEES',
+    label: 'cumulativeFee',
     minWidth: 150,
     align: 'center',
     format: (value) => `$${value.pool.feesTotalUSD.toLocaleString()}`,
   },
   {
     id: 'volume',
-    label: 'VOLUME',
+    label: 'volume',
     minWidth: 150,
     align: 'center',
     format: (value) => `$${value.toLocaleString()}`,
@@ -437,21 +437,21 @@ export const categoryDesktopColumns = [
 export const categoryNativeColumns = [
   {
     id: 'symbol',
-    label: 'SYMBOL',
+    label: 'symbol',
     minWidth: 25,
     align: 'center',
     format: (value) => `${value.toLocaleString('en-US')}`,
   },
   {
     id: 'size',
-    label: 'SIZE',
+    label: 'size',
     minWidth: 15,
     align: 'center',
     format: (value) => `${value.toLocaleString()}`,
   },
   {
     id: 'supply',
-    label: 'SUPPLY',
+    label: 'supply',
     minWidth: 25,
     align: 'center',
     format: (value) => `${value.toLocaleString()}`,
@@ -460,17 +460,17 @@ export const categoryNativeColumns = [
 
 
 export const poolDesktopColumns = [
-  { id: 'name', label: 'NAME', minWidth: 250 },
+  { id: 'name', label: 'name', minWidth: 250 },
   {
     id: 'symbol',
-    label: 'SYMBOL',
+    label: 'symbol',
     minWidth: 25 ,
     align: 'center',
     format: (value) => `[${value.toLocaleString('en-US')}]`,
   },
   {
     id: 'price',
-    label: 'VALUE',
+    label: 'price',
     minWidth: 150,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
@@ -484,14 +484,14 @@ export const poolDesktopColumns = [
   },
   {
     id: 'marketcap',
-    label: 'MARKET CAP',
+    label: 'marketCap',
     minWidth: 200,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
   },
   {
     id: 'volume',
-    label: 'VOLUME',
+    label: 'volume',
     minWidth: 200,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
@@ -501,14 +501,14 @@ export const poolDesktopColumns = [
 export const poolNativeColumns  = [
   {
     id: 'symbol',
-    label: 'SYMBOL',
+    label: 'symbol',
     minWidth: 25 ,
     align: 'center',
     format: (value) => `[${value.toLocaleString('en-US')}]`,
   },
   {
     id: 'price',
-    label: 'VALUE',
+    label: 'price',
     minWidth: 50,
     align: 'center',
     format: (value) => `$${value.toLocaleString('en-US')}`,
@@ -532,11 +532,11 @@ export const NATIVE_WIDE = 400
 export const NATIVE_NORMAL = 399
 export const NATIVE_SMALL = 320
 
-const PREFIX = window.innerWidth > 600 ? 'TRANSACTION' : 'TX'
+const PREFIX = window.innerWidth > 600 ? 'transaction' : 'transactionAbbr'
 
 export const TX_CONFIRM = { show: true, message: `${PREFIX} CONFIRMED`, opcode: 'success' }
 export const TX_REVERT = { show: true, message:  `${PREFIX} REVERTED`, opcode: 'error' }
-export const WEB3_PROVIDER = { show: true, message: 'NO PROVIDER DETECTED', opcode: 'info' }
+export const WEB3_PROVIDER = { show: true, message: 'noProvider', opcode: 'info' }
 
 const envNetwork = process.env.REACT_APP_ETH_NETWORK;
 
@@ -555,15 +555,16 @@ export const NO_PROVIDER = toFlagDispatch(WEB3_PROVIDER);
 
 export const MARKET_ORDER = (input, output, f) => ({
   show: true,
-  title: 'CONFIRM ORDER',
+  title: 'confirmOrder',
   message: `You are about to swap ${input.amount} ${input.market} for ${output.amount} ${output.market}.`,
-  actions: [{ label: 'CONFIRM', f: f }, { label: 'REJECT', f: null }]
+  actions: [{ label: 'confirm', f: f }, { label: 'reject', f: null }]
 })
 export const UNCLAIMED_CREDITS = (f) => ({
   show: true,
   title: 'UNCLAIMED CREDITS',
   message: `You have unclaimed credits for this pool, would you like to redeem your share?`,
-  actions: [{ label: 'CONFIRM', f: f }, { label: 'REJECT', f: null }]
+  actions: [{ label: 'confirm', f: f }, { label: 'reject', f: null }]
 })
-export const INCORRECT_NETWORK = { show: true, title: 'INCORRECT NETWORK', message: `The current network is not supported, please change to your provider's network to ${envNetwork}.`, actions: [ ] }
-export const DISCLAIMER = { show: true, title: 'DISCLAIMER', message: <>This project is in beta. Use it at your own risk, and do not put in more than you are prepared to lose.</>, actions: [ ] }
+
+export const INCORRECT_NETWORK = { show: true, title: 'invalidNet', message: `invalidNetMsg`, actions: [ ] }
+export const DISCLAIMER = { show: true, title: 'disclaimer', message: 'disclaimerMsg', actions: [ ] }

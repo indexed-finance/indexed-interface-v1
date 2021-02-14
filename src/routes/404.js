@@ -2,6 +2,7 @@ import React from 'react'
 
 import { makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
+import { useTranslation } from 'react-i18next'
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -11,12 +12,13 @@ const useStyles = makeStyles(() => ({
 
 export default function Error404() {
   const classes = useStyles()
+  const { t } = useTranslation()
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
       <Grid item>
         <div className={classes.container}>
-          <h2> 404, NO PAGE FOUND</h2>
+          <h2> {t('404')} </h2>
         </div>
       </Grid>
     </Grid>

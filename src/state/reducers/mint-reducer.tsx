@@ -1,6 +1,7 @@
 import React, { Fragment, ReactElement, useReducer } from "react";
 import { BigNumber, formatBalance, PoolHelper } from "@indexed-finance/indexed.js";
 import { PoolToken } from "@indexed-finance/indexed.js/dist/types";
+import { useTranslation } from 'react-i18next';
 
 import {
   SetSingleAmount,
@@ -171,6 +172,7 @@ export function useMintTokenActions(
   index: number
 ): TokenActions {
   let { address, decimals, name, symbol, usedBalance: poolBalance } = state.tokens[index];
+  const { t } = useTranslation();
 
   let allowance = (state.pool.userAddress && state.pool.userAllowances[address]) || BN_ZERO;
   let balance = (state.pool.userAddress && state.pool.userBalances[address]) || BN_ZERO;
@@ -188,9 +190,9 @@ export function useMintTokenActions(
   let errorMessage = '';
   let maximumInput = poolBalance.div(2);
   if (amount.gt(balance)) {
-    errorMessage = 'EXCEEDS BALANCE';
+    errorMessage = 'insufficientBalanceToExecute';
   } else if (state.isSingle && amount.gt(maximumInput)) {
-    errorMessage = 'EXCEEDS MAX IN';
+    errorMessage = 'exceedsMaxIn';
   }
 
   let symbolAdornment: ReactElement | undefined;
@@ -198,7 +200,7 @@ export function useMintTokenActions(
 
   if (state.isSingle && maximumAmountIn.gt(0)) {
     const maximumDisplayAmountIn = formatBalance(maximumAmountIn, decimals, 4);
-    symbolAdornment = <Fragment>MAX: {maximumDisplayAmountIn} <MaximumAmountToolTip /></Fragment>
+    symbolAdornment = <Fragment>{t('max')}: {maximumDisplayAmountIn} <MaximumAmountToolTip /></Fragment>
   }
 
   let approvalNeeded = allowance.lt(maximumAmountIn);
@@ -292,6 +294,7 @@ export function useMint(): MintContextType {
   const useToken = (index: number): TokenActions => useMintTokenActions(mintState, dispatch, index);
   const balance = (mintState.pool && mintState.pool.userPoolBalance) || BN_ZERO;
   const displayBalance = formatBalance(balance, 18, 4);
+  const { t } = useTranslation();
 
   const setPoolAmount = (amount: string | number) => {
     if (amount !== mintState.poolDisplayAmount) {
@@ -314,7 +317,7 @@ export function useMint(): MintContextType {
   let minPoolAmountOut = mintState.minPoolAmountOut;
   if (minPoolAmountOut.gt(0)) {
     bindPoolAmountInput.helperText = <span>
-      Minimum: {formatBalance(minPoolAmountOut, 18, 4)} <MinimumAmountToolTip/>
+      {t('minimum')}: {formatBalance(minPoolAmountOut, 18, 4)} <MinimumAmountToolTip/>
     </span>
   }
 
@@ -325,7 +328,7 @@ export function useMint(): MintContextType {
     if (!maxTotalSupply.eq(0) && newSupply.gt(maxTotalSupply)) {
       bindPoolAmountInput.error = true;
       bindPoolAmountInput.helperText = <span>
-        EXCEEDS MAX SUPPLY <MaximumSupplyTooltip />
+        {t('exceedsMaxSupply')} <MaximumSupplyTooltip />
       </span>
     }
   }

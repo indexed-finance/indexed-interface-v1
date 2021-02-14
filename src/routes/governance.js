@@ -10,6 +10,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import Lozenge from '@atlaskit/lozenge'
 import { useHistory, Link } from "react-router-dom";
 import { BigNumber, formatBalance } from '@indexed-finance/indexed.js'
+import { useTranslation } from 'react-i18next';
 
 import Ndx from '../assets/constants/abi/Ndx.json'
 import ButtonPrimary from '../components/buttons/primary'
@@ -76,6 +77,7 @@ export default function Governance(){
   const [ metadata, setMetadata ] = useState(dummy)
   const history = useHistory()
   const classes = useStyles()
+  const { t } = useTranslation()
 
   let { dispatch, state } = useContext(store)
 
@@ -147,7 +149,7 @@ export default function Governance(){
   function Init(){
     return (
       <center style={{ paddingTop: 25 }}>
-        <p> Connect your web3 provider to continue </p>
+        <p> {t('connectWeb3')} </p>
       </center>
     )
   }
@@ -169,17 +171,17 @@ export default function Governance(){
 
     return(
       <Fragment>
-        <p style={{ marginBottom: 0 }}> You have not setup your wallet for voting yet, either for individual voting, or delegation. </p>
+        <p style={{ marginBottom: 0 }}> {t('inactiveMsg')} </p>
         <label style={{ width: '92.5%' }}>
           <b style={{ float: 'left'}}>
-            INDIVIDUAL <Radio value={0} checked={selection == 0} onClick={handleSelection} color='#00e79a' />
+            {t('individual')} <Radio value={0} checked={selection == 0} onClick={handleSelection} color='#00e79a' />
           </b>
           <b style={{ float: 'right'}}>
-            DELEGATION <Radio value={1} checked={selection == 1} onClick={handleSelection} color='orange' />
+            {t('delegation')} <Radio value={1} checked={selection == 1} onClick={handleSelection} color='orange' />
           </b>
         </label>
         <Grid item>
-          <ButtonPrimary margin={{ marginLeft: 0 }} onClick={submit}> INITIALISE </ButtonPrimary>
+          <ButtonPrimary margin={{ marginLeft: 0 }} onClick={submit}> {t('initialise')} </ButtonPrimary>
         </Grid>
       </Fragment>
     )
@@ -208,18 +210,18 @@ export default function Governance(){
     return(
       <Fragment>
         <Grid item>
-          <p style={{ marginTop: 5 }}> Allocate your votes to another address:</p>
-          <AddressInput error={!!error} helperText={error} onChange={handleInput} value={input} variant="outlined" label='ADDRESS'/>
+          <p style={{ marginTop: 5 }}> {t('delegateTo')}:</p>
+          <AddressInput error={!!error} helperText={error} onChange={handleInput} value={input} variant="outlined" label={t('address')}/>
         </Grid>
         <Grid item>
-          <ButtonPrimary onClick={submit} margin={{ marginTop: !state.native ? 0 : 5, marginLeft: 25, float: 'right' }}> DELEGATE </ButtonPrimary>
+          <ButtonPrimary onClick={submit} margin={{ marginTop: !state.native ? 0 : 5, marginLeft: 25, float: 'right' }}> {t('delegate')} </ButtonPrimary>
           {show && (
             <Link to='/propose'>
-              <ButtonSecondary style={{ margin: 0, marginTop: !state.native ? 0 : 12.5, float:'left' }}> CREATE PROPOSAL </ButtonSecondary>
+              <ButtonSecondary style={{ margin: 0, marginTop: !state.native ? 0 : 12.5, float:'left' }}> {t('createProposal')} </ButtonSecondary>
             </Link>
           )}
           {!show && (
-            <ButtonPrimary onClick={goBack} style={{ margin: 0, marginTop: !state.native ? 0 : 12.5,  float:'left' }}> GO BACK </ButtonPrimary>
+            <ButtonPrimary onClick={goBack} style={{ margin: 0, marginTop: !state.native ? 0 : 12.5,  float:'left' }}> {t('goBack')} </ButtonPrimary>
           )}
         </Grid>
       </Fragment>
@@ -275,8 +277,8 @@ export default function Governance(){
           <Grid item xs={12} md={5} lg={5} xl={5}>
             <Canvas native={state.native}>
               <div className={classes.wallet} style={{ height: wallet }}>
-                <h3> BALANCE: {state.balances['NDX'].amount} NDX </h3>
-                <h4> STATUS: {status}</h4>
+                <h3> {t('balance')}: {state.balances['NDX'].amount} NDX </h3>
+                <h4> {t('status')}: {status}</h4>
                 <Grid container direction='column' alignItems='flex-start' justify='space-between' style={{ height: `calc(${wallet} - 24%)` }}>
                   {phase}
                 </Grid>
@@ -287,7 +289,7 @@ export default function Governance(){
             <Canvas native={state.native}>
               <div className={classes.chart}>
                 <div className={classes.stats}>
-                  <h3> TOTAL VOTERS: {metadata.voters}</h3>
+                  <h3> {t('totalVotes')}: {metadata.voters}</h3>
                   <h4> NDX: $0.00</h4>
                 </div>
                 {!state.native && (
@@ -322,7 +324,7 @@ export default function Governance(){
                       secondary={
                         <div id={proposalState}>
                           <Lozenge isBold>
-                            {proposalState}
+                            {t(proposalState)}
                             </Lozenge>
                           <o> {p.id} • {p.expiry}</o>
                         </div>
@@ -345,7 +347,7 @@ export default function Governance(){
                     <SecondaryAction>
                       {!isNaN(p.state)  && (
                         <ButtonPrimary variant='outlined'>
-                          VOTE
+                          {t('vote')}
                         </ButtonPrimary>
                       )}
                     </SecondaryAction>

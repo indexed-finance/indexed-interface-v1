@@ -31,6 +31,8 @@ import style from '../assets/css/routes/proposal'
 import getStyles from '../assets/css'
 import { store } from '../state'
 import { EtherscanUrl } from '../components/buttons/etherscan-link'
+import { useTranslation } from 'react-i18next'
+
 const dateFormat = require("dateformat");
 
 const govABI = require('../assets/constants/abi/GovernorAlpha.json');
@@ -63,7 +65,8 @@ function Blockie({ address, id, width, border }) {
 
 export default function Proposal(){
   const [ component, setComponent ] = useState({ blockie: null, list: null })
-  const [ isTransaction, setTransaction ] = useState(false)
+  const [isTransaction, setTransaction] = useState(false)
+  const { t } = useTranslation()
 
   let { state, dispatch, handleTransaction } = useContext(store)
   let { id } = useParams()
@@ -158,9 +161,9 @@ export default function Proposal(){
         <Fragment>
           <span> {i + 1}. </span>
             <li>
-              Call <ReactMarkdown source={" `" + signature + "` "}/> on {" "}
+              {t('call')} <ReactMarkdown source={" `" + signature + "` "}/> {t('on')} {" "}
               <a target="_blank" href={etherscanUrl} rel='noreferrer'>{targetName}</a>
-              {" "} with parameters:
+              {" "} {t('withParameters')}:
               <ReactMarkdown source={" `" + paramsDisplay + "` "}/>
               { value > 0 && <ReactMarkdown source={" and `" + value + "ether ` "}/> }
             </li>
@@ -229,62 +232,62 @@ export default function Proposal(){
       return <div className={classes.modal}>
         <label>
           <b style={{ float: 'left'}}>
-            FOR <Radio value={1} checked={input == 1} onClick={handleInput} color='#00e79a' />
+            {t('for')} <Radio value={1} checked={input == 1} onClick={handleInput} color='#00e79a' />
           </b>
           <b style={{ float: 'right'}}>
-            AGAINST <Radio value={0} checked={input == 0} onClick={handleInput} color='#f44336' />
+            {t('against')} <Radio value={0} checked={input == 0} onClick={handleInput} color='#f44336' />
           </b>
         </label>
-        <p> WEIGHT: {parseFloat(state.balances['NDX'].amount).toLocaleString()} NDX </p>
-        <p> IMPACT: <span> {weight}% </span> </p>
+        <p> {t('weight')}: {parseFloat(state.balances['NDX'].amount).toLocaleString()} NDX </p>
+        <p> {t('impact')}: <span> {weight}% </span> </p>
         <ButtonPrimary variant='outlined' style={{ marginBottom: 25 }} onClick={vote}>
-          VOTE
+          {t('vote')}
         </ButtonPrimary>
       </div>
     }
     function DisplayVotes() {
       return <label>
         <b style={{ float: 'left'}}>
-          FOR {formatBalance(toBN(metadata.for), 18, 4)}
+          {t('for')} {formatBalance(toBN(metadata.for), 18, 4)}
         </b>
         <b style={{ float: 'right'}}>
-          AGAINST {formatBalance(toBN(metadata.against), 18, 4)}
+          {t('against')} {formatBalance(toBN(metadata.against), 18, 4)}
         </b>
       </label>
     }
     if (propState === 'expired') {
       return <div className={classes.modal}>
-        
-        <p> Proposal Has Expired </p>
+
+        <p> {t('proposalExpired')} </p>
       </div>
     }
     if (propState === 'canceled') {
       return <div className={classes.modal}>
         <DisplayVotes />
-        <p> Proposal Canceled </p>
+        <p> {t('proposalCanceled')} </p>
       </div>
     }
     if (propState === 'queued') {
       const timestamp = (metadata.eta * 1000);
-     
+
       if (new Date().getTime() > timestamp) {
         return <div className={classes.modal}>
           <DisplayVotes />
-          <p>Proposal Ready To Be Executed</p>
-          <ButtonPrimary variant='outlined' style={{ marginBottom: 25 }} disabled={!state.account} onClick={execute}>Execute</ButtonPrimary>
+          <p>{t('readyToExecute')}</p>
+          <ButtonPrimary variant='outlined' style={{ marginBottom: 25 }} disabled={!state.account} onClick={execute}>{t('executeButton')}</ButtonPrimary>
         </div>
       }
       const readyDate = new Date(timestamp);
       const dateString = dateFormat(readyDate, 'UTC:mmm d, yyyy, h:MM TT');
       return <div className={classes.modal}>
         <DisplayVotes />
-        <p>Ready At: {dateString} UTC</p>
-        <p>Time Left: <CountDown date={timestamp} /></p>
+        <p>{t('readyAt')}: {dateString} UTC</p>
+        <p>{t('timeLeft')}: <CountDown date={timestamp} /></p>
       </div>
     }
     return <div className={classes.modal}>
       <DisplayVotes />
-      <p>Proposal Has Been Executed</p>
+      <p>{t('hasExecuted')}</p>
     </div>
   }
 
@@ -306,7 +309,7 @@ export default function Proposal(){
                   <div className={classes.title} style={{ width }}>
                     <div className={classes.lozenge}>
                       <div id={getProposalState(metadata, latestBlock)}>
-                        <Lozenge isBold> {getProposalState(metadata, latestBlock)} </Lozenge>
+                        <Lozenge isBold> {t(getProposalState(metadata, latestBlock))}</Lozenge>
                       </div>
                     </div>
                     <h3> {metadata.title}</h3>
@@ -325,14 +328,14 @@ export default function Proposal(){
               </div>
               <div className={classes.results}>
                 <div className={classes.option}>
-                  <div className={classes.vote}> FOR </div>
+                  <div className={classes.vote}> {t('for')} </div>
                   <span className={classes.progress}>
                     <Progress color='#00e79a' width={progress} values={values} option='for' />
                     <span> {parseFloat(forVotes).toLocaleString()} NDX</span>
                   </span>
                 </div>
                 <div className={classes.option}>
-                  <div className={classes.vote}> AGAINST </div>
+                  <div className={classes.vote}> {t('against')} </div>
                   <span className={classes.progress}>
                     <Progress color='#f44336' width={progress} values={values} option='against' />
                     <span> {parseFloat(againstVotes).toLocaleString()} NDX</span>
@@ -347,7 +350,7 @@ export default function Proposal(){
             <Canvas native={state.native}>
               <DisplayActionBox />
             </Canvas>
-            <Container margin={marginX} title='VOTES' padding='1em 0em'>
+            <Container margin={marginX} title={t('voteDetails')} padding='1em 0em'>
               <div className={classes.log}>
                 <List dense classes={classes.table}>
                   {component.list}
@@ -359,7 +362,7 @@ export default function Proposal(){
       </Grid>
       <Grid item xs={12} md={12} lg={12} xl={12} container direction='row' alignItems='flex-start' justify='space-between'>
         <Grid item xs={12} md={8} lg={8} xl={8}>
-           <Container title='DETAILS' margin={margin} padding="1em 0em">
+          <Container title={t('details')} margin={margin} padding="1em 0em">
             <div className={classes.body}>
               <div className={classes.metadata}>
                 <ul>

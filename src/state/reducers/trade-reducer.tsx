@@ -150,7 +150,7 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
       const balance = getBalance(address);
       const allowance = getAllowanceForPair(address);
       if (balance.lt(amount)) {
-        newState.input.errorMessage = 'INSUFFICIENT BALANCE';
+        newState.input.errorMessage = 'insufficientBalance';
         isReady = false;
       } else {
         newState.input.errorMessage = '';
@@ -163,7 +163,7 @@ function tradeReducer(state: TradeState = initialState, actions: TradeDispatchAc
       const { address, amount } = newState.output;
       const reserves = getReserves(address);
       if (reserves.lt(amount)) {
-        newState.output.errorMessage = 'EXCEEDS MAX OUT'
+        newState.output.errorMessage = 'exceedMaxOut'
         isReady = false;
       } else {
         newState.output.errorMessage = '';
