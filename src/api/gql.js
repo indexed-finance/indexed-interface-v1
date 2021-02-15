@@ -19,6 +19,7 @@ const proposalAndDistributionQuery = () => `
       id
       eta
       for
+      startBlock
       against
       proposer
       expiry
