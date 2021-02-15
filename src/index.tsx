@@ -134,6 +134,14 @@ function Application(){
 
           if(title) proposal.title = title.replace('# ', '');
           else proposal.title = ''
+
+          const lines = description.split('\n');
+          for (let i = 0; i < lines.length; i++) {
+            if (/^\d\./g.exec(lines[i])) {
+              lines[i] = `\n${lines[i]}`
+            }
+          }
+          proposal.description = lines.join('\n')
         }
         dispatch({ type: 'GENERIC', payload: { governance: { proposals, dailyDistributionSnapshots } } })
       }
