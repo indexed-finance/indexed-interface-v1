@@ -4,6 +4,7 @@ import { JsonFragment } from "@ethersproject/abi";
 import { Interface } from 'ethers/lib/utils';
 
 import { DAO, CONTROLLER, STAKING_FACTORY, PROXY_MANAGER } from '../assets/constants/addresses'
+import { EtherscanUrl } from '../components/buttons/etherscan-link';
 
 const GovernorAlpha = require('../assets/constants/abi/GovernorAlpha.json').abi;
 const MarketCapSqrtController = require('../assets/constants/abi/MarketCapSqrtController.json').abi;
@@ -39,18 +40,22 @@ interface ContractCall {
   target: string;
   targetName: string;
   signature: string;
+  fnName: string;
   value: number;
   paramsDisplay: string;
 }
+
+
 
 export function parseProposalCalls(proposal: ProposalCallData): ContractCall[] {
   const calls: ContractCall[] = [];
   for (let i = 0; i < proposal.signatures.length; i++) {
     let signature = proposal.signatures[i];
     const target = proposal.targets[i];
+    let fnName: string | undefined;
     const calldata = proposal.calldatas[i];
     const value = proposal.values[i];
-    const abi = ContractABIs[target];
+    const abi = ContractABIs[target.toLowerCase()];
     let targetName = ContractNames[target.toLowerCase()] || target;
     let paramsDisplay = '';
     if (abi) {
@@ -63,11 +68,16 @@ export function parseProposalCalls(proposal: ProposalCallData): ContractCall[] {
           sigHash = calldata.slice(0, 10);
         }
         const fn = iface.getFunction(sigHash);
+        fnName = fn.name;
         const params = [...iface.decodeFunctionData(fn, sigHash.concat(calldata.slice(2)))];
         for (let i = 0; i < params.length; i++) {
           if (fn.inputs[i].type === 'address') {
-            const name = ContractNames[params[i].toLowerCase()];
-            if (name) params[i] = `${params[i]} (${name})`;
+            const url = EtherscanUrl({ type: 'account', entity: params[i] });
+            params[i] = `[${params[i]}](${url})`;
+          } else {
+            if (fn.inputs[i].type === 'address[]') {
+              params[i] = `[${params[i].map((addr) => `[${addr}](${EtherscanUrl({ type: 'account', entity: addr })})`).join(', ')}]`
+            }
           }
         }
         paramsDisplay = params.join(', ');
@@ -78,6 +88,7 @@ export function parseProposalCalls(proposal: ProposalCallData): ContractCall[] {
     calls.push({
       target,
       targetName,
+      fnName: fnName || signature,
       signature,
       value,
       paramsDisplay
