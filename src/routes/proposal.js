@@ -160,31 +160,31 @@ export default function Proposal(){
     return mdLines.join('\n');
   }
 
-  useEffect(() => {
-    const getAccountMetadata = async() => {
-      let { web3 } = state
+  // useEffect(() => {
+  //   const getAccountMetadata = async() => {
+  //     let { web3 } = state
 
-      if(web3.injected) {
-        let contract = toContract(web3.injected, Ndx.abi, NDX)
-        let balance = await contract.methods.getCurrentVotes(state.account).call()
-        let amount = formatBalance(toBN(balance), 18, 4)
+  //     if(web3.injected) {
+  //       let contract = toContract(web3.injected, Ndx.abi, NDX)
+  //       let balance = await contract.methods.getCurrentVotes(state.account, ).call()
+  //       let amount = formatBalance(toBN(balance), 18, 4)
 
-        dispatch({ type: 'BALANCE',
-          payload: {
-            balances: {
-              'NDX': { address: NDX, amount }
-            }
-          }
-        })
-      }
-    }
-    getAccountMetadata()
-  }, [ state.web3.injected ])
+  //       dispatch({ type: 'BALANCE',
+  //         payload: {
+  //           balances: {
+  //             'NDX': { address: NDX, amount }
+  //           }
+  //         }
+  //       })
+  //     }
+  //   }
+  //   getAccountMetadata()
+  // }, [ state.web3.injected ])
 
   useEffect(() => {
     if (state.governance.proposals.length === 0) return;
     const retrieveProposal = async() => {
-      let proposal = state.governance.proposals.find(p => p.id == id)
+      let proposal = state.governance.proposals.find(p => p.id === id)
       let recentBlock = await state.web3[process.env.REACT_APP_ETH_NETWORK].eth.getBlock('latest');
 
       setLatestBlock(parseInt(recentBlock.number));
@@ -195,6 +195,22 @@ export default function Proposal(){
       })
 
       setMetadata(proposal)
+
+      let { web3 } = state
+
+      if(web3.injected) {
+        let contract = toContract(web3.injected, Ndx.abi, NDX)
+        let balance = await contract.methods.getPriorVotes(state.account, proposal.startBlock).call()
+        let amount = formatBalance(toBN(balance), 18, 4)
+
+        dispatch({ type: 'BALANCE',
+          payload: {
+            balances: {
+              'NDX': { address: NDX, amount }
+            }
+          }
+        })
+      }
     }
     retrieveProposal()
   }, [ , state.governance ]);
