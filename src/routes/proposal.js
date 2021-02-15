@@ -142,31 +142,22 @@ export default function Proposal(){
     )
   }
 
-  function DisplayProposalCalls() {
+  function getProposalCalls() {
     const calls = parseProposalCalls(metadata);
-    return calls.map((propCall, i) => {
+    const mdLines = [];
+    calls.forEach((propCall, i) => {
       const {
         target,
         targetName,
-        signature,
-        value,
+        fnName,
         paramsDisplay
       } = propCall;
       console.log(propCall)
       const etherscanUrl = EtherscanUrl({ type: 'account', entity: target });
-      return (
-        <Fragment>
-          <span> {i + 1}. </span>
-            <li>
-              Call <ReactMarkdown source={" `" + signature + "` "}/> on {" "}
-              <a target="_blank" href={etherscanUrl} rel='noreferrer'>{targetName}</a>
-              {" "} with parameters:
-              <ReactMarkdown source={" `" + paramsDisplay + "` "}/>
-              { value > 0 && <ReactMarkdown source={" and `" + value + "ether ` "}/> }
-            </li>
-        </Fragment>
-      )
-    })
+      const text = `${1 + i}. [${targetName}]($${etherscanUrl}).${fnName}(${paramsDisplay})`;
+      mdLines.push(text);
+    });
+    return mdLines.join('\n');
   }
 
   useEffect(() => {
@@ -363,7 +354,7 @@ export default function Proposal(){
             <div className={classes.body}>
               <div className={classes.metadata}>
                 <ul>
-                  <DisplayProposalCalls />
+                  <ReactMarkdown source={getProposalCalls()} />
                 </ul>
               </div>
               <div className={classes.markdown}>
