@@ -6,7 +6,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText'
-import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import Lozenge from '@atlaskit/lozenge'
 import { useHistory, Link } from "react-router-dom";
 import { BigNumber, formatBalance } from '@indexed-finance/indexed.js'
@@ -30,11 +29,6 @@ import { store } from '../state'
 import style from '../assets/css/routes/governance'
 import getStyles from '../assets/css'
 import { getProposalState } from "../utils/proposal";
-
-const proposalState = {
-  0: 'active',
-  1: 'rejcted'
-}
 
 const INACTIVE = () => <span id='inactive'>INACTIVE</span>
 const DELEGATED = () => <span id='delegated'>DELEGATED</span>
@@ -208,12 +202,12 @@ export default function Governance(){
     return(
       <Fragment>
         <Grid item>
-          <p style={{ marginTop: 5 }}> Allocate your votes to another address:</p>
+          <p style={{ marginTop: 5 }}> Delegate your votes to another address:</p>
           <AddressInput error={!!error} helperText={error} onChange={handleInput} value={input} variant="outlined" label='ADDRESS'/>
         </Grid>
         <Grid item>
           <ButtonPrimary onClick={submit} margin={{ marginTop: !state.native ? 0 : 5, marginLeft: 25, float: 'right' }}> DELEGATE </ButtonPrimary>
-          {show && (
+          {show && state.balances['NDX'].amount >= 100000 && (
             <Link to='/propose'>
               <ButtonSecondary style={{ margin: 0, marginTop: !state.native ? 0 : 12.5, float:'left' }}> CREATE PROPOSAL </ButtonSecondary>
             </Link>
@@ -233,6 +227,7 @@ export default function Governance(){
   useEffect(() => {
     const retrieveProposals = async() => {
       let { proposals, dailyDistributionSnapshots } = state.governance
+      proposals = [...proposals];
 
       if((proposals.length > 0 || dailyDistributionSnapshots.length > 0) && state.request){
         let length = dailyDistributionSnapshots.length - 1
@@ -247,6 +242,7 @@ export default function Governance(){
           voters: parseFloat(voters).toLocaleString(),
           block: recentBlock.number
         })
+        proposals.sort((a, b) => b.id - a.id);
         setProposals(proposals)
 
         if(state.web3.injected) {
