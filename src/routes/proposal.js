@@ -355,7 +355,7 @@ export default function Proposal(){
               <DisplayActionBox />
             </Canvas>
             <Container margin={marginX} title='VOTES' padding='1em 0em'>
-              <div className={classes.log}>
+              <div className={classes.log} style={{ overflow: 'auto' }}>
                 <List dense classes={classes.table}>
                   {component.list}
                 </List>
