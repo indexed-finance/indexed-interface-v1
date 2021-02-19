@@ -15,7 +15,7 @@ import style from '../../assets/css/components/approvals'
 import getStyles from '../../assets/css'
 import { store } from '../../state'
 
-import { tokenMetadata } from '../../assets/constants/parameters';
+import { getTokenImage, tokenMetadata } from '../../assets/constants/parameters';
 
 const Tick = styled(ListItemIcon)({
   minWidth: 35,
@@ -68,7 +68,7 @@ export default function TokenOutput(props) {
         </Tick>
       {show && (
         <ListItemAvatar className={classes.wrapper}>
-          <Avatar className={classes.avatar} src={tokenMetadata[token.symbol].image} />
+          <Avatar className={classes.avatar} src={getTokenImage(token)} />
         </ListItemAvatar>
       )}
       <ListItemText primary={token.symbol} secondary={props.secondary} />

@@ -18,7 +18,7 @@ import style from '../../assets/css/components/approvals'
 import getStyles from '../../assets/css'
 import { store } from '../../state'
 
-import { tokenMetadata } from '../../assets/constants/parameters';
+import { getTokenImage, tokenMetadata } from '../../assets/constants/parameters';
 import { getERC20 } from '../../lib/erc20';
 
 const ApproveButton = styled(ButtonTransaction)({
@@ -114,7 +114,7 @@ export default function TokenInput(props) {
         </Tick>
        {show && (
         <ListItemAvatar className={classes.wrapper}>
-          <Avatar alt={classes.avatar} className={classes.avatar} src={tokenMetadata[token.symbol].image} />
+          <Avatar alt={classes.avatar} className={classes.avatar} src={getTokenImage(token)} />
         </ListItemAvatar>
       )}
       <ListItemText style={{ width: '30px' }} primary={token.symbol} secondary={props.secondary || token.symbolAdornment} />
