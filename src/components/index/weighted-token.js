@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import { usePalette } from 'react-palette'
 
-import { tokenMetadata } from '../../assets/constants/parameters'
+import { getTokenImage, tokenMetadata } from '../../assets/constants/parameters'
 import style from '../../assets/css/components/weights'
 import getStyles from '../../assets/css'
 import { BigNumber, formatBalance } from '@indexed-finance/indexed.js'
@@ -12,7 +12,10 @@ import { BigNumber, formatBalance } from '@indexed-finance/indexed.js'
 const useStyles = getStyles(style)
 
 export default function WeightedToken({ token }) {
-  let { image, name } = tokenMetadata[token.symbol];
+  let { image, name } = tokenMetadata[token.symbol] || {
+    name: token.name || '',
+    image: getTokenImage(token)
+  };
   let { data } = usePalette(image)
   const classes = useStyles()
 
