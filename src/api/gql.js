@@ -64,6 +64,7 @@ const categoryInfoQuery = (id) => `
 {
   category(id: "${id}") {
     tokens {
+      address: id
       symbol
       priceUSD
       name

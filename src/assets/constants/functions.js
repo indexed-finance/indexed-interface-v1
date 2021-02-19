@@ -37,9 +37,10 @@ export function getCategoryImages(category, state) {
 
   category.indexes.map((index) =>
     state.indexes[index].assets.map((token) => {
-      if(isSelected[token.symbol]) return;
+      console.log(token);
+      if (isSelected[token.symbol]) return;
       else isSelected[token.symbol] = true;
-      return getTokenImage(token);
+      categoryImages.push(getTokenImage(token));
     })
   )
 

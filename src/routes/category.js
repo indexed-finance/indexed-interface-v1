@@ -8,7 +8,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { useParams } from 'react-router-dom'
 
-import { tokenMetadata } from '../assets/constants/parameters'
+import { getTokenImage, tokenMetadata } from '../assets/constants/parameters'
 import { getCategory } from '../api/gql'
 import style from '../assets/css/routes/category'
 import Container from '../components/container'
@@ -50,14 +50,16 @@ function TabPanel(props) {
   );
 }
 
-const ImageCell = (i) =>  (
-  <div style={{ display: 'inline-flex', flexWrap: 'nowrap', alignItems: 'center' }}>
-    <img src={tokenMetadata[i.symbol].image} style={{ float: 'left', width: 35, padding: 5 }} />
+const ImageCell = (i) =>  {
+  return (
+    <div style={{ display: 'inline-flex', flexWrap: 'nowrap', alignItems: 'center' }}>
+    <img src={getTokenImage(i)} style={{ float: 'left', width: 35, padding: 5 }} />
     <span style={{ marginBlock: 0, marginLeft: 17.5, clear: 'both' }}>
-      {tokenMetadata[i.symbol].name} [{i.symbol}]
+      {i.name} [{i.symbol}]
     </span>
   </div>
-)
+  )
+}
 
 const useStyles = getStyles(style);
 
