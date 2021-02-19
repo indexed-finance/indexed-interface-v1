@@ -3,7 +3,7 @@ import { formatBalance } from '@indexed-finance/indexed.js'
 import moment from 'moment';
 
 import {
-  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, DESKTOP_MASSIVE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL, tokenMetadata
+  DESKTOP_SMALL, DESKTOP_WIDE, DESKTOP_LARGE, DESKTOP_NORMAL, DESKTOP_HUGE, DESKTOP_MASSIVE, NATIVE_WIDE, NATIVE_NORMAL, NATIVE_SMALL, tokenMetadata, getTokenImage
 } from './parameters'
 
 export function getHelperData(arr) {
@@ -39,9 +39,7 @@ export function getCategoryImages(category, state) {
     state.indexes[index].assets.map((token) => {
       if(isSelected[token.symbol]) return;
       else isSelected[token.symbol] = true;
-      return categoryImages.push(
-        tokenMetadata[token.symbol].image
-      );
+      return getTokenImage(token);
     })
   )
 
