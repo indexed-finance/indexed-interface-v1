@@ -31,6 +31,7 @@ import defiDarkCircular from '../images/defi-dark-circular.png'
 import defiLightCircular from '../images/defi-light-circular.png'
 import ccDarkCircular from '../images/cc-dark-circular.png'
 import ccLightCircular from '../images/cc-light-circular.png'
+import orclDark from '../images/orcl-dark.png'
 
 import { isNative } from './functions'
 
@@ -164,6 +165,16 @@ export const categoryMetadata = {
     circular: {
       light: defiDarkCircular,
       dark: defiLightCircular
+    }
+  },
+  3: {
+    normal: {
+      light: orclDark,
+      dark: orclDark
+    },
+    circular: {
+      light: orclDark,
+      dark: orclDark
     }
   },
   null: {
