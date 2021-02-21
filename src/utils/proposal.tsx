@@ -11,6 +11,7 @@ const MarketCapSqrtController = require('../assets/constants/abi/MarketCapSqrtCo
 const StakingRewardsFactory = require('../assets/constants/abi/StakingRewardsFactory.json');
 const DelegateCallProxyManager = require('../assets/constants/abi/DelegateCallProxyManager.json');
 const NDXToken = require('../assets/constants/abi/Ndx.json').abi;
+const PoolFactory = require('../assets/constants/abi/PoolFactory.json');
 
 const ContractNames = {
   [CONTROLLER.toLowerCase()]: 'MarketCapSqrtController',
@@ -21,7 +22,8 @@ const ContractNames = {
   '0x2701ea55b8b4f0fe46c15a0f560e9cf0c430f833': 'ETH-CC10',
   [DAO.toLowerCase()]: 'GovernorAlpha',
   [PROXY_MANAGER.toLowerCase()]: 'DelegateCallProxyManager',
-  [NDX.toLowerCase()]: 'NDX'
+  [NDX.toLowerCase()]: 'NDX',
+  '0x592f70ce43a310d15ff59be1460f38ab6df3fe65': 'PoolFactory'
 };
 
 const ContractABIs = {
@@ -29,7 +31,8 @@ const ContractABIs = {
   [STAKING_FACTORY.toLowerCase()]: StakingRewardsFactory,
   [DAO.toLowerCase()]: GovernorAlpha,
   [PROXY_MANAGER.toLowerCase()]: DelegateCallProxyManager,
-  [NDX.toLowerCase()]: NDXToken
+  [NDX.toLowerCase()]: NDXToken,
+  '0x592f70ce43a310d15ff59be1460f38ab6df3fe65': PoolFactory
 };
 
 interface ProposalCallData {
@@ -47,8 +50,6 @@ interface ContractCall {
   value: number;
   paramsDisplay: string;
 }
-
-
 
 export function parseProposalCalls(proposal: ProposalCallData): ContractCall[] {
   const calls: ContractCall[] = [];
