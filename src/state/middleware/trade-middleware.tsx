@@ -224,7 +224,7 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
       await action.helper.waitForUpdate;
 
       const { address, decimals } = action.helper.tokenA;
-      const input = {
+      const output = {
         amount: BN_ZERO,
         displayAmount: '0',
         address,
@@ -232,7 +232,7 @@ function tradeDispatchMiddleware(dispatch: TradeDispatch, state: TradeState) {
         isPoolToken: true
       };
       const wl0 = whitelist[process.env.REACT_APP_ETH_NETWORK][0];
-      const output = {
+      const input = {
         address: wl0.address,
         decimals: wl0.decimals,
         amount: BN_ZERO,
