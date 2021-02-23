@@ -63,7 +63,7 @@ export function getTokenImage(token) {
   } else {
     address = token.address;
   }
-  return `${imageBaseUrl}${address.toLowerCase()}.png`;
+  return `${imageBaseUrl}${address?.toLowerCase()}.png`;
 }
 
 export const initialState = {
