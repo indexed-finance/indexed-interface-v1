@@ -1,5 +1,8 @@
 import { getIPFSFile } from './ipfs';
 import { SUBGRAPH_URL_UNISWAP, SUBGRAPH_URL_INDEXED } from '../assets/constants/urls';
+import { computeUniswapPairAddress } from '@indexed-finance/indexed.js/dist/utils/address';
+import { NDX, WETH } from '../assets/constants/addresses';
+import { UNISWAP_SUBGRAPH_URL } from '@indexed-finance/indexed.js/dist/subgraph';
 
 const execRequest = (query, url = SUBGRAPH_URL_INDEXED) => fetch(
   url,
@@ -102,9 +105,11 @@ const categoriesQuery = () => `
   }
 }`
 
+const ndxPair = computeUniswapPairAddress(WETH, NDX).toLowerCase()
+
 const priceQuery = () => `
 {
-  pairs(where: { id: "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc"}) {
+  pairs(where: { id: "${ndxPair}"}) {
     token0Price
   }
 }`
@@ -165,18 +170,20 @@ export async function getCategory(id) {
 }
 
 export async function getMarketMetadata(pairAddress) {
-  const { data: { pairs } } = await execRequest(
+  const results = await execRequest(
     marketMetadataQuery(pairAddress.toLowerCase()),
     SUBGRAPH_URL_UNISWAP
   );
+  const pairs = results?.data?.pairs || [] 
   return pairs[0];
 }
 
 export async function getMarketTrades(pairAddress) {
-  const { data: { swaps } } = await execRequest(
+  const results = await execRequest(
     pairQuery(pairAddress.toLowerCase()),
     SUBGRAPH_URL_UNISWAP
   );
+  const swaps = results?.data?.swaps || [] 
   return swaps;
 }
 
@@ -188,7 +195,7 @@ export async function getProposals() {
 export async function getETHPrice() {
   const { data: { pairs } } = await execRequest(
     priceQuery(),
-    'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2'
+    UNISWAP_SUBGRAPH_URL
   );
-  return pairs[0].token0Price;
+  return pairs[0]?.token0Price;
 }
