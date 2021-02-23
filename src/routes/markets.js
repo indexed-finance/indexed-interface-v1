@@ -96,7 +96,7 @@ export default function Markets(){
               {!native && (
                 <Fragment>
                   <div style={{ float: 'left', marginRight: 20, marginTop: 25 }}>
-                    <img src={categoryMetadata[market.category].normal[mode]} style={{ width: 50 }} />
+                    <img src={categoryMetadata[market.category]?.normal[mode]} style={{ width: 50 }} />
                   </div>
                   <div style={{ float: 'right' }}>
                     <h2> {market.name} [{market.symbol}]</h2>
