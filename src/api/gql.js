@@ -78,7 +78,7 @@ const categoryInfoQuery = (id) => `
 
 const categoryMetadataQuery = (id) => `
 {
-  category(id: "0x${id.toString(16)}") {
+  category(id: "${id}") {
     metadataHash
   }
 }
