@@ -1,6 +1,6 @@
 export const SUBGRAPH_URL_INDEXED = process.env.REACT_APP_ETH_NETWORK === 'mainnet'
   ? 'https://api.thegraph.com/subgraphs/name/indexed-finance/indexed'
-  : 'https://api.thegraph.com/subgraphs/name/indexed-finance/indexed-v1';
+  : 'https://api.thegraph.com/subgraphs/name/indexed-finance/indexed-rinkeby';
 
 export const SUBGRAPH_URL_UNISWAP = process.env.REACT_APP_ETH_NETWORK === 'mainnet'
   ? 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2'

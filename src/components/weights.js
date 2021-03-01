@@ -7,7 +7,7 @@ import LinearProgress from '@material-ui/core/LinearProgress'
 import { usePalette } from 'react-palette'
 
 
-import { tokenMetadata } from '../assets/constants/parameters'
+import { getTokenImage, tokenMetadata } from '../assets/constants/parameters'
 import style from '../assets/css/components/weights'
 import getStyles from '../assets/css'
 import { formatBalance } from '@indexed-finance/indexed.js'
@@ -18,7 +18,8 @@ const dummy = { balance: 0, name: null, symbol: null, weight: 0 }
 
 export default function Weight({ asset, native, show, width }) {
   const [ metadata, setMetadata ] = useState(dummy)
-  let { image, name } = tokenMetadata[asset.symbol]
+  // let { image, name } = tokenMetadata[asset.symbol]
+  const image = getTokenImage(asset)
   let { data } = usePalette(image)
   const classes = useStyles()
 
@@ -73,7 +74,7 @@ export default function Weight({ asset, native, show, width }) {
       </div>
       <div className={classes.precentage} style={{ float: window.innerWidth > 321 ? metadata.float : 'inherit' }}>
         <span className={classes.altTitle}>
-          {!native ? `${name} [${metadata.symbol}]` : metadata.symbol}
+          {!native ? `${metadata.name} [${metadata.symbol}]` : metadata.symbol}
         </span>
         <BorderLinearProgress variant="determinate" value={metadata.percent} />
         <span className={classes.alternative}>

@@ -108,21 +108,23 @@ function Application(){
       let categories = {};
       let indexes = {};
 
-      // let tokenCategories = await getTokenCategories()
+      const tryRequire = (str) => {
+        try {
+          return require(`${str}`);
+        } catch (err) {
+          return {}
+        }
+      }
 
       if (!state.helper || state.request) return;
       const addCategory = async (categoryID) => {
         if (categories[categoryID]) {
           return;
         } else {
-          if (process.env.REACT_APP_ETH_NETWORK === 'mainnet') {
-            const id = `0x${(+categoryID).toString(16)}`;
-            const { name, symbol, description } = require(`./assets/constants/categories/${id}.json`)
-            categories[categoryID] = { name, symbol, description, indexes: [] };
-          } else {
-            const { name, symbol, description } = await getCategoryMetadata(+categoryID);
-            categories[categoryID] = { name, symbol, description, indexes: [] };
-          }
+          const id = categoryID;
+          const fil = tryRequire(`./assets/constants/categories/${id}.json`);
+          const { name, symbol, description } = fil;
+          categories[categoryID] = { name, symbol, description, indexes: [] };
         }
       };
 
@@ -152,7 +154,7 @@ function Application(){
 
           let snapshots = pool.pool.snapshots;
           let timestamp = new Date(Date.now())
-          let categoryID = `0x${category.toString(16)}`;
+          let categoryID = category;
 
           await addCategory(categoryID);
 
@@ -215,7 +217,7 @@ function Application(){
         for (let pool of state.helper.uninitialized) {
           await pool.update();
           const { category, name, symbol, address, tokens } = pool;
-          const categoryID = `0x${category.toString(16)}`;
+          let categoryID = category;
           await addCategory(categoryID);
           let finalValueEstimate = new BigNumber(0);
           let currentValue = new BigNumber(0);

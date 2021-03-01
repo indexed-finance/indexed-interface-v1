@@ -318,18 +318,6 @@ export function useMint(): MintContextType {
     </span>
   }
 
-  if (mintState.pool) {
-    let { maxTotalSupply, totalSupply } = mintState.pool.pool
-    let newSupply = totalSupply.plus(mintState.poolAmountOut);
-
-    if (!maxTotalSupply.eq(0) && newSupply.gt(maxTotalSupply)) {
-      bindPoolAmountInput.error = true;
-      bindPoolAmountInput.helperText = <span>
-        EXCEEDS MAX SUPPLY <MaximumSupplyTooltip />
-      </span>
-    }
-  }
-
   return {
     useToken,
     mintState,
