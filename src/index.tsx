@@ -108,11 +108,9 @@ function Application(){
       let categories = {};
       let indexes = {};
 
-      // let tokenCategories = await getTokenCategories()
-
       const tryRequire = (str) => {
         try {
-          return require(str);
+          return require(`${str}`);
         } catch (err) {
           return {}
         }
@@ -124,14 +122,9 @@ function Application(){
           return;
         } else {
           const id = categoryID;
-          const { name, symbol, description } = tryRequire(`./assets/constants/categories/${id}.json`)
+          const fil = tryRequire(`./assets/constants/categories/${id}.json`);
+          const { name, symbol, description } = fil;
           categories[categoryID] = { name, symbol, description, indexes: [] };
-          // if (process.env.REACT_APP_ETH_NETWORK === 'mainnet') {
-            
-          // } else {
-          //   const { name, symbol, description } = await getCategoryMetadata(+categoryID);
-          //   categories[categoryID] = { name, symbol, description, indexes: [] };
-          // }
         }
       };
 
