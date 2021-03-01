@@ -109,7 +109,7 @@ const ndxPair = computeUniswapPairAddress(WETH, NDX).toLowerCase()
 
 const priceQuery = () => `
 {
-  pairs(where: { id: "${ndxPair}"}) {
+  pairs(where: { id: "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc"}) {
     token0Price
   }
 }`
