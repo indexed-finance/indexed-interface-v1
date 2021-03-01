@@ -59,7 +59,7 @@ export interface PortfolioToken {
   price: number;
   value: number;
   earned: number;
-  category: number;
+  category: string;
   stakingPoolAddress: string;
 }
 
