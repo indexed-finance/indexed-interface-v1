@@ -33,6 +33,7 @@ import ccDarkCircular from '../images/cc-dark-circular.png'
 import ccLightCircular from '../images/cc-light-circular.png'
 import orclDarkCircular from '../images/orcl-dark-circular.png'
 import orclLightCircular from '../images/orcl-light-circular.png'
+import degenLightCircular from '../images/degen-light-circular.png';
 
 import { isNative } from './functions'
 
@@ -148,7 +149,7 @@ export const initialProposalState = {
 // be weary of it causing future trouble w/images
 
 export const categoryMetadata = {
-  1: {
+  '0x1': {
     normal: {
       light: ccLight,
       dark: ccDark
@@ -158,7 +159,7 @@ export const categoryMetadata = {
       dark: ccDarkCircular
     }
   },
-  2: {
+  '0x2': {
     normal: {
       light: defiLight,
       dark: defiDark
@@ -168,7 +169,7 @@ export const categoryMetadata = {
       dark: defiLightCircular
     }
   },
-  3: {
+  '0x3': {
     normal: {
       light: orclLightCircular,
       dark: orclDarkCircular
@@ -176,6 +177,16 @@ export const categoryMetadata = {
     circular: {
       light: orclLightCircular,
       dark: orclDarkCircular
+    }
+  },
+  'sigma-v10x1': {
+    normal: {
+      light: degenLightCircular,
+      dark: degenLightCircular,
+    },
+    circular: {
+      light: degenLightCircular,
+      dark: degenLightCircular
     }
   },
   null: {
@@ -548,6 +559,7 @@ const PREFIX = window.innerWidth > 600 ? 'TRANSACTION' : 'TX'
 
 export const TX_CONFIRM = { show: true, message: `${PREFIX} CONFIRMED`, opcode: 'success' }
 export const TX_REVERT = { show: true, message:  `${PREFIX} REVERTED`, opcode: 'error' }
+export const TX_REJECT = { show: true, message: `${PREFIX} REJECTED`, opcode: 'error' };
 export const WEB3_PROVIDER = { show: true, message: 'NO PROVIDER DETECTED', opcode: 'info' }
 
 const envNetwork = process.env.REACT_APP_ETH_NETWORK;
