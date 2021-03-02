@@ -14,7 +14,7 @@ import Container from '../components/container'
 import ButtonPrimary from '../components/buttons/primary'
 import Loader from '../components/loaders/stake'
 
-import { tokenMetadata } from '../assets/constants/parameters'
+import { categoryMetadata, getTokenImage, tokenMetadata } from '../assets/constants/parameters'
 import getStyles from '../assets/css'
 import { useStakingState } from '../state/staking/context';
 import { store } from '../state'
@@ -24,6 +24,7 @@ const useStyles = getStyles(style)
 export default function Stake() {
   const theme =  useTheme()
   const classes = useStyles()
+  const mode = theme.palette.primary.main === '#ffffff' ? 'light' : 'dark'
 
   let reducerState = useStakingState();
   let { state } = useContext(store);
@@ -92,11 +93,13 @@ export default function Stake() {
 
           let total = parseFloat(formatBalance(totalRewards, 18, 4));
           let symbol = '', name = '', tokens = [];
-
+          let category = '';
           if (meta) {
-            tokens = meta.indexPoolTokenSymbols.slice(0 , 4);
+            // tokens = meta.indexPoolTokenSymbols.slice(0 , 4);
+            // tokens = meta.
             symbol = meta.stakingSymbol;
             name = meta.indexPoolName
+            category = meta.poolCategory;
           }
 
           let formattedName = name.replace(/Tokens/g, ' ')
@@ -175,9 +178,8 @@ export default function Stake() {
                 <Card color={color}>
                   <div className={classes.pool}>
                     <div className={classes.image}>
-                      {tokens.map((symbol, i) =>
-                        <img alt={`asset-${i}`} src={tokenMetadata[symbol].image} style={imgStyles[i]} />
-                      )}
+                      { category && <img alt={`asset-2`} src={categoryMetadata[category]?.normal[mode]} style={imgStyles[2]} /> }
+                      { showUni && <img alt={`asset-3`} src={tokenMetadata['ETH'].image} style={imgStyles[3]} /> }
                     </div>
                     <div className={classes.information}>
                       <Fragment>

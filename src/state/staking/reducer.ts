@@ -8,6 +8,7 @@ export interface StakingPoolMetadata {
   indexPoolSymbol: string;
   indexPoolTokenSymbols: string[];
   stakingSymbol: string;
+  poolCategory: string;
 }
 
 export interface StakingState {

@@ -115,7 +115,8 @@ export function useStaking(): StakingContextType {
             indexPoolName,
             indexPoolSymbol,
             indexPoolTokenSymbols,
-            stakingSymbol
+            stakingSymbol,
+            poolCategory: helper.pool.category
           }
         });
       }

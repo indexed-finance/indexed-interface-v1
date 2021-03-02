@@ -103,7 +103,7 @@ export default function Portfolio(){
     } = token;
     let image = categoryMetadata[category].circular[mode]
     let isLPToken = symbol.includes('UNI')
-    let lpImage = tokenMetadata['UNI'].image
+    let lpImage = tokenMetadata['ETH'].image
     let { marginBottom, paddingTop } = {
       marginBottom: isLPToken ? 10 : 0,
       paddingtop: isLPToken ? 10 : 5
