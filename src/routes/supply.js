@@ -9,7 +9,7 @@ import StakingRewardsFactory from '../assets/constants/abi/StakingRewardsFactory
 import IStakingRewards from '../assets/constants/abi/IStakingRewards.json'
 import { formatBalance, toTokenAmount, toWei, toBN, toHex } from '@indexed-finance/indexed.js'
 
-import { TX_CONFIRMED, TX_PENDING, TX_REVERTED } from '../assets/constants/parameters'
+import { categoryMetadata, TX_CONFIRMED, TX_PENDING, TX_REVERTED } from '../assets/constants/parameters'
 import { STAKING_FACTORY } from '../assets/constants/addresses'
 
 import style from '../assets/css/routes/supply'
@@ -28,6 +28,7 @@ import { useStakingState } from '../state/staking/context';
 import EtherScanLink from '../components/buttons/etherscan-link';
 import Web3RequiredPrimaryButton from '../components/buttons/web3-required-primary';
 import { BigNumber } from 'ethers';
+import { useTheme } from '@material-ui/core/styles';
 const dateFormat = require("dateformat");
 
 const useStyles = getStyles(style)
@@ -36,6 +37,9 @@ export default function Supply() {
   const [ input, setInput ] = useState(null)
   const [ tokens, setTokens ] = useState([])
   const { useStakingPool } = useStakingState();
+
+  const theme =  useTheme()
+  const mode = theme.palette.primary.main === '#ffffff' ? 'light' : 'dark'
 
   let { state, native, dispatch } = useContext(store)
   let { asset } = useParams()
@@ -51,12 +55,17 @@ export default function Supply() {
     if (pool && pool.pool) update();
   }, [])
 
-  const initializePool = async(addr) => {
+  const initializePool = async (addr) => {
     let { web3, account } = state
 
     try {
-      let tokenAddress = pool.pool.stakingToken
-      let contract = toContract(web3.injected, StakingRewardsFactory, STAKING_FACTORY)
+      let tokenAddress = pool.pool.stakingToken;
+      console.log(`STAKING TOKEN ${tokenAddress}`)
+      const factory =  pool.pool.pool.indexPool === '0x126c121f99e1e211df2e5f8de2d96fa36647c855'.toLowerCase()
+        ? '0x4246863cf318f930a955f4BaB2a9277c21E3b0bB'
+        : STAKING_FACTORY;
+      let contract = toContract(web3.injected, StakingRewardsFactory, factory)
+      console.log(await contract.methods.notifyRewardAmount(tokenAddress).call())
 
       await contract.methods.notifyRewardAmount(tokenAddress)
       .send({ from: account })
@@ -441,32 +450,15 @@ export default function Supply() {
     )
   }
 
-  useEffect(() => {
-    // Ensure that if a pool is using a UNIV2 token for staking, to
-    // format images in occurance and if not render as is
-    const sortDisplayImages = () => {
-      if(!pool.pool && !pool.metadata) return;
-      else if(tokens.length > 0) return;
-
-      let targetArr = pool.metadata.indexPoolTokenSymbols.slice(0, 4)
-      let findExisting = targetArr.find(i => i == 'UNI')
-
-      if(!ticker.includes('UNI')) {
-        setTokens(targetArr)
-      } else {
-        if(findExisting) {
-          targetArr[targetArr.indexOf(findExisting)] = targetArr[0]
-          targetArr[0] = findExisting
-        } else {
-          targetArr[0] = 'UNI'
-        }
-        setTokens(targetArr)
-      }
-    }
-    sortDisplayImages()
-  }, [ , pool.metadata ])
-
-  console.log(state.native)
+  function DisplayImages() {
+    if (!pool.pool || !pool.metadata || !pool.pool.pool) return <></>;
+    const isWethPair = pool.pool.pool.isWethPair;
+    const category = pool.metadata.poolCategory;
+    return <div>
+      { category && <img alt={`asset-2`} src={categoryMetadata[category]?.normal[mode]} style={imgStyles[2]} /> }
+      { isWethPair && <img alt={`asset-3`} src={tokenMetadata['ETH'].image} style={imgStyles[3]} /> }
+    </div>
+  }
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
@@ -480,9 +472,11 @@ export default function Supply() {
           <div className={classes.modal} style={{ padding, height }}>
             <Grid container direction='row' alignItems='center' justify={positioning} spacing={4}>
               <Grid item>
-                {tokens.map(
+                {/* {tokens.map(
                   (symbol, i) => <img alt={`asset-${i}`} src={tokenMetadata[symbol].image} style={imgStyles[i]} />
-                )}
+                )} */}
+                {/* <img alt={`asset-${i}`} src={tokenMetadata[symbol].image} style={imgStyles[i]} /> */}
+                <DisplayImages />
               </Grid>
               <Grid item>
                 { FormInput() }
