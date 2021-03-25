@@ -34,6 +34,8 @@ import ccLightCircular from '../images/cc-light-circular.png'
 import orclDarkCircular from '../images/orcl-dark-circular.png'
 import orclLightCircular from '../images/orcl-light-circular.png'
 import degenLightCircular from '../images/degen-light-circular.png';
+import nftpLightCircular from '../images/nftp-light-circular.png';
+import nftpDarkCircular from '../images/nftp-dark-circular.png';
 
 import { isNative } from './functions'
 
@@ -187,6 +189,16 @@ export const categoryMetadata = {
     circular: {
       light: degenLightCircular,
       dark: degenLightCircular
+    }
+  },
+  'sigma-v10x2': {
+    normal: {
+      light: nftpLightCircular,
+      dark: nftpDarkCircular
+    },
+    circular: {
+      light: nftpLightCircular,
+      dark: nftpDarkCircular
     }
   },
   null: {
