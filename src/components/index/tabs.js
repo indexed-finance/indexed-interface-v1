@@ -234,7 +234,7 @@ export default function VerticalTabs({ data }) {
         <Grid item container direction='row' alignItems='flex-start' justify='start' spacing={infoSpacing}>
           <Grid item key='uniswap'>
             <div>
-              <Link to={`/category/0x${data.category}`}>
+              <Link to={`/category/${data.category}`}>
                 <ButtonPrimary variant='outlined' margin={{ marginLeft: 20, marginTop: 12.5, marginBottom: 12.5 }}>
                   CATEGORY
                 </ButtonPrimary>
