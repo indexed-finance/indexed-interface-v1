@@ -49,13 +49,13 @@ const Loader = ({ theme }) => (
 export default function StickyHeadTable(props) {
   let { market, triggerMarket, state } = props
   let { request, native, indexes } = state
-  let { overflowX, height, padding } = style.getFormatting(native)
+  let { overflowX, padding } = style.getFormatting(native)
   const classes = useStyles()
   const theme = useTheme()
 
   return (
     <div className={classes.root}>
-      <TableContainer style={{ overflowX, height }} >
+      <TableContainer style={{ overflowX  }} >
         <Table stickyHeader className={classes.table} dense={state.native}>
           <TableHead>
             <Row>
