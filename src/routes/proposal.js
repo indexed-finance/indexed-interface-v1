@@ -367,7 +367,7 @@ export default function Proposal(){
       <Grid item xs={12} md={12} lg={12} xl={12} container direction='row' alignItems='flex-start' justify='space-between'>
         <Grid item xs={12} md={8} lg={8} xl={8}>
            <Container title='DETAILS' margin={margin} padding="1em 0em">
-            <div className={classes.body}>
+            <div className={classes.body} style={{ overflowWrap: 'anywhere' }}>
               <div className={classes.metadata}>
                 <ul>
                   <ReactMarkdown source={getProposalCalls()} />
