@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState, useContext } from 'react'
+import React, { Fragment, useEffect, useState, useContext, useMemo } from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import Lozenge from '@atlaskit/lozenge'
@@ -70,26 +70,29 @@ export default function Proposal(){
   let { native } = state
 
   const [ metadata, setMetadata ] = useState(initialProposalState)
-  const [ weight, setWeight ] = useState(null)
+  // const [ weight, setWeight ] = useState(null)
   const [ input, setInput ] = useState(1);
   const [latestBlock, setLatestBlock] = useState(null);
 
   const classes = useStyles()
 
   const handleInput = (event) => {
-    let target = event.target.value == 1 ? metadata.against : metadata.for
-    let weight = formatBalance(toBN(target), 18, 4)
-    let { amount } = state.balances['NDX']
-
-    if(weight > 0) {
-      weight = ((parseFloat(amount) / weight) * 100).toFixed(2)
-    } else if (weight != 0){
-      weight = 100
-    }
-
     setInput(event.target.value)
-    setWeight(weight)
   }
+
+  const weight = useMemo(() => {
+    const currentVotes = parseFloat(formatBalance(toBN(input == 1 ? metadata.against : metadata.for), 18, 4));
+    const { amount } = parseFloat(state.balances['NDX'])
+    let weight = 0;
+    if (amount > 0) {
+      if (currentVotes > 0) {
+        weight = ((parseFloat(amount) / (currentVotes)) * 100).toFixed(2)
+      } else {
+        weight = 100;
+      }
+    }
+    return weight;
+  }, [ state.balances['NDX'], metadata.for, metadata.against, input ])
 
   const vote = async() => {
     let { web3, account } = state
@@ -211,6 +214,7 @@ export default function Proposal(){
 
   function DisplayActionBox() {
     const propState = getProposalState(metadata, latestBlock);
+    console.log(state.balances['NDX'].amount)
     if (propState === 'active') {
       return <div className={classes.modal}>
         <label>
@@ -221,9 +225,9 @@ export default function Proposal(){
             AGAINST <Radio value={0} checked={input == 0} onClick={handleInput} color='#f44336' />
           </b>
         </label>
-        <p> WEIGHT: {parseFloat(state.balances['NDX'].amount).toLocaleString()} NDX </p>
-        <p> IMPACT: <span> {weight}% </span> </p>
-        <ButtonPrimary variant='outlined' style={{ marginBottom: 25 }} onClick={vote}>
+        <p> VOTES: {parseFloat(state.balances['NDX'].amount).toLocaleString()} NDX </p>
+        <p> IMPACT: <span> {weight || 0}% </span> </p>
+        <ButtonPrimary variant='outlined' style={{ marginBottom: 25 }} onClick={vote} disabled={!(state.balances['NDX'].amount) || !parseFloat(state.balances['NDX'].amount)}>
           VOTE
         </ButtonPrimary>
       </div>
