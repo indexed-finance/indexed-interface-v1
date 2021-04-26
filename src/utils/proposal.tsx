@@ -12,6 +12,8 @@ const StakingRewardsFactory = require('../assets/constants/abi/StakingRewardsFac
 const DelegateCallProxyManager = require('../assets/constants/abi/DelegateCallProxyManager.json');
 const NDXToken = require('../assets/constants/abi/Ndx.json').abi;
 const PoolFactory = require('../assets/constants/abi/PoolFactory.json');
+const ProxyManagerAccessControl = require('../assets/constants/abi/ProxyManagerAccessControl.json');
+const SigmaControllerV1 = require('../assets/constants/abi/SigmaControllerV1.json');
 
 const ContractNames = {
   [CONTROLLER.toLowerCase()]: 'MarketCapSqrtController',
@@ -23,8 +25,15 @@ const ContractNames = {
   [DAO.toLowerCase()]: 'GovernorAlpha',
   [PROXY_MANAGER.toLowerCase()]: 'DelegateCallProxyManager',
   [NDX.toLowerCase()]: 'NDX',
-  '0x592f70ce43a310d15ff59be1460f38ab6df3fe65': 'PoolFactory'
+  '0x592f70ce43a310d15ff59be1460f38ab6df3fe65': 'PoolFactory',
+  '0x3d4860d4b7952a3cad3accfada61463f15fc0d54': 'ProxyManagerAccessControl',
+  '0x5b470a8c134d397466a1a603678dadda678cbc29': 'SigmaControllerV1',
 };
+
+const ImplementationIDs = {
+  '0x42fdd905bf1f3fac3b475cdca7cc127db3a757ae179f57c9da3b4787f5f58206': `keccak256("SigmaIndexPoolV1.sol")`,
+  '0xe4105e36f4402bad908f77146a54b96b1aae362be2a9d940c0e19537431e1efb': `keccak256("IndexPoolV1.sol")`
+}
 
 const ContractABIs = {
   [CONTROLLER.toLowerCase()]: MarketCapSqrtController,
@@ -32,7 +41,9 @@ const ContractABIs = {
   [DAO.toLowerCase()]: GovernorAlpha,
   [PROXY_MANAGER.toLowerCase()]: DelegateCallProxyManager,
   [NDX.toLowerCase()]: NDXToken,
-  '0x592f70ce43a310d15ff59be1460f38ab6df3fe65': PoolFactory
+  '0x592f70ce43a310d15ff59be1460f38ab6df3fe65': PoolFactory,
+  '0x3d4860d4b7952a3cad3accfada61463f15fc0d54': ProxyManagerAccessControl,
+  '0x5b470a8c134d397466a1a603678dadda678cbc29': SigmaControllerV1
 };
 
 interface ProposalCallData {
@@ -78,10 +89,10 @@ export function parseProposalCalls(proposal: ProposalCallData): ContractCall[] {
           if (fn.inputs[i].type === 'address') {
             const url = EtherscanUrl({ type: 'account', entity: params[i] });
             params[i] = `[${params[i]}](${url})`;
-          } else {
-            if (fn.inputs[i].type === 'address[]') {
-              params[i] = `[${params[i].map((addr) => `[${addr}](${EtherscanUrl({ type: 'account', entity: addr })})`).join(', ')}]`
-            }
+          } else if (fn.inputs[i].type === 'address[]') {
+            params[i] = `[${params[i].map((addr) => `[${addr}](${EtherscanUrl({ type: 'account', entity: addr })})`).join(', ')}]`
+          } else if (fn.inputs[i].type === 'bytes32') {
+            params[i] = ImplementationIDs[params[i]] || params[i];
           }
         }
         paramsDisplay = params.join(', ');
