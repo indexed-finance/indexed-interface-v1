@@ -154,32 +154,11 @@ export default function Proposal(){
       } = propCall;
       console.log(propCall)
       const etherscanUrl = EtherscanUrl({ type: 'account', entity: target });
-      const text = `${1 + i}. [${targetName}]($${etherscanUrl}).${fnName}(${paramsDisplay})`;
+      const text = `${1 + i}. [${targetName}](${etherscanUrl}).${fnName}(${paramsDisplay})`;
       mdLines.push(text);
     });
     return mdLines.join('\n');
   }
-
-  // useEffect(() => {
-  //   const getAccountMetadata = async() => {
-  //     let { web3 } = state
-
-  //     if(web3.injected) {
-  //       let contract = toContract(web3.injected, Ndx.abi, NDX)
-  //       let balance = await contract.methods.getCurrentVotes(state.account, ).call()
-  //       let amount = formatBalance(toBN(balance), 18, 4)
-
-  //       dispatch({ type: 'BALANCE',
-  //         payload: {
-  //           balances: {
-  //             'NDX': { address: NDX, amount }
-  //           }
-  //         }
-  //       })
-  //     }
-  //   }
-  //   getAccountMetadata()
-  // }, [ state.web3.injected ])
 
   useEffect(() => {
     if (state.governance.proposals.length === 0) return;
