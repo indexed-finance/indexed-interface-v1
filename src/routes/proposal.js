@@ -31,6 +31,7 @@ import style from '../assets/css/routes/proposal'
 import getStyles from '../assets/css'
 import { store } from '../state'
 import { EtherscanUrl } from '../components/buttons/etherscan-link'
+import { Link } from '@material-ui/core'
 const dateFormat = require("dateformat");
 
 const govABI = require('../assets/constants/abi/GovernorAlpha.json');
@@ -302,7 +303,10 @@ export default function Proposal(){
                     <h3> {metadata.title}</h3>
                     {!state.native && (
                       <div className={classes.reciept}>
-                        <span>{metadata.proposer.substring(0, 6)}...{metadata.proposer.substring(38, 64)} • </span>  {metadata.expiry}
+                        <span>{metadata.proposer.substring(0, 6)}...{metadata.proposer.substring(38, 64)} • </span>
+                        <Link target="_blank" href={EtherscanUrl({ type: 'countdown', entity: metadata.expiry })} rel='noreferrer'>
+                          End Block: {metadata.expiry}
+                        </Link>
                       </div>
                     )}
                   </div>
