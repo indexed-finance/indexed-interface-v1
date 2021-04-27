@@ -20,6 +20,9 @@ export function EtherscanUrl(props) {
     case 'token':
       relPath = `token/${entity}`;
       break;
+    case 'countdown':
+      relPath = `block/${entity}`;
+      break;
     default: break
   }
 
