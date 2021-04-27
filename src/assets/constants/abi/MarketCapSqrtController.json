@@ -141,6 +141,32 @@
         {
           "indexed": false,
           "internalType": "address",
+          "name": "pool",
+          "type": "address"
+        }
+      ],
+      "name": "PoolReindexed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "pool",
+          "type": "address"
+        }
+      ],
+      "name": "PoolReweighed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
           "name": "token",
           "type": "address"
         },
@@ -337,6 +363,19 @@
     },
     {
       "inputs": [],
+      "name": "defaultExitFeeRecipient",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "defaultSellerPremium",
       "outputs": [
         {
@@ -480,6 +519,52 @@
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "poolAddress",
+          "type": "address"
+        }
+      ],
+      "name": "getPoolMeta",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bool",
+              "name": "initialized",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint16",
+              "name": "categoryID",
+              "type": "uint16"
+            },
+            {
+              "internalType": "uint8",
+              "name": "indexSize",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "reweighIndex",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint64",
+              "name": "lastReweigh",
+              "type": "uint64"
+            }
+          ],
+          "internalType": "struct MarketCapSqrtController.IndexPoolMeta",
+          "name": "meta",
+          "type": "tuple"
         }
       ],
       "stateMutability": "view",
@@ -696,6 +781,37 @@
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "poolAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "controller",
+          "type": "address"
+        }
+      ],
+      "name": "setController",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "defaultExitFeeRecipient_",
+          "type": "address"
+        }
+      ],
+      "name": "setDefaultExitFeeRecipient",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "uint8",
           "name": "_defaultSellerPremium",
           "type": "uint8"
@@ -714,12 +830,48 @@
           "type": "address"
         },
         {
+          "internalType": "address",
+          "name": "exitFeeRecipient",
+          "type": "address"
+        }
+      ],
+      "name": "setExitFeeRecipient",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "poolAddresses",
+          "type": "address[]"
+        },
+        {
+          "internalType": "address",
+          "name": "exitFeeRecipient",
+          "type": "address"
+        }
+      ],
+      "name": "setExitFeeRecipient",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "poolAddresses",
+          "type": "address[]"
+        },
+        {
           "internalType": "uint256",
-          "name": "maxPoolTokens",
+          "name": "swapFee",
           "type": "uint256"
         }
       ],
-      "name": "setMaxPoolTokens",
+      "name": "setSwapFee",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
