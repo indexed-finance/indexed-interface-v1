@@ -36,8 +36,8 @@ import orclLightCircular from '../images/orcl-light-circular.png'
 import degenLightCircular from '../images/degen-light-circular.png';
 import nftpLightCircular from '../images/nftp-light-circular.png';
 import nftpDarkCircular from '../images/nftp-dark-circular.png';
-import errorDarkCircular from '../images/error-dark-circular';
-import errorLightCircular from '../images/error-light-circular';
+import errorDarkCircular from '../images/error-dark-circular.png';
+import errorLightCircular from '../images/error-light-circular.png';
 
 import { isNative } from './functions'
 
