@@ -50,7 +50,7 @@ export default function Stake() {
           </div>
         </Container>
       </Grid>
-      <Grid item container direction='row' spacing={spacing} xs={6} md={6} lg={6} xl={6}>
+      <Grid item container direction='row' spacing={spacing} xs={10} md={10} lg={10} xl={10}>
         {
           newReducerState.helper &&
           newReducerState.helper.pools.length > 0 &&
@@ -85,7 +85,7 @@ export default function Stake() {
         </Container>
       </Grid>
 
-      <Grid item container direction='row' spacing={spacing} xs={6} md={6} lg={6} xl={6}>
+      <Grid item container direction='row' spacing={spacing} xs={10} md={10} lg={10} xl={10}>
       {
         legacyExpired.length > 0 &&
         legacyExpired.map((pool, i) => <StakingCard
