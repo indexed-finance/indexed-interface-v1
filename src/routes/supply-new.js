@@ -317,7 +317,7 @@ export default function SupplyNew() {
       }
       if (isPairToken) {
         return <a
-          href={`https://info.uniswap.org/pair/${stakingToken}`}
+          href={`https://v2.info.uniswap.org/pair/${stakingToken}`}
           target='_blank'
           rel='noreferrer noopener'
         >

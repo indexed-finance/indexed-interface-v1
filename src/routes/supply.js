@@ -369,7 +369,7 @@ export default function Supply() {
       }
       if (pool.pool.pool.isWethPair) {
         return <a
-          href={`https://info.uniswap.org/pair/${pool.pool.stakingToken}`}
+          href={`https://v2.info.uniswap.org/pair/${pool.pool.stakingToken}`}
           target='_blank'
           rel='noreferrer noopener'
         >
