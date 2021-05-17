@@ -29,15 +29,22 @@ export function EtherscanUrl(props) {
   return `https://${subdomain}etherscan.io/${relPath}`;
 }
 
-export default function EtherScanLink(props) {
-  const etherscanUrl = EtherscanUrl(props);
+export default function EtherScanLink({
+  type,
+  entity,
+  ImageComponent = LaunchIcon,
+  ...rest
+}) {
+  const etherscanUrl = EtherscanUrl({ type, entity });
   return <IconButton
+    disableRipple
     style={{ padding: 0, margin: 0, marginLeft: 10 }}
-    component={(props) =>
-      <Link target="_blank" href={etherscanUrl} rel='noreferrer' {...props} />
+    component={(_props) =>
+      <Link target="_blank" href={etherscanUrl} rel='noopener noreferrer' {..._props} />
     }
-    size='small'
+    {...rest}
+    size='medium'
   >
-    <LaunchIcon />
+    <ImageComponent />
   </IconButton>
 }
