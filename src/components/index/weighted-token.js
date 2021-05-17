@@ -8,6 +8,8 @@ import { getTokenImage, tokenMetadata } from '../../assets/constants/parameters'
 import style from '../../assets/css/components/weights'
 import getStyles from '../../assets/css'
 import { BigNumber, formatBalance } from '@indexed-finance/indexed.js'
+import { IconButton } from '@material-ui/core'
+import EtherScanLink from '../buttons/etherscan-link'
 
 const useStyles = getStyles(style)
 
@@ -42,7 +44,14 @@ export default function WeightedToken({ token }) {
   return (
     <div className={classes.root}>
       <div className={classes.wrapper}>
-        <img alt={classes.asset} src={image} className={classes.asset} />
+        <EtherScanLink
+          type='token'
+          entity={token.address}
+          ImageComponent={() => <img alt={classes.asset} src={image} className={classes.asset} />}
+          classes={{
+            root: classes.etherscanLink,
+          }}
+        />
       </div>
       <div className={classes.percentage}>
         <span className={classes.title}>
