@@ -106,21 +106,16 @@ export default function NewStakingCard({
 
   function Status() {
     return <div className={classes.status}>
-      <h5>STAKED: {displaySupply.toLocaleString()} {state.native ? '' : symbol}</h5>
+      <h5> STAKED: {displaySupply.toLocaleString()} {state.native ? '' : symbol}</h5>
       <h5 style={{ color: '#00e79a' }}>APY: {apy}%</h5>
+      <h4 style={{ marginTop: 20 }}>RATE: {total.toLocaleString()} NDX/DAY</h4>
     </div>
   }
 
-  function Content() {
-    return <ul className={classes.list}>
-      <li> RATE: {total.toLocaleString()} NDX/DAY </li>
-    </ul>
-  }
-
   return(
-    <Grid item xs={10} md={6} lg={6} xl={6} style={{ width: '100%' }} key={key}>
-      <Link className={classes.href} to={`/stake/${symbol.toLowerCase()}`}>
-        <Card color={color}>
+    <Grid item xs={12} sm={12} md={12} lg={6} xl={6} key={key}>
+      <Card color={color} className={classes.card}>
+        <Link className={classes.href}  to={`/stake/${symbol.toLowerCase()}`}>
           <div className={classes['pool']}>
             <div className={classes.image}>
               { category && <img alt={`asset-2`} src={categoryMetadata[category]?.normal[mode]} style={imgStyles[2]} /> }
@@ -132,13 +127,16 @@ export default function NewStakingCard({
                 { Status() }
               </Fragment>
             </div>
-            { Content() }
           </div>
-          <div className={classes.button}>
-            { Button() }
-          </div>
-        </Card>
-      </Link>
+        </Link>
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-end',
+              shapeOutside: 'inset(calc(100% - 100px) 0 0)'
+            }}>
+              { Button() }
+            </div>
+      </Card>
     </Grid>
   )
 }

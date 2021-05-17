@@ -29,7 +29,7 @@ export default function Stake() {
   console.log()
   let { state } = useContext(store);
 
-  let { margin } = style.getFormatting(state)
+  let { margin, spacing } = style.getFormatting(state)
 
   const { pools } = reducerState;
   const reversed = cloneDeep(pools).reverse();
@@ -38,7 +38,7 @@ export default function Stake() {
 
   return(
     <Grid container direction='column' alignItems='center' justify='center'>
-      <Grid item xs={10} md={6} lg={6} xl={6} >
+      <Grid item xs={10} md={6} lg={6} xl={6}>
         <Container margin={margin} padding="1em 2em" title='LIQUIDITY MINING'>
           <div className={classes.header}>
             <p>
@@ -50,30 +50,30 @@ export default function Stake() {
           </div>
         </Container>
       </Grid>
-
-      {
-        newReducerState.helper &&
-        newReducerState.helper.pools.length > 0 &&
-        newReducerState.helper.pools.map((pool, i) => <NewStakingCard
-          key={i}
-          helper={newReducerState.helper}
-          category={newReducerState.categories[pool.token] || ''}
-          pool={pool}
-          ndxPrice={newReducerState.ndxPrice}
-          stakingTokenPrices={newReducerState.stakingTokenPrices}
-        />)
-      }
-
-{
-        legacyActive.length > 0 &&
-        legacyActive.map((pool, i) => <StakingCard
-          key={i}
-          meta={reducerState.metadata[pool.pool.address]}
-          pool={pool}
-          ndxPrice={reducerState.ndxPrice}
-          stakingTokenPrices={reducerState.stakingTokenPrices}
-        />)
-      }
+      <Grid item container direction='row' spacing={spacing} xs={6} md={6} lg={6} xl={6}>
+        {
+          newReducerState.helper &&
+          newReducerState.helper.pools.length > 0 &&
+            newReducerState.helper.pools.map((pool, i) => <NewStakingCard
+              key={i}
+              helper={newReducerState.helper}
+              category={newReducerState.categories[pool.token] || ''}
+              pool={pool}
+              ndxPrice={newReducerState.ndxPrice}
+              stakingTokenPrices={newReducerState.stakingTokenPrices}
+            />)
+          }
+          {
+            legacyActive.length > 0 &&
+            legacyActive.map((pool, i) => <StakingCard
+              key={i}
+              meta={reducerState.metadata[pool.pool.address]}
+              pool={pool}
+              ndxPrice={reducerState.ndxPrice}
+              stakingTokenPrices={reducerState.stakingTokenPrices}
+            />)
+          }
+      </Grid>
 
       <Grid item xs={10} md={6} lg={6} xl={6} >
         <Container margin={margin} padding="1em 2em" title='Legacy Staking Pools'>
@@ -85,6 +85,7 @@ export default function Stake() {
         </Container>
       </Grid>
 
+      <Grid item container direction='row' spacing={spacing} xs={6} md={6} lg={6} xl={6}>
       {
         legacyExpired.length > 0 &&
         legacyExpired.map((pool, i) => <StakingCard
@@ -95,6 +96,8 @@ export default function Stake() {
           stakingTokenPrices={reducerState.stakingTokenPrices}
         />)
       }
+      </Grid>
+
       {!reducerState.pools.length && (
         <Grid item xs={10} md={6} style={{ width: '100%' }}>
           <ParentSize>

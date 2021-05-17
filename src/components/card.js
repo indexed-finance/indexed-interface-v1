@@ -20,7 +20,8 @@ export default function Canvas({
   color = undefined,
   button = undefined,
   style = undefined,
-  custom = undefined
+  custom = undefined,
+  className = ''
 }){
 
   let margin = native ? '1em 1.5em .5em 1.5em' : '3em 0em .5em 3em'
@@ -29,5 +30,5 @@ export default function Canvas({
   if(!color) color = '#666666'
   if(custom) style.width = `calc(${style.width}px - ${custom})`
 
-  return <Wrapper style={{ ...style, margin, borderColor: color }}> {children} </Wrapper>
+  return <Wrapper style={{ ...style, margin, borderColor: color }} className={className}> {children} </Wrapper>
 }

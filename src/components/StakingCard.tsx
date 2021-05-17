@@ -138,33 +138,33 @@ export default function StakingCard({
 
   function Content() {
     if (!isReady) {
-      return <ul className={classes.list}>
-        <li> BEGINS IN <Countdown date={periodStart * 1000} /> </li>
-        <li> TOTAL: {total.toLocaleString()} NDX </li>
-      </ul>
+      return <Fragment>
+        <h4> BEGINS IN <Countdown date={periodStart * 1000} /> </h4>
+        <h4> TOTAL: {total.toLocaleString()} NDX </h4>
+      </Fragment>
     }
     if (active) {
-      return <ul className={classes.list}>
-        <li> RATE: {rate.toLocaleString()} NDX/DAY </li>
-        <li> TOTAL: {total.toLocaleString()} NDX </li>
-      </ul>
+      return <Fragment>
+        <h4> RATE: {rate.toLocaleString()} NDX/DAY </h4>
+        <h4> TOTAL: {total.toLocaleString()} NDX </h4>
+      </Fragment>
     }
     if (hasBegun) {
-      return <ul className={classes.list}>
-        <li> RATE: {rate.toLocaleString()} NDX/DAY </li>
-        <li> TOTAL: {total.toLocaleString()} NDX </li>
-      </ul>
+      return <Fragment>
+        <h4> RATE: {rate.toLocaleString()} NDX/DAY </h4>
+        <h4> TOTAL: {total.toLocaleString()} NDX </h4>
+      </Fragment>
     }
-    return <ul className={classes.list}>
-      <li> CAN BE INITIALIZED </li>
-      <li> AVAILABLE: {total.toLocaleString()} NDX </li>
-    </ul>
+    return <Fragment>
+      <h4> CAN BE INITIALIZED </h4>
+      <h4> AVAILABLE: {total.toLocaleString()} NDX </h4>
+    </Fragment>
   }
 
   return(
-    <Grid item xs={10} md={6} lg={6} xl={6} style={{ width: '100%' }} key={key}>
-      <Link className={classes.href} to={`/stake-old/${symbol.toLowerCase()}`}>
-        <Card color={color}>
+    <Grid item xs={12} sm={12} md={12} lg={6} xl={6} key={key}>
+      <Card color={color} className={classes.card}>
+        <Link className={classes.href} to={`/stake-old/${symbol.toLowerCase()}`}>
           <div className={classes['pool']}>
             <div className={classes.image}>
               { category && <img alt={`asset-2`} src={categoryMetadata[category]?.normal[mode]} style={imgStyles[2]} /> }
@@ -174,15 +174,19 @@ export default function StakingCard({
               <Fragment>
                 <h4> {!state.native ? `${formattedName} [${symbol}]` : symbol} </h4>
                 { Status() }
+                { Content() }
               </Fragment>
             </div>
-            { Content() }
           </div>
-          <div className={classes.button}>
-            { Button() }
-          </div>
-        </Card>
-      </Link>
+        </Link>
+        <div style={{
+          display: 'flex',
+          alignItems: 'flex-end',
+          shapeOutside: 'inset(calc(100% - 100px) 0 0)'
+        }}>
+          { Button() }
+        </div>
+      </Card>
     </Grid>
   )
 }
