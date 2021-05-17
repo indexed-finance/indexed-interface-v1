@@ -14,7 +14,14 @@ const Wrapper = styled(Paper)({
   }
 })
 
-export default function Canvas({ native, children, color, button, style, custom }){
+export default function Canvas({
+  native = undefined,
+  children = undefined,
+  color = undefined,
+  button = undefined,
+  style = undefined,
+  custom = undefined
+}){
 
   let margin = native ? '1em 1.5em .5em 1.5em' : '3em 0em .5em 3em'
 
