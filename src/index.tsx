@@ -19,6 +19,7 @@ import { getCategoryMetadata, getProposals } from './api/gql'
 import { store } from './state'
 
 import './assets/css/root.css'
+import { NewStakingContextProvider } from './state/new-staking/context';
 
 const Governance = lazy(() => import('./routes/governance'))
 const Categories = lazy(() => import('./routes/categories'))
@@ -30,6 +31,7 @@ const Index = lazy(() => import('./routes/index'))
 const Pool = lazy(() => import('./routes/pool'))
 const Stake = lazy(() => import('./routes/stake'))
 const Supply = lazy(() => import('./routes/supply'))
+const SupplyNew = lazy(() => import('./routes/supply-new'))
 // const Root = lazy(() => import('./routes/root'))
 const Error404 = lazy(() => import('./routes/404'))
 const Category = lazy(() => import('./routes/category'))
@@ -344,8 +346,11 @@ function Application(){
                 <Route exact path='/stake'>
                   <Stake />
                 </Route>
-                <Route path='/stake/:asset'>
+                <Route path='/stake-old/:asset'>
                   <Supply />
+                </Route>
+                <Route path='/stake/:asset'>
+                  <SupplyNew />
                 </Route>
                 <Route exact path='/'>
                   <Markets />
@@ -370,7 +375,9 @@ function Application(){
 ReactDOM.render(
   <StateProvider>
     <StakingContextProvider>
-      <Application />
+      <NewStakingContextProvider>
+        <Application />
+      </NewStakingContextProvider>
     </StakingContextProvider>
   </StateProvider>,
   document.getElementById('root')
