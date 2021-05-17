@@ -1,7 +1,5 @@
-import { getStakingHelpers, PoolHelper, StakingPoolHelper } from '@indexed-finance/indexed.js'
-import { useContext, useEffect, useReducer } from 'react';
+import { StakingPoolHelper } from '@indexed-finance/indexed.js'
 import { AddPools, SetMetadata, StakingAction } from './actions';
-import { store } from '../index'
 
 export interface StakingPoolMetadata {
   indexPoolName: string;
@@ -28,7 +26,7 @@ export function stakingReducer(state: StakingState = initialState, action_: Stak
   const actions = Array.isArray(action_) ? action_ : [action_];
 
   function addPools(action: AddPools) {
-    newState.pools = action.pools;
+    newState.pools = action.pools.sort((a, b) => a.pool.periodFinish - b.pool.periodFinish);
   }
 
   function addPoolMetadata(action: SetMetadata) {

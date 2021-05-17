@@ -11,7 +11,7 @@ import { NDX, WETH } from '../../assets/constants/addresses';
 
 const WETH_NDX_PAIR = computeUniswapPairAddress(WETH, NDX);
 
-interface StakingPoolHook {
+export interface StakingPoolHook {
   pool?: StakingPoolHelper;
   metadata?: StakingPoolMetadata;
   userBalanceStakingToken?: string;
@@ -102,6 +102,7 @@ export function useStaking(): StakingContextType {
       for (let pool of state.pools) {
         const { indexPool } = pool.pool;
         const helper = indexPoolHelpers.find(h => h.address.toLowerCase() === indexPool.toLowerCase());
+        if (!helper) continue;
         if (globalState.account && !pool.userAddress) {
           pool.setUserAddress(globalState.account)
         }
