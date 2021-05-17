@@ -1,8 +1,10 @@
 import { getIPFSFile } from './ipfs';
-import { SUBGRAPH_URL_UNISWAP, SUBGRAPH_URL_INDEXED } from '../assets/constants/urls';
 import { computeUniswapPairAddress } from '@indexed-finance/indexed.js/dist/utils/address';
 import { NDX, WETH } from '../assets/constants/addresses';
-import { UNISWAP_SUBGRAPH_URL } from '@indexed-finance/indexed.js/dist/subgraph';
+import { SUBGRAPH_URLS } from '@indexed-finance/subgraph-clients/dist/constants';
+
+const SUBGRAPH_URL_UNISWAP = SUBGRAPH_URLS[process.env.REACT_APP_ETH_NETWORK].uniswap;
+const SUBGRAPH_URL_INDEXED = SUBGRAPH_URLS[process.env.REACT_APP_ETH_NETWORK].indexedCore;
 
 const execRequest = (query, url = SUBGRAPH_URL_INDEXED) => fetch(
   url,
@@ -193,9 +195,23 @@ export async function getProposals() {
 }
 
 export async function getETHPrice() {
-  const { data: { pairs } } = await execRequest(
+  const res = await execRequest(
     priceQuery(),
-    UNISWAP_SUBGRAPH_URL
+    SUBGRAPH_URL_UNISWAP
   );
+  if (!res || !res.data) {
+    return fetch(
+      'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd',
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }
+      }
+    ).then(r => r.json()).then(({ ethereum }) => ethereum.usd)
+    .catch(err => 0);
+  }
+  const { data: { pairs } } = res;
   return pairs[0]?.token0Price;
 }

@@ -331,7 +331,7 @@ export const tokenMetadata = {
     address: "0x408e41876cccdc0f92210600ef50372656052a38",
     name: "Republic",
     image: ren
-  }
+  },
 }
 
 export const marketColumns = [

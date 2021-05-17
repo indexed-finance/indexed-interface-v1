@@ -28,15 +28,23 @@ const setStyle = (theme) => ({
     float: 'right'
   },
   asset: {
-    marginTop: 10,
-    width: 50
+    width: 50,
+    height: 50
   },
   alternative: {
     color: '#999999'
   },
+  etherscanLink: {
+    '&:hover': {
+      backgroundColor: 'rgba(0,0,0,0.06)'
+    }
+  },
   wrapper: {
     float: 'left',
-    marginRight: 20
+    marginRight: 20,
+    '& > a': {
+      padding: '2.5px !important',
+    }
   }
 })
 
