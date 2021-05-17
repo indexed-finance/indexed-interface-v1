@@ -69,7 +69,7 @@ export default function SupplyNew() {
         dispatch(TX_PENDING(transactionHash))
       ).on('confirmation', async(conf, receipt) => {
         if(conf === 0){
-          if(receipt.status === 1) {
+          if (Boolean(receipt.status)) {
             await helper.updatePool();
             await dispatch(TX_CONFIRMED(receipt.transactionHash))
           } else {
@@ -92,8 +92,10 @@ export default function SupplyNew() {
       .on('transactionHash', (transactionHash) =>
         dispatch(TX_PENDING(transactionHash))
       ).on('confirmation', async(conf, receipt) => {
-        if(conf === 0) {
-          if(receipt.status === 1) {
+          console.log(receipt.status)
+          if(conf === 0) {
+          console.log(receipt.status)
+          if (Boolean(receipt.status)) {
             await dispatch(TX_CONFIRMED(receipt.transactionHash))
             await setInput(null)
             await helper.update();
@@ -117,7 +119,7 @@ export default function SupplyNew() {
         dispatch(TX_PENDING(transactionHash))
       ).on('confirmation', async(conf, receipt) => {
         if(conf === 0){
-          if(receipt.status === 1) {
+          if (Boolean(receipt.status)) {
             await helper.update();
             await dispatch(TX_CONFIRMED(receipt.transactionHash))
             await setInput(null)
@@ -142,7 +144,7 @@ export default function SupplyNew() {
         dispatch(TX_PENDING(transactionHash))
       ).on('confirmation', async(conf, receipt) => {
         if(conf === 0){
-          if(receipt.status === 1) {
+          if (Boolean(receipt.status)) {
             await helper.updatePool();
             await dispatch(TX_CONFIRMED(receipt.transactionHash))
           } else {
