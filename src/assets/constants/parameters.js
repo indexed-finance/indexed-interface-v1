@@ -38,6 +38,8 @@ import nftpLightCircular from '../images/nftp-light-circular.png';
 import nftpDarkCircular from '../images/nftp-dark-circular.png';
 import errorDarkCircular from '../images/error-dark-circular.png';
 import errorLightCircular from '../images/error-light-circular.png';
+import fffDarkCircular from '../images/fff-dark-circular.png'
+import fffLightCircular from '../images/fff-light-circular.png'
 
 import { isNative } from './functions'
 
@@ -211,6 +213,16 @@ export const categoryMetadata = {
     circular: {
       dark: errorDarkCircular,
       light: errorLightCircular
+    }
+  },
+  'sigma-v10x4': {
+    normal: {
+      dark: fffDarkCircular,
+      light: fffLightCircular
+    },
+    circular: {
+      dark: fffDarkCircular,
+      light: fffLightCircular
     }
   },
   null: {
