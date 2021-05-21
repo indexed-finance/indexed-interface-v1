@@ -234,7 +234,6 @@ export default function Navigation({ mode }) {
             </Grid>
           </Grid>
         </Toolbar>
-      <div style={{textAlign:'center'}}>The price information on this website is highly inaccurate. See <a href="https://twitter.com/ndxfi/status/1395725348390768640">here</a> for details. Use <a href="https://ndx.holdings/">ndx.holdings</a> for accurate information.</div>
       </AppBar>
     </div>
   </div>
