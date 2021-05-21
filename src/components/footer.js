@@ -11,6 +11,7 @@ import medium from '../assets/images/medium.png'
 import twitter from '../assets/images/twitter.png'
 import discourse from '../assets/images/discourse.png'
 import snapshot from '../assets/images/snapshot.png'
+import defipulse from '../assets/images/defi-pulse.png'
 import { store } from '../state'
 
 import getStyles from '../assets/css'
@@ -56,6 +57,9 @@ export default function Footer() {
           </a>
           <a className={classes.logo}  rel="noopener noreferrer" href="https://github.com/indexed-finance" target='_blank'>
             <img alt='github' src={github} />
+          </a>
+          <a className={classes.logo}  rel="noopener noreferrer" href="https://defipulse.com" target='_blank'>
+            <img alt='github' src={defipulse} />
           </a>
         </Grid>
       </Grid>
