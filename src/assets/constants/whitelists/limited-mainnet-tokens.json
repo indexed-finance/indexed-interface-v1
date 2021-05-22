@@ -1,5 +1,11 @@
 [
   {
+    "address": "0x0000000000000000000000000000000000000000",
+    "symbol": "ETH",
+    "name": "Ether",
+    "decimals": 18
+  },
+  {
     "name": "WrappedBTC",
     "symbol": "WBTC",
     "decimals": 8,
@@ -52,12 +58,6 @@
     "symbol": "BAT",
     "decimals": 18,
     "address": "0x0D8775F648430679A709E98d2b0Cb6250d2887EF"
-  },
-  {
-    "address": "0x0000000000000000000000000000000000000000",
-    "symbol": "ETH",
-    "name": "Ether",
-    "decimals": 18
   },
   {
     "name": "Balancer",

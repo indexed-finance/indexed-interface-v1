@@ -2,7 +2,7 @@ import { BigNumber, formatBalance, PoolHelper } from "@indexed-finance/indexed.j
 import Minter from '@indexed-finance/indexed.js/dist/minter';
 import { MintParams } from "@indexed-finance/indexed.js/dist/minter/types";
 import { useEffect, useReducer } from "react";
-import { ZERO_ADDRESS } from "../../assets/constants/addresses";
+import { WETH, ZERO_ADDRESS } from "../../assets/constants/addresses";
 import { whitelistTokens } from "../../assets/constants/parameters";
 import useDebounce from "../../hooks/useDebounce";
 import {
@@ -107,6 +107,14 @@ function uniswapMinterReducer(
     newState.pool = action.pool;
     newState.minter = action.minter;
     newState.whitelist = newState.whitelist.filter(t => !(newState.pool.tokens.find(pt => compareAddresses(t.address, pt.address))));
+    if (!!action.pool.tokens.find(pt => compareAddresses(pt.address, WETH))) {
+      newState.whitelist = newState.whitelist.filter(t => t.address !== `0x${'00'.repeat(20)}`)
+    }
+    newState.input = {
+      ...newState.whitelist[0],
+      amount: BN_ZERO,
+      displayAmount: ''
+    }
   }
 
   function setSide(action: SetSpecifiedSide){

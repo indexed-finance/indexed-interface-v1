@@ -204,7 +204,6 @@ function uniswapMinterDispatchMiddleware(dispatch: UniswapMinterDispatch, state:
         whitelist.filter(t => t.address !== ZERO_ADDRESS),
         action.pool
       );
-      const defaultToken = whitelist.find(t => t.address === ZERO_ADDRESS);
 
       dispatch([
         { type: 'SET_MINTER', pool: action.pool, minter },
@@ -217,7 +216,6 @@ function uniswapMinterDispatchMiddleware(dispatch: UniswapMinterDispatch, state:
             amount: BN_ZERO
           }
         },
-        { type: 'SET_INPUT_TOKEN', token: { ...defaultToken, amount: BN_ZERO, displayAmount: '' } },
       ]);
     }
 
