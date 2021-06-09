@@ -96,7 +96,7 @@ export default function VerticalTabs({ data }) {
     setValue(newValue);
   }
 
-  const sortSwaps = async(swaps, book) => {
+  const sortSwaps = async(swaps, book, tokens) => {
     for(let order in swaps){
       let {
         tokenIn,
@@ -104,11 +104,11 @@ export default function VerticalTabs({ data }) {
         tokenAmountIn,
         tokenAmountOut,
         timestamp,
-        id
+        id,
       } = swaps[order]
 
-      let input = helper.getTokenByAddress(tokenIn);
-      let output = helper.getTokenByAddress(tokenOut);
+      let input = tokens[tokenIn.toLowerCase()]; //helper.getTokenByAddress(tokenIn);
+      let output = tokens[tokenOut.toLowerCase()];//helper.getTokenByAddress(tokenOut);
       let inputDisplay = formatBalance(toBN(tokenAmountIn), input.decimals, 2)
       let outputDisplay = formatBalance(toBN(tokenAmountOut), output.decimals, 2)
       let transactionHash = id.split('-')[0];
@@ -183,11 +183,14 @@ export default function VerticalTabs({ data }) {
     const getTrades = async() => {
       if(Object.values(data).length > 0 && meta !== dummy && helper) {
         let pair = computeUniswapPairAddress(process.env.REACT_APP_WETH, meta.address);
-        let swaps = await getSwaps(meta.address.toLowerCase());
+        let {swaps,tokens} = await getSwaps(meta.address.toLowerCase());
+        let formattedTokens = tokens.reduce((prev, { id, symbol, decimals }) => ({
+          ...prev,
+          [id.toLowerCase()]: { symbol, decimals }
+        }), {});
         let trades = await getMarketTrades(pair);
         let history = await sortTrades(trades, []);
-        let orderbook = await sortSwaps(swaps, []);
-
+        let orderbook = await sortSwaps(swaps, [], formattedTokens);
         setTrades(history)
         setSwaps(orderbook)
       }

@@ -62,6 +62,11 @@ const swapQuery = (poolAddress) => `
     tokenAmountOut
     timestamp
   }
+  tokens(first: 200) {
+    id
+    symbol
+    decimals
+  }
 }
 `
 
@@ -162,8 +167,8 @@ export async function getTokenCategories() {
 }
 
 export async function getSwaps(poolAddress) {
-  let { data: { swaps } } = await execRequest(swapQuery(poolAddress));
-  return swaps;
+  let { data: { swaps, tokens } } = await execRequest(swapQuery(poolAddress));
+  return { swaps, tokens };
 }
 
 export async function getCategory(id) {
